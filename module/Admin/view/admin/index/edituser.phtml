@@ -1,0 +1,176 @@
+
+<script type="text/javascript">
+
+function checkdata()
+{
+	var getnm = trim(document.getElementById("username").value);
+        var email = trim(document.getElementById("email").value);
+	
+	if(getnm == "" || email == "")
+	{
+		alert("Please fill all the value properly.");return false;
+	}
+        var email = document.getElementById('email');
+    var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+    if (!filter.test(email.value)) {
+    alert('Please provide a valid email address');
+    email.focus;
+    return false;
+    }
+	document.form1.submit();
+	return true;
+	
+}
+
+function trim(str) {
+        return str.replace(/^\s+|\s+$/g,"");
+}
+function resetdata()
+{
+    	document.getElementById("username").value="";
+        document.getElementById("email").value="";
+}
+</script>
+<form name="form1" action="<?php echo $this->url('admin',array('action'=>'edituser','id'=>$this->userdata->user_id)); ?>" method="post" >
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td valign="top" align="center" class="middlesection"><table width="96%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td >&nbsp;</td>
+                    </tr>
+                    <tr>
+                      <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                  <td align="left" valign="middle"><h1>Edit User</h1></td>
+                                  <td align="right" valign="bottom"><table width="0%" border="0" cellspacing="0" cellpadding="0">
+                                      <tr>
+                                        <td><!--<a href="#" class="buttonash" onClick="resetdata();"><span> reset </span></a> --></td>
+<!--                                        <td width="5"><a onClick="" href="javascript:history.go(-1);" class="buttonash"><span>Back</span></a></td>
+                                        <td><a onClick="return checkdata();" href="#" class="buttonash"><span> save user </span></a></td>-->
+                                      </tr>
+                                    </table></td>
+                                </tr>
+                              </table></td>
+                          </tr>
+                          <tr>
+                            <td class="bottomboder"><img src="<?php echo $this->basePath().'/images/ashish.gif'; ?>" height="1" /></td>
+                          </tr>
+                          </table></td>
+                    </tr>
+                    <tr>
+                        <td><div  style="height: 20px;color: red; vertical-align: middle;">
+                                <?php
+                                if (isset($this->message) && !empty($this->message))
+                                    echo $this->message;
+                                if ($this->messages) {
+                                    foreach ($this->messages as $messages) {
+                                        echo $messages;
+                                    }
+                                }
+                                ?></div></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                    </tr>
+                    <tr>
+                      <td><div class="tab-content-out" style="clear:both" >
+                        <div id="tabs" class="tabs" >
+
+                             <div class="TabbedPanelsContentGroup">
+		<div  class="TabbedPanelsContent">
+			<div style=" border:0;" class="tab-content">
+                              <div class="entry-edit">
+                                <div class="tebelhd" align="left"> User Information </div>
+                                <div class="fieldset" id="_generalbase_fieldset">
+                                  <div class="hor-scroll" align="left">
+                                    <table class="form-list" cellspacing="0">
+                                        <?php if(!empty($this->userdata->user_id)){?>
+                                      <tbody>
+                                        <tr>
+                                          <td class="hidden" colspan="100"><input id="_generalpath" name="general[path]" value="1" type="hidden"></td>
+                                        </tr>
+                                        <tr>
+                                          <input type="hidden" name="userid" value="<?php echo $this->userid;?>">
+                                          <td class="label"><label for="name">Name <span class="required">*</span></label></td>
+                                          <td class="value"><input id="username" name="username" value="<?php echo $this->userdata->username;?>" class="required-entry required-entry input-text" type="text"></td>
+<!--                                          <td class="scope-label">[STORE VIEW]</td>-->
+                                          <td></td>
+                                        </tr>
+                                        <tr>
+                                          <td class="label"><label for="name">Email <span class="required">*</span></label></td>
+                                          <td class="value"><input id="email" name="email" value="<?php echo $this->userdata->email_address;?>" class="required-entry required-entry input-text" type="text"></td>
+<!--                                          <td class="scope-label">[STORE VIEW]</td>-->
+                                          <td></td>
+                                        </tr>
+<!--                                        <tr>
+                                          <td class="label"><label for="">Role : <span class="required">*</span></label></td>
+                                          <td class="value"><?php
+                                          
+//                                          switch ($this->userdata->role) {
+//                                              case 1:    break;
+//                                              
+//                                                default:
+//                                                  break;
+//                                          }
+//                                          echo ($this->userdata->role == 2) ? '<input type="checkbox" name="role" value=\"checked\" />' : '<input type="checkbox" name="role"  />';
+//                                          echo 'User'; 
+                                          ?></td>
+                                          <td></td>
+                                        </tr>-->
+                                        <tr>
+                                          <td class="label"><label for="">Disable account :<span class="required">*</span></label></td>
+                                          <td class="value"><?php 
+                                          if(!$this->userdata->disable_account){
+                                          echo '<input type="radio" name="disable_account" value="0" checked="check">Active Account';
+                                          echo '<input type="radio" name="disable_account" value="1">Deactive Account';
+                                          }else{
+                                              echo '<input type="radio" name="disable_account" value="0" >Active Account';
+                                          echo '<input type="radio" name="disable_account" value="1" checked="check">Deactive Account';
+                                          }
+//                                          echo $this->userdata->disable_account ? '<input type="radio" name="disable_account" value=\"checked\" />' : '<input type="radio" name="disable_account" value=\"checked\" />Deactive' ; 
+                                          ?></td>
+                                          <td></td>
+                                        </tr>
+                                        <tr>
+                                          <td class="label"><label for="">Profile Photo :</label></td>
+                                          <td class="value"><?php echo  ($this->userdata->profile_photo)? "YES" : "NO"; ?>
+                                              
+                                          <td></td>
+                                        </tr>
+                                        
+                                        <tr>
+                                          <td class="label"><label for="">Facebook Name :</label></td>
+                                          <td class="value"><input type="text" name="facebook_username" class="required-entry required-entry input-text" value="<?php echo $this->userdata->facebook_username; ?>"></td>
+                                          <td></td>
+                                        </tr>
+                                        <tr>
+                                          <td class="label"><label for="">Twitter Name :</label></td>
+                                          <td class="value"><input type="text" name="twitter_username" class="required-entry required-entry input-text" value="<?php echo $this->userdata->twitter_username; ?>" /></td>
+                                          <td></td>
+                                        </tr>
+                                        <td class="label"></td>
+                                        <td class="value"><a onClick="" href="javascript:history.go(-1);" class="buttonash"><span>Cancel</span></a>
+                                            
+                                        <a onClick="return checkdata();" href="#" class="buttonash"><span> save user </span></a></td>
+                                        </tr>
+                                      </tbody>
+                                      <?php } else{
+                                          echo "<tbody><tr><td  style=\"height: 20px;color: red; vertical-align: middle;\">No Record Found</td></tr></tbody>" ;
+                                      }?>
+                                    </table>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+			</div>
+		</div>
+               </div>
+              </div></td>
+              </tr>
+            </table></td>
+           </tr>
+</table>
+</form>

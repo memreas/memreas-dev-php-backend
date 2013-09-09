@@ -1,0 +1,192 @@
+<?php
+use Zend\Session\Container;
+//session_start();
+//$auth = Zend_Auth::getInstance();
+// $username = $auth->getIdentity()->username; ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/main.dwt" codeOutsideHTMLIsLocked="false" -->
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+        <!-- InstanceBeginEditable name="doctitle" -->
+        <!-- InstanceEndEditable -->
+        <?php echo $this->headTitle('Eventapp Admin Panel - NEEDS TO CHANGE TO MEMREAS') ?>
+
+        <?php // echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'))
+//                        ->prependStylesheet($this->basePath() . '/css/bootstrap-responsive.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/style.css')
+//                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+                ->prependStylesheet($this->basePath() . '/css/menushowhide1.css')
+                ->prependStylesheet($this->basePath() . '/css/boxes.css')
+                ->prependStylesheet($this->basePath() . '/css/menu-topbar.css')
+                ->prependStylesheet($this->basePath() . '/css/menu-base.css')
+                ->prependStylesheet($this->basePath() . '/datepicker/css/demos.css')
+                ->prependStylesheet($this->basePath() . '/datepicker/css/jquery.ui.all.css')
+                ->prependStylesheet($this->basePath() . '/datepicker/css/jquery.ui.base.css')
+                ->prependStylesheet($this->basePath() . '/datepicker/css/jquery.ui.core.css')
+                ->prependStylesheet($this->basePath() . '/datepicker/css/jquery.ui.datepicker.css')
+                ->prependStylesheet($this->basePath() . '/datepicker/css/jquery.ui.theme.css')
+                ->prependStylesheet($this->basePath() . '/css/colorbox.css');
+                ?>
+<?php
+      /*echo $this->headLink(array(3 'rel' => 'favicon',4 'href' => '/img/favicon.ico',5 ), 'PREPEND')
+              ->appendStylesheet('/css/bootstrap-responsive.min.css')
+              ->prependStylesheet($this->basePath() . '/css/bootstrap-responsive.min.css')
+                ->prependStylesheet($this->basePath() . '')
+                ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+                ->prependStylesheet($this->basePath() . '/css/style.css')
+           
+       * 
+       */     
+        ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+//                                      ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+//                                      ->prependFile($this->basePath() . '/js/jquery.min.js') 
+            ?>
+       
+        <script type="text/javascript">
+	 
+            function vis(id){
+                document.getElementById(id).style.display='inline';
+            }
+            function invis(id){
+                document.getElementById(id).style.display='none';
+            }
+        </script>
+
+<!--        <script type="text/javascript" src="<?php //echo $this->baseUrl('js/jquery-1.js'); ?>"></script>-->
+        <?php echo $this->headScript()->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+//                                      ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+//                                      ->prependFile($this->basePath() . '/js/jquery.min.js') 
+                ->prependFile($this->basePath() .'/datepicker/js/jquery-1.5.1.js')
+        ->prependFile($this->basePath() .'/js/jquery_002.js')
+        ->prependFile($this->basePath() .'/js/stlib.js')
+        ->prependFile($this->basePath() .'/js/menu.js')
+        ->prependFile($this->basePath() .'/js/jquery.colorbox.js')
+        ->prependFile($this->basePath() .'/datepicker/js/jquery.ui.core.js')
+        ->prependFile($this->basePath() .'/datepicker/js/jquery.ui.widget.js')
+        ->prependFile($this->basePath() .'/datepicker/js/jquery.ui.datepicker.js')
+        ->prependFile($this->basePath() .'/datepicker/js/jquery.ui.datepicker.js')
+        ->prependFile($this->basePath() .'/js/jquery.validate.js')
+        ?>
+        <script>
+            $(function() {
+                $( "#datepicker" ).datepicker();
+                $(".example1").colorbox({iframe:true, width:"80%", height:"80%"});
+            });     
+        </script>
+    </head>
+    <body>
+            <?php // $session_user = new Zend_Session_Namespace('login');
+            $sessionObj = new Container('user_information');
+        $username = $sessionObj->offsetGet('username');
+            ?>                
+            <table width="" border="0" align="center" cellpadding="0" cellspacing="0" class="maintable">
+                <tr>
+                    <td class="topsection">
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td ><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td height="96" valign="middle">
+                                  <a href="#"><img src="<?php echo $this->basePath() .'/images/logo.gif'; ?>" hspace="20" /></a></td>
+                                            <td class="p10"><table width="0%" height="70"  border="0" align="right" cellpadding="0" cellspacing="0">
+                                                    <tr>
+                                                        <td height="24" valign="top" >Logged in as : <?php  echo ucfirst($username); ?> | <?php echo date('l jS \of F Y H:ia'); ?> |  <a href="<?php echo $this->url('admin',array('action' => 'logout'), null, true); ?>">Log Out</a></td>
+                                                    </tr>                                                        
+                                                </table></td>
+                                        </tr>
+                                    </table></td>
+                            </tr>
+                            <tr>
+                                <td align="center">
+                                    <table width="98%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td width="8"></td>
+                                            <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                    <tr>
+                                                        <td>
+                                                            <script type="text/javascript">
+                                                                ddlevelsmenu.setup("ddtopmenubar", "topbar") //ddlevelsmenu.setup("mainmenuid", "topbar|sidebar")
+                                                            </script>
+                                                            <div id="ddtopmenubar" class="mattblackmenu">
+<!--                                                                <ul>
+                                                <li > <a href="<?php //echo $this->url(array('controller'=>'index','action'=>'dashboard','module'=>'admin'));      ?>" >Dashboard</a> </li>
+                                                                    <li> 
+                                                                        <li> <a href="<?php // echo $this->url(array('controller' => 'index', 'action' => 'manageusers')); ?>">Manage Users</a></li>
+                                                                    </li>
+                                                                    <li><ul id="ddsubmenu2" class="ddsubmenustyle">
+                                                                            <li> <a href="<?php // echo $this->url(array('controller' => 'index', 'action' => 'manageevents')); ?>">Manage Events</a></li>
+                                                                        </ul>
+                                                                    </li>
+                                                                    <li><ul id="ddsubmenu8" class="ddsubmenustyle">
+                                                                            <li > <a href="<?php // echo $this->url(array('controller' => 'index', 'action' => 'changepassword', 'module' => 'admin')); ?>" >Change Password</a> </li>
+                                                                        </ul>
+                                                                    </li>
+                                                                </ul>-->
+ <ul>
+                            <li > <a href="<?php echo $this->url('admin',array('action' => 'manageusers')); ?>" >Manage Users</a> </li>
+                            <li > <a href="<?php echo $this->url('admin',array('action' => 'manageevents')); ?>" rel="ddsubmenu2">Manage Events</a> </li>
+                            <li> <a href="<?php echo $this->url('admin',array('action' => 'changepassword')); ?>" rel="ddsubmenu3" >change Password</a> </li>
+                            <li style="padding:0PX; overflow:hidden;"><a href="#" style="padding:0PX; border:0PX;" rel="ddsubmenu0" ><img src="../images/blank.gif" width="0" height="0"  /></a> </li>
+                            <!--<li> <a href="#"  rel="ddsubmenu4" style="margin-left:-6px;  " >Customers</a> </li>
+                            <li > <a href="#" rel="ddsubmenu5" >Promotions</a> </li>
+                            <li > <a href="#" rel="ddsubmenu6" >Newsletter</a> </li>
+                            <li > <a href="#" rel="ddsubmenu7" >CMS</a> </li>
+                            <li > <a href="#" rel="ddsubmenu8" >Reports</a> </li>
+                            <li > <a href="#" rel="ddsubmenu9" >System</a> </li>-->
+                          </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table></td>
+                                        </tr>
+                                    </table></td>
+                            </tr>
+                            <tr>
+                                <td height="27px"></td>
+                            </tr>
+                        </table>                            
+                    </td>
+                </tr>
+                <tr>
+                    <td ><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td style="background:url(<?php echo $this->basePath().'/images/leftbg.gif'; ?> ) repeat-y; width:8px;"></td>
+                                <!-- InstanceBeginEditable name="EditRegion2" -->
+                                <td class="middsection" height="500px"> 
+                                <?php echo $this->content; ?>
+                                </td>
+                                <!-- InstanceEndEditable -->
+                                <td style="background:url(<?php echo $this->basePath().'/images/rightbg.gif'; ?>) repeat-y; width:8px;"></td>
+                            </tr>
+                        </table></td>
+                </tr>
+                <tr>
+                    <td>
+                        <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td style="background:url(<?php echo $this->basePath().'/images/bt-left.gif'; ?> ) no-repeat; height:20px; width:8px; "></td>
+                                <td style="background:url(<?php echo $this->basePath().'/images/bt-middle.gif'; ?> ) repeat-x; height:20px;" width="993"></td>
+                                <td style="background:url(<?php echo $this->basePath().'/images/bt-left.gif'; ?> ) no-repeat; height:20px; width:8px; "></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="bottomsection" valign="middle">
+                        <table width="98%" border="0" cellspacing="5" cellpadding="0" align="center">
+                            <tr>
+                                <td align="left" class="bottomlink"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </body>
+
+</html>

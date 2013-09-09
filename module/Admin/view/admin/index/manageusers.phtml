@@ -1,0 +1,190 @@
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td style="background:url('<?php echo $this->basePath().'/images/leftbg.gif'; ?>') repeat-y; width:8px;"></td>
+          <!-- InstanceBeginEditable name="EditRegion2" -->
+          <td class="middlesection"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="p10"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td align="left" valign="middle"><h1>Manage Users</h1></td>
+                            <td align="right" valign="bottom"><h4 style="color: #4B5974;">Total Users : <?php echo $this->user_total;?></h4></td>
+                          </tr>
+                        </table></td>
+                    </tr>
+                    <tr>
+                      <td class="bottomboder"><img src="<?php echo $this->basePath().'/images/ashish.gif'; ?>" height="1" /></td>
+                    </tr>
+                  </table></td>
+              </tr>
+<!-------- Start -->
+<!--              <tr>
+                <td class="p10"><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr>
+                      <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td valign="top"><img src="<?php // echo  $this->basePath().'images/linegre.gif'; ?>" /></td>
+                            <td style="background:url('<?php // echo $this->basePath().'images/bghd.gif'; ?>') repeat-x;"><table class="actions" cellspacing="0">
+                                <tbody>
+                                  <tr>
+
+                                    <td align="right"><table width="0" border="0" cellspacing="0" cellpadding="2">
+                                        <tr><td><a href="<?php // echo $this->url(array('controller'=>'index','action'=>'exporttoexcel','module'=>'admin'),null,true); ?>" class="buttonash"><span>Export To Excel</span></a></td>
+                                          <td></td>
+                                        </tr>
+                                      </table></td>
+                                  </tr>
+                                </tbody>
+                              </table></td>
+                            <td valign="top">
+                                <img src="<?php // echo $this->baseUrl('images/linegre.gif'); ?>" /></td>
+                          </tr>
+                        </table></td>
+                    </tr>
+                  </table></td>
+              </tr>-->
+<!-------- END -->
+              <tr>
+                <td class="p10"><div style="width:960px;"><div  style="height: 20px;color: red; vertical-align: middle;">
+                            <?php if ($this->messages) {
+                                                                foreach ($this->messages as $messages) {
+                                                                    echo $messages;
+                                                                }
+                                                            }
+                                    if($this->flashmessenger()->hasMessages())
+            foreach ($this->flashmessenger()->getMessages () as $message)
+                echo $message;
+                                                            ?></div>
+                    <div id="productGrid">
+
+                      <div class="grid">
+                        <div class="">
+                          <table class="data" id="productGrid_table" cellspacing="0">
+                              <input type="hidden" name="page_complete" id="page_complete" value="2"/>
+                            <input type="hidden" name="limit_complete" id="limit_complete" value="<?php if(!empty ($this->user_total)) echo $this->user_total; else echo "0"; ?>"/>
+<!--                            <input type="hidden" name="filter" id="filter" value="<?php if(!empty ($this->filter)) echo $this->filter;?>"/>-->
+<!--                            <col class="a-center" widtd="20" />
+                            <col widtd="50" />
+                            <col />
+                            <col widtd="60" />
+                            <col widtd="100" />
+                            <col widtd="80" />
+                            <col widtd="100" />
+                            <col widtd="100" />
+                            <col widtd="70" />
+                            <col widtd="70" />
+                            <col widtd="100" />
+                            <col widtd="50" />-->
+                            <thead>
+                              <tr class="headings">
+                                <th width="3%"><span class="sort-title">Id</span></th>
+                                <th width="17%" ><span class="sort-title">Username</th>
+                                <th width="15%"><span class="sort-title">Email</th>
+                                <th width="2%"><span class="sort-title">Profile Photo</th>
+                                <th width="17%"><span class="sort-title">Facebook User Name</th>
+                                <th width="17%"><span class="sort-title">Twitter User Name</th>
+                                <th width="10%"><span class="sort-title">Role</th>
+                                <th width="3%"><span class="sort-title">Status</th>
+                                <th width="10%"><span class="sort-title">Action</span></th>
+<!--                                <th><span class="sort-title">Id</span></th>
+                                <th ><span class="sort-title">Username</th>
+                                <th ><span class="sort-title">email</th>
+                                <th ><span class="sort-title">Status</th>
+                                <th ><span class="sort-title">Action</span></th>-->
+                              </tr>
+                            </thead>
+                            <?php 
+                            
+                            if(!empty($this->entries) && count($this->entries)!=0) {?>
+                            <tbody id="question_data">
+                              <?php
+                                  $t=1;
+                                foreach($this->entries as $entry) {
+
+                              ?>
+                              <tr>
+
+                                <td class="a-right"><?php echo $t;?>.</td>
+                                <td class=""><?php echo $this->escapeHtml($entry->username) ?></td>
+                                <td class=""><?php echo $this->escapeHtml($entry->email_address) ?></td>                                
+                                <td ><?php echo $this->escapeHtml($entry->profile_photo) ? "YES" : "NO" ?></td>
+                                <td><?php echo $this->escapeHtml($entry->facebook_username) ?></td>
+                                <td><?php echo $this->escapeHtml($entry->twitter_username) ?></td>
+                                <td><?php
+                      switch ($this->escapeHtml($entry->role)) {
+                          case 1:
+                              echo "Supper Admin";
+                              break;
+                          case 2:
+                              echo "User";
+                              break;
+                          default:
+                              echo "Admin";
+                              break;
+                      }
+                                 ?></td>
+                                <?php
+                                $status = $this->escapeHtml($entry->disable_account);
+                                switch ($this->role) {
+                                     case 1:
+                                                echo '<td class="a-right">';
+                                                echo ($status == 1) ? '<a title="Click to Activate" href="' . $this->url('admin',array('action' => 'activeuser', 'id' => $this->escapeHtml($entry->user_id))) . '" ><img width=16 height=16 src="' . $this->basePath().'/images/icon_deactive.png' . '"></a>' : '<a title="Click to Deactivate" href="' . $this->url('admin',array('action' => 'activeuser','id' => $this->escapeHtml($entry->user_id))) . '" ><img width=16 height=16 src="' . $this->basePath().'/images/ico_active.png' . '"></a>';
+                                                echo '&nbsp;</td>';
+                                                echo '<td class="a-right">
+                                                        <a title="Click to Edit User details" href="' . $this->url('admin',array('action' => 'edituser', 'id' => $this->escapeHtml($entry->user_id))) . '" ><img src="' . $this->basePath().'/images/edit.png' . '"></a>  &nbsp;
+                                                        <a title="Click to View User details" href="' . $this->url('admin',array('action' => 'viewuser','id' => $this->escapeHtml($entry->user_id))) . '"><img src="' . $this->basePath().'/images/view_16x16.png' . '"></a>
+                                                        
+                                                    </td>';
+                                              break;
+                                     case 3:
+                                                
+                                                if($this->escapeHtml($entry->role)==3 || $this->escapeHtml($entry->role)==1){
+                                                echo '<td class="a-right">';
+//                                                echo ($status == 1) ? '<img src="' . $this->baseUrl('images/icon_deactive.jpg') . '">' : '<img src="' . $this->baseUrl('images/ico_active.jpg') . '">';
+                                                echo '&nbsp;</td>';
+                                                echo '<td class="a-right">
+                                                        <a title="Click to Edit User details" href=""><img src=""></a>  &nbsp;
+                                                        <a title="Click to View User details" href="' . $this->url('admin',array('action' => 'viewuser', 'id' => $this->escapeHtml($entry->user_id))) . '"><img src="' . $this->basePath().'/images/view_16x16.png' . '"></a>
+                                                      </td>';
+                                                }else{
+                                                    echo '<td class="a-right">';
+                                                    echo ($status == 1) ? '<a title="Click to Activate" href="' . $this->url('admin',array('action' => 'activeuser','id' => $this->escapeHtml($entry->user_id))) . '" ><img width=16 height=16 src="' . $this->basePath().'/images/icon_deactive.png' . '"></a>' : '<a title="Click to Deactivate" href="' . $this->url('admin',array('action' => 'activeuser','id' => $this->escapeHtml($entry->user_id))) . '" ><img width=16 height=16 src="' . $this->basePath().'/images/ico_active.png' . '"></a>';
+                                                    echo '&nbsp;</td>';
+                                                    echo '<td class="a-right">
+                                                        <a title="Click to Edit User details" href="' . $this->url('admin',array('action' => 'edituser','id' => $this->escapeHtml($entry->user_id))) . '" ><img src="' . $this->basePath().'/images/edit.png' . '"></a>  &nbsp;
+                                                        <a title="Click to View User details" href="' . $this->url('admin',array('action' => 'viewuser', 'id' => $this->escapeHtml($entry->user_id))) . '"><img src="' . $this->basePath().'/images/view_16x16.png' . '"></a>
+                                                        </td>';
+                                                }
+                                              break;
+
+                                     default:
+                                         break;
+                                 }?>
+
+                              </tr>
+                              <?php $t++; }?>
+                            </tbody>
+                            <?php } else { ?>
+                                    
+                                                <?php echo "<tbody><tr><td  colspan=\"9\" style=\"height: 20px;color: red; vertical-align: middle;\">No Record Found</td></tr></tbody>" ; ?>
+                                    
+                                <?php } ?>
+                          </table>
+                       <div class="paging">
+                     <?= ( count($this->entries) > 0 ) ? $this->paginationControl($this->entries, 'Sliding', 'admin/index/pagerformanageusers.phtml') : ""; ?>
+                </div>
+                        </div>
+                      </div>
+                    </div>
+               </div></td>
+              </tr>
+            </table></td>
+          <!-- InstanceEndEditable -->
+          <td style="background:url('<?php echo $this->basePath().'/images/rightbg.gif'; ?>') repeat-y; width:8px;"></td>
+        </tr>
+      </table>
