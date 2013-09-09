@@ -1,0 +1,117 @@
+<html>
+<head>
+<script>
+
+$(document).ready(function(){
+ 
+        $(".slidingDiv").hide();
+        $(".show_hide").show();
+ 
+    $('.show_hide').click(function(){
+    $(".slidingDiv").slideToggle();
+    });
+ 
+});
+
+
+/*
+by Addy Osmani
+based on the original webkitdirectory POC
+by Ryan Seddon
+*/
+var files, 
+    file, 
+    extension, 
+    input = document.getElementById("fileURL"),
+    output = document.getElementById("fileOutput"),
+    holder = document.getElementById("fileHolder");
+
+input.addEventListener("change", function (e) {
+alert("inside event listener ----> ");
+    files = e.target.files;
+    output.innerHTML = "";
+
+    for (var i = 0, len = files.length; i < len; i++) {
+        file = files[i];
+        extension = file.name.split(".").pop();
+        output.innerHTML += "<li class='type-" + extension + "'>" + file.name + " (" +  Math.floor(file.size/1024 * 100)/100 + "KB)</li>";
+alert("just updated output ----> ");
+    }
+}, false);
+
+
+
+// This event is fired as the mouse is moved over an element when a drag is occuring
+input.addEventListener("dragover", function (e) {
+    holder.classList.add("highlightOver");
+});
+
+// This event is fired when the mouse leaves an element while a drag is occuring
+input.addEventListener("dragleave", function (e) {
+    holder.classList.remove("highlightOver");
+});
+
+// Fires when the user releases the mouse button while dragging an object.
+input.addEventListener("dragend", function (e) {
+    holder.classList.remove("highlightOver");
+});
+
+// The drop event is fired on the element where the drop was occured at the end of the drag operation
+input.addEventListener("drop", function (e) {
+    holder.classList.remove("highlightOver");
+});
+
+
+
+</script>
+<style media="screen" type="text/css">
+.container { margin:20px}
+.type-css { color:red}
+.type-js { color:blue}
+.row { margin:5px}
+
+.slidingDiv {
+    height:300px;
+    background-color: #99CCFF;
+    padding:20px;
+    margin-top:10px;
+    border-bottom:5px solid #3399FF;
+}
+ 
+.show_hide {
+    display:none;
+}
+
+
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>Demo <small>Drag and drop a directory on file input with <em>webkitdirectory</em></small></h1>
+    </div>
+    <div class="row">
+		<input type="file" multiple webkitdirectory id="fileURL"/>
+	</div>
+    <div class="row">
+		 <ul id="fileOutput"></ul>
+    </div>
+
+</div>
+
+
+<a href="#" class="show_hide">Show/hide</a>
+<div class="slidingDiv">
+	Fill this space with really interesting content. <a href="#" class="show_hide">hide</a>
+</div>
+
+<!-- <input type="file" id="file-input" webkitdirectory="" directory=""> -->
+<!-- <input  id="file_input"  type="file" webkitdirectory directory  /> -->
+</body>
+</html>
+
+
+
+
+
+

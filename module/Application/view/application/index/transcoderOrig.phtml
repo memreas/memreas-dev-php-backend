@@ -1,0 +1,211 @@
+<?php 
+use Guzzle\Http\Client;
+use Zend\Session\Container;
+
+$session = new Container('user');        
+$user_id = $session->offsetGet('user_id');
+echo "user_id ----> " . $user_id;
+$domain = "http://d1ckv7o9k6o3x9.cloudfront.net/";
+
+/*
+error_log("OUTPUT JSON IN paypal.phtml ----> " . $this->json);
+if (isset($this->json)) {
+	echo $this->json;
+} else {
+	echo("json not found");
+}
+*/
+
+?>
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>memreas</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+  
+<!--jQuery Lybrary-->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="js/jquery.form.js"></script>
+<script src="/js/jquery.js"></script>
+<script src="/js/modernizr.custom.17475.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!--Bootstrap jQuery-->
+<script src="/js/bootstrap.min.js"></script>
+<!--memreas paypal-->
+<script src="/js/paypal.js"></script>
+<!-- Fetch the user_id -->
+
+ <script> 
+        $(document).ready(function() { 
+        //elements
+        var progressbox     = $('#progressbox');
+        var progressbar     = $('#progressbar');
+        var statustxt       = $('#statustxt');
+        var submitbutton    = $("#SubmitButton");
+        var myform          = $("#UploadForm");
+        var output          = $("#output");
+        var completed       = '0%';
+        
+                $(myform).ajaxForm({
+                    beforeSend: function() { //brfore sending form
+                        submitbutton.attr('disabled', ''); // disable upload button
+                        statustxt.empty();
+                        progressbox.show(); //show progressbar
+                        progressbar.width(completed); //initial value 0% of progressbar
+                        statustxt.html(completed); //set status text
+                        statustxt.css('color','#000'); //initial color of status text
+                    },
+                    uploadProgress: function(event, position, total, percentComplete) { //on progress
+                        progressbar.width(percentComplete + '%') //update progressbar percent complete
+                        statustxt.html(percentComplete + '%'); //update status text
+                        if(percentComplete>50)
+                            {
+                                statustxt.css('color','#fff'); //change status text to white after 50%
+                            }
+                        },
+                    complete: function(response) { // on complete
+                        output.html(response.responseText); //update element with received data
+                        myform.resetForm();  // reset form
+                        submitbutton.removeAttr('disabled'); //enable submit button
+                        progressbox.hide(); // hide progressbar
+                    }
+            });
+        }); 
+
+    </script> 
+</script>
+</head>
+<body>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Transcode Media</a></li>
+  </ul>
+  <div id="tabs-1">
+	<form action="/index/transcoder" method="post" enctype="multipart/form-data" id="UploadForm">
+	<table width="500" border="0">
+	  <tr>
+		<td>File : </td>
+		<td><input name="VideoFile" type="file" /></td>
+	  </tr>
+	  <tr>
+		<td>Enable Audio : </td>
+		<td><input type="checkbox" name="encoding_enable_audio" checked="checked" class="checkbox" /></td>
+	  </tr>
+	  <tr>
+		<td colspan='2'>Output Formats</td>
+	  </tr>
+	  <tr>
+		<td>MPEG Web :</td>
+		<td><input type="checkbox" name="encoding_x264" checked="checked"/></td>
+	  </tr>
+	  <tr>
+		<td>MPEG 1080p :</td>
+		<td><input type="checkbox" name="encoding_1080" checked="checked"/></td>
+	  </tr>
+	  <tr>
+		<td>Webm :</td>
+		<td><input type="checkbox" name="encoding_webm" checked="checked"/></td>
+	  </tr>
+	  <tr>
+		<td>HLS :</td>
+		<td><input type="checkbox" name="encoding_hls" checked="checked"/></td>
+	  </tr>
+	  <tr>
+		<td colspan='2'>&nbsp;</td>
+	  </tr>
+		<tr>
+		<td colspan='2'>&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td>&nbsp;</td>
+		<td><input type="submit"  id="SubmitButton" value="Upload" /></td>
+	  </tr>
+	</table>
+	</form>
+
+<div id="progressbox"><div id="progressbar"></div ><div id="statustxt">0%</div ></div>
+<div id="output"></div>
+
+	</table>
+	<div id="store_card_form_results">
+		<table>
+			<tr>
+				<td>Results:
+			</tr>
+			<tr>
+				<td><textarea id="results" name="results" rows="10" cols="120">Result will be shown here.</textarea>
+			</tr>
+		</table>
+	</div>
+  </div>
+  
+
+</div>
+
+</form>
+</div>
+
+
+
+<script language="JavaScript">
+	function generateCC(){
+		var cc_number = new Array(16);
+		var cc_len = 16;
+		var start = 0;
+		var rand_number = Math.random();
+
+		//switch(document.store_card_form.credit_card_type.value)
+		switch($('#credit_card_type').val())		
+        {
+			case "Visa":
+				cc_number[start++] = 4;
+				break;
+			case "Discover":
+				cc_number[start++] = 6;
+				cc_number[start++] = 0;
+				cc_number[start++] = 1;
+				cc_number[start++] = 1;
+				break;
+			case "MasterCard":
+				cc_number[start++] = 5;
+				cc_number[start++] = Math.floor(Math.random() * 5) + 1;
+				break;
+			case "Amex":
+				cc_number[start++] = 3;
+				cc_number[start++] = Math.round(Math.random()) ? 7 : 4 ;
+				cc_len = 15;
+				break;
+        }
+
+        for (var i = start; i < (cc_len - 1); i++) {
+			cc_number[i] = Math.floor(Math.random() * 10);
+        }
+
+		var sum = 0;
+		for (var j = 0; j < (cc_len - 1); j++) {
+			var digit = cc_number[j];
+			if ((j & 1) == (cc_len & 1)) digit *= 2;
+			if (digit > 9) digit -= 9;
+			sum += digit;
+		}
+
+		var check_digit = new Array(0, 9, 8, 7, 6, 5, 4, 3, 2, 1);
+		cc_number[cc_len - 1] = check_digit[sum % 10];
+
+		//document.store_card_form.credit_card_number.value = "";
+		var cc = "";
+		for (var k = 0; k < cc_len; k++) {
+			cc += cc_number[k];
+		}
+		$('#credit_card_number').val(cc);
+	}
+</script>
+<script language="javascript">
+	generateCC();
+</script>
+
+</body>
+</html>

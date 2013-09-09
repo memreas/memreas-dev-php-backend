@@ -1,0 +1,171 @@
+<script type="text/javascript">
+    function deletecomfirm(){
+        var r=confirm("Do You Realy Wat to Delete This Media Item ! ");
+        if (r==true)
+            return true;
+  
+        else
+            return false;
+    }
+
+</script>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+    <tr>
+        <td valign="top" align="center" class="middlesection"><table width="96%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td >&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td><table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td align="left" valign="middle"><h1>Event Details</h1></td>
+                                            <td align="right" valign="bottom"></td>
+                                        </tr>
+                                    </table></td>
+                            </tr>
+                            <tr>
+                                <td class="bottomboder"><img src="<?php echo $this->basePath().'/images/ashish.gif'; ?>" height="1" /></td>
+                            </tr>
+                        </table></td>
+                </tr>
+                <tr>
+                    <td><div  style="height: 20px;color: red; vertical-align: middle;">
+                            <?php
+                            if ($this->messages) {
+                                foreach ($this->messages as $messages) {
+                                    echo $messages;
+                                }
+                            }
+                            ?></div></td>
+                </tr>
+                <tr>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><div class="tab-content-out" style="clear:both" >
+                            <div id="tabs" class="tabs" >
+
+                                <div class="TabbedPanelsContentGroup">
+                                    <div  class="TabbedPanelsContent">
+                                        <div style=" border:0;" class="tab-content">
+                                            <div class="entry-edit">
+                                                <div class="tebelhd" align="left"> General Information </div>
+                                                <div class="fieldset" id="_generalbase_fieldset">
+                                                    <div class="hor-scroll" align="left">
+                                                        <table class="form-list" cellspacing="0">
+                                                            <tbody>
+                                                                <?php
+                                                                $round_count = 1;
+                                                                $gallry_image_count = 0;
+                                                                foreach ($this->event_media as $entries) {
+                                                                    if ($round_count) {
+                                                                        ?>
+                                                                        <tr>
+                                                                            <td class="hidden" colspan="100"><input id="_generalpath" name="general[path]" value="1" type="hidden"></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="name">Event Name : </label></td>
+                                                                            <td class="value"><?php echo $entries['name']; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Event Location : </label></td>
+                                                                            <td class="value"><?php echo $entries['location']; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Event Date :</label></td>
+                                                                            <td class="value"><?php echo $entries['date']; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Friends can Post :</label></td>
+                                                                            <td class="value"><?php echo ($entries['friends_can_post']) ? 'YES' : "NO"; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Friends can Share :</label></td>
+                                                                            <td class="value"><?php echo ($entries['friends_can_share']) ? "YES" : "NO"; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Public :</label></td>
+                                                                            <td class="value"><?php echo ($entries['public']) ? "YES" : "NO"; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Event Viewable From :</label></td>
+                                                                            <td class="value"><?php echo $entries['viewable_from']; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Viewable To :</label></td>
+                                                                            <td class="value"><?php echo $entries['viewable_to']; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td class="label"><label for="">Self Destruct Date :</label></td>
+                                                                            <td class="value"><?php echo $entries['self_destruct']; ?></td>
+                                                                            <td></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                <table cellpadding="8px" >
+                                                                    <thead><th><label for="">Event Medias :</th></thead>
+                                                                    <?php
+                                                                    $round_count--;
+                                                                }
+                                                                if (isset($entries['metadata']) || !empty($entries['metadata'])) {
+//                                                                    echo "<pre>";
+                                                                    $json_array = json_decode($entries['metadata'], true);
+//                                                                    echo getcwd();echo "<br>";
+                                                                    if (isset($json_array['type']['image']) && is_array($json_array['type']['image']))
+                                                                        $url = $json_array['S3_files']['path'];
+                                                                    else if (isset($json_array['type']['video']) && is_array($json_array['type']['video']))
+                                                                        $url=$this->basePath().'/images/video.jpg';
+                                                                    else if (isset($json_array['type']['audio']) && is_array($json_array['type']['audio']))
+                                                                        $url=$this->basePath().'/images/audio.png';
+//                                                                        $url ='../../../../images/ico-pdf.gif';
+
+//                                                                    echo "$url";
+                                                                    if (isset($url) && !empty($url)) {
+                                                                        $gallry_image_count++;
+                                                                        $table_row = "<td class=\"label\"><img src=\"".$url."\" width=\"100\" height=\"100\">
+                                            <a title=\"Click to delete\" href=\"" . $this->url('admin',array('action' => 'deletemedia','id' => $this->escapeHtml($entries['media_id']))) . "\"  onclick=\"return deletecomfirm(); \"><img src=\"".$this->basePath().'/images/drop.png'."\"></a></td>";
+                                                                        if ($gallry_image_count % 6 == 1) {
+                                                                            echo "<tr cellpadding=\"15px\">";
+                                                                        }
+                                                                        echo $table_row;
+                                                                        if ($gallry_image_count % 6 == 0)
+                                                                            echo "</tr>";
+                                                                    }
+                                                                }
+                                                                ?>
+                                                            <?php
+                                                            }
+                                                            if ($gallry_image_count == 0) {
+
+                                                                echo '<td><div  style="height: 20px;color: red; vertical-align: middle;">
+                          Record Not Found For media
+                            </div></td>
+                    </tr>';
+                                                            }
+                                                            ?>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div></td>
+                </tr>
+            </table></td>
+    </tr>
+</table>
+<table align="center"><tr><td><a  href="javascript:history.go(-1);<?php //  echo $this->url('admin',array('action'=>'manageevents')); ?>" class="buttonash"><span>Back</span></a></td></tr></table>

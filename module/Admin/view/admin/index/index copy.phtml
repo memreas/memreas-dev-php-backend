@@ -1,0 +1,65 @@
+<?php
+//echo "url-".$this->url('admin', array('action' => 'success'));
+$form = $this->form;
+$form->setAttribute('action', $this->url('admin'));
+$form->prepare();
+echo $this->form()->openTag($form);
+ 
+?>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+              <tr>
+               <td height="35" align="center" class="login-hd">Login to Eventapp</td>
+              </tr>
+              <tr>
+                <td><table width="100%%" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td height="190">&nbsp;</td>
+                    <td width="50%" valign="middle" style="padding-top:10px;" class="login">
+                        <table>
+                            <tr><td style="color: red">
+                                    <?php
+                                    if($this->formElementErrors($form->get('username')))
+                                         echo "Error in Username : ".$this->formElementErrors($form->get('username'));
+                                         else if($this->formElementErrors($form->get('password')))
+                                             echo "Error in Password : ".$this->formElementErrors($form->get('password'));
+                                          else if(count($this->messages)>0)
+                    foreach ($this->messages as $value) {
+                        echo $value;
+                    }
+      
+                                    ?>
+                                </td></tr>
+                        </table>
+                        <form name="users" method="POST" action="<?php echo $this->url('admin',array('action'=>'index'));?>">
+                        <table width="0%" border="0" align="center" cellpadding="0" cellspacing="5">
+                        <tr>
+                          <td>User Name : </td>
+                          <td><?php echo $this->formElement($form->get('username')); 
+                         ?>
+<!--                              <input type="text" name="username" />-->
+                              
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Password : </td>
+                          <td><?php echo $this->formElement($form->get('password'));  
+                          
+                          ?>
+<!--                              <input type="password" name="password" /></td>-->
+                        </tr>
+                        <tr>
+                          <td>&nbsp;</td>
+                          <td><a href="javascript:document.user.submit();" class="buttonash"><span>Login</span></a></td>
+                        </tr>
+                        <tr>
+                          <td colspan="2" align="center"><a href="<?php echo $this->url('admin',array('action'=>'forgotpassword'));?>"><strong>Forgot Password?</strong></a></td>
+                        </tr>
+                    </table>
+                        </form>
+                    </td>
+                  </tr>
+                </table></td>
+              </tr>
+            </table>
+<?php echo $this->form()->closeTag(); ?>
