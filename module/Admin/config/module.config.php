@@ -16,7 +16,7 @@ return array(
                     'route'    => '/',
                     'defaults' => array(
                         'controller' => 'Admin\Controller\Index',
-                        'action'     => 'index',
+                        'action'     => 'admin',
                     ),
                 ),
             ),
@@ -34,7 +34,7 @@ return array(
                     ),
                     'defaults' => array(
                         'controller' => 'Admin\Controller\Index',
-                        'action' => 'index',
+                        'action' => 'admin',
                     ),
                 ),
             ),

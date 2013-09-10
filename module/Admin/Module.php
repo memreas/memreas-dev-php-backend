@@ -65,7 +65,7 @@ class Module {
                     return $table;
                 },
                 'UserTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+			        $dbAdapter = $sm->get('memreasdevdb');
                     $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new User());
                     return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
@@ -76,7 +76,7 @@ class Module {
                     return $table;
                 },
                 'MediaTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+			        $dbAdapter = $sm->get('memreasdevdb');
                     $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Media());
                     return new TableGateway('media', $dbAdapter, null, $resultSetPrototype);
@@ -87,7 +87,7 @@ class Module {
                     return $table;
                 },
                 'EventTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+			        $dbAdapter = $sm->get('memreasdevdb');
                     $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Event());
                     return new TableGateway('event', $dbAdapter, null, $resultSetPrototype);
@@ -98,13 +98,13 @@ class Module {
                     return $table;
                 },
                 'EventMediaTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+			        $dbAdapter = $sm->get('memreasdevdb');
                     $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\EventMedia());
                     return new TableGateway('event_media', $dbAdapter, null, $resultSetPrototype);
                 },
                 'EventTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+			        $dbAdapter = $sm->get('memreasdevdb');
                     $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\Event());
                     return new TableGateway('event', $dbAdapter, null, $resultSetPrototype);
@@ -115,7 +115,7 @@ class Module {
                     return $table;
                 },
                 'FriendMediaTableGateway' => function ($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+			        $dbAdapter = $sm->get('memreasdevdb');
                     $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new Model\FriendMedia());
                     return new TableGateway('friend_media', $dbAdapter, null, $resultSetPrototype);
@@ -127,7 +127,7 @@ class Module {
                     //My assumption, you've alredy set dbAdapter
                     //and has users table with columns : user_name and pass_word
                     //that password hashed with md5
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+			        $dbAdapter = $sm->get('memreasdevdb');
                     $dbTableAuthAdapter = new DbTableAuthAdapter($dbAdapter,
                                     'user', 'username', 'password', 'MD5(?)');
 
