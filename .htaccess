@@ -1,0 +1,58 @@
+<IfModule mod_php5.c>
+
+#setup for zf2 redirect to public - doesn't work well...
+#RewriteEngine On
+#RewriteRule ^\.htaccess$ - [F]
+#RewriteCond %{REQUEST_URI} =""
+#RewriteRule ^.*$ /memreas-rest-paypal/app/index.php [NC,L]
+#RewriteCond %{REQUEST_URI} !^/memreas-rest-paypal/app/.*$
+#RewriteRule ^(.*)$ /memreas-rest-paypal/app/$1
+#RewriteCond %{REQUEST_FILENAME} -f
+#RewriteRule ^.*$ - [NC,L]
+#RewriteRule ^memreas-rest-paypal/app/.*$ /memreas-rest-paypal/app/index.php [NC,L]
+
+#set index.php as the default for directories
+DirectoryIndex index.php
+
+#Limits for file uploads
+php_value memory_limit 200M
+php_value max_execution_time 259200
+php_value max_input_time 259200
+php_value session.gc_maxlifetime 1200
+php_value upload_max_filesize 0
+php_value post_max_size 0
+
+#Prevent public display of PHP errors via htaccess
+# supress php errors
+#php_flag display_startup_errors off
+#php_flag display_errors off
+#php_flag html_errors off
+#php_value docref_root 0
+#php_value docref_ext 0
+
+
+# PHP error handling for development servers
+php_flag display_startup_errors on
+php_flag display_errors on
+php_flag html_errors on
+php_flag log_errors on
+php_flag ignore_repeated_errors off
+php_flag ignore_repeated_source off
+php_flag report_memleaks on
+php_flag track_errors on
+php_value docref_root 0
+php_value docref_ext 0
+php_value error_log php_errors.log
+# [see footnote 3] # php_value error_reporting 999999999
+php_value error_reporting -1
+php_value log_errors_max_len 0
+
+<Files php_errors.log>
+ Order allow,deny
+ Deny from all
+ Satisfy All
+</Files>
+
+</IfModule>
+
+

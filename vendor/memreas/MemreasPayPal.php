@@ -86,13 +86,42 @@ class MemreasPayPal {
 			
 			//Fetch the transactions
 			$transactions =  $memreas_paypal_tables->getTransactionTable()->getTransactionByAccountId($account_id);
+		
+			//Debug...	
+			$transactions_arr = array();
+			foreach ($transactions as $row) {
+				$row_arr = array();
+     		   //echo $row->my_column . PHP_EOL;
+     		   error_log( "transaction_id" . $row->transaction_id . PHP_EOL);
+     		   $row_arr["transaction_id"] = $row->transaction_id;
+     		   error_log( "account_id" . $row->account_id . PHP_EOL);
+     		   $row_arr["account_id"] = $row->account_id;
+     		   error_log( "transaction_type" . $row->transaction_type . PHP_EOL);
+     		   $row_arr["transaction_type"] = $row->transaction_type;
+     		   error_log( "pass_fail" . $row->pass_fail . PHP_EOL);
+     		   $row_arr["pass_fail"] = $row->pass_fail;
+     		   error_log( "amount" . $row->amount . PHP_EOL);
+     		   $row_arr["amount"] = $row->amount;
+     		   error_log( "currency" . $row->currency . PHP_EOL);
+     		   $row_arr["currency"] = $row->currency;
+     		   error_log( "transaction_request" . $row->transaction_request . PHP_EOL);
+     		   $row_arr["transaction_request"] = $row->transaction_request;
+     		   error_log( "transaction_response" . $row->transaction_response . PHP_EOL);
+     		   $row_arr["transaction_response"] = $row->transaction_response;
+     		   error_log( "transaction_sent" . $row->transaction_sent . PHP_EOL);
+     		   $row_arr["transaction_sent"] = $row->transaction_sent;
+     		   error_log( "transaction_receive" . $row->transaction_receive . PHP_EOL);
+     		   $row_arr["transaction_receive"] = $row->transaction_receive;
+     		   $transactions_arr[] = $row_arr;
+			}
 			
 			//Return a success message:
 			$result = array (
 				"Status"=>"Success",
 				"account"=>$account,
-				"transactions"=>(array)$transactions,
+				"transactions"=>$transactions_arr,
 				);
+error_log(json_encode($result));
 			return $result;
 		}
 

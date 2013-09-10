@@ -12,13 +12,12 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
-use Admin\Model;
-use Admin\Model\UserTable;
-use Admin\Form;
-use Zend\Mail\Message;
-use Zend\Mail\Transport\Sendmail as SendmailTransport;
+use Application\Model;
+use Application\Model\UserTable;
+use Application\Form;
 use Guzzle\Http\Client;
 
+use Application\Model\MemreasConstants;
 use memreas\MemreasTranscoder;
 use memreas\MemreasTranscoderTables;
 use memreas\MemreasPayPal;
@@ -27,8 +26,12 @@ use memreas\MemreasPayPalTables;
 class IndexController extends AbstractActionController
 {
 	//protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php";
-	protected $url = "http://192.168.1.9/eventapp_zend2.1/webservices/index_json.php";
-    protected $user_id;
+	//protected $media_url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/addmediaevent.php";
+	//$this->url = MemreasConstants::ORIGINAL_URL;
+
+	protected $url = MemreasConstants::ORIGINAL_URL;
+	protected $media_url = MemreasConstants::MEDIA_URL;
+	protected $user_id;
     protected $storage;
     protected $authservice;
     protected $userTable;
@@ -38,8 +41,10 @@ class IndexController extends AbstractActionController
     protected $friendmediaTable;
     
 	public function fetchXML($action, $xml) {
+error_log("Inside fetchXML....");
 		$guzzle = new Client();
 
+error_log("Inside fetchXML this->url $this->url ....");
 		$request = $guzzle->post(
 			$this->url, 
 			null, 
@@ -50,11 +55,13 @@ class IndexController extends AbstractActionController
 	    	)
 		);
 		$response = $request->send();
+error_log("Inside fetchXML response $response ....");
 		return $data = $response->getBody(true);
 	}
 
     public function indexAction() {
-	    $path = $this->security("application/index/event.phtml");
+error_log("Inside indexAction....");
+	    $path = $this->security("application/index/paypal.phtml");
 		$view = new ViewModel();
 		$view->setTemplate($path); // path to phtml file under view folder
 		return $view;			
@@ -391,6 +398,7 @@ error_log("Inside transcoderAction" . PHP_EOL);
     }
 
     public function loginAction() {
+error_log("Inside loginAction....");
 		//Fetch the post data
 		$request = $this->getRequest();
 		$postData = $request->getPost()->toArray();
@@ -408,6 +416,7 @@ error_log("Inside transcoderAction" . PHP_EOL);
 
 		//ZF2 Authenticate
 		if ($data->loginresponse->status == 'success') {
+error_log("Inside loginAction success....");
 			$this->setSession($username);
             //Redirect here
 			return $this->redirect()->toRoute('index', array('action' => $redirect));
@@ -469,10 +478,9 @@ error_log("Inside transcoderAction" . PHP_EOL);
     		 	$filetmp_name = $file['tmp_name'];
 	     		$filesize = $file['size'];
      	
-				$url = "http://192.168.1.9/eventapp_zend2.1/webservices/addmediaevent.php";
 				$guzzle = new Client();
 				$session = new Container('user');        
-				$request = $guzzle->post($url)
+				$request = $guzzle->post($media_url)
 								->addPostFields(
 									array(
 										'user_id' => $session->offsetGet('user_id'),

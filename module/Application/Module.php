@@ -51,8 +51,6 @@ use Admin\Model\UserTable;
 use Admin\Model;
 
 //PayPal Modules
-
-
 class Module
 {
     public function onBootstrap(MvcEvent $e)

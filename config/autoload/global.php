@@ -21,7 +21,6 @@ $dbParams = array(
 );
 
 return array(
-
 	'db'=> array(
 		'adapters'=>array(
 			'memreasdevdb' => array(
