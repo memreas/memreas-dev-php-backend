@@ -21,6 +21,7 @@ define('PP_CONFIG_PATH', dirname(__FILE__) . "/config/");
 
 //memreas models
 use memreas\DBProfiler;
+use Application\Model\User;
 use Application\Model\Account;
 use Application\Model\AccountBalances;
 use Application\Model\AccountDetail;
@@ -92,25 +93,15 @@ class MemreasPayPal {
 			foreach ($transactions as $row) {
 				$row_arr = array();
      		   //echo $row->my_column . PHP_EOL;
-     		   error_log( "transaction_id" . $row->transaction_id . PHP_EOL);
      		   $row_arr["transaction_id"] = $row->transaction_id;
-     		   error_log( "account_id" . $row->account_id . PHP_EOL);
      		   $row_arr["account_id"] = $row->account_id;
-     		   error_log( "transaction_type" . $row->transaction_type . PHP_EOL);
      		   $row_arr["transaction_type"] = $row->transaction_type;
-     		   error_log( "pass_fail" . $row->pass_fail . PHP_EOL);
      		   $row_arr["pass_fail"] = $row->pass_fail;
-     		   error_log( "amount" . $row->amount . PHP_EOL);
      		   $row_arr["amount"] = $row->amount;
-     		   error_log( "currency" . $row->currency . PHP_EOL);
      		   $row_arr["currency"] = $row->currency;
-     		   error_log( "transaction_request" . $row->transaction_request . PHP_EOL);
      		   $row_arr["transaction_request"] = $row->transaction_request;
-     		   error_log( "transaction_response" . $row->transaction_response . PHP_EOL);
      		   $row_arr["transaction_response"] = $row->transaction_response;
-     		   error_log( "transaction_sent" . $row->transaction_sent . PHP_EOL);
      		   $row_arr["transaction_sent"] = $row->transaction_sent;
-     		   error_log( "transaction_receive" . $row->transaction_receive . PHP_EOL);
      		   $row_arr["transaction_receive"] = $row->transaction_receive;
      		   $transactions_arr[] = $row_arr;
 			}
@@ -121,7 +112,6 @@ class MemreasPayPal {
 				"account"=>$account,
 				"transactions"=>$transactions_arr,
 				);
-error_log(json_encode($result));
 			return $result;
 		}
 
@@ -137,11 +127,13 @@ error_log(json_encode($result));
 	{
 		//Fetch Session
 		$this->fetchSession();
-
+error_log(json_encode($message_data));
 		//Get the data from the form
+		$seller = $message_data['seller'];
+		$memreas = $message_data['memreas'];
 		$amount = $message_data['amount'];
 
-		//Fetch the Account
+		//Fetch the Buyer Account
 		$account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($this->user_id);	
 		if (!$account) {
 			$result = array ( "Status"=>"Error", "Description"=>"Could not find account", );
@@ -149,6 +141,40 @@ error_log(json_encode($result));
 		}		
 		$account_id = $account->account_id;
 		
+		//Fetch the Seller Account
+		$seller_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($seller);
+		$seller_user_id = $seller_user->user_id;
+		$seller_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($seller_user_id);	
+		if (!$seller_account) {
+			$result = array ( "Status"=>"Error", "Description"=>"Could not find seller account", );
+			return $result;
+		}		
+		$seller_account_id = $seller_account->account_id;
+		
+		//Fetch the Seller Account
+		$seller_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($seller);
+		$seller_user_id = $seller_user->user_id;
+		$seller_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($seller_user_id);	
+		if (!$seller_account) {
+			$result = array ( "Status"=>"Error", "Description"=>"Could not find seller account", );
+			return $result;
+		}		
+		$seller_account_id = $seller_account->account_id;
+
+		//Fetch the memreas Account
+		$memreas_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($memreas);
+		$memreas_user_id = $memreas_user->user_id;
+		$memreas_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($memreas_user_id);	
+		if (!$memreas_account) {
+			$result = array ( "Status"=>"Error", "Description"=>"Could not find memreas account", );
+			return $result;
+		}		
+		$memreas_account_id = $memreas_account->account_id;
+
+error_log("account_id ----> $account_id" . PHP_EOL);
+error_log("seller_account_id ----> $seller_account_id" . PHP_EOL);
+error_log("memreas_account ----> $memreas_account" . PHP_EOL);
+
 		//Fetch Account_Balances 
 		$currentAccountBalance = $memreas_paypal_tables->getAccountBalancesTable()->getAccountBalances($account_id);
 		//If no acount found set the starting balance to zero else use the ending balance.
@@ -588,5 +614,110 @@ error_log("json returned from PayPal ----> " . $card->toJSON());
 			
 		return $result;
 	}
+
+	public function payPalAddSeller($message_data, $memreas_paypal_tables, $service_locator) 
+	{
+error_log("Inside payPalAddSeller");
+		//Fetch Session
+		$this->fetchSession();
+		//Get memreas user name
+		$user_name = $message_data['user_name'];
+		$user = $memreas_paypal_tables->getUserTable()->getUserByUsername($user_name);
+error_log("Inside payPalAddSeller - user_name ----> $user_name");
+error_log("Inside payPalAddSeller - user->username ----> $user->username");
+error_log("Inside payPalAddSeller - user->user_id ----> $user->user_id");
+		//Get Paypal email address
+		$paypal_email_address = $message_data['paypal_email_address'];
+		//Get the Billing Address and associate it with the card
+		$billing_address = new Address();
+		$billing_address->setLine1($message_data['address_line_1']);
+		$billing_address->setLine2($message_data['address_line_2']);
+		$billing_address->setCity($message_data['city']);
+		$billing_address->setState($message_data['state']);
+		$billing_address->setPostalCode($message_data['zip_code']);
+		$billing_address->setPostal_code($message_data['zip_code']);
+		$billing_address->setCountryCode("US");
+		$billing_address->setCountry_code("US");
+
+		//Fetch the Account
+		$row = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($user->user_id);	
+		if (!$row) {
+error_log("Inside payPalAddSeller - if !row");
+			//Create an account entry
+			$now = date('Y-m-d H:i:s');
+			$account  = new Account();
+			$account->exchangeArray(array(
+				'user_id' => $user->user_id,
+				'account_type' => 'seller',
+				'balance' => 0,
+				'create_time' => $now,
+				'update_time' => $now
+			));
+			$account_id =  $memreas_paypal_tables->getAccountTable()->saveAccount($account);
+		} else {
+error_log("Inside payPalAddSeller - if !row else Account Exists");
+			$account_id = $row->account_id;
+			//Return a success message:
+			$result = array (
+				"Status"=>"Failure",
+				"account_id"=> $account_id,
+				"Error"=>"Seller already exists",
+			);
+			return $result;
+		}
+		
+		$accountDetail  = new AccountDetail();
+		$accountDetail->exchangeArray(array(
+			'account_id'=>$account_id,
+			'first_name'=>$message_data['first_name'],
+			'last_name'=>$message_data['last_name'],
+			'address_line_1'=>$message_data['address_line_1'],
+			'address_line_2'=>$message_data['address_line_2'],
+			'city'=>$message_data['city'],
+			'state'=>$message_data['state'],
+			'zip_code'=>$message_data['zip_code'],
+			'postal_code'=>$message_data['zip_code'],
+			'paypal_email_address'=>$message_data['paypal_email_address'],
+			));
+		$account_detail_id = $memreas_paypal_tables->getAccountDetailTable()->saveAccountDetail($accountDetail);
+
+		//Store the transaction that is sent to PayPal
+		$now = date('Y-m-d H:i:s');
+		$transaction  = new Memreas_Transaction();
+		$transaction->exchangeArray(array(
+				'account_id'=>$account_id,
+				'transaction_type' =>'add_seller',
+				'transaction_request' => "N/a",
+				'pass_fail' => 1,
+				'transaction_sent' =>$now,
+				'transaction_receive' =>$now	
+		));
+		$transaction_id =  $memreas_paypal_tables->getTransactionTable()->saveTransaction($transaction);
+
+		//Insert account balances as needed
+		$account_balances  = new AccountBalances();
+		$account_balances->exchangeArray(array(
+			'account_id' => $account_id, 
+			'transaction_id' => $transaction_id, 
+			'transaction_type' => 'add seller', 
+			'starting_balance' => 0, 
+			'amount' => 0, 
+			'ending_balance' => 0, 
+			'create_time' => $now
+		));
+		$account_balances_id =  $memreas_paypal_tables->getAccountBalancesTable()->saveAccountBalances($account_balances);
+
+		//Return a success message:
+		$result = array (
+			"Status"=>"Success",
+			"account_id"=> $account_id,
+			"account_detail_id"=>$account_detail_id,
+			"transaction_id"=>$transaction_id,
+			"account_balances_id"=>$account_balances_id,
+		);
+			
+		return $result;
+	}
+
 }
 ?>

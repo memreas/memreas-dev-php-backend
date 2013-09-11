@@ -163,7 +163,7 @@ class Module
 
 							//Database Tables...
 							//memreas base tables
-			                'Admin\Model\UserTable' => function($sm) {
+			                'Application\Model\UserTable' => function($sm) {
 			                    $tableGateway = $sm->get('UserTableGateway');
 			                    $table = new UserTable($tableGateway);
 			                    return $table;

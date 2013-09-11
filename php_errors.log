@@ -1061,3 +1061,193 @@ Connection: keep-alive
 [09-Sep-2013 22:52:37 America/New_York] transaction_receive2013-09-09 21:24:31
 
 [09-Sep-2013 22:52:37 America/New_York] {"Status":"Success","account":{"account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","user_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","account_type":"buyer","balance":"9.75","create_time":"2013-09-09 21:23:06","update_time":"2013-09-09 21:23:54"},"transactions":[{"transaction_id":"8bf81ff6-19b7-11e3-b5ed-5081956b566e","account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","transaction_type":"store_credit_card","pass_fail":"1","amount":null,"currency":null,"transaction_request":"{\"type\":\"visa\",\"number\":\"4620859906992962\",\"expire_month\":\"06\",\"expire_year\":\"2014\",\"first_name\":\"John\",\"last_name\":\"Meah\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"billing_address\":{\"line1\":\"125 Bowery Street\",\"line2\":\"Suite 814\",\"city\":\"New York\",\"state\":\"NY\",\"postal_code\":\"10018\",\"country_code\":\"US\"}}","transaction_response":"{\"type\":\"visa\",\"number\":\"xxxxxxxxxxxx2962\",\"expire_month\":\"6\",\"expire_year\":\"2014\",\"first_name\":\"John\",\"last_name\":\"Meah\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"billing_address\":{\"line1\":\"125 Bowery Street\",\"line2\":\"Suite 814\",\"city\":\"New York\",\"state\":\"NY\",\"postal_code\":\"10018\",\"country_code\":\"US\"},\"id\":\"CARD-08R37517BJ035305UKIXHI6Y\",\"valid_until\":\"2014-07-01T00:00:00Z\",\"state\":\"ok\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/vault\\\/credit-card\\\/CARD-08R37517BJ035305UKIXHI6Y\",\"rel\":\"self\",\"method\":\"GET\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/vault\\\/credit-card\\\/CARD-08R37517BJ035305UKIXHI6Y\",\"rel\":\"delete\",\"method\":\"DELETE\"}]}","transaction_sent":"2013-09-09 21:23:06","transaction_receive":"2013-09-09 21:23:06"},{"transaction_id":"90723bf2-19b7-11e3-b5ed-5081956b566e","account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","transaction_type":"store_credit_card","pass_fail":"1","amount":null,"currency":null,"transaction_request":"{\"type\":\"mastercard\",\"number\":\"5318507196221683\",\"expire_month\":\"06\",\"expire_year\":\"2014\",\"first_name\":\"John\",\"last_name\":\"Meah\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"billing_address\":{\"line1\":\"125 Bowery Street\",\"line2\":\"Suite 814\",\"city\":\"New York\",\"state\":\"NY\",\"postal_code\":\"10018\",\"country_code\":\"US\"}}","transaction_response":"{\"type\":\"mastercard\",\"number\":\"xxxxxxxxxxxx1683\",\"expire_month\":\"6\",\"expire_year\":\"2014\",\"first_name\":\"John\",\"last_name\":\"Meah\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"billing_address\":{\"line1\":\"125 Bowery Street\",\"line2\":\"Suite 814\",\"city\":\"New York\",\"state\":\"NY\",\"postal_code\":\"10018\",\"country_code\":\"US\"},\"id\":\"CARD-70L8172945980680XKIXHJAY\",\"valid_until\":\"2014-07-01T00:00:00Z\",\"state\":\"ok\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/vault\\\/credit-card\\\/CARD-70L8172945980680XKIXHJAY\",\"rel\":\"self\",\"method\":\"GET\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/vault\\\/credit-card\\\/CARD-70L8172945980680XKIXHJAY\",\"rel\":\"delete\",\"method\":\"DELETE\"}]}","transaction_sent":"2013-09-09 21:23:14","transaction_receive":"2013-09-09 21:23:14"},{"transaction_id":"9b43bf88-19b7-11e3-b5ed-5081956b566e","account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","transaction_type":"add_value_to_account","pass_fail":"1","amount":"5.00","currency":"USD","transaction_request":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-08R37517BJ035305UKIXHI6Y\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\"}}]},\"transactions\":[{\"amount\":{\"currency\":\"USD\",\"total\":\"5\",\"details\":{\"shipping\":\"0.00\",\"subtotal\":\"5\",\"tax\":\"0.00\",\"fee\":\"0.00\"}},\"description\":\"Adding $amount value to account\"}]}","transaction_response":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-08R37517BJ035305UKIXHI6Y\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"last4\":\"2962\",\"type\":\"visa\",\"expire_month\":\"6\",\"expire_year\":\"2014\"}}]},\"transactions\":[{\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\",\"details\":{\"subtotal\":\"5.00\"}},\"description\":\"Adding $amount value to account\",\"related_resources\":[{\"sale\":{\"id\":\"2MB96482HM3518023\",\"create_time\":\"2013-09-10T01:23:34Z\",\"update_time\":\"2013-09-10T01:23:37Z\",\"state\":\"completed\",\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\"},\"parent_payment\":\"PAY-45L12960XE1871332KIXHJFQ\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/2MB96482HM3518023\",\"rel\":\"self\",\"method\":\"GET\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/2MB96482HM3518023\\\/refund\",\"rel\":\"refund\",\"method\":\"POST\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-45L12960XE1871332KIXHJFQ\",\"rel\":\"parent_payment\",\"method\":\"GET\"}]}}]}],\"id\":\"PAY-45L12960XE1871332KIXHJFQ\",\"create_time\":\"2013-09-10T01:23:34Z\",\"update_time\":\"2013-09-10T01:23:37Z\",\"state\":\"approved\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-45L12960XE1871332KIXHJFQ\",\"rel\":\"self\",\"method\":\"GET\"}]}","transaction_sent":"2013-09-09 21:23:32","transaction_receive":"2013-09-09 21:23:37"},{"transaction_id":"9f019ad2-19b7-11e3-b5ed-5081956b566e","account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","transaction_type":"add_value_to_account","pass_fail":"1","amount":"5.00","currency":"USD","transaction_request":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-08R37517BJ035305UKIXHI6Y\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\"}}]},\"transactions\":[{\"amount\":{\"currency\":\"USD\",\"total\":\"5\",\"details\":{\"shipping\":\"0.00\",\"subtotal\":\"5\",\"tax\":\"0.00\",\"fee\":\"0.00\"}},\"description\":\"Adding $amount value to account\"}]}","transaction_response":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-08R37517BJ035305UKIXHI6Y\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"last4\":\"2962\",\"type\":\"visa\",\"expire_month\":\"6\",\"expire_year\":\"2014\"}}]},\"transactions\":[{\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\",\"details\":{\"subtotal\":\"5.00\"}},\"description\":\"Adding $amount value to account\",\"related_resources\":[{\"sale\":{\"id\":\"3U248731GC912110S\",\"create_time\":\"2013-09-10T01:23:40Z\",\"update_time\":\"2013-09-10T01:23:41Z\",\"state\":\"completed\",\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\"},\"parent_payment\":\"PAY-1GD40993AR3794742KIXHJHA\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/3U248731GC912110S\",\"rel\":\"self\",\"method\":\"GET\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/3U248731GC912110S\\\/refund\",\"rel\":\"refund\",\"method\":\"POST\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-1GD40993AR3794742KIXHJHA\",\"rel\":\"parent_payment\",\"method\":\"GET\"}]}}]}],\"id\":\"PAY-1GD40993AR3794742KIXHJHA\",\"create_time\":\"2013-09-10T01:23:40Z\",\"update_time\":\"2013-09-10T01:23:41Z\",\"state\":\"approved\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-1GD40993AR3794742KIXHJHA\",\"rel\":\"self\",\"method\":\"GET\"}]}","transaction_sent":"2013-09-09 21:23:38","transaction_receive":"2013-09-09 21:23:42"},{"transaction_id":"a88f0e18-19b7-11e3-b5ed-5081956b566e","account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","transaction_type":"decrement_value_from_account","pass_fail":"1","amount":"-0.25","currency":"USD","transaction_request":"N\/a","transaction_response":"N\/a","transaction_sent":"2013-09-09 21:23:54","transaction_receive":"2013-09-09 21:23:54"},{"transaction_id":"b77baa08-19b7-11e3-b5ed-5081956b566e","account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","transaction_type":"add_value_to_account","pass_fail":"1","amount":"5.00","currency":"USD","transaction_request":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-70L8172945980680XKIXHJAY\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\"}}]},\"transactions\":[{\"amount\":{\"currency\":\"USD\",\"total\":\"5\",\"details\":{\"shipping\":\"0.00\",\"subtotal\":\"5\",\"tax\":\"0.00\",\"fee\":\"0.00\"}},\"description\":\"Adding $amount value to account\"}]}","transaction_response":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-70L8172945980680XKIXHJAY\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"last4\":\"1683\",\"type\":\"mastercard\",\"expire_month\":\"6\",\"expire_year\":\"2014\"}}]},\"transactions\":[{\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\",\"details\":{\"subtotal\":\"5.00\"}},\"description\":\"Adding $amount value to account\",\"related_resources\":[{\"sale\":{\"id\":\"4BH33516FS294082K\",\"create_time\":\"2013-09-10T01:24:21Z\",\"update_time\":\"2013-09-10T01:24:23Z\",\"state\":\"completed\",\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\"},\"parent_payment\":\"PAY-5JF655768W017970XKIXHJRI\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/4BH33516FS294082K\",\"rel\":\"self\",\"method\":\"GET\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/4BH33516FS294082K\\\/refund\",\"rel\":\"refund\",\"method\":\"POST\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-5JF655768W017970XKIXHJRI\",\"rel\":\"parent_payment\",\"method\":\"GET\"}]}}]}],\"id\":\"PAY-5JF655768W017970XKIXHJRI\",\"create_time\":\"2013-09-10T01:24:21Z\",\"update_time\":\"2013-09-10T01:24:23Z\",\"state\":\"approved\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-5JF655768W017970XKIXHJRI\",\"rel\":\"self\",\"method\":\"GET\"}]}","transaction_sent":"2013-09-09 21:24:19","transaction_receive":"2013-09-09 21:24:23"},{"transaction_id":"bc8f42de-19b7-11e3-b5ed-5081956b566e","account_id":"8bef8742-19b7-11e3-b5ed-5081956b566e","transaction_type":"add_value_to_account","pass_fail":"1","amount":"5.00","currency":"USD","transaction_request":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-70L8172945980680XKIXHJAY\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\"}}]},\"transactions\":[{\"amount\":{\"currency\":\"USD\",\"total\":\"5\",\"details\":{\"shipping\":\"0.00\",\"subtotal\":\"5\",\"tax\":\"0.00\",\"fee\":\"0.00\"}},\"description\":\"Adding $amount value to account\"}]}","transaction_response":"{\"intent\":\"sale\",\"payer\":{\"payment_method\":\"credit_card\",\"funding_instruments\":[{\"credit_card_token\":{\"credit_card_id\":\"CARD-70L8172945980680XKIXHJAY\",\"payer_id\":\"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11\",\"last4\":\"1683\",\"type\":\"mastercard\",\"expire_month\":\"6\",\"expire_year\":\"2014\"}}]},\"transactions\":[{\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\",\"details\":{\"subtotal\":\"5.00\"}},\"description\":\"Adding $amount value to account\",\"related_resources\":[{\"sale\":{\"id\":\"6SF44770G6447610L\",\"create_time\":\"2013-09-10T01:24:30Z\",\"update_time\":\"2013-09-10T01:24:31Z\",\"state\":\"completed\",\"amount\":{\"total\":\"5.00\",\"currency\":\"USD\"},\"parent_payment\":\"PAY-1KL20158XW743822JKIXHJTI\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/6SF44770G6447610L\",\"rel\":\"self\",\"method\":\"GET\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/sale\\\/6SF44770G6447610L\\\/refund\",\"rel\":\"refund\",\"method\":\"POST\"},{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-1KL20158XW743822JKIXHJTI\",\"rel\":\"parent_payment\",\"method\":\"GET\"}]}}]}],\"id\":\"PAY-1KL20158XW743822JKIXHJTI\",\"create_time\":\"2013-09-10T01:24:29Z\",\"update_time\":\"2013-09-10T01:24:31Z\",\"state\":\"approved\",\"links\":[{\"href\":\"https:\\\/\\\/api.sandbox.paypal.com\\\/v1\\\/payments\\\/payment\\\/PAY-1KL20158XW743822JKIXHJTI\",\"rel\":\"self\",\"method\":\"GET\"}]}","transaction_sent":"2013-09-09 21:24:28","transaction_receive":"2013-09-09 21:24:31"}]}
+[09-Sep-2013 23:27:47 America/New_York] Inside indexAction....
+[09-Sep-2013 23:28:20 America/New_York] PHP Notice:  Undefined index: seller in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 131
+[09-Sep-2013 23:28:20 America/New_York] PHP Notice:  Undefined index: memreas in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 132
+[09-Sep-2013 23:28:20 America/New_York] PHP Fatal error:  Call to undefined method memreas\MemreasPayPalTables::getUserTable() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 144
+[09-Sep-2013 23:29:39 America/New_York] Inside indexAction....
+[09-Sep-2013 23:29:42 America/New_York] {"amount":".25"}
+[09-Sep-2013 23:29:42 America/New_York] PHP Notice:  Undefined index: seller in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 131
+[09-Sep-2013 23:29:42 America/New_York] PHP Notice:  Undefined index: memreas in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 132
+[09-Sep-2013 23:29:42 America/New_York] PHP Fatal error:  Call to undefined method memreas\MemreasPayPalTables::getUserTable() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 144
+[09-Sep-2013 23:32:15 America/New_York] Inside indexAction....
+[09-Sep-2013 23:32:17 America/New_York] {"amount":".25","seller":"jmeah2","memreas":"memreas"}
+[09-Sep-2013 23:32:17 America/New_York] PHP Fatal error:  Call to undefined method memreas\MemreasPayPalTables::getUserTable() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 144
+[09-Sep-2013 23:36:15 America/New_York] Inside indexAction....
+[09-Sep-2013 23:36:19 America/New_York] {"amount":".25","seller":"jmeah2","memreas":"memreas"}
+[09-Sep-2013 23:36:53 America/New_York] Inside indexAction....
+[09-Sep-2013 23:36:55 America/New_York] {"amount":".25","seller":"jmeah2","memreas":"memreas"}
+[09-Sep-2013 23:49:53 America/New_York] Inside indexAction....
+[09-Sep-2013 23:49:55 America/New_York] {"amount":".25","seller":"jmeah2","memreas":"memreas"}
+[09-Sep-2013 23:50:59 America/New_York] Inside indexAction....
+[09-Sep-2013 23:51:01 America/New_York] {"amount":".25","seller":"jmeah2","memreas":"memreas"}
+[09-Sep-2013 23:51:01 America/New_York] seller_user_id -----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 00:14:25 America/New_York] Inside indexAction....
+[10-Sep-2013 00:43:32 America/New_York] Inside indexAction....
+[10-Sep-2013 01:15:10 America/New_York] Inside indexAction....
+[10-Sep-2013 01:19:53 America/New_York] Inside indexAction....
+[10-Sep-2013 01:19:55 America/New_York] PHP Parse error:  syntax error, unexpected '$paypal_email_address' (T_VARIABLE) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 626
+[10-Sep-2013 01:26:41 America/New_York] Inside indexAction....
+[10-Sep-2013 01:35:08 America/New_York] Inside indexAction....
+[10-Sep-2013 01:35:57 America/New_York] Inside indexAction....
+[10-Sep-2013 01:39:36 America/New_York] Inside indexAction....
+[10-Sep-2013 01:39:39 America/New_York] PHP Parse error:  syntax error, unexpected '$billing_address' (T_VARIABLE) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 629
+[10-Sep-2013 01:40:02 America/New_York] Inside indexAction....
+[10-Sep-2013 01:40:04 America/New_York] PHP Parse error:  syntax error, unexpected ''transaction_receive'' (T_CONSTANT_ENCAPSED_STRING), expecting ')' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 680
+[10-Sep-2013 01:41:47 America/New_York] Inside indexAction....
+[10-Sep-2013 01:41:49 America/New_York] PHP Notice:  Undefined index: credit_card_type in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 470
+[10-Sep-2013 01:41:49 America/New_York] PHP Notice:  Undefined index: credit_card_number in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 471
+[10-Sep-2013 01:41:49 America/New_York] PHP Notice:  Undefined index: expiration_month in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 472
+[10-Sep-2013 01:41:49 America/New_York] PHP Notice:  Undefined index: expiration_year in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 473
+[10-Sep-2013 01:42:11 America/New_York] Inside indexAction....
+[10-Sep-2013 01:42:13 America/New_York] PHP Notice:  Undefined index: credit_card_type in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 470
+[10-Sep-2013 01:42:13 America/New_York] PHP Notice:  Undefined index: credit_card_number in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 471
+[10-Sep-2013 01:42:13 America/New_York] PHP Notice:  Undefined index: expiration_month in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 472
+[10-Sep-2013 01:42:13 America/New_York] PHP Notice:  Undefined index: expiration_year in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 473
+[10-Sep-2013 01:46:37 America/New_York] Inside indexAction....
+[10-Sep-2013 01:46:39 America/New_York] PHP Notice:  Undefined index: credit_card_type in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 470
+[10-Sep-2013 01:46:39 America/New_York] PHP Notice:  Undefined index: credit_card_number in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 471
+[10-Sep-2013 01:46:39 America/New_York] PHP Notice:  Undefined index: expiration_month in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 472
+[10-Sep-2013 01:46:39 America/New_York] PHP Notice:  Undefined index: expiration_year in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 473
+[10-Sep-2013 02:05:21 America/New_York] Inside indexAction....
+[10-Sep-2013 02:05:23 America/New_York] PHP Notice:  Undefined index: credit_card_type in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 470
+[10-Sep-2013 02:05:23 America/New_York] PHP Notice:  Undefined index: credit_card_number in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 471
+[10-Sep-2013 02:05:23 America/New_York] PHP Notice:  Undefined index: expiration_month in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 472
+[10-Sep-2013 02:05:23 America/New_York] PHP Notice:  Undefined index: expiration_year in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 473
+[10-Sep-2013 02:05:32 America/New_York] Inside indexAction....
+[10-Sep-2013 02:06:59 America/New_York] Inside indexAction....
+[10-Sep-2013 02:07:02 America/New_York] PHP Notice:  Undefined index: credit_card_type in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 470
+[10-Sep-2013 02:07:02 America/New_York] PHP Notice:  Undefined index: credit_card_number in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 471
+[10-Sep-2013 02:07:02 America/New_York] PHP Notice:  Undefined index: expiration_month in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 472
+[10-Sep-2013 02:07:02 America/New_York] PHP Notice:  Undefined index: expiration_year in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 473
+[10-Sep-2013 02:07:38 America/New_York] Inside indexAction....
+[10-Sep-2013 02:07:40 America/New_York] PHP Notice:  Undefined index: credit_card_type in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 470
+[10-Sep-2013 02:07:40 America/New_York] PHP Notice:  Undefined index: credit_card_number in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 471
+[10-Sep-2013 02:07:40 America/New_York] PHP Notice:  Undefined index: expiration_month in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 472
+[10-Sep-2013 02:07:40 America/New_York] PHP Notice:  Undefined index: expiration_year in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 473
+[10-Sep-2013 02:07:48 America/New_York] Inside indexAction....
+[10-Sep-2013 02:07:52 America/New_York] PHP Notice:  Undefined index: credit_card_type in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 470
+[10-Sep-2013 02:07:52 America/New_York] PHP Notice:  Undefined index: credit_card_number in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 471
+[10-Sep-2013 02:07:52 America/New_York] PHP Notice:  Undefined index: expiration_month in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 472
+[10-Sep-2013 02:07:52 America/New_York] PHP Notice:  Undefined index: expiration_year in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 473
+[10-Sep-2013 02:09:27 America/New_York] Inside indexAction....
+[10-Sep-2013 02:10:09 America/New_York] Inside indexAction....
+[10-Sep-2013 02:10:55 America/New_York] Inside indexAction....
+[10-Sep-2013 02:12:55 America/New_York] Inside indexAction....
+[10-Sep-2013 02:12:59 America/New_York] Inside indexAction....
+[10-Sep-2013 02:13:55 America/New_York] Inside indexAction....
+[10-Sep-2013 02:13:59 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 02:13:59 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 02:13:59 America/New_York] PHP Notice:  Undefined index: user_name in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 624
+[10-Sep-2013 02:13:59 America/New_York] PHP Notice:  Undefined variable: id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/module/Admin/src/Admin/Model/UserTable.php on line 81
+[10-Sep-2013 02:21:56 America/New_York] Inside indexAction....
+[10-Sep-2013 02:21:59 America/New_York] json returned from PayPal ----> {"type":"visa","number":"xxxxxxxxxxxx5139","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"id":"CARD-1J4867084L9346128KIXLVBY","valid_until":"2014-07-01T00:00:00Z","state":"ok","links":[{"href":"https:\/\/api.sandbox.paypal.com\/v1\/vault\/credit-card\/CARD-1J4867084L9346128KIXLVBY","rel":"self","method":"GET"},{"href":"https:\/\/api.sandbox.paypal.com\/v1\/vault\/credit-card\/CARD-1J4867084L9346128KIXLVBY","rel":"delete","method":"DELETE"}]}
+[10-Sep-2013 02:21:59 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 611
+[10-Sep-2013 02:22:07 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 02:22:07 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 02:22:07 America/New_York] PHP Notice:  Undefined variable: transaction_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 688
+[10-Sep-2013 02:26:15 America/New_York] Inside indexAction....
+[10-Sep-2013 02:26:19 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 02:26:19 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 02:26:19 America/New_York] PHP Notice:  Undefined variable: transactionid in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 702
+[10-Sep-2013 02:26:38 America/New_York] Inside indexAction....
+[10-Sep-2013 02:26:42 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 02:26:42 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 13:57:33 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 13:57:33 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 14:06:25 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 14:06:25 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 14:07:50 America/New_York] Inside indexAction....
+[10-Sep-2013 14:07:54 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 14:07:54 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 21:36:15 America/New_York] Inside indexAction....
+[10-Sep-2013 21:38:20 America/New_York] Inside indexAction....
+[10-Sep-2013 21:38:23 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 21:38:23 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 21:38:24 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 21:43:02 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 21:43:02 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 21:43:02 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 21:50:27 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 21:50:27 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 21:50:27 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 21:50:33 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 21:50:33 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 21:50:33 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:19:36 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:19:36 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:19:36 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:19:36 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:19:36 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:19:36 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:20:34 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:20:34 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:20:34 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:20:34 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:20:34 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:20:34 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:20:41 America/New_York] Inside indexAction....
+[10-Sep-2013 22:20:55 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:20:55 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:20:55 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:20:55 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:20:55 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:20:55 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:39:56 America/New_York] Inside indexAction....
+[10-Sep-2013 22:39:59 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:39:59 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:39:59 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:39:59 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:39:59 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:39:59 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:44:44 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:44:44 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:44:44 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:44:44 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:44:44 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:44:44 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:45:38 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:45:38 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:45:38 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:45:38 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:45:38 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:45:38 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:47:15 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:47:15 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:47:15 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:47:15 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:47:15 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:47:15 America/New_York] Inside getAccountByUserId - if !row
+[10-Sep-2013 22:47:15 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:53:06 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:53:06 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:53:06 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:53:06 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:53:06 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:53:06 America/New_York] Inside getAccountByUserId - if !row
+[10-Sep-2013 22:53:06 America/New_York] Inside payPalAddSeller - if !row
+[10-Sep-2013 22:53:41 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 22:53:41 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 22:53:41 America/New_York] Inside payPalAddSeller - user_name ----> jmeah2
+[10-Sep-2013 22:53:41 America/New_York] Inside payPalAddSeller - user->username ----> jmeah2
+[10-Sep-2013 22:53:41 America/New_York] Inside payPalAddSeller - user->user_id ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+[10-Sep-2013 22:53:41 America/New_York] Inside getAccountByUserId - if row
+[10-Sep-2013 22:53:41 America/New_York] Inside payPalAddSeller - if !row else Account Exists
+[10-Sep-2013 22:54:40 America/New_York] Inside getAccountByUserId - if !row
+[10-Sep-2013 22:54:43 America/New_York] json returned from PayPal ----> {"type":"visa","number":"xxxxxxxxxxxx6559","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"id":"CARD-23H14446DT742222UKIX5W4Q","valid_until":"2014-07-01T00:00:00Z","state":"ok","links":[{"href":"https:\/\/api.sandbox.paypal.com\/v1\/vault\/credit-card\/CARD-23H14446DT742222UKIX5W4Q","rel":"self","method":"GET"},{"href":"https:\/\/api.sandbox.paypal.com\/v1\/vault\/credit-card\/CARD-23H14446DT742222UKIX5W4Q","rel":"delete","method":"DELETE"}]}
+[10-Sep-2013 22:54:43 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 611
+[10-Sep-2013 22:54:47 America/New_York] Inside getAccountByUserId - if row
+[10-Sep-2013 22:54:48 America/New_York] json returned from PayPal ----> {"type":"mastercard","number":"xxxxxxxxxxxx9611","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"id":"CARD-3KY66995SR132445TKIX5W5Y","valid_until":"2014-07-01T00:00:00Z","state":"ok","links":[{"href":"https:\/\/api.sandbox.paypal.com\/v1\/vault\/credit-card\/CARD-3KY66995SR132445TKIX5W5Y","rel":"self","method":"GET"},{"href":"https:\/\/api.sandbox.paypal.com\/v1\/vault\/credit-card\/CARD-3KY66995SR132445TKIX5W5Y","rel":"delete","method":"DELETE"}]}
+[10-Sep-2013 22:54:48 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 611
+[10-Sep-2013 23:00:35 America/New_York] Inside payPalAccountHistory...
+[10-Sep-2013 23:00:35 America/New_York] Inside getAccountByUserId - if row
+[10-Sep-2013 23:02:15 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 23:02:15 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 23:02:15 America/New_York] PHP Notice:  Undefined variable: id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/module/Admin/src/Admin/Model/UserTable.php on line 81
+[10-Sep-2013 23:03:37 America/New_York] Inside index/payPalAddSeller
+[10-Sep-2013 23:03:37 America/New_York] Inside payPalAddSeller
+[10-Sep-2013 23:03:37 America/New_York] Inside payPalAddSeller - user_name ----> jmeah3
+[10-Sep-2013 23:03:37 America/New_York] Inside payPalAddSeller - user->username ----> jmeah3
+[10-Sep-2013 23:03:37 America/New_York] Inside payPalAddSeller - user->user_id ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+[10-Sep-2013 23:03:37 America/New_York] Inside getAccountByUserId - if !row
+[10-Sep-2013 23:03:37 America/New_York] Inside payPalAddSeller - if !row

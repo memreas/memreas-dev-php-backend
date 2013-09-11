@@ -74,6 +74,40 @@ error_log("Inside indexAction....");
 		return $view;			
     }
 
+
+     public function payPalAddSellerAction() {
+error_log("Inside index/payPalAddSeller");
+	    $path = $this->security("application/index/paypal.phtml");
+
+		if (isset($_REQUEST['callback'])) {
+			//Fetch parms
+			$callback = $_REQUEST['callback'];
+			$json = $_REQUEST['json'];
+			$jsonArr = json_decode($json, true);
+			$actionname = $jsonArr['action'];
+			$type = $jsonArr['type'];
+			$message_data = $jsonArr['json'];
+
+			//PayPal related calls...
+			$memreasPayPal = new MemreasPayPal();
+			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
+			$result = $memreasPayPal->payPalAddSeller($message_data, $memreas_paypal_tables, $this->getServiceLocator());
+				
+			$json = json_encode($result);
+			//Return the ajax call...
+			$callback_json = $callback . "(" . $json . ")";
+			$output = ob_get_clean();
+			header("Content-type: plain/text");
+			echo $callback_json;
+			//Need to exit here to avoid ZF2 framework view.
+			exit;
+		} else {
+			$view = new ViewModel();
+			$view->setTemplate($path); // path to phtml file under view folder
+		}
+
+		return $view;		  
+     }
      public function paypalDecrementValueAction() {
 	    $path = $this->security("application/index/paypal.phtml");
 
