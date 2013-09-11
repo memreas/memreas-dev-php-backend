@@ -4,6 +4,7 @@ namespace memreas;
 class MemreasPayPalTables {
 
     protected $service_locator = NULL;
+    protected $userTable = NULL;
     protected $accountTable = NULL;
 	protected $accountBalancesTable = NULL;
 	protected $accountDetailTable = NULL;
@@ -16,6 +17,15 @@ class MemreasPayPalTables {
        $this->service_locator = $sl;
    }
    
+   	//User related tables
+	public function getUserTable()
+	{
+		if (!$this->userTable) {
+			$this->userTable = $this->service_locator->get('Application\Model\UserTable');
+		}
+		return $this->userTable;
+	}
+	
    	//PayPal related tables
 	public function getAccountTable()
 	{

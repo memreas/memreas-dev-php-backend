@@ -10,6 +10,7 @@ var payPalDeleteCards_url = '/index/paypalDeleteCards';
 var payPalAddValue_url = '/index/payPalAddValue';
 var payPalDecrementValue_url = '/index/payPalDecrementValue';
 var payPalAccountHistory_url = '/index/payPalAccountHistory';
+var payPalAddSeller_url = '/index/payPalAddSeller';
 
 //onEmailFocusOut = function () {
 //    if (!isValidEmail($('#inEmail').val())) {
@@ -28,6 +29,54 @@ var payPalAccountHistory_url = '/index/payPalAccountHistory';
 //    return true;
 //  }
 //}
+
+/////////////////////
+// Add Seller
+/////////////////////
+jQuery.paypalAddSeller = function () {
+
+alert("Inside jQuery.paypalAddSeller...");
+
+	var obj = new Object();
+	obj.user_name = $("#user_name").val();
+	obj.paypal_email_address = $("#paypal_email_address").val();
+	obj.first_name = $("#first_name").val();
+	obj.last_name = $("#last_name").val();
+	obj.address_line_1 = $("#address_line_1").val();
+	obj.address_line_2 = $("#address_line_2").val();
+	obj.city = $("#city").val();
+	obj.state = $("#state").val();
+	obj.zip_code = $("#zip_code").val();
+    var json_paypalAddSeller = JSON.stringify(obj);
+    var data = "";
+    
+    data = '{"action": "paypalAddSeller", ' + 
+    '"type":"jsonp", ' + 
+    '"json": ' + json_paypalAddSeller  + 
+    '}';
+   
+	//var results += json_paypalAddSeller;
+	$("#add_seller_form_results").val(json_paypalAddSeller, null, '\t');
+	
+	$.ajax( {
+	  type:'post', 
+	  url: payPalAddSeller_url,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $("#add_seller_form_results").val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	$("#add_seller_form_results").val(req_resp);
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+	  	//alert("Inside error jqXHR...");
+       	alert(jqXHR.responseText);
+       	alert(jqXHR.status);
+    	//alert(textStatus);
+       	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
 
 /////////////////////
 // Store Card
@@ -101,8 +150,6 @@ jQuery.paypalAccountHistory = function (element) {
 
 alert("About to update " + element);   
 	$(element).val(json_paypalAccountHistory);
-	
-
 	$.ajax( {
 	  type:'post', 
 	  url: payPalAccountHistory_url,
@@ -143,6 +190,8 @@ jQuery.paypalDecrementValue = function (element) {
 
 	var obj = new Object();
 	obj.amount = $("#decrement_amount").val();
+	obj.seller = $("#seller").val();
+	obj.memreas = $("#memreas").val();
     var json_paypalDecrementValue = JSON.stringify(obj, null, '\t');
     var data = "";
     var result = "";

@@ -128,3 +128,117 @@ PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0
 PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer KB0kSATYc5e-l994Ma7HaX1BmAE49fjJmXzxP78Bi-w
 PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 2130706433391313787762665186
 PayPal\Transport\PPRestCall: {"id":"PAY-1KL20158XW743822JKIXHJTI","create_time":"2013-09-10T01:24:29Z","update_time":"2013-09-10T01:24:31Z","state":"approved","intent":"sale","payer":{"payment_method":"credit_card","funding_instruments":[{"credit_card_token":{"credit_card_id":"CARD-70L8172945980680XKIXHJAY","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","last4":"1683","type":"mastercard","expire_month":"6","expire_year":"2014"}}]},"transactions":[{"amount":{"total":"5.00","currency":"USD","details":{"subtotal":"5.00"}},"description":"Adding $amount value to account","related_resources":[{"sale":{"id":"6SF44770G6447610L","create_time":"2013-09-10T01:24:30Z","update_time":"2013-09-10T01:24:31Z","state":"completed","amount":{"total":"5.00","currency":"USD"},"parent_payment":"PAY-1KL20158XW743822JKIXHJTI","links":[{"href":"https://api.sandbox.paypal.com/v1/payments/sale/6SF44770G6447610L","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/payments/sale/6SF44770G6447610L/refund","rel":"refund","method":"POST"},{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-1KL20158XW743822JKIXHJTI","rel":"parent_payment","method":"GET"}]}}]}],"links":[{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-1KL20158XW743822JKIXHJTI","rel":"self","method":"GET"}]}
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"","number":null,"expire_month":null,"expire_year":null,"first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 2130706433387713787917081544
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"","number":null,"expire_month":null,"expire_year":null,"first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333885137879173336782
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"","number":null,"expire_month":null,"expire_year":null,"first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333883137879199962042
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"","number":null,"expire_month":null,"expire_year":null,"first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333880137879312326063
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"","number":null,"expire_month":null,"expire_year":null,"first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333886137879322247154
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"","number":null,"expire_month":null,"expire_year":null,"first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333881137879326052964
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"","number":null,"expire_month":null,"expire_year":null,"first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333886137879327252891
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"visa","number":"4413493000375139","expire_month":"06","expire_year":"2014","first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 9yraZ1qK70bE9q4wo2A-6NazxX.2crZe3.V7sqtv6p4
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333884137879411849062
+PayPal\Transport\PPRestCall: {"id":"CARD-1J4867084L9346128KIXLVBY","valid_until":"2014-07-01T00:00:00Z","state":"ok","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","type":"visa","number":"xxxxxxxxxxxx5139","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"links":[{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-1J4867084L9346128KIXLVBY","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-1J4867084L9346128KIXLVBY","rel":"delete","method":"DELETE"}]}
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/oauth2/token
+PayPal\Core\PPHttpConnection: Payload grant_type=client_credentials
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Basic QWFjT1VSQURuM3N6cktmeWlRbUhWNk83bXp2YmhnRWJuVEdhUU5zWWFpbF9LV1Q4S2FnOTFQVjlvSDNKOkVNSC1uaERhOERmQ013aFhmWTZHRHdQc1kzSHlVN0pMRXdWTDJUZjM4ZHloVTBkTEhaNnNhVmpscUYtUw==
+PayPal\Core\PPHttpConnection: Adding header Accept: */*
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"visa","number":"4916040304146559","expire_month":"06","expire_year":"2014","first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 1JFuUo8sCUYQg7nMEbBBfFjaoWm4e.u9VcQ7NIHD4wk
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333879137886808035323
+PayPal\Transport\PPRestCall: {"id":"CARD-23H14446DT742222UKIX5W4Q","valid_until":"2014-07-01T00:00:00Z","state":"ok","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","type":"visa","number":"xxxxxxxxxxxx6559","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"links":[{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-23H14446DT742222UKIX5W4Q","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-23H14446DT742222UKIX5W4Q","rel":"delete","method":"DELETE"}]}
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card
+PayPal\Core\PPHttpConnection: Payload {"type":"mastercard","number":"5243254001349611","expire_month":"06","expire_year":"2014","first_name":"John","last_name":"Meah","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"}}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer 1JFuUo8sCUYQg7nMEbBBfFjaoWm4e.u9VcQ7NIHD4wk
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333879137886808727159
+PayPal\Transport\PPRestCall: {"id":"CARD-3KY66995SR132445TKIX5W5Y","valid_until":"2014-07-01T00:00:00Z","state":"ok","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","type":"mastercard","number":"xxxxxxxxxxxx9611","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"links":[{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3KY66995SR132445TKIX5W5Y","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3KY66995SR132445TKIX5W5Y","rel":"delete","method":"DELETE"}]}
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/oauth2/token
+PayPal\Core\PPHttpConnection: Payload grant_type=client_credentials
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Basic QWFjT1VSQURuM3N6cktmeWlRbUhWNk83bXp2YmhnRWJuVEdhUU5zWWFpbF9LV1Q4S2FnOTFQVjlvSDNKOkVNSC1uaERhOERmQ013aFhmWTZHRHdQc1kzSHlVN0pMRXdWTDJUZjM4ZHloVTBkTEhaNnNhVmpscUYtUw==
+PayPal\Core\PPHttpConnection: Adding header Accept: */*
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-23H14446DT742222UKIX5W4Q
+PayPal\Core\PPHttpConnection: Payload 
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer wVPX7y6CTn6-nDRlBEhfMWYwjLyd8Obm7kuFiDVObnk
+PayPal\Transport\PPRestCall: {"id":"CARD-23H14446DT742222UKIX5W4Q","valid_until":"2014-07-01T00:00:00Z","state":"ok","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","type":"visa","number":"xxxxxxxxxxxx6559","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"links":[{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-23H14446DT742222UKIX5W4Q","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-23H14446DT742222UKIX5W4Q","rel":"delete","method":"DELETE"}]}
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/oauth2/token
+PayPal\Core\PPHttpConnection: Payload grant_type=client_credentials
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Basic QWFjT1VSQURuM3N6cktmeWlRbUhWNk83bXp2YmhnRWJuVEdhUU5zWWFpbF9LV1Q4S2FnOTFQVjlvSDNKOkVNSC1uaERhOERmQ013aFhmWTZHRHdQc1kzSHlVN0pMRXdWTDJUZjM4ZHloVTBkTEhaNnNhVmpscUYtUw==
+PayPal\Core\PPHttpConnection: Adding header Accept: */*
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/payments/payment
+PayPal\Core\PPHttpConnection: Payload {"intent":"sale","payer":{"payment_method":"credit_card","funding_instruments":[{"credit_card_token":{"credit_card_id":"CARD-23H14446DT742222UKIX5W4Q","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}]},"transactions":[{"amount":{"currency":"USD","total":"5","details":{"shipping":"0.00","subtotal":"5","tax":"0.00","fee":"0.00"}},"description":"Adding $amount value to account"}]}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer NZA0BP2v5ChCEcLYGTu-NvNo3QBfwrWYTiU81FDEtaE
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333884137886830352034
+PayPal\Transport\PPRestCall: {"id":"PAY-12R23214JM634152CKIX5YUQ","create_time":"2013-09-11T02:58:26Z","update_time":"2013-09-11T02:58:28Z","state":"approved","intent":"sale","payer":{"payment_method":"credit_card","funding_instruments":[{"credit_card_token":{"credit_card_id":"CARD-23H14446DT742222UKIX5W4Q","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","last4":"6559","type":"visa","expire_month":"6","expire_year":"2014"}}]},"transactions":[{"amount":{"total":"5.00","currency":"USD","details":{"subtotal":"5.00"}},"description":"Adding $amount value to account","related_resources":[{"sale":{"id":"4SJ694794C525961B","create_time":"2013-09-11T02:58:26Z","update_time":"2013-09-11T02:58:28Z","state":"completed","amount":{"total":"5.00","currency":"USD"},"parent_payment":"PAY-12R23214JM634152CKIX5YUQ","links":[{"href":"https://api.sandbox.paypal.com/v1/payments/sale/4SJ694794C525961B","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/payments/sale/4SJ694794C525961B/refund","rel":"refund","method":"POST"},{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-12R23214JM634152CKIX5YUQ","rel":"parent_payment","method":"GET"}]}}]}],"links":[{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-12R23214JM634152CKIX5YUQ","rel":"self","method":"GET"}]}
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/oauth2/token
+PayPal\Core\PPHttpConnection: Payload grant_type=client_credentials
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Basic QWFjT1VSQURuM3N6cktmeWlRbUhWNk83bXp2YmhnRWJuVEdhUU5zWWFpbF9LV1Q4S2FnOTFQVjlvSDNKOkVNSC1uaERhOERmQ013aFhmWTZHRHdQc1kzSHlVN0pMRXdWTDJUZjM4ZHloVTBkTEhaNnNhVmpscUYtUw==
+PayPal\Core\PPHttpConnection: Adding header Accept: */*
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3KY66995SR132445TKIX5W5Y
+PayPal\Core\PPHttpConnection: Payload 
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer xQeuUO4MgwiG6gqJD.Y.WyPnF8yQND0rQRKU0RiTVlk
+PayPal\Transport\PPRestCall: {"id":"CARD-3KY66995SR132445TKIX5W5Y","valid_until":"2014-07-01T00:00:00Z","state":"ok","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","type":"mastercard","number":"xxxxxxxxxxxx9611","expire_month":"6","expire_year":"2014","first_name":"John","last_name":"Meah","billing_address":{"line1":"125 Bowery Street","line2":"Suite 814","city":"New York","state":"NY","postal_code":"10018","country_code":"US"},"links":[{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3KY66995SR132445TKIX5W5Y","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/vault/credit-card/CARD-3KY66995SR132445TKIX5W5Y","rel":"delete","method":"DELETE"}]}
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/oauth2/token
+PayPal\Core\PPHttpConnection: Payload grant_type=client_credentials
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Basic QWFjT1VSQURuM3N6cktmeWlRbUhWNk83bXp2YmhnRWJuVEdhUU5zWWFpbF9LV1Q4S2FnOTFQVjlvSDNKOkVNSC1uaERhOERmQ013aFhmWTZHRHdQc1kzSHlVN0pMRXdWTDJUZjM4ZHloVTBkTEhaNnNhVmpscUYtUw==
+PayPal\Core\PPHttpConnection: Adding header Accept: */*
+PayPal\Core\PPHttpConnection: Connecting to https://api.sandbox.paypal.com/v1/payments/payment
+PayPal\Core\PPHttpConnection: Payload {"intent":"sale","payer":{"payment_method":"credit_card","funding_instruments":[{"credit_card_token":{"credit_card_id":"CARD-3KY66995SR132445TKIX5W5Y","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11"}}]},"transactions":[{"amount":{"currency":"USD","total":"5","details":{"shipping":"0.00","subtotal":"5","tax":"0.00","fee":"0.00"}},"description":"Adding $amount value to account"}]}
+PayPal\Core\PPHttpConnection: Adding header Content-Type: application/json
+PayPal\Core\PPHttpConnection: Adding header User-Agent: PayPalSDK/rest-sdk-php 0.6.0 (lang=PHP;v=5.4.11;bit=64;os=Darwin_12.4.0;machine=x86_64;openssl=0.9.8r;curl=7.24.0)
+PayPal\Core\PPHttpConnection: Adding header Authorization: Bearer PYZuwpO9y607xBmNm3yQn5fgajymXw6.bxis8MMscMc
+PayPal\Core\PPHttpConnection: Adding header PayPal-Request-Id: 21307064333877137886831739320
+PayPal\Transport\PPRestCall: {"id":"PAY-9BB01944N1654691WKIX5YXY","create_time":"2013-09-11T02:58:39Z","update_time":"2013-09-11T02:58:42Z","state":"approved","intent":"sale","payer":{"payment_method":"credit_card","funding_instruments":[{"credit_card_token":{"credit_card_id":"CARD-3KY66995SR132445TKIX5W5Y","payer_id":"05cd7b92-c7d7-11e2-8c7e-c7f987b90c11","last4":"9611","type":"mastercard","expire_month":"6","expire_year":"2014"}}]},"transactions":[{"amount":{"total":"5.00","currency":"USD","details":{"subtotal":"5.00"}},"description":"Adding $amount value to account","related_resources":[{"sale":{"id":"1U2617395J453635J","create_time":"2013-09-11T02:58:39Z","update_time":"2013-09-11T02:58:42Z","state":"completed","amount":{"total":"5.00","currency":"USD"},"parent_payment":"PAY-9BB01944N1654691WKIX5YXY","links":[{"href":"https://api.sandbox.paypal.com/v1/payments/sale/1U2617395J453635J","rel":"self","method":"GET"},{"href":"https://api.sandbox.paypal.com/v1/payments/sale/1U2617395J453635J/refund","rel":"refund","method":"POST"},{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-9BB01944N1654691WKIX5YXY","rel":"parent_payment","method":"GET"}]}}]}],"links":[{"href":"https://api.sandbox.paypal.com/v1/payments/payment/PAY-9BB01944N1654691WKIX5YXY","rel":"self","method":"GET"}]}

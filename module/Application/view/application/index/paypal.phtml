@@ -91,6 +91,14 @@ var user_id = "<?php echo $user_id; ?>";
         jQuery.paypalAccountHistory('#account_history_results');
     }
 
+	//Add Seller
+    $(document).ready(function () {
+        $("#btnOK3").click(onBtn3CallClicked);
+    });
+    function onBtn3CallClicked() {
+        jQuery.paypalAddSeller();
+    }
+
     $(function() {
 	    $( "#tabs" ).tabs();
 	});
@@ -304,10 +312,127 @@ var user_id = "<?php echo $user_id; ?>";
   	</div>
   </div>
   <div id="tabs-3">
-    <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-    <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
-  </div>
-  <div id="tabs-4">
+	<form id="add_seller_form" name=add_seller_form" action="/index/paypal">
+	<table>
+		<tr>
+			<td>user name:
+			<td><input type="text" id="user_name" name="user_name" value="jmeah2">
+			<td>paypal email address:
+			<td><input type="text" id="paypal_email_address" name="paypal_email_address" value="jmeah_seller@memreas.com">
+		</tr>
+		<tr>
+			<td>first name:
+			<td><input type="text" id="first_name" name="first_name" value="John">
+			<td>last name:
+			<td><input type="text" id="last_name" name="last_name" value="Meah">
+		</tr>
+		<tr>
+			<td>address line 1:
+			<td><input type="text" id="address_line_1" name="address_line_1" value="125 Bowery Street">
+		</tr>
+		<tr>
+			<td>address line 2:
+			<td><input type="text" id="address_line_2" name="address_line_2" value="Suite 814">
+		</tr>
+		<tr>
+			<td>city:
+			<td><input type="text" id="city" name="city" value="New York">
+		</tr>
+		<tr>
+			<td>state:
+			<td>						
+							<select id=state name="state">
+								<option value=""></option>
+								<option value="AK">AK</option>
+								<option value="AL">AL</option>
+								<option value="AR">AR</option>
+								<option value="AZ">AZ</option>
+								<option value="CA" selected>CA</option>
+								<option value="CO">CO</option>
+								<option value="CT">CT</option>
+								<option value="DC">DC</option>
+								<option value="DE">DE</option>
+								<option value="FL">FL</option>
+								<option value="GA">GA</option>
+								<option value="HI">HI</option>
+								<option value="IA">IA</option>
+								<option value="ID">ID</option>
+								<option value="IL">IL</option>
+								<option value="IN">IN</option>
+								<option value="KS">KS</option>
+								<option value="KY">KY</option>
+								<option value="LA">LA</option>
+								<option value="MA">MA</option>
+								<option value="MD">MD</option>
+								<option value="ME">ME</option>
+								<option value="MI">MI</option>
+								<option value="MN">MN</option>
+								<option value="MO">MO</option>
+								<option value="MS">MS</option>
+								<option value="MT">MT</option>
+								<option value="NC">NC</option>
+								<option value="ND">ND</option>
+								<option value="NE">NE</option>
+								<option value="NH">NH</option>
+								<option value="NJ">NJ</option>
+								<option value="NM">NM</option>
+								<option value="NV">NV</option>
+								<option value="NY" selected>NY</option>
+								<option value="OH">OH</option>
+								<option value="OK">OK</option>
+								<option value="OR">OR</option>
+								<option value="PA">PA</option>
+								<option value="RI">RI</option>
+								<option value="SC">SC</option>
+								<option value="SD">SD</option>
+								<option value="TN">TN</option>
+								<option value="TX">TX</option>
+								<option value="UT">UT</option>
+								<option value="VA">VA</option>
+								<option value="VT">VT</option>
+								<option value="WA">WA</option>
+								<option value="WI">WI</option>
+								<option value="WV">WV</option>
+								<option value="WY">WY</option>
+								<option value="AA">AA</option>
+								<option value="AE">AE</option>
+								<option value="AP">AP</option>
+								<option value="AS">AS</option>
+								<option value="FM">FM</option>
+								<option value="GU">GU</option>
+								<option value="MH">MH</option>
+								<option value="MP">MP</option>
+								<option value="PR">PR</option>
+								<option value="PW">PW</option>
+								<option value="VI">VI</option>
+							</select>
+			<td>
+			<td>
+		</tr>
+		<tr>
+			<td>zip:
+			<td><input type="text" id="zip_code" name="zip_code" value="10018">
+			<td>
+			<td><input type="hidden" id="isValid" name="isValid" value="1">
+		</tr>
+		<tr>
+			<td>
+			<td><input id="btnOK3" type="button" name="ok" value="ok">
+			<td>
+			<td><input id="btnClear" type="button" name="clear" value="cancel">
+		</tr>
+	</table>
+	<div id="add_seller_results">
+		<table>
+			<tr>
+				<td>Results:
+			</tr>
+			<tr>
+				<td><textarea id="add_seller_form_results" name="add_seller_form_results" rows="10" cols="120">Result will be shown here.</textarea>
+			</tr>
+		</table>
+	</div>
+  </div>  <div id="tabs-4">
 	<form id="add_value_form" name=add_value_form" action="/index/paypalAddValue">
 		<table>
 			<div id="card_list4">
@@ -340,6 +465,18 @@ var user_id = "<?php echo $user_id; ?>";
   <div id="tabs-5">
 	<form id="decrement_value_form" name=decrement_value_form" action="/index/paypalAddValue">
 		<table>
+			<tr>
+				<td>
+				<td>Seller:
+				<td>
+				<td><input id="seller" type="text" name="seller" value="jmeah2">
+			</tr>
+			<tr>
+				<td>
+				<td>memreas:
+				<td>
+				<td><input id="memreas" type="text" name="seller" value="memreas">
+			</tr>
 			<tr>
 				<td>
 				<td>$ amount(USD):

@@ -45,7 +45,10 @@ class AccountDetailTable {
 						'state' => $account->state, 
 						'zip_code' => $account->zip_code, 
 						'postal_code' => $account->postal_code, 
-						'paypal_card_reference_id' => $account->paypal_card_reference_id );
+						'paypal_card_reference_id' => $account->paypal_card_reference_id, 
+						'paypal_email_address' => $account->paypal_email_address, 
+						'paypal_receiver_phone' => $account->paypal_receiver_phone, 
+						'paypal_receiver_id' => $account->paypal_receiver_id );		
 		
 		if (isset($account->account_detail_id)) {
 			if ($this->getAccountDetail ( $account->account_detail_id )) {

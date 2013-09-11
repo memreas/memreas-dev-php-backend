@@ -73,7 +73,7 @@ class UserTable
         $this->tableGateway->delete(array('user_id' => $id));
     }
     
-        public function getUserByUsername($username)
+    public function getUserByUsername($username)
     {
         $rowset = $this->tableGateway->select(array('username' => $username));
         $row = $rowset->current();
