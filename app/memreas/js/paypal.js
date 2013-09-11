@@ -137,7 +137,9 @@ jQuery.paypalStoreCard = function () {
 jQuery.paypalAccountHistory = function (element) {
 
 	var obj = new Object();
-	obj.in = "";
+	obj.user_name = $("#account_history_form_user_name").val();
+	//obj.user_name = $("#dteFrom").val();
+	//obj.user_name = $("#dteTo").val();
     var json_paypalAccountHistory = JSON.stringify(obj, null, '\t');
     var data = "";
     var result = "";

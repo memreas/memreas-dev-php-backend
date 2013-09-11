@@ -20,10 +20,8 @@ class AccountTable {
 		$rowset = $this->tableGateway->select ( array ('user_id' => $user_id ) );
 		$row = $rowset->current ();
 		if (! $row) {
-error_log("Inside getAccountByUserId - if !row");
 			return null;
 		}
-error_log("Inside getAccountByUserId - if row");
 		return $row;
 	}
 	
