@@ -74,11 +74,15 @@ class MemreasPayPal {
 		//Fetch Session
 		$this->fetchSession();
 
+		//Fetch the user_name and id
+		$user_name = $message_data['user_name'];
+		$user = $memreas_paypal_tables->getUserTable()->getUserByUsername($user_name);
+
 		//Fetch the user_id
 	    if(isset($this->user_id)){
 
 			//Fetch the Account
-			$account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($this->user_id);	
+			$account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($user->user_id);	
 			if (!$account) {
 				$result = array ( "Status"=>"Error", "Description"=>"Could not find account", );
 				return $result;
@@ -552,8 +556,6 @@ error_log("memreas_account ----> $memreas_account" . PHP_EOL);
 		  exit(1);
 		}			
 
-error_log("json returned from PayPal ----> " . $card->toJSON());
-		
 		//Update the transaction table with the PayPal response
 		//$transaction  = new Transaction();
 		$transaction->exchangeArray(array(
@@ -617,15 +619,11 @@ error_log("json returned from PayPal ----> " . $card->toJSON());
 
 	public function payPalAddSeller($message_data, $memreas_paypal_tables, $service_locator) 
 	{
-error_log("Inside payPalAddSeller");
 		//Fetch Session
 		$this->fetchSession();
 		//Get memreas user name
 		$user_name = $message_data['user_name'];
 		$user = $memreas_paypal_tables->getUserTable()->getUserByUsername($user_name);
-error_log("Inside payPalAddSeller - user_name ----> $user_name");
-error_log("Inside payPalAddSeller - user->username ----> $user->username");
-error_log("Inside payPalAddSeller - user->user_id ----> $user->user_id");
 		//Get Paypal email address
 		$paypal_email_address = $message_data['paypal_email_address'];
 		//Get the Billing Address and associate it with the card
@@ -642,7 +640,6 @@ error_log("Inside payPalAddSeller - user->user_id ----> $user->user_id");
 		//Fetch the Account
 		$row = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($user->user_id);	
 		if (!$row) {
-error_log("Inside payPalAddSeller - if !row");
 			//Create an account entry
 			$now = date('Y-m-d H:i:s');
 			$account  = new Account();
@@ -655,7 +652,6 @@ error_log("Inside payPalAddSeller - if !row");
 			));
 			$account_id =  $memreas_paypal_tables->getAccountTable()->saveAccount($account);
 		} else {
-error_log("Inside payPalAddSeller - if !row else Account Exists");
 			$account_id = $row->account_id;
 			//Return a success message:
 			$result = array (
