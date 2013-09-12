@@ -35,18 +35,16 @@ var payPalAddSeller_url = '/index/payPalAddSeller';
 /////////////////////
 jQuery.paypalAddSeller = function () {
 
-alert("Inside jQuery.paypalAddSeller...");
-
 	var obj = new Object();
-	obj.user_name = $("#user_name").val();
-	obj.paypal_email_address = $("#paypal_email_address").val();
-	obj.first_name = $("#first_name").val();
-	obj.last_name = $("#last_name").val();
-	obj.address_line_1 = $("#address_line_1").val();
-	obj.address_line_2 = $("#address_line_2").val();
-	obj.city = $("#city").val();
-	obj.state = $("#state").val();
-	obj.zip_code = $("#zip_code").val();
+	obj.user_name = $("#add_seller_user_name").val();
+	obj.paypal_email_address = $("#add_seller_paypal_email_address").val();
+	obj.first_name = $("#add_seller_first_name").val();
+	obj.last_name = $("#add_seller_last_name").val();
+	obj.address_line_1 = $("#add_seller_address_line_1").val();
+	obj.address_line_2 = $("#add_seller_address_line_2").val();
+	obj.city = $("#add_seller_city").val();
+	obj.state = $("#add_seller_state").val();
+	obj.zip_code = $("#add_seller_zip_code").val();
     var json_paypalAddSeller = JSON.stringify(obj);
     var data = "";
     

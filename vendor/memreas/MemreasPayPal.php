@@ -246,7 +246,7 @@ class MemreasPayPal {
 		$now = date('Y-m-d H:i:s');
 		$endingAccountBalance = new AccountBalances();
 		$endingAccountBalance->exchangeArray(array(
-			'account_id' => $account_id,
+			'account_id' => $seller_account_id,
 			'transaction_id' => $transaction_id, 
 			'transaction_type' => "increment_value_to_account", 
 			'starting_balance' => $starting_balance, 
@@ -258,18 +258,16 @@ class MemreasPayPal {
 
 		//Update the account table
 		$now = date('Y-m-d H:i:s');
-		$account = $memreas_paypal_tables->getAccountTable()->getAccount($account_id);
+		$account = $memreas_paypal_tables->getAccountTable()->getAccount($seller_account_id);
 		$account->exchangeArray(array(
 			'balance' => $ending_balance, 
 			'update_time' => $now, 
 			));
 		$account_id = $memreas_paypal_tables->getAccountTable()->saveAccount($account);
 
-
-
-		//////////////////////////
+		//////////////////////////////////
 		//Fetch the memreas_master Account
-		//////////////////////////
+		//////////////////////////////////
 		$memreas_master_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($memreas_master);
 		$memreas_master_user_id = $memreas_master_user->user_id;
 		$memreas_master_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($memreas_master_user_id);	
@@ -278,7 +276,6 @@ class MemreasPayPal {
 			return $result;
 		}		
 		$memreas_master_account_id = $memreas_master_account->account_id;
-
 		
 		//Increment the memreas_master account by 20% of the purchase
 		//Fetch Account_Balances 
@@ -461,6 +458,15 @@ error_log("memreas_master_account_id ----> $memreas_master_account_id" . PHP_EOL
 			'create_time' => $now,
 			));
 		$transaction_id = $memreas_paypal_tables->getAccountBalancesTable()->saveAccountBalances($endingAccountBalance);
+
+		//Update the account table
+		$now = date('Y-m-d H:i:s');
+		$account = $memreas_paypal_tables->getAccountTable()->getAccount($account_detail->account_id);
+		$account->exchangeArray(array(
+			'balance' => $ending_balance, 
+			'update_time' => $now, 
+			));
+		$account_id = $memreas_paypal_tables->getAccountTable()->saveAccount($account);
 
 		//Return an error message:
 		$result = array (
@@ -729,6 +735,7 @@ error_log("memreas_master_account_id ----> $memreas_master_account_id" . PHP_EOL
 
 	public function payPalAddSeller($message_data, $memreas_paypal_tables, $service_locator) 
 	{
+error_log(json_encode($message_data));
 		//Fetch Session
 		$this->fetchSession();
 		//Get memreas user name
