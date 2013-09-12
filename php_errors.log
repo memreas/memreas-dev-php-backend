@@ -1306,3 +1306,22 @@ Connection: keep-alive
 [11-Sep-2013 23:31:38 America/New_York] {"user_name":"jmeah2","paypal_email_address":"jmeah_seller@memreas.com","first_name":"John","last_name":"Meah","address_line_1":"125 Bowery Street","address_line_2":"Suite 814","city":"New York","state":"NY","zip_code":"10018"}
 [11-Sep-2013 23:32:11 America/New_York] Inside index/payPalAddSeller
 [11-Sep-2013 23:32:11 America/New_York] {"user_name":"jmeah3","paypal_email_address":"jmeah_seller@memreas.com","first_name":"John","last_name":"Meah","address_line_1":"446 East Meadow Ave.","address_line_2":"Suite 814","city":"East Meadow","state":"NY","zip_code":"11554"}
+[11-Sep-2013 23:48:27 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 729
+[11-Sep-2013 23:48:31 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 729
+[11-Sep-2013 23:52:50 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:52:53 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:52:53 America/New_York] {"user_name":"jmeah2","paypal_email_address":"jmeah_seller@memreas.com","first_name":"John","last_name":"Meah","address_line_1":"125 Bowery Street","address_line_2":"Suite 814","city":"New York","state":"NY","zip_code":"10018"}
+[11-Sep-2013 23:53:19 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:53:19 America/New_York] {"user_name":"jmeah3","paypal_email_address":"jmeah_seller@memreas.com","first_name":"John","last_name":"Meah","address_line_1":"446 East Meadow Ave.","address_line_2":"Suite 814","city":"East Meadow","state":"NY","zip_code":"11554"}
+[11-Sep-2013 23:57:42 America/New_York] account_id ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 23:57:42 America/New_York] seller_account_id ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 23:57:42 America/New_York] memreas_master_account_id ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 23:57:59 America/New_York] account_id ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 23:57:59 America/New_York] seller_account_id ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 23:57:59 America/New_York] memreas_master_account_id ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
