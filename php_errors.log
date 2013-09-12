@@ -1272,3 +1272,37 @@ Connection: keep-alive
 [11-Sep-2013 20:20:11 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 723
 [11-Sep-2013 20:20:59 America/New_York] Inside index/payPalAddSeller
 [11-Sep-2013 20:21:06 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 20:29:21 America/New_York] account_id ----> 378fe1ca-1b41-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 20:29:21 America/New_York] seller_account_id ----> 3343d6f8-1b41-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 20:29:21 America/New_York] memreas_master_account_id ----> 378fe1ca-1b41-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 20:38:28 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 729
+[11-Sep-2013 20:38:31 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 729
+[11-Sep-2013 20:44:11 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 20:44:46 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 20:56:33 America/New_York] Inside indexAction....
+[11-Sep-2013 20:56:38 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 729
+[11-Sep-2013 20:56:46 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 729
+[11-Sep-2013 20:56:57 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 20:56:57 America/New_York] PHP Notice:  Undefined index: add_seller_user_name in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 741
+[11-Sep-2013 20:56:57 America/New_York] PHP Notice:  Undefined variable: id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/module/Admin/src/Admin/Model/UserTable.php on line 81
+[11-Sep-2013 23:12:30 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:12:30 America/New_York] PHP Notice:  Undefined index: add_seller_user_name in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 741
+[11-Sep-2013 23:12:30 America/New_York] PHP Notice:  Undefined variable: id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/module/Admin/src/Admin/Model/UserTable.php on line 81
+[11-Sep-2013 23:24:26 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:24:26 America/New_York] PHP Notice:  Undefined index: add_seller_user_name in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 741
+[11-Sep-2013 23:27:52 America/New_York] Inside indexAction....
+[11-Sep-2013 23:27:57 America/New_York] Inside indexAction....
+[11-Sep-2013 23:27:59 America/New_York] Inside indexAction....
+[11-Sep-2013 23:28:00 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:28:52 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:28:52 America/New_York] {"user_name":"jmeah2","paypal_email_address":"jmeah_seller@memreas.com","first_name":"John","last_name":"Meah","address_line_1":"125 Bowery Street","address_line_2":"Suite 814","city":"New York","state":"NY","zip_code":"10018"}
+[11-Sep-2013 23:28:52 America/New_York] PHP Notice:  Undefined index: add_seller_user_name in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 742
+[11-Sep-2013 23:29:13 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:29:18 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:31:38 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:31:38 America/New_York] {"user_name":"jmeah2","paypal_email_address":"jmeah_seller@memreas.com","first_name":"John","last_name":"Meah","address_line_1":"125 Bowery Street","address_line_2":"Suite 814","city":"New York","state":"NY","zip_code":"10018"}
+[11-Sep-2013 23:32:11 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 23:32:11 America/New_York] {"user_name":"jmeah3","paypal_email_address":"jmeah_seller@memreas.com","first_name":"John","last_name":"Meah","address_line_1":"446 East Meadow Ave.","address_line_2":"Suite 814","city":"East Meadow","state":"NY","zip_code":"11554"}

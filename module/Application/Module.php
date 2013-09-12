@@ -46,9 +46,9 @@ use Application\Model\PaymentMethod;
 use Application\Model\PaymentMethodTable;
 use Application\Model\TranscodeTransaction;
 use Application\Model\TranscodeTransactionTable;
-use Admin\Model\User;
-use Admin\Model\UserTable;
-use Admin\Model;
+use Application\Model\User;
+use Application\Model\UserTable;
+use Application\Model;
 
 //PayPal Modules
 class Module
@@ -142,8 +142,8 @@ class Module
         		    	        Container::setDefaultManager($sessionManager);
 			                    return $sessionManager;
     	    		        },
-			                'Admin\Model\MyAuthStorage' => function($sm) {
-			                    return new \Admin\Model\MyAuthStorage('eventapp');
+			                'Application\Model\MyAuthStorage' => function($sm) {
+			                    return new \Application\Model\MyAuthStorage('eventapp');
 			                },
 			                'AuthService' => function($sm) {
 		    	                //My assumption, you've alredy set dbAdapter
@@ -155,7 +155,7 @@ class Module
 
 			                    $authService = new AuthenticationService();
 			                    $authService->setAdapter($dbTableAuthAdapter);
-			                    $authService->setStorage($sm->get('Admin\Model\MyAuthStorage'));
+			                    $authService->setStorage($sm->get('Application\Model\MyAuthStorage'));
 	            		        return $authService;
 			                },							  
 
@@ -174,7 +174,7 @@ class Module
 			                    $resultSetPrototype->setArrayObjectPrototype(new User());
 			                    return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
 			                },
-			                'Admin\Model\MediaTable' => function($sm) {
+			                'Application\Model\MediaTable' => function($sm) {
 			                    $tableGateway = $sm->get('MediaTableGateway');
 			                    $table = new Model\MediaTable($tableGateway);
 			                    return $table;
@@ -185,7 +185,7 @@ class Module
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\Media());
 			                    return new TableGateway('media', $dbAdapter, null, $resultSetPrototype);
 			                },
-			                'Admin\Model\EventTable' => function($sm) {
+			                'Application\Model\EventTable' => function($sm) {
 			                    $tableGateway = $sm->get('EventTableGateway');
 			                    $table = new Model\EventTable($tableGateway);
 			                    return $table;
@@ -196,7 +196,7 @@ class Module
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\Event());
 			                    return new TableGateway('event', $dbAdapter, null, $resultSetPrototype);
 			                },
-			                'Admin\Model\EventMediaTable' => function($sm) {
+			                'Application\Model\EventMediaTable' => function($sm) {
 			                    $tableGateway = $sm->get('EventMediaTableGateway');
 			                    $table = new Model\EventMediaTable($tableGateway);
 			                    return $table;
@@ -213,7 +213,7 @@ class Module
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\Event());
 			                    return new TableGateway('event', $dbAdapter, null, $resultSetPrototype);
 			                },
-			                'Admin\Model\FriendMediaTable' => function($sm) {
+			                'Application\Model\FriendMediaTable' => function($sm) {
 			                    $tableGateway = $sm->get('FriendMediaTableGateway');
 			                    $table = new Model\FriendMediaTable($tableGateway);
 			                    return $table;
