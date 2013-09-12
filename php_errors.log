@@ -1258,3 +1258,17 @@ Connection: keep-alive
 [10-Sep-2013 23:46:07 America/New_York] Inside payPalAccountHistory...
 [10-Sep-2013 23:46:13 America/New_York] Inside payPalAccountHistory...
 [10-Sep-2013 23:46:25 America/New_York] Inside payPalAccountHistory...
+[11-Sep-2013 14:40:26 America/New_York] Inside indexAction....
+[11-Sep-2013 14:40:30 America/New_York] account_id ----> c0d721ae-1a8e-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 14:40:30 America/New_York] seller_account_id ----> 48b34280-1a8d-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 14:40:30 America/New_York] memreas_master_account_id ----> c0d721ae-1a8e-11e3-b5ed-5081956b566e
+
+[11-Sep-2013 18:21:30 America/New_York] Inside payPalAccountHistory...
+[11-Sep-2013 20:19:55 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 723
+[11-Sep-2013 20:19:59 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 723
+[11-Sep-2013 20:20:03 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 723
+[11-Sep-2013 20:20:11 America/New_York] PHP Notice:  Undefined variable: account_balances_id in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 723
+[11-Sep-2013 20:20:59 America/New_York] Inside index/payPalAddSeller
+[11-Sep-2013 20:21:06 America/New_York] Inside index/payPalAddSeller

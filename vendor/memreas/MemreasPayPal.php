@@ -131,13 +131,14 @@ class MemreasPayPal {
 	{
 		//Fetch Session
 		$this->fetchSession();
-error_log(json_encode($message_data));
 		//Get the data from the form
 		$seller = $message_data['seller'];
-		$memreas = $message_data['memreas'];
+		$memreas_master = $message_data['memreas_master'];
 		$amount = $message_data['amount'];
 
+		//////////////////////////
 		//Fetch the Buyer Account
+		//////////////////////////
 		$account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($this->user_id);	
 		if (!$account) {
 			$result = array ( "Status"=>"Error", "Description"=>"Could not find account", );
@@ -145,40 +146,7 @@ error_log(json_encode($message_data));
 		}		
 		$account_id = $account->account_id;
 		
-		//Fetch the Seller Account
-		$seller_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($seller);
-		$seller_user_id = $seller_user->user_id;
-		$seller_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($seller_user_id);	
-		if (!$seller_account) {
-			$result = array ( "Status"=>"Error", "Description"=>"Could not find seller account", );
-			return $result;
-		}		
-		$seller_account_id = $seller_account->account_id;
-		
-		//Fetch the Seller Account
-		$seller_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($seller);
-		$seller_user_id = $seller_user->user_id;
-		$seller_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($seller_user_id);	
-		if (!$seller_account) {
-			$result = array ( "Status"=>"Error", "Description"=>"Could not find seller account", );
-			return $result;
-		}		
-		$seller_account_id = $seller_account->account_id;
-
-		//Fetch the memreas Account
-		$memreas_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($memreas);
-		$memreas_user_id = $memreas_user->user_id;
-		$memreas_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($memreas_user_id);	
-		if (!$memreas_account) {
-			$result = array ( "Status"=>"Error", "Description"=>"Could not find memreas account", );
-			return $result;
-		}		
-		$memreas_account_id = $memreas_account->account_id;
-
-error_log("account_id ----> $account_id" . PHP_EOL);
-error_log("seller_account_id ----> $seller_account_id" . PHP_EOL);
-error_log("memreas_account ----> $memreas_account" . PHP_EOL);
-
+		//Decrement the user's account
 		//Fetch Account_Balances 
 		$currentAccountBalance = $memreas_paypal_tables->getAccountBalancesTable()->getAccountBalances($account_id);
 		//If no acount found set the starting balance to zero else use the ending balance.
@@ -229,6 +197,148 @@ error_log("memreas_account ----> $memreas_account" . PHP_EOL);
 			'update_time' => $now, 
 			));
 		$account_id = $memreas_paypal_tables->getAccountTable()->saveAccount($account);
+		
+		//////////////////////////
+		//Fetch the Seller Account
+		//////////////////////////
+		$seller_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($seller);
+		$seller_user_id = $seller_user->user_id;
+		$seller_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($seller_user_id);	
+		if (!$seller_account) {
+			$result = array ( "Status"=>"Error", "Description"=>"Could not find seller account", );
+			return $result;
+		}		
+		$seller_account_id = $seller_account->account_id;
+		
+		//Increment the seller's account by 80% of the purchase
+		//Fetch Account_Balances 
+		$currentAccountBalance = $memreas_paypal_tables->getAccountBalancesTable()->getAccountBalances($seller_account_id);
+		//If no acount found set the starting balance to zero else use the ending balance.
+		if (!isset($currentAccountBalance)) {
+			$result = array ( "Status"=>"Error", "Description"=>"Could not find account_balances", );
+			return $result;
+		}		
+
+		//Log the transaction
+		$now = date('Y-m-d H:i:s');
+		$memreas_transaction  = new Memreas_Transaction;
+		$seller_amount = $amount * 0.8;
+		$memreas_master_amount = $amount - $seller_amount;
+		
+		$memreas_transaction->exchangeArray(array(
+				'account_id'=>$seller_account_id,
+				'transaction_type' =>'increment_value_to_account',
+				'pass_fail' => 1,
+				'amount' => $seller_amount,
+				'currency' => 'USD',
+				'transaction_request' => "N/a",
+				'transaction_sent' =>$now,
+				'transaction_response' => "N/a",
+				'transaction_receive' =>$now,	
+		));
+		$transaction_id = $memreas_paypal_tables->getTransactionTable()->saveTransaction($memreas_transaction);
+
+		//Increment the account		
+		$starting_balance = $currentAccountBalance->ending_balance;
+		$ending_balance = $starting_balance + $seller_amount;
+
+		//Insert the new account balance
+		$now = date('Y-m-d H:i:s');
+		$endingAccountBalance = new AccountBalances();
+		$endingAccountBalance->exchangeArray(array(
+			'account_id' => $account_id,
+			'transaction_id' => $transaction_id, 
+			'transaction_type' => "increment_value_to_account", 
+			'starting_balance' => $starting_balance, 
+			'amount' => "$seller_amount", 
+			'ending_balance' => $ending_balance, 
+			'create_time' => $now,
+			));
+		$transaction_id = $memreas_paypal_tables->getAccountBalancesTable()->saveAccountBalances($endingAccountBalance);
+
+		//Update the account table
+		$now = date('Y-m-d H:i:s');
+		$account = $memreas_paypal_tables->getAccountTable()->getAccount($account_id);
+		$account->exchangeArray(array(
+			'balance' => $ending_balance, 
+			'update_time' => $now, 
+			));
+		$account_id = $memreas_paypal_tables->getAccountTable()->saveAccount($account);
+
+
+
+		//////////////////////////
+		//Fetch the memreas_master Account
+		//////////////////////////
+		$memreas_master_user = $memreas_paypal_tables->getUserTable()->getUserByUsername($memreas_master);
+		$memreas_master_user_id = $memreas_master_user->user_id;
+		$memreas_master_account = $memreas_paypal_tables->getAccountTable()->getAccountByUserId($memreas_master_user_id);	
+		if (!$memreas_master_account) {
+			$result = array ( "Status"=>"Error", "Description"=>"Could not find memreas_master account", );
+			return $result;
+		}		
+		$memreas_master_account_id = $memreas_master_account->account_id;
+
+		
+		//Increment the memreas_master account by 20% of the purchase
+		//Fetch Account_Balances 
+		$currentAccountBalance = $memreas_paypal_tables->getAccountBalancesTable()->getAccountBalances($memreas_master_account_id);
+		//If no acount found set the starting balance to zero else use the ending balance.
+		if (!isset($currentAccountBalance)) {
+			$result = array ( "Status"=>"Error", "Description"=>"Could not find account_balances", );
+			return $result;
+		}		
+
+		//Log the transaction
+		$now = date('Y-m-d H:i:s');
+		$memreas_transaction  = new Memreas_Transaction;
+		
+		$memreas_transaction->exchangeArray(array(
+				'account_id'=>$memreas_master_account_id,
+				'transaction_type' =>'increment_value_to_account',
+				'pass_fail' => 1,
+				'amount' => $memreas_master_amount,
+				'currency' => 'USD',
+				'transaction_request' => "N/a",
+				'transaction_sent' =>$now,
+				'transaction_response' => "N/a",
+				'transaction_receive' =>$now,	
+		));
+		$transaction_id = $memreas_paypal_tables->getTransactionTable()->saveTransaction($memreas_transaction);
+
+		//Increment the account		
+		$starting_balance = $currentAccountBalance->ending_balance;
+		$ending_balance = $starting_balance + $memreas_master_amount;
+
+		//Insert the new account balance
+		$now = date('Y-m-d H:i:s');
+		$endingAccountBalance = new AccountBalances();
+		$endingAccountBalance->exchangeArray(array(
+			'account_id' => $memreas_master_account_id,
+			'transaction_id' => $transaction_id, 
+			'transaction_type' => "increment_value_to_account", 
+			'starting_balance' => $starting_balance, 
+			'amount' => "$memreas_master_amount", 
+			'ending_balance' => $ending_balance, 
+			'create_time' => $now,
+			));
+		$transaction_id = $memreas_paypal_tables->getAccountBalancesTable()->saveAccountBalances($endingAccountBalance);
+
+		//Update the account table
+		$now = date('Y-m-d H:i:s');
+		$account = $memreas_paypal_tables->getAccountTable()->getAccount($memreas_master_account_id);
+		$account->exchangeArray(array(
+			'balance' => $ending_balance, 
+			'update_time' => $now, 
+			));
+		$account_id = $memreas_paypal_tables->getAccountTable()->saveAccount($account);
+
+
+error_log("account_id ----> $account_id" . PHP_EOL);
+error_log("seller_account_id ----> $seller_account_id" . PHP_EOL);
+error_log("memreas_master_account_id ----> $memreas_master_account_id" . PHP_EOL);
+
+		
 
 		//Return an error message:
 		$result = array (
