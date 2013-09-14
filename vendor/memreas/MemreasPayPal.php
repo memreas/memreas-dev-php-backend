@@ -1,4 +1,8 @@
 <?php
+/////////////////////////////////
+// Author: John Meah
+// Copyright memreas llc 2013
+/////////////////////////////////
 namespace memreas;
 
 use Zend\Session\Container;
@@ -17,6 +21,16 @@ use PayPal\Rest\ApiContext;
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Core\PPConfigManager;
 use PayPal\Exception\PPConnectionException;
+
+use PayPal\CoreComponentTypes\BasicAmountType;
+use PayPal\PayPalAPI\MassPayReq;
+use PayPal\PayPalAPI\MassPayRequestItemType;
+use PayPal\PayPalAPI\MassPayRequestType;
+use PayPal\Service\PayPalAPIInterfaceServiceService;
+use PayPal\Auth\PPSignatureCredential;
+use PayPal\Auth\PPTokenAuthorization;
+
+
 define('PP_CONFIG_PATH', dirname(__FILE__) . "/config/");
 
 //memreas models
@@ -704,21 +718,6 @@ error_log("memreas_master_account_id ----> $memreas_master_account_id" . PHP_EOL
 		));
 		$payment_method_id =  $memreas_paypal_tables->getPaymentMethodTable()->savePaymentMethod($payment_method);
 
-
-/*
-		//Insert account balances as needed
-		$account_balances  = new AccountBalances();
-		$account_balances->exchangeArray(array(
-			'account_id' => $account_id, 
-			'transaction_id' => $transaction_id, 
-			'transaction_type' => 'store_card', 
-			'starting_balance' => 0, 
-			'amount' => 0, 
-			'ending_balance' => 0, 
-			'create_time' => $now
-		));
-		$account_balances_id =  $memreas_paypal_tables->getAccountBalancesTable()->saveAccountBalances($account_balances);
-*/
 		//Return a success message:
 		$result = array (
 			"Status"=>"Success",
@@ -735,7 +734,6 @@ error_log("memreas_master_account_id ----> $memreas_master_account_id" . PHP_EOL
 
 	public function payPalAddSeller($message_data, $memreas_paypal_tables, $service_locator) 
 	{
-error_log(json_encode($message_data));
 		//Fetch Session
 		$this->fetchSession();
 		//Get memreas user name
@@ -829,6 +827,95 @@ error_log(json_encode($message_data));
 			"account_balances_id"=>$account_balances_id,
 		);
 			
+		return $result;
+	}
+
+	public function payPalListMassPayee($message_data, $memreas_paypal_tables, $service_locator) 
+	{
+
+		//Fetch Session
+		//$this->fetchSession();
+
+		//Fetch the list of seller's due payment
+		$rowset = $memreas_paypal_tables->getAccountTable()->listMassPayee();	
+
+		$account_mass_payees = array();
+		$rowCount = count($rowset);
+		foreach ($rowset as $row) {
+				$account_mass_payee = array();
+				$account_mass_payee['account_id'] = $row->account_id;
+				$account_mass_payee['user_id'] = $row->user_id;
+				$account_mass_payee['account_type'] = $row->account_type;
+				$account_mass_payee['balance'] = $row->balance;
+				$account_mass_payees[] = $account_mass_payee;
+		}
+
+		$str="";
+		$status="Error";
+		if ($rowCount > 0) {
+			$str = "found $rowCount rows";
+			$status = "Success";
+
+			//Return a success message:
+			$result = array (
+				"Status"=>$status,
+				"NumRows"=>"$str",
+				"accounts"=>$account_mass_payees,
+				);
+		} else {
+			$str = 'no rows matched the query';
+			//Return an error message:
+			$result = array (
+				"Status"=>"Error",
+				"Description"=>$str
+				);
+		}		
+		return $result;
+	}
+
+	public function paypalPayoutMassPayees($message_data, $memreas_paypal_tables, $service_locator) 
+	{
+error_log("Inside paypalPayoutMassPayees..." . PHP_EOL);		
+
+		//Fetch PayPal credential
+		$credential = $this->fetchPayPalCredential($service_locator);
+		//Setup an api context for the card
+		$api_context = new ApiContext($credential);
+
+		//setup the mass pay
+		$massPayRequest = new MassPayRequestType();
+		$massPayRequest->MassPayItem = array();
+
+error_log("MassPayReq class found..." . PHP_EOL);		
+		/*		
+		//Delete the card at PayPal and update the database
+		$arr = array();
+		foreach($message_data as $card) {
+			$creditCard = CreditCard::get($card, $api_context);
+			try {
+				$creditCard->delete($api_context);
+				$arr[] = "$card";
+				//$row = $memreas_paypal_tables->getPaymentMethodTable()->getPaymentMethodByPayPalReferenceId($card);	
+				//Delete Payment Method Table
+				$memreas_paypal_tables->getPaymentMethodTable()->deletePaymentMethodByPayPalCardReferenceId($card);
+				//Delete Account Detail Table (associated billing address)
+				$memreas_paypal_tables->getAccountDetailTable()->deleteAccountDetailByPayPalCardReferenceId($card);
+			} catch (\PPConnectionException $ex) {
+	  			$result = array (
+					"Status"=>"Error",
+					"Description"=>$ex->getMessage()
+				);
+			  return $result;
+			}		
+		}
+		*/		
+
+		$result = array (
+			"Status"=>"Success",
+			"Description"=>"Payouts Data",
+			"Payouts"=>$payouts,
+			);
+
 		return $result;
 	}
 

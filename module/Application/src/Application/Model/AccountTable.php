@@ -16,6 +16,16 @@ class AccountTable {
 		return $resultSet;
 	}
 	
+	public function listMassPayee() {
+	
+		$rowset = $this->tableGateway->select ( array ('account_type' => 'seller' ) );
+		//$rowset = $this->tableGateway->select->where('account_type = "seller" and balance > 0');
+		if (! $rowset) {
+			return null;
+		}
+		return $rowset;
+	}
+	
 	public function getAccountByUserId($user_id) {
 		$rowset = $this->tableGateway->select ( array ('user_id' => $user_id ) );
 		$row = $rowset->current ();

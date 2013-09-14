@@ -1,4 +1,9 @@
 <?php 
+/////////////////////////////////
+// Author: John Meah
+// Copyright memreas llc 2013
+/////////////////////////////////
+
 use Guzzle\Http\Client;
 use Zend\Session\Container;
 
@@ -25,11 +30,16 @@ if (isset($this->json)) {
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
   
 <!--jQuery Lybrary-->
+<!--
 <script src="/memreas/js/jquery.js"></script>
+-->
+<!-- JQuery -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="/memreas/js/modernizr.custom.17475.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <!--Bootstrap jQuery-->
 <script src="/memreas/js/bootstrap.min.js"></script>
+
 <!--memreas paypal-->
 <script src="/memreas/js/paypal.js"></script>
 <!-- Fetch the user_id -->
@@ -97,6 +107,23 @@ var user_id = "<?php echo $user_id; ?>";
     });
     function onBtn3CallClicked() {
         jQuery.paypalAddSeller();
+    }
+
+	//List MassPayees
+    $(document).ready(function () {
+        $("#btnOK7").click(onBtn7CallClicked);
+    });
+    function onBtn7CallClicked() {
+        jQuery.paypalListMassPayees('#mass_pay_results', '#mass_pay_list');
+    }
+
+	//Payout MassPayees
+    $(document).ready(function () {
+        $("#btnPayOut7").click(onBtnPayOut7CallClicked);
+    });
+    function onBtnPayOut7CallClicked() {
+alert("Inside onBtnPayOut7CallClicked...");
+        jQuery.paypalPayoutMassPayees('#mass_pay_results', '#mass_pay_list');
     }
 
     $(function() {
@@ -531,8 +558,28 @@ var user_id = "<?php echo $user_id; ?>";
 	</table>
   	</div>  </div>
   <div id="tabs-7">
-    <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>
-    <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+	<form id="mass_pay_form" name=list_delete_cards_form" action="/index/payPalListMassPayee">
+		<table>
+			<div id="mass_pay_list">
+			</div>
+			<tr>
+				<td>
+				<td><input id="btnOK7" type="button" name="btnOK7" value="list mass payees">
+				<td>
+				<td><input id="btnPayOut7" type="button" name="btnPayOut7" value="payout">
+			</tr>
+		</table>
+		
+	<div id="mass_pay_form_results">
+	<table>
+		<tr>
+			<td>Results:
+		</tr>
+		<tr>
+			<td><textarea id="mass_pay_results" name="mass_pay_results" rows="10" cols="120">Result will be shown here.</textarea>
+		</tr>
+	</table>
+  	</div>
   </div>
   <div id="tabs-8">
     <p>Mauris eleifend est et turpis. Duis id erat. Suspendisse potenti. Aliquam vulputate, pede vel vehicula accumsan, mi neque rutrum erat, eu congue orci lorem eget lorem. Vestibulum non ante. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Fusce sodales. Quisque eu urna vel enim commodo pellentesque. Praesent eu risus hendrerit ligula tempus pretium. Curabitur lorem enim, pretium nec, feugiat nec, luctus a, lacus.</p>

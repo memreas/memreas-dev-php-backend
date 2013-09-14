@@ -1325,3 +1325,305 @@ Connection: keep-alive
 
 [11-Sep-2013 23:57:59 America/New_York] memreas_master_account_id ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
 
+[12-Sep-2013 00:06:19 America/New_York] Inside payPalAccountHistory...
+[12-Sep-2013 00:06:39 America/New_York] Inside payPalAccountHistory...
+[12-Sep-2013 00:06:45 America/New_York] Inside payPalAccountHistory...
+[12-Sep-2013 13:16:13 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 01:29:20 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 14:59:49 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:15:34 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:16:23 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:16:42 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:17:31 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:18:31 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:20:25 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:26:27 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:28:37 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:34:35 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 15:55:29 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:01:19 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:05:02 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:07:13 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:07:45 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:07:58 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:10:36 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:12:22 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:13:05 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:13:41 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:13:46 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:25:08 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:26:11 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:26:17 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:26:17 America/New_York] PHP Fatal error:  Cannot use object of type Application\Model\Account as array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 851
+[13-Sep-2013 16:28:17 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:28:21 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:28:21 America/New_York] PHP Fatal error:  Cannot use object of type Application\Model\Account as array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 835
+[13-Sep-2013 16:29:34 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:29:34 America/New_York] PHP Fatal error:  Cannot use object of type Application\Model\Account as array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 835
+[13-Sep-2013 16:31:20 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:31:24 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:31:24 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.40
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:31:24 America/New_York] PHP Fatal error:  Cannot use object of type Application\Model\Account as array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 837
+[13-Sep-2013 16:33:24 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:33:24 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.40
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:33:24 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.10
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:33:24 America/New_York] PHP Notice:  Undefined variable: rowCount in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 847
+[13-Sep-2013 16:34:19 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:34:23 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:34:23 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.40
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:34:23 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.10
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:41:57 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:42:01 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:42:01 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.40
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:42:01 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.10
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:46:51 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:46:56 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:46:56 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.40
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:46:56 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.10
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:47:51 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 16:47:54 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 16:47:54 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.40
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 16:47:54 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.10
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-11 23:57:59
+)
+
+[13-Sep-2013 17:02:31 America/New_York] account_id ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[13-Sep-2013 17:02:31 America/New_York] seller_account_id ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[13-Sep-2013 17:02:31 America/New_York] memreas_master_account_id ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[13-Sep-2013 17:02:38 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 17:02:38 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.60
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[13-Sep-2013 17:02:38 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.15
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[13-Sep-2013 17:02:52 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 17:02:57 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 17:02:57 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.60
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[13-Sep-2013 17:02:57 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.15
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[13-Sep-2013 17:03:33 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 17:03:33 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.60
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[13-Sep-2013 17:03:33 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.15
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[13-Sep-2013 17:03:36 America/New_York] Inside index/payPalAddSeller
+[13-Sep-2013 17:03:42 America/New_York] Inside index/payPalListMassPayee
+[13-Sep-2013 17:03:42 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.60
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[13-Sep-2013 17:03:42 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.15
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[14-Sep-2013 00:50:36 America/New_York] Inside index/payPalAddSeller
+[14-Sep-2013 00:50:38 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.60
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[14-Sep-2013 00:50:38 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.15
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[14-Sep-2013 01:17:01 America/New_York] Inside index/payPalAddSeller
+[14-Sep-2013 01:17:02 America/New_York] Application\Model\Account Object
+(
+    [account_id] => ccf25a96-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.60
+    [create_time] => 2013-09-11 23:52:53
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[14-Sep-2013 01:17:02 America/New_York] Application\Model\Account Object
+(
+    [account_id] => dd01b026-1b5e-11e3-b5ed-5081956b566e
+    [user_id] => 61d6feae-c962-11e2-9598-68c4a0d139a6
+    [account_type] => seller
+    [balance] => 0.15
+    [create_time] => 2013-09-11 23:53:19
+    [update_time] => 2013-09-13 17:02:31
+)
+
+[14-Sep-2013 01:30:17 America/New_York] Inside index/payPalAddSeller
+[14-Sep-2013 01:31:49 America/New_York] Inside index/payPalAddSeller
+[14-Sep-2013 01:33:35 America/New_York] Inside index/payPalAddSeller
+[14-Sep-2013 01:35:15 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[14-Sep-2013 01:35:15 America/New_York] Inside paypalPayoutMassPayees...
+
+[14-Sep-2013 01:35:15 America/New_York] MassPayReq class found...
+
+[14-Sep-2013 01:35:15 America/New_York] PHP Notice:  Undefined variable: payouts in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 916
