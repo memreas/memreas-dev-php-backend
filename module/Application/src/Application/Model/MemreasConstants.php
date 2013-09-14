@@ -1,4 +1,9 @@
 <?php  
+/////////////////////////////////
+// Author: John Meah
+// Copyright memreas llc 2013
+/////////////////////////////////
+
 namespace Application\Model;
 class MemreasConstants {
         const MEMREASDB     = 'memreasdevdb';

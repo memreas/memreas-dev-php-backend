@@ -11,6 +11,8 @@ var payPalAddValue_url = '/index/payPalAddValue';
 var payPalDecrementValue_url = '/index/payPalDecrementValue';
 var payPalAccountHistory_url = '/index/payPalAccountHistory';
 var payPalAddSeller_url = '/index/payPalAddSeller';
+var payPalListMassPayee_url = '/index/payPalListMassPayee';
+var paypalPayoutMassPayees_url = '/index/paypalPayoutMassPayees';
 
 //onEmailFocusOut = function () {
 //    if (!isValidEmail($('#inEmail').val())) {
@@ -148,7 +150,6 @@ jQuery.paypalAccountHistory = function (element) {
     '"json": ' + json_paypalAccountHistory  + 
     '}';
 
-alert("About to update " + element);   
 	$(element).val(json_paypalAccountHistory);
 	$.ajax( {
 	  type:'post', 
@@ -402,3 +403,113 @@ jQuery.paypalDeleteCards = function () {
 	});
 	return false;
 }
+
+/////////////////////
+// List Mass Payees
+/////////////////////
+jQuery.paypalListMassPayees = function (element, list) {
+
+	//var element = '#list_delete_cards_results';
+	var obj = new Object();
+	obj.in = "";
+    var json_payPalListMassPayee = JSON.stringify(obj, null, '\t');
+    var data = "";
+    var result = "";
+    
+    //if () {}
+    data = '{"action": "list", ' + 
+    '"type":"jsonp", ' + 
+    '"json": ' + json_payPalListMassPayee  + 
+    '}';
+   
+	$(element).val(json_payPalListMassPayee);
+
+	$.ajax( {
+	  type:'post', 
+	  url: payPalListMassPayee_url,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	var html_str = "";
+	  	var html_button = "";
+	  	$(element).val(req_resp);
+	  	if (json.Status == "Success") {
+	  	
+	  		for (var i=0;i<json.accounts.length;i++)
+			{ 
+				html_str += '<tr>' +
+						'<td><input type="checkbox" id="account_selected_' + i + '" name="account_selected_" value="'+ json.accounts[i].account_id + '">' +
+						//'<td>user_id' +
+						//'<td><input type="text" id="user_id" name="user id" value="'+ json.payment_methods[i].user_id + '">' +
+						'<td>account id:' +
+						'<td><input type="text" id="account_id_' + i + '" name="account_id" value="'+ json.accounts[i].account_id + '">' +
+						'<td>user id:' +
+						'<td><input type="text" id="user_id_' + i + '" name="user_id" value="'+ json.accounts[i].user_id + '">' +
+						'<td>account type:' +
+						'<td><input type="text" id="account_type_' + i + '" name="account_type" value="'+ json.accounts[i].account_type + '">' +
+						'<td>balance:' +
+						'<td><input type="text" id="balance_' + i + '" name="balance" value="'+ json.accounts[i].balance + '">' +
+						'</tr>';
+			}
+			$(list).html(html_str);
+	  	}
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+       	alert(jqXHR.responseText);
+       	alert(jqXHR.status);
+    	//alert(textStatus);
+       	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
+/////////////////////
+// Payout Mass Payees 
+/////////////////////
+jQuery.paypalPayoutMassPayees = function (element, list) {
+alert("Inside jQuery.paypalPayoutMassPayees...");
+	//Fetch the list of cards to delete...
+	var selected = new Array();
+	$("input:checked").each(function() {
+	    selected.push($(this).attr('value'));
+	});	
+	
+	if(selected.length == 0) {
+		alert("No cards checked to delete");
+		return;
+	}
+
+    var json_paypalPayoutMassPayees = JSON.stringify(selected, null, '\t');
+    var data = "";
+    var result = "";
+    
+    data = '{"action": "delete", ' + 
+    '"type":"jsonp", ' + 
+    '"json": ' + json_paypalPayoutMassPayees  + 
+    '}';
+   
+	$(element).val(json_paypalPayoutMassPayees);
+
+	$.ajax( {
+	  type:'post', 
+	  url: paypalPayoutMassPayees_url,
+	  dataType: 'jsonp',
+	  data: 'json=' + data,
+	  success: function(json){
+	  	var req_resp = $(element).val() + "\n\n" + JSON.stringify(json, null, '\t');
+	  	$(element).val(req_resp);
+	  	return true;
+	  },
+	  error: function (jqXHR, textStatus, errorThrown) {
+       	alert(jqXHR.responseText);
+       	alert(jqXHR.status);
+    	//alert(textStatus);
+       	//alert(errorThrown);
+	  }
+	});
+	return false;
+}
+
