@@ -1627,3 +1627,287 @@ Connection: keep-alive
 [14-Sep-2013 01:35:15 America/New_York] MassPayReq class found...
 
 [14-Sep-2013 01:35:15 America/New_York] PHP Notice:  Undefined variable: payouts in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 916
+[14-Sep-2013 01:49:21 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[14-Sep-2013 01:49:21 America/New_York] Inside paypalPayoutMassPayees...
+
+[14-Sep-2013 01:49:21 America/New_York] account_id ---> ccf25a96-1b5e-11e3-b5ed-5081956b566e...
+
+[14-Sep-2013 01:49:21 America/New_York] account_id ---> dd01b026-1b5e-11e3-b5ed-5081956b566e...
+
+[14-Sep-2013 01:49:21 America/New_York] MassPayReq class found...
+
+[14-Sep-2013 01:49:21 America/New_York] PHP Notice:  Undefined variable: payouts in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 912
+[14-Sep-2013 01:50:45 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[14-Sep-2013 01:50:45 America/New_York] Inside paypalPayoutMassPayees...
+
+[14-Sep-2013 01:50:45 America/New_York] account_id ---> ccf25a96-1b5e-11e3-b5ed-5081956b566e...
+
+[14-Sep-2013 01:50:45 America/New_York] account_id ---> dd01b026-1b5e-11e3-b5ed-5081956b566e...
+
+[14-Sep-2013 01:50:45 America/New_York] MassPayReq class found...
+
+[15-Sep-2013 00:35:22 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[15-Sep-2013 00:35:22 America/New_York] Inside paypalPayoutMassPayees...
+
+[15-Sep-2013 00:35:22 America/New_York] account_id ---> ccf25a96-1b5e-11e3-b5ed-5081956b566e...
+
+[15-Sep-2013 00:35:22 America/New_York] account_id ---> dd01b026-1b5e-11e3-b5ed-5081956b566e...
+
+[15-Sep-2013 00:35:22 America/New_York] MassPayReq class found...
+
+[15-Sep-2013 01:26:55 America/New_York] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 899
+[15-Sep-2013 01:26:59 America/New_York] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 899
+[15-Sep-2013 01:27:29 America/New_York] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 899
+[15-Sep-2013 01:28:48 America/New_York] PHP Parse error:  syntax error, unexpected '' (T_ENCAPSED_AND_WHITESPACE), expecting identifier (T_STRING) or variable (T_VARIABLE) or number (T_NUM_STRING) in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 913
+[15-Sep-2013 01:31:39 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[15-Sep-2013 01:31:39 America/New_York] Inside paypalPayoutMassPayees...
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['account_id'] ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['user_id'] ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['balance'] ----> 0.60
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:31:39 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['account_id'] ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['user_id'] ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['balance'] ----> 0.15
+
+[15-Sep-2013 01:31:39 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:31:39 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:31:39 America/New_York] Create object MassPayReq
+
+[15-Sep-2013 01:31:39 America/New_York] Added massPayReq->MassPayRequest = massPayRequest
+
+[15-Sep-2013 01:31:39 America/New_York] PHP Fatal error:  Class 'memreas\Configuration' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 926
+[15-Sep-2013 01:37:07 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[15-Sep-2013 01:37:07 America/New_York] Inside paypalPayoutMassPayees...
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['account_id'] ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['user_id'] ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['balance'] ----> 0.60
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:37:07 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['account_id'] ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['user_id'] ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['balance'] ----> 0.15
+
+[15-Sep-2013 01:37:07 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:37:07 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 01:37:07 America/New_York] Create object MassPayReq
+
+[15-Sep-2013 01:37:07 America/New_York] Added massPayReq->MassPayRequest = massPayRequest
+
+[15-Sep-2013 01:37:07 America/New_York] PHP Warning:  array_merge() [<a href='0function.array-merge0'>function.array-merge0</a>]: Argument #2 is not an array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPConfigManager.php on line 119
+[15-Sep-2013 01:37:07 America/New_York] Fetched paypalService
+
+[15-Sep-2013 01:37:07 America/New_York] PHP Warning:  array_key_exists() expects parameter 2 to be array, null given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPCredentialManager.php on line 55
+[15-Sep-2013 01:37:07 America/New_York] PHP Warning:  Invalid argument supplied for foreach() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPCredentialManager.php on line 61
+[15-Sep-2013 01:37:07 America/New_York] PHP Warning:  Invalid argument supplied for foreach() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPCredentialManager.php on line 71
+[15-Sep-2013 23:52:45 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[15-Sep-2013 23:52:45 America/New_York] Inside paypalPayoutMassPayees...
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['account_id'] ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['user_id'] ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['balance'] ----> 0.60
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 23:52:45 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['account_id'] ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['user_id'] ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['balance'] ----> 0.15
+
+[15-Sep-2013 23:52:45 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 23:52:45 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[15-Sep-2013 23:52:45 America/New_York] Create object MassPayReq
+
+[15-Sep-2013 23:52:45 America/New_York] Added massPayReq->MassPayRequest = massPayRequest
+
+[15-Sep-2013 23:52:45 America/New_York] PHP Warning:  array_merge() [<a href='0function.array-merge0'>function.array-merge0</a>]: Argument #2 is not an array in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPConfigManager.php on line 119
+[15-Sep-2013 23:52:45 America/New_York] Fetched paypalService
+
+[15-Sep-2013 23:52:45 America/New_York] PHP Warning:  array_key_exists() expects parameter 2 to be array, null given in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPCredentialManager.php on line 55
+[15-Sep-2013 23:52:45 America/New_York] PHP Warning:  Invalid argument supplied for foreach() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPCredentialManager.php on line 61
+[15-Sep-2013 23:52:45 America/New_York] PHP Warning:  Invalid argument supplied for foreach() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Core/PPCredentialManager.php on line 71
+[16-Sep-2013 23:04:59 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[16-Sep-2013 23:04:59 America/New_York] Inside paypalPayoutMassPayees...
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['account_id'] ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['user_id'] ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['balance'] ----> 0.60
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:04:59 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['account_id'] ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['user_id'] ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['balance'] ----> 0.15
+
+[16-Sep-2013 23:04:59 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:04:59 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:04:59 America/New_York] Create object MassPayReq
+
+[16-Sep-2013 23:04:59 America/New_York] Added massPayReq->MassPayRequest = massPayRequest
+
+[16-Sep-2013 23:04:59 America/New_York] PHP Fatal error:  Class 'Application\Model\PayPalConfig' not found in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/memreas/MemreasPayPal.php on line 926
+[16-Sep-2013 23:06:15 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[16-Sep-2013 23:06:15 America/New_York] Inside paypalPayoutMassPayees...
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['account_id'] ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['user_id'] ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['balance'] ----> 0.60
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:06:15 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['account_id'] ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['user_id'] ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['balance'] ----> 0.15
+
+[16-Sep-2013 23:06:15 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:06:15 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:06:15 America/New_York] Create object MassPayReq
+
+[16-Sep-2013 23:06:15 America/New_York] Added massPayReq->MassPayRequest = massPayRequest
+
+[16-Sep-2013 23:06:15 America/New_York] Fetched paypalService
+
+[16-Sep-2013 23:06:15 America/New_York] PHP Fatal error:  Call to undefined method PayPal\Auth\OAuthTokenCredential::getThirdPartyAuthorization() in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/vendor/paypal/sdk-core-php/lib/PayPal/Handler/PPAuthenticationHandler.php on line 18
+[16-Sep-2013 23:10:33 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[16-Sep-2013 23:10:33 America/New_York] Inside paypalPayoutMassPayees...
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['account_id'] ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['user_id'] ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['balance'] ----> 0.60
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:10:33 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['account_id'] ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['user_id'] ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['balance'] ----> 0.15
+
+[16-Sep-2013 23:10:33 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:10:33 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:10:33 America/New_York] Create object MassPayReq
+
+[16-Sep-2013 23:10:33 America/New_York] Added massPayReq->MassPayRequest = massPayRequest
+
+[16-Sep-2013 23:10:33 America/New_York] Fetched paypalService
+
+[16-Sep-2013 23:10:35 America/New_York] Sent mass payment ... check response
+
+[16-Sep-2013 23:12:20 America/New_York] Inside paypalPayoutMassPayeesAction...
+
+[16-Sep-2013 23:12:20 America/New_York] Inside paypalPayoutMassPayees...
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['account_id'] ----> ccf25a96-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['user_id'] ----> 5ef2657e-c95e-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['balance'] ----> 0.60
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:12:20 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['account_id'] ----> dd01b026-1b5e-11e3-b5ed-5081956b566e
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['user_id'] ----> 61d6feae-c962-11e2-9598-68c4a0d139a6
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['account_type'] ----> seller
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['balance'] ----> 0.15
+
+[16-Sep-2013 23:12:20 America/New_York] account_mass_payee['paypal_email_address'] ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:12:20 America/New_York] massPayItem added for ----> jmeah_seller@memreas.com
+
+[16-Sep-2013 23:12:20 America/New_York] Create object MassPayReq
+
+[16-Sep-2013 23:12:20 America/New_York] Added massPayReq->MassPayRequest = massPayRequest
+
+[16-Sep-2013 23:12:20 America/New_York] Fetched paypalService
+
+[16-Sep-2013 23:12:22 America/New_York] Sent mass payment ... check response
+
