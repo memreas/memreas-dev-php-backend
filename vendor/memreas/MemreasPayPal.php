@@ -30,7 +30,6 @@ use PayPal\Service\PayPalAPIInterfaceServiceService;
 use PayPal\Auth\PPSignatureCredential;
 use PayPal\Auth\PPTokenAuthorization;
 
-
 define('PP_CONFIG_PATH', dirname(__FILE__) . "/config/");
 
 //memreas models
@@ -43,6 +42,7 @@ use Application\Model\PaymentMethod;
 use Application\Model\Subscription;
 use Application\Model\Transaction as Memreas_Transaction;
 use Application\Model\TransactionReceiver;
+use Application\Model\PayPalConfig;
 
 class MemreasPayPal {
 
@@ -343,13 +343,6 @@ class MemreasPayPal {
 			'update_time' => $now, 
 			));
 		$account_id = $memreas_paypal_tables->getAccountTable()->saveAccount($account);
-
-
-error_log("account_id ----> $account_id" . PHP_EOL);
-error_log("seller_account_id ----> $seller_account_id" . PHP_EOL);
-error_log("memreas_master_account_id ----> $memreas_master_account_id" . PHP_EOL);
-
-		
 
 		//Return an error message:
 		$result = array (
@@ -879,27 +872,42 @@ error_log("Inside paypalPayoutMassPayees..." . PHP_EOL);
 
 		//Fetch PayPal credential
 		$credential = $this->fetchPayPalCredential($service_locator);
-		//Setup an api context for the card
-		$api_context = new ApiContext($credential);
 
 		//setup the mass pay
 		$massPayRequest = new MassPayRequestType();
 		$massPayRequest->MassPayItem = array();
 
-error_log("MassPayReq class found..." . PHP_EOL);		
-		/*		
-		//Delete the card at PayPal and update the database
-		$arr = array();
-		foreach($message_data as $card) {
-			$creditCard = CreditCard::get($card, $api_context);
+		//Setup vars and loop through post
+		$payouts = array();
+		$account_mass_payees = array();
+		$rowCount = count($message_data);
+		foreach($message_data as $account_id) {
+			//Fetch the account data
+			$account = $memreas_paypal_tables->getAccountTable()->getAccount($account_id);	
+			$account_detail = $memreas_paypal_tables->getAccountDetailTable()->getAccountDetailByAccount($account_id);	
 			try {
-				$creditCard->delete($api_context);
-				$arr[] = "$card";
-				//$row = $memreas_paypal_tables->getPaymentMethodTable()->getPaymentMethodByPayPalReferenceId($card);	
-				//Delete Payment Method Table
-				$memreas_paypal_tables->getPaymentMethodTable()->deletePaymentMethodByPayPalCardReferenceId($card);
-				//Delete Account Detail Table (associated billing address)
-				$memreas_paypal_tables->getAccountDetailTable()->deleteAccountDetailByPayPalCardReferenceId($card);
+				$account_mass_payee = array();
+				$account_mass_payee['account_id'] = $account->account_id;
+				$account_mass_payee['user_id'] = $account->user_id;
+				$account_mass_payee['account_type'] = $account->account_type;
+				$account_mass_payee['balance'] = $account->balance;
+				$account_mass_payee['paypal_email_address'] = $account_detail->paypal_email_address;
+				$account_mass_payees[] = $account_mass_payee;
+				
+error_log("account_mass_payee['account_id'] ----> " . $account_mass_payee['account_id'] . PHP_EOL);
+error_log("account_mass_payee['user_id'] ----> " . $account_mass_payee['user_id'] . PHP_EOL);
+error_log("account_mass_payee['account_type'] ----> " . $account_mass_payee['account_type'] . PHP_EOL);
+error_log("account_mass_payee['balance'] ----> " . $account_mass_payee['balance'] . PHP_EOL);
+error_log("account_mass_payee['paypal_email_address'] ----> " . $account_mass_payee['paypal_email_address'] . PHP_EOL);
+				//Record the transaction 
+				//TODO
+				
+				//Create a mass pay item for this account
+				$masspayItem = new MassPayRequestItemType();
+				$masspayItem->Amount = new BasicAmountType("USD", $account_mass_payee['balance']);
+				$masspayItem->ReceiverEmail = $account_mass_payee['paypal_email_address'];
+				$massPayRequest->MassPayItem[] = $masspayItem;				
+error_log("massPayItem added for ----> " . $account_mass_payee['paypal_email_address'] . PHP_EOL);
 			} catch (\PPConnectionException $ex) {
 	  			$result = array (
 					"Status"=>"Error",
@@ -908,12 +916,78 @@ error_log("MassPayReq class found..." . PHP_EOL);
 			  return $result;
 			}		
 		}
-		*/		
+		
+		//Send out the group as a batch...
+		$massPayReq = new MassPayReq();
+		$massPayReq->MassPayRequest = $massPayRequest;
+		$paypalService = new PayPalAPIInterfaceServiceService(PayPalConfig::getAcctAndConfig());
+
+		//Store the transaction before sending
+		$now = date('Y-m-d H:i:s');
+		$memreas_transaction  = new Memreas_Transaction;
+		$memreas_transaction->exchangeArray(array(
+				'account_id'=>$account_detail->account_id,
+				'transaction_type' =>'masspay_payput',
+				'transaction_request' => $massPayReq,
+				'transaction_sent' =>$now
+		));
+		$transaction_id =  $memreas_paypal_tables->getTransactionTable()->saveTransaction($memreas_transaction);
+		
+		/////////////////////////
+		// PayPal Payment Request
+		/////////////////////////
+		try {
+				$massPayResponse = $paypalService->MassPay($massPayReq);
+				//Record the transaction 
+				// Parse the resuls
+				//TODO
+				error_log(print_r($massPayResponse), true);
+
+		} catch (Exception $ex) {
+			//Update the transaction table with error 
+			$now = date('Y-m-d H:i:s');
+			$memreas_transaction->exchangeArray(array(
+					'transaction_id' => $transaction_id,
+					'pass_fail' => 0,
+					'amount' => $amount,
+					'currency' => 'USD',
+					'transaction_response' => $ex->getMessage(),
+					'transaction_receive' =>$now	
+			));
+			$transaction_id = $memreas_paypal_tables->getTransactionTable()->saveTransaction($memreas_transaction);
+
+			$result = array (
+				"Status"=>"Error",
+				"Description"=>$ex->getMessage()
+			);
+		  return $result;
+		}
+
+		//Update the transaction table with the PayPal response
+		//$transaction  = new Transaction();
+		$now = date('Y-m-d H:i:s');
+		$memreas_transaction->exchangeArray(array(
+				'transaction_id' => $transaction_id,
+				'pass_fail' => 1,
+				'amount' => $amount,
+				'currency' => 'USD',
+				'transaction_response' => $massPayResponse,
+				'transaction_receive' =>$now	
+		));
+		$transaction_id = $memreas_paypal_tables->getTransactionTable()->saveTransaction($memreas_transaction);
+
+
+
+
+
+
+
 
 		$result = array (
 			"Status"=>"Success",
 			"Description"=>"Payouts Data",
 			"Payouts"=>$payouts,
+			"massPayResponse"=>$massPayResponse, 
 			);
 
 		return $result;

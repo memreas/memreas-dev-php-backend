@@ -16,6 +16,16 @@ class AccountDetailTable {
 		return $resultSet;
 	}
 	
+	public function getAccountDetailByAccount($account_id) {
+		//Note: this assumes account is 1:1 with account_detail - this may change later...
+		$rowset = $this->tableGateway->select ( array ('account_id' => $account_id ) );
+		$row = $rowset->current ();
+		if (! $row) {
+			throw new \Exception ( "Could not find row $account_id" );
+		}
+		return $row;
+	}
+	
 	public function getAccountDetail($account_detail_id) {
 		$rowset = $this->tableGateway->select ( array ('account_detail_id' => $account_detail_id ) );
 		$row = $rowset->current ();
