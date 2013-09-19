@@ -9,12 +9,12 @@ class MemreasConstants {
         const MEMREASDB     = 'memreasdevdb';
         const S3BUCKET     	= "memreasdev";
         const TOPICARN		= "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker";
-        //const ORIGINAL_URL	= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php";
-        const ORIGINAL_URL	= "http://192.168.1.13/eventapp_zend2.1/webservices/index_json.php";
-        //const MEDIA_URL	= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/addmediaevent.php";
-        const MEDIA_URL	= "http://192.168.1.13/eventapp_zend2.1/webservices/addmediaevent.php";
-        //const UUID_URL	= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/addmediaevent.php";
-        const UUID_URL	= "http://192.168.1.13/eventapp_zend2.1/webservices/generateUUID_json.php";
+        const ORIGINAL_URL	= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php";
+        //const ORIGINAL_URL	= "http://192.168.1.13/eventapp_zend2.1/webservices/index_json.php";
+        const MEDIA_URL	= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/addmediaevent.php";
+        //const MEDIA_URL	= "http://192.168.1.13/eventapp_zend2.1/webservices/addmediaevent.php";
+        const UUID_URL	= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/addmediaevent.php";
+        //const UUID_URL	= "http://192.168.1.13/eventapp_zend2.1/webservices/generateUUID_json.php";
         const URL			= "/index";
 
         //const SITEURL			= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";

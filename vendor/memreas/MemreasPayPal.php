@@ -30,6 +30,8 @@ use PayPal\Service\PayPalAPIInterfaceServiceService;
 use PayPal\Auth\PPSignatureCredential;
 use PayPal\Auth\PPTokenAuthorization;
 
+use PayPal\IPN\PPIPNMessage;
+
 define('PP_CONFIG_PATH', dirname(__FILE__) . "/config/");
 
 //memreas models
@@ -992,6 +994,24 @@ error_log("massPayItem added for ----> " . $account_mass_payee['paypal_email_add
 
 		return $result;
 	}
+
+	public function ipnListener($message_data, $memreas_paypal_tables, $service_locator) 
+	{
+error_log("Inside ipnListener....");
+
+		$ipnMessage = new PPIPNMessage(null, PayPalConfig::getAcctAndConfig());
+		foreach($ipnMessage->getRawData() as $key => $value) {
+			error_log("IPN: $key => $value");
+		}
+
+		if($ipnMessage->validate()) {
+			error_log("Success: Got valid IPN data");		
+		} else {
+			error_log("Error: Got invalid IPN data");	
+		}
+		
+	}
+
 
 }
 ?>
