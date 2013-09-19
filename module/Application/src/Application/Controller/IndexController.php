@@ -64,6 +64,16 @@ error_log("Inside fetchXML response $response ....");
 		return $data = $response->getBody(true);
 	}
 
+    public function ipnListenerAction() {
+error_log("Inside ipnListenerAction....");
+			//PayPal related calls...
+			$memreasPayPal = new MemreasPayPal();
+			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
+			$result = $memreasPayPal->ipnListener(null, $memreas_paypal_tables, $this->getServiceLocator());
+			http_response_code(200);
+			exit;
+	}
+	
     public function indexAction() {
 error_log("Inside indexAction....");
 	    $path = $this->security("application/index/paypal.phtml");
