@@ -18,6 +18,7 @@
         "paypal/sdk-core-php": "2.4.*",
         "paypal/merchant-sdk-php":"*",
         "aws/aws-sdk-php": "2.*",
-		"sybio/image-workshop": "2.0.0"
+		"sybio/image-workshop": "2.0.0",
+		"doctrine/doctrine-orm-module": "0.*"
     }    
 }

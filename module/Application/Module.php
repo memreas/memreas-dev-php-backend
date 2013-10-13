@@ -22,6 +22,10 @@ use Zend\Authentication\Adapter\DbTable as DbTableAuthAdapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
+use memreas\UUID;
+
+use Application\Model\MemreasConstants;
+
 use Application\Model\TransactionReceiver;
 
 use Application\Model\Subscription;
@@ -149,7 +153,7 @@ class Module
 		    	                //My assumption, you've alredy set dbAdapter
 			                    //and has users table with columns : user_name and pass_word
 			                    //that password hashed with md5
-                			    $dbAdapter = $sm->get('memreasdevdb');
+                			    $dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 			                    $dbTableAuthAdapter = new DbTableAuthAdapter($dbAdapter,
 			                                    'user', 'username', 'password', 'MD5(?)');
 
@@ -159,6 +163,14 @@ class Module
 	            		        return $authService;
 			                },							  
 
+							/*
+							//memreas UUID
+			                'memreas\UUID' => function($sm) {
+			                	$adapter = $sm->get('memreasbackenddb');
+			                	$uuid = new UUID($adapter);
+			                	return $uuid->fetchUUID();
+			                },
+			                */
 
 
 							//Database Tables...
@@ -169,7 +181,7 @@ class Module
 			                    return $table;
 			                },
 			                'UserTableGateway' => function ($sm) {
-			                    $dbAdapter = $sm->get('memreasdevdb');
+			                    $dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 			                    $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
 			                    $resultSetPrototype->setArrayObjectPrototype(new User());
 			                    return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
@@ -180,7 +192,7 @@ class Module
 			                    return $table;
 			                },
 			                'MediaTableGateway' => function ($sm) {
-			                    $dbAdapter = $sm->get('memreasdevdb');
+			                    $dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 			                    $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\Media());
 			                    return new TableGateway('media', $dbAdapter, null, $resultSetPrototype);
@@ -191,7 +203,7 @@ class Module
 			                    return $table;
 			                },
 			                'EventTableGateway' => function ($sm) {
-			                    $dbAdapter = $sm->get('memreasdevdb');
+			                    $dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 			                    $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\Event());
 			                    return new TableGateway('event', $dbAdapter, null, $resultSetPrototype);
@@ -202,13 +214,13 @@ class Module
 			                    return $table;
 			                },
 			                'EventMediaTableGateway' => function ($sm) {
-			                    $dbAdapter = $sm->get('memreasdevdb');
+			                    $dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 			                    $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\EventMedia());
 			                    return new TableGateway('event_media', $dbAdapter, null, $resultSetPrototype);
 			                },
 			                'EventTableGateway' => function ($sm) {
-			                    $dbAdapter = $sm->get('memreasdevdb');
+			                    $dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 			                    $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\Event());
 			                    return new TableGateway('event', $dbAdapter, null, $resultSetPrototype);
@@ -219,7 +231,7 @@ class Module
 			                    return $table;
 			                },
 			                'FriendMediaTableGateway' => function ($sm) {
-			                    $dbAdapter = $sm->get('memreasdevdb');
+			                    $dbAdapter = $sm->get(MemreasConstants::MEMREASDB);
 			                    $resultSetPrototype = new \Zend\Db\ResultSet\ResultSet();
 			                    $resultSetPrototype->setArrayObjectPrototype(new Model\FriendMedia());
 			                    return new TableGateway('friend_media', $dbAdapter, null, $resultSetPrototype);
