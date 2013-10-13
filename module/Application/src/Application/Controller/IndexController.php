@@ -23,10 +23,12 @@ use Application\Form;
 use Guzzle\Http\Client;
 
 use Application\Model\MemreasConstants;
+use memreas\AWSManager;
 use memreas\MemreasTranscoder;
 use memreas\MemreasTranscoderTables;
 use memreas\MemreasPayPal;
 use memreas\MemreasPayPalTables;
+use memreas\UUID;
 
 class IndexController extends AbstractActionController
 {
@@ -76,7 +78,7 @@ error_log("Inside ipnListenerAction....");
 	
     public function indexAction() {
 error_log("Inside indexAction....");
-	    $path = $this->security("application/index/paypal.phtml");
+	    $path = $this->security("application/index/tcode.phtml");
 		$view = new ViewModel();
 		$view->setTemplate($path); // path to phtml file under view folder
 		return $view;			
@@ -392,7 +394,7 @@ error_log("Inside payPalAccountHistory...");
    public function transcoderAction() {
 
 error_log("Inside transcoderAction" . PHP_EOL);
-	    $path = $this->security("application/index/tcode.phtml");
+	    //$path = $this->security("application/index/tcode.phtml");
 
 		//Fetch the post data
 		//$request = $this->getRequest();
@@ -400,8 +402,66 @@ error_log("Inside transcoderAction" . PHP_EOL);
 		//$username = $postData ['username'];
 		//$password = $postData ['password'];
 
+		foreach (getallheaders() as $name => $value) {
+			//echo "$name : $value\n<p>";
+			error_log("$name : $value\n", 0);
+			if ( $name == "x-amz-sns-message-type" ) {
+			
+				if ( $value == "SubscriptionConfirmation" ) {
+					$inputJSON = file_get_contents('php://input');
+					error_log($inputJSON, 0); // manually get the URL here and paste into browser to subscribe
+					//Return the status code here so that we subscribe to the message - hopefully
+					ob_start();
+					http_response_code(200);
+					ob_end_flush(); 	// Strange behaviour, will not work
+					flush();            // Unless both are called !
+					exit;
+				} elseif ( $value == "Notification" ) {
+error_log("Inside transcoderAction:Notification" . PHP_EOL);
+					$inputJSON = file_get_contents('php://input');
+					error_log("inputJSON...... $inputJSON");
+					$input= json_decode($inputJSON, true); 
+					//Fetch the json from message
+					$message_data = json_decode($input['Message'], true);
+
+					error_log("**************************************");
+//					error_log("Message only...... $inputMessage");
+
+					error_log("data_user_id...... " . $message_data['user_id']);
+					error_log("data_media_id...... " . $message_data['media_id']);
+					error_log("data_content_type...... " . $message_data['content_type']);
+					error_log("data_s3path...... " . $message_data['s3path']);
+					error_log("data_s3file_name...... " . $message_data['s3file_name']);
+					error_log("data_isVideo...... " . $message_data['isVideo']);
+					error_log("data_email...... " . $message_data['email']);
+
+					//Return the status code here so that the SNS topic won't keep resending the message
+					ob_start();
+					http_response_code(200);
+					ob_end_flush(); 	// Strange behaviour, will not work
+					flush();            // Unless both are called !
+
+					//Process Message here - 
+					$aws_manager = new AWSManager($this->getServiceLocator());
+					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
+
+					error_log ("CHECKOUT THE RESULT FROM THE SUBSCRIBE.... $result");
+			
+					return $result;
+
+				} //End else if "notification"
+			}  //End if ( $name == "x-amz-sns-message-type" )
+		} //End foreach (getallheaders() as $name => $value)			
+			
+error_log("Inside transcoderAction:missed both conditions..." . PHP_EOL);
+			
+			
+
+/*
 		$memreasTranscoder = new MemreasTranscoder();
 		$memreas_transcoder_tables = new MemreasTranscoderTables($this->getServiceLocator());
+		//Create an instance of UUID;
+		UUID::getInstance($this->getServiceLocator()->get('memreasbackenddb'));
 		if(isset($_POST['json'])) {
 			//Fetch from S3
 			$result = $memreasTranscoder->exec($memreas_transcoder_tables, $this->getServiceLocator(), false);		
@@ -414,45 +474,7 @@ error_log("Inside transcoderAction" . PHP_EOL);
 		$view = new ViewModel();
 		$view->setTemplate($path); // path to phtml file under view folder
 		return $view;			
-
-
-//////
-	    $path = $this->security("application/index/tcode.phtml");
-
-/*
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			//$memreasPayPal = new MemreasPayPal();
-			//$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			//$result = $memreasPayPal->storeCreditCard($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-			
-			$result = '{"Status":"Success"}';
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-*/
-
-
-
-		return $view;			
+*/		
     }
 
 

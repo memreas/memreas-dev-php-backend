@@ -6,11 +6,15 @@ use PHPImageWorkshop\ImageWorkshop;
 
 //memreas custom
 use memreas\MemreasAWSTranscoder;
+use memreas\MemreasTranscoderTables;
 use memreas\UUID;
 //memreas models
 use Application\Model\MemreasConstants;
+use Application\Model\Media;
+use Application\Model\MediaTable;
 use Application\Model\TranscodeTransaction;
 use Application\Model\TranscodeTransactionTable;
+
 
 class MemreasTranscoder {
 
@@ -24,7 +28,6 @@ class MemreasTranscoder {
     public function __construct() {
 		$this->fetchSession();
 		$this->memreas_aws_transcoder = new MemreasAWSTranscoder();
-        
     }
     
     public function resizeImage($dirPath, $file, $thumbnail_name, $height, $width) {
@@ -69,11 +72,14 @@ error_log("Inside fetchResizeUpload - resized and saved local file is now  --> "
 
 	public function exec($memreas_transcoder_tables, $service_locator, $isUpload=false) {
 	
+error_log("_REQUEST----> " . print_r($_REQUEST, true) .PHP_EOL);
+
 		try {
 			//date_default_timezone_set('UTC');
 			$starttime = date('Y-m-d H:i:s');
 			$files_json;
 			$message_data;
+			$metadata = array();
 			if(isset($_POST)) {
 			//HomeDirectory.$DestinationDirectory.$NewVideoName
 				//AWS Settings
@@ -90,7 +96,8 @@ error_log("!found /var/app/current" . PHP_EOL);
 				}
 
 				//Make directories here - create a unique directory by user_id
-				$temp_job_uuid_dir = UUID::fetchUUID();
+				$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
+error_log("temp_job_uuid_dir ----> $temp_job_uuid_dir" . PHP_EOL);
 
 				//Some Settings
 				$WebHome 				= 'data/'; // 2944444a-cc8f-11e2-8fd6-12313909a953 in JSON
@@ -116,19 +123,18 @@ error_log("!found /var/app/current" . PHP_EOL);
 				$errstr = '';
 
 				//Make directories here - create a unique directory by user_id
-				$temp_uuid_dir = UUID::fetchUUID();
 				$toCreate = array(
 					$HomeDirectory, // data/temp_uuid_dir/
-					$HomeDirectory.$DestinationDirectory, // data/temp_uuid_dir/media/
-					$HomeDirectory.$DestinationDirectory.$thumbnails, // data/temp_uuid_dir/media/thumbnails/
-					$HomeDirectory.$DestinationDirectory.$thumbnails.$_79x80, // data/temp_uuid_dir/media/thumbnails/79x80/
-					$HomeDirectory.$DestinationDirectory.$thumbnails.$_448x306, // data/temp_uuid_dir/media/thumbnails/448x306/
-					$HomeDirectory.$DestinationDirectory.$thumbnails.$_384x216, // data/temp_uuid_dir/media/thumbnails/384x216/
-					$HomeDirectory.$DestinationDirectory.$thumbnails.$_98x78, // data/temp_uuid_dir/media/thumbnails/98x78/
-					$HomeDirectory.$DestinationDirectory.$x264, // data/temp_uuid_dir/media/x264/
-					$HomeDirectory.$DestinationDirectory.$web, // data/temp_uuid_dir/media/web/
-					$HomeDirectory.$DestinationDirectory.$hls, // data/temp_uuid_dir/media/hls/
-					$HomeDirectory.$DestinationDirectory.$p1080, // data/temp_uuid_dir/media/p1080/
+					$HomeDirectory.$DestinationDirectory, // data/temp_job_uuid_dir/media/
+					$HomeDirectory.$DestinationDirectory.$thumbnails, // data/temp_job_uuid_dir/media/thumbnails/
+					$HomeDirectory.$DestinationDirectory.$thumbnails.$_79x80, // data/temp_job_uuid_dir/media/thumbnails/79x80/
+					$HomeDirectory.$DestinationDirectory.$thumbnails.$_448x306, // data/temp_job_uuid_dir/media/thumbnails/448x306/
+					$HomeDirectory.$DestinationDirectory.$thumbnails.$_384x216, // data/temp_job_uuid_dir/media/thumbnails/384x216/
+					$HomeDirectory.$DestinationDirectory.$thumbnails.$_98x78, // data/temp_job_uuid_dir/media/thumbnails/98x78/
+					$HomeDirectory.$DestinationDirectory.$x264, // data/temp_job_uuid_dir/media/x264/
+					$HomeDirectory.$DestinationDirectory.$web, // data/temp_job_uuid_dir/media/web/
+					$HomeDirectory.$DestinationDirectory.$hls, // data/temp_job_uuid_dir/media/hls/
+					$HomeDirectory.$DestinationDirectory.$p1080, // data/temp_job_uuid_dir/media/p1080/
 				);
 
 				$permissions = 0755;
@@ -138,27 +144,30 @@ error_log("!found /var/app/current" . PHP_EOL);
 error_log("dir -----> $dir" . PHP_EOL);				  
 				}				
 				
-				
-				//$transaction_id = uniqid('', true);
-				// check $_FILES['VideoFile'] array is not empty
-				// "is_uploaded_file" Tells whether the file was uploaded via HTTP POST
-
 				// Random number for both file, will be added after video name
 				$RandomNumber 	= rand(0, 9999999999); 
 
 				if (!$isUpload) {
+error_log("Inside !isUpload..." . PHP_EOL);	
+					//Fetch the json from the post
 					$message_data = json_decode($_POST['json'], true);
-					$this->user_id = $message_data['user_id'];
 error_log("FOUND JSON ----> " . $_POST['json'] . PHP_EOL);	
+					$this->user_id = $message_data['user_id'];
 					//get the file from S3 here
-					$message_data = json_decode($_POST['json'], true);
 					$tmp_file = $HomeDirectory.$DestinationDirectory.$message_data['s3file_name'];
+error_log("About to get " . $message_data['s3path'].$message_data['s3file_name'] . PHP_EOL);	
+error_log("About to save as  " . $tmp_file . PHP_EOL);	
+error_log('MemreasConstants::S3BUCKET ----> ' . MemreasConstants::S3BUCKET . PHP_EOL);	
+error_log('message_data[s3path] ----> ' . $message_data['s3path'] . PHP_EOL);	
+error_log('message_data[s3file_name] ----> ' . $message_data['s3file_name'] . PHP_EOL);	
 					$response = $this->memreas_aws_transcoder->s3->getObject(array(
 						'Bucket' => MemreasConstants::S3BUCKET, 
 						'Key'	 =>	$message_data['s3path'].$message_data['s3file_name'], 
 						'SaveAs' =>	$tmp_file,
 					));
 
+error_log('response ----> ' . print_r($response, true) . PHP_EOL);	
+error_log("Just fetched file from S3" . PHP_EOL);	
 					$VideoFileName 	= str_replace(' ','-',strtolower($message_data['s3file_name'])); 
 					//$TempSrc	 	= $_FILES['VideoFile']['tmp_name'][0]; // Tmp name of video file stored in PHP tmp folder
 					$VideoFileType	= $response['ContentType']; //Obtain file type, returns "video/png", video/jpeg, text/plain etc.
@@ -177,6 +186,7 @@ error_log("FOUND JSON ----> " . $_POST['json'] . PHP_EOL);
 					$DestRandVideoName 			= $HomeDirectory.$DestinationDirectory.$NewVideoName; //Name for Big Video	
 				} else if(isset($_FILES['VideoFile']) && is_uploaded_file($_FILES['VideoFile']['tmp_name'][0])) {
 					
+error_log("Inside if videofile and is uploaded...." . PHP_EOL);	
 					// Elements (values) of $_FILES['VideoFile'] array
 					//let's access these values by using their index position
 					$VideoFileName 	= str_replace(' ','-',strtolower($_FILES['VideoFile']['name'][0])); 
@@ -195,6 +205,7 @@ error_log("FOUND JSON ----> " . $_POST['json'] . PHP_EOL);
 					//set the Destination Video
 	
 					$DestRandVideoName 			= $HomeDirectory.$DestinationDirectory.$NewVideoName; //Name for Big Video	
+error_log("Leaving ... Inside if videofile and is uploaded...." . PHP_EOL);	
 				} else if(!isset($_FILES['VideoFile']) || !is_uploaded_file($_FILES['VideoFile']['tmp_name'][0])) {
 						error_log('Something went wrong with Upload!'); 
 						die('Something went wrong with Upload!'); // output error when above checks fail.
@@ -221,11 +232,10 @@ error_log("FOUND JSON ----> " . $_POST['json'] . PHP_EOL);
 	
 				// Save file in upload destination
 				if ($isUpload) {
+error_log("move file ...." . PHP_EOL);	
 					move_uploaded_file($TempSrc,$DestRandVideoName);
 
-					//Insert a media table entry here
-					
-
+error_log("upload to s3...." . PHP_EOL);	
 					//Put to S3 here...
 					$message_data = array (
 						"s3file_name"=>$original_file_name,
@@ -235,12 +245,41 @@ error_log("FOUND JSON ----> " . $_POST['json'] . PHP_EOL);
 						"content_type"=>"video/mp4", //specific to webm for aws metadata
 						"s3path"=>$this->user_id.'/media/',
 					);
-					$this->memreas_aws_transcoder->s3videoUpload($message_data);
+					$media_s3_path = $this->memreas_aws_transcoder->s3videoUpload($message_data);
+					//Store the metadata
 
+error_log("about to save media_s3_path ----.> $media_s3_path...." . PHP_EOL);	
+					$metadata['S3_files']['path'] = $media_s3_path;
+					$metadata['S3_files']['Full'] = $media_s3_path;
+
+error_log("Just got media s3 path and set metadata...." . PHP_EOL);	
+error_log("metadata ---> " . json_encode($metadata) . PHP_EOL);	
+					//Insert a media table entry here
+					$now = date('Y-m-d H:i:s');
+					$memreas_media = new Media();
+					$memreas_media->exchangeArray(array(
+								'user_id' => $this->user_id, 
+								'is_profile_pic' => 0, 
+								'sync_status' => 0, 
+								'metadata' => json_encode($metadata), 
+								'report_flag' => 0, 
+								'create_date' => $now, 
+								'update_date' => $now, 
+							));
+					$media_id = $memreas_transcoder_tables->getMediaTable()->saveMedia($memreas_media);
+error_log("Just inserted $media_id" . PHP_EOL);
 				} else {
-					//Fetch the media table entry here...
+					//Fetch the media table entry here?...
+					//$memreas_media = $memreas_transcoder_tables->getMediaTable()->getMedia($message_data['media_id']);
+					//$memreas_media->exchangeArray(array(
+					//			'metadata' => json_encode($metadata), 
+					//			'update_date' => $now, 
+					//		));
+					//$media_id = $memreas_transcoder_tables->getMediaTable()->saveMedia($memreas_media);
+error_log("Do nothing we have the media_id ----> $media_id" . PHP_EOL);
 				}
 				
+error_log("About to build thumbnails..." . PHP_EOL);
 				////////////////////////
 				// Thumbnails section
 				////////////////////////
@@ -326,7 +365,7 @@ error_log("filename  ---->  " . $filename . PHP_EOL);
 								"s3file_name"=>basename($filename),
 								"file"=>$file,
 								"user_id"=>$this->user_id,
-								"media_id"=>"placeholder",
+								"media_id"=>$media_id,
 								"content_type"=>"image/png", //specific to webm for aws metadata
 								"s3path"=>$fmt[$key],
 							);
@@ -661,7 +700,6 @@ error_log("filename  ---->  " . $filename . PHP_EOL);
 
 				 $transcode_job_duration = strtotime($transcode_end_time) - strtotime($transcode_start_time);
 				 //Insert transcode_transaction
-				 //Store the transaction that is sent to PayPal
 				 $now = date('Y-m-d H:i:s');
 				 $transcode_transaction = new TranscodeTransaction();
 				 $transcode_transaction->exchangeArray(array(
@@ -727,17 +765,33 @@ error_log("filename  ---->  " . $filename . PHP_EOL);
 				error_log( '{"files":[{"url":"'.$DestinationDirectory.$NewVideoName.'","thumbnailUrl":['.$tnstring.'],"name":"'.$NewVideoName.'","type":"'.$VideoFileType.'","size":"'.$filesize.'","deleteUrl":"","deleteType":"","webm":"'.$ConvertedDirectory.$web.$NewVideoName.'.webm","webmsize":'.filesize($HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'.webm').',"x264":"'.$ConvertedDirectory.$x264.$NewVideoName.'x264.mp4","x264size":'.filesize($HomeDirectory.$ConvertedDirectory.$x264.$NewVideoName.'x264.mp4').'}]}');
 				echo '{"files":[{"url":"'.$DestinationDirectory.$NewVideoName.'","thumbnailUrl":['.$tnstring.'],"name":"'.$NewVideoName.'","type":"'.$VideoFileType.'","size":"'.$filesize.'","deleteUrl":"","deleteType":"","webm":"'.$ConvertedDirectory.$web.$NewVideoName.'.webm","webmsize":'.filesize($HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'.webm').',"x264":"'.$ConvertedDirectory.$x264.$NewVideoName.'x264.mp4","x264size":'.filesize($HomeDirectory.$ConvertedDirectory.$x264.$NewVideoName.'x264.mp4').'}]}';
 
+				//Update the media table entry here
+				$now = date('Y-m-d H:i:s');
+				$memreas_media = $memreas_transcoder_tables->getMediaTable()->getMedia($media_id);
+				$memreas_media->exchangeArray(array(
+							'metadata' => $json_metadata, 
+							'update_date' => $now, 
+						));
+				$media_id = $memreas_transcoder_tables->getMediaTable()->saveMedia($memreas_media);
+
+error_log("Just updated $media_id" . PHP_EOL);
+
 				//Delete the temp dir if we got this far...
 				try{
 					$result = $this->rmWorkDir($HomeDirectory);
 				}
-				catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
+				catch(Exception $e){
+					$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);
+					$result = $this->rmWorkDir($HomeDirectory);
+				}
 				exit();
 
 			} // End if(isset($_POST))
 		} catch (Exception $e) {
 			error_log( 'Caught exception: '.  $e->getMessage() . PHP_EOL);
 			echo 'Caught exception: ',  $e->getMessage(), "\n";
+			//Always delete the temp dir...
+			$result = $this->rmWorkDir($HomeDirectory);
 		}
 
 	}

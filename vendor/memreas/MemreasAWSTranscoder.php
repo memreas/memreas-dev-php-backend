@@ -94,7 +94,6 @@ class MemreasAWSTranscoder {
             $result = mysql_query($query) or die("SELECT FROM MEDIA FAILED");
             $row = mysql_fetch_array($result);
 
-
             $metadata = json_decode($row['metadata'], true);
             $metadata['S3_files']['79x80'] = $paths['79x80_Path'];
             $metadata['S3_files']['448x306'] = $paths['448x306_Path'];

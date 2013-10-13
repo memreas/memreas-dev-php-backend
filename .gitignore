@@ -6,5 +6,7 @@ nbproject
 .idea
 .project
 .settings
+.log
 composer.lock
 .elasticbeanstalk/
+data/

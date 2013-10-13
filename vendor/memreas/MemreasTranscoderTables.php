@@ -1,10 +1,14 @@
 <?php
 namespace memreas;
 
+use memreas\UUID;
+
 class MemreasTranscoderTables {
 
     protected $service_locator = NULL;
     protected $transcodeTransactionTable = NULL;
+    protected $mediaTable = NULL;
+    protected $uuid = NULL;
 	    
 	function __construct($sl) {
 	   $this->service_locator = $sl;
@@ -20,5 +24,15 @@ error_log("Inside else !transcodeTransactionTable");
 		return $this->transcodeTransactionTable;
 	}
 	
+   	//Media table
+	public function getMediaTable()
+	{
+		if (!$this->mediaTable) {
+error_log("Inside else !mediaTable");
+			$this->mediaTable = $this->service_locator->get('Application\Model\MediaTable');
+		}
+error_log("got mediaTable...");
+		return $this->mediaTable;
+	}
 }
 ?>
