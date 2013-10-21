@@ -77,23 +77,22 @@ error_log("Inside ipnListenerAction....");
 	}
 	
     public function indexAction() {
-error_log("Inside indexAction....");
+error_log("Inside backend.indexAction...".PHP_EOL);
+//error_log("Inside indexAction....");
+//error_log("Inside indexAction _REQUEST ----> " . print_r($_REQUEST, true) . PHP_EOL);
+//error_log("Inside indexAction _POST ----> " . print_r($_POST, true) . PHP_EOL);
 	    
-	    if (isset($_REQUEST['action']) ) {
+	    if (isset($_REQUEST['action']) && ($_REQUEST['action'] == "transcoder") ) {
 error_log("Inside indexAction:isset(_REQUEST['action']....");
-	    	$action = $_REQUEST['action'];
-	    	if ($action == "transcoder") {
-error_log("Inside indexAction:isset(_REQUEST['action']:action == transcoder....");
-	    		$this->transcoderAction();
-	    	}
+    		$this->transcoderAction();
 	    	exit;
-	    } 
+	    }
 	    
 	    //Base response if called from URL...
-	    $path = $this->security("application/index/tcode.phtml");
-		$view = new ViewModel();
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
+	    //$path = $this->security("application/index/tcode.phtml");
+		//$view = new ViewModel();
+		//$view->setTemplate($path); // path to phtml file under view folder
+		//return $view;	
     }
 
     public function moreAction() {
