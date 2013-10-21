@@ -23,7 +23,7 @@ use Application\Form;
 use Guzzle\Http\Client;
 
 use Application\Model\MemreasConstants;
-use memreas\AWSManager;
+use memreas\AWSManagerReceiver;
 use memreas\MemreasTranscoder;
 use memreas\MemreasTranscoderTables;
 use memreas\MemreasPayPal;
@@ -78,6 +78,18 @@ error_log("Inside ipnListenerAction....");
 	
     public function indexAction() {
 error_log("Inside indexAction....");
+	    
+	    if (isset($_REQUEST['action']) ) {
+error_log("Inside indexAction:isset(_REQUEST['action']....");
+	    	$action = $_REQUEST['action'];
+	    	if ($action == "transcoder") {
+error_log("Inside indexAction:isset(_REQUEST['action']:action == transcoder....");
+	    		$this->transcoderAction();
+	    	}
+	    	exit;
+	    } 
+	    
+	    //Base response if called from URL...
 	    $path = $this->security("application/index/tcode.phtml");
 		$view = new ViewModel();
 		$view->setTemplate($path); // path to phtml file under view folder
@@ -395,17 +407,14 @@ error_log("Inside payPalAccountHistory...");
 
 error_log("Inside transcoderAction" . PHP_EOL);
 	    //$path = $this->security("application/index/tcode.phtml");
-
+		UUID::getInstance($this->getServiceLocator()->get('memreasbackenddb'));
+		
 		//Fetch the post data
-		//$request = $this->getRequest();
-		//$postData = $request->getPost()->toArray();
-		//$username = $postData ['username'];
-		//$password = $postData ['password'];
-
 		foreach (getallheaders() as $name => $value) {
 			//echo "$name : $value\n<p>";
 			error_log("$name : $value\n", 0);
 			if ( $name == "x-amz-sns-message-type" ) {
+error_log("Inside transcoderAction:name == x-amz-sns-message-type" . PHP_EOL);
 			
 				if ( $value == "SubscriptionConfirmation" ) {
 					$inputJSON = file_get_contents('php://input');
@@ -418,11 +427,17 @@ error_log("Inside transcoderAction" . PHP_EOL);
 					exit;
 				} elseif ( $value == "Notification" ) {
 error_log("Inside transcoderAction:Notification" . PHP_EOL);
-					$inputJSON = file_get_contents('php://input');
-					error_log("inputJSON...... $inputJSON");
-					$input= json_decode($inputJSON, true); 
-					//Fetch the json from message
-					$message_data = json_decode($input['Message'], true);
+					if ( isset($_REQUEST['guzzle']) ) {
+error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) " . PHP_EOL);
+						$message_data = json_decode($_REQUEST['json'], true);
+					} else {
+error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) else" . PHP_EOL);
+						$inputJSON = file_get_contents('php://input');
+						error_log("inputJSON...... $inputJSON");
+						$input= json_decode($inputJSON, true); 
+						//Fetch the json from message
+						$message_data = json_decode($input['Message'], true);
+					}
 
 					error_log("**************************************");
 //					error_log("Message only...... $inputMessage");
@@ -442,7 +457,7 @@ error_log("Inside transcoderAction:Notification" . PHP_EOL);
 					flush();            // Unless both are called !
 
 					//Process Message here - 
-					$aws_manager = new AWSManager($this->getServiceLocator());
+					$aws_manager = new AWSManagerReceiver($this->getServiceLocator());
 					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
 
 					error_log ("CHECKOUT THE RESULT FROM THE SUBSCRIBE.... $result");
