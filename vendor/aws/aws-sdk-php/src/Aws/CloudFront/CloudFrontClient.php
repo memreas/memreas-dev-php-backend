@@ -64,7 +64,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  */
 class CloudFrontClient extends AbstractClient
 {
-    const LATEST_API_VERSION = '2013-05-12';
+    const LATEST_API_VERSION = '2013-09-27';
 
     /**
      * Factory method to create a new Amazon CloudFront client using an array of configuration options.
@@ -173,7 +173,6 @@ class CloudFrontClient extends AbstractClient
         $signedPolicy = strtr(base64_encode($signedPolicy), '+=/', '-_~');
 
         $url->getQuery()
-            ->useUrlEncoding(false)
             ->set('Signature', $signedPolicy)
             ->set('Key-Pair-Id', $options['key_pair_id']);
 
@@ -182,6 +181,7 @@ class CloudFrontClient extends AbstractClient
             return (string) $url;
         } else {
             // Use a relative URL when creating Flash player URLs
+            $url->getQuery()->useUrlEncoding(false);
             $url->setScheme(null)->setHost(null);
             return substr($url, 1);
         }

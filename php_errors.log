@@ -5859,3 +5859,1133 @@ Connection: keep-alive
 
 [12-Oct-2013 00:51:37 America/New_York] message_data[s3file_name] ----> 2013-02-09_15-54-15_980.mp4
 
+[21-Oct-2013 05:08:03 America/New_York] PHP Fatal error:  Uncaught exception 'RuntimeException' with message 'Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/init_autoloader.php:50
+Stack trace:
+#0 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/app/index.php(9): require()
+#1 {main}
+  thrown in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/init_autoloader.php on line 50
+[21-Oct-2013 05:08:59 America/New_York] PHP Fatal error:  Uncaught exception 'RuntimeException' with message 'Unable to load ZF2. Run `php composer.phar install` or define a ZF2_PATH environment variable.' in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/init_autoloader.php:50
+Stack trace:
+#0 /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/app/index.php(9): require()
+#1 {main}
+  thrown in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/init_autoloader.php on line 50
+[21-Oct-2013 05:09:03 America/New_York] Inside transcoderAction
+
+[21-Oct-2013 05:09:03 America/New_York] Host : 192.168.1.13
+
+[21-Oct-2013 05:09:03 America/New_York] Connection : keep-alive
+
+[21-Oct-2013 05:09:03 America/New_York] Cache-Control : max-age=0
+
+[21-Oct-2013 05:09:03 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[21-Oct-2013 05:09:03 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+
+[21-Oct-2013 05:09:03 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[21-Oct-2013 05:09:03 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[21-Oct-2013 05:09:03 America/New_York] Cookie : PHPSESSID=gclugo6qfsmqkp26irjpho8va2
+
+[21-Oct-2013 05:09:03 America/New_York] Inside transcoderAction:missed both conditions...
+
+[21-Oct-2013 05:09:59 America/New_York] Inside transcoderAction
+
+[21-Oct-2013 05:09:59 America/New_York] Host : 192.168.1.13
+
+[21-Oct-2013 05:09:59 America/New_York] Connection : keep-alive
+
+[21-Oct-2013 05:09:59 America/New_York] Cache-Control : max-age=0
+
+[21-Oct-2013 05:09:59 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[21-Oct-2013 05:09:59 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+
+[21-Oct-2013 05:09:59 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[21-Oct-2013 05:09:59 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[21-Oct-2013 05:09:59 America/New_York] Cookie : PHPSESSID=gclugo6qfsmqkp26irjpho8va2; myapp=bf8voic2rva3k583gn96ldfao6
+
+[21-Oct-2013 05:09:59 America/New_York] Inside transcoderAction:missed both conditions...
+
+[21-Oct-2013 05:10:07 America/New_York] Inside transcoderAction
+
+[21-Oct-2013 05:10:07 America/New_York] Host : 192.168.1.13
+
+[21-Oct-2013 05:10:07 America/New_York] Connection : keep-alive
+
+[21-Oct-2013 05:10:07 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[21-Oct-2013 05:10:07 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+
+[21-Oct-2013 05:10:07 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[21-Oct-2013 05:10:07 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[21-Oct-2013 05:10:07 America/New_York] Cookie : PHPSESSID=gclugo6qfsmqkp26irjpho8va2; myapp=bf8voic2rva3k583gn96ldfao6
+
+[21-Oct-2013 05:10:07 America/New_York] Inside transcoderAction:missed both conditions...
+
+[21-Oct-2013 05:10:24 America/New_York] Inside transcoderAction
+
+[21-Oct-2013 05:10:24 America/New_York] Host : 192.168.1.13
+
+[21-Oct-2013 05:10:24 America/New_York] Connection : keep-alive
+
+[21-Oct-2013 05:10:24 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[21-Oct-2013 05:10:24 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36
+
+[21-Oct-2013 05:10:24 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[21-Oct-2013 05:10:24 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[21-Oct-2013 05:10:24 America/New_York] Cookie : PHPSESSID=gclugo6qfsmqkp26irjpho8va2; myapp=bf8voic2rva3k583gn96ldfao6
+
+[21-Oct-2013 05:10:24 America/New_York] Inside transcoderAction:missed both conditions...
+
+[21-Oct-2013 05:23:58 America/New_York] Inside backend.indexAction...
+
+[21-Oct-2013 05:23:58 America/New_York] Inside transcoderAction
+
+[21-Oct-2013 05:23:58 America/New_York] Host : 192.168.1.13
+
+[21-Oct-2013 05:23:58 America/New_York] Content-Type : application/x-www-form-urlencoded; charset=utf-8
+
+[21-Oct-2013 05:23:58 America/New_York] User-Agent : Guzzle/3.7.4 curl/7.24.0 PHP/5.4.11
+
+[21-Oct-2013 05:23:58 America/New_York] x-amz-sns-message-type : Notification
+
+[21-Oct-2013 05:23:58 America/New_York] Inside transcoderAction:name == x-amz-sns-message-type
+
+[21-Oct-2013 05:23:58 America/New_York] Inside transcoderAction:Notification
+
+[21-Oct-2013 05:23:58 America/New_York] Inside transcoderAction:isset(_REQUEST['guzzle']) 
+
+[21-Oct-2013 05:23:58 America/New_York] **************************************
+[21-Oct-2013 05:23:58 America/New_York] data_user_id...... 19292f84-3a18-11e3-91ae-12313913ddb0
+[21-Oct-2013 05:23:58 America/New_York] data_media_id...... 83886cd6-3a32-11e3-91ae-12313913ddb0
+[21-Oct-2013 05:23:58 America/New_York] data_content_type...... video/mp4
+[21-Oct-2013 05:23:58 America/New_York] data_s3path...... 19292f84-3a18-11e3-91ae-12313913ddb0/media/
+[21-Oct-2013 05:23:58 America/New_York] data_s3file_name...... 2012-10-18_19-14-24_259.mp4
+[21-Oct-2013 05:23:58 America/New_York] data_isVideo...... 1
+[21-Oct-2013 05:23:58 America/New_York] data_email...... chirag.patel@sufalamtech.com
+[21-Oct-2013 05:23:58 America/New_York] Inside AWSManagerReceiver contructor...
+
+[21-Oct-2013 05:23:58 America/New_York] Exit AWSManagerReceiver constructor
+[21-Oct-2013 05:23:58 America/New_York] Inside snsProcessMediaSubscribe ...
+
+[21-Oct-2013 05:23:58 America/New_York] Inside awsTranscode ...
+[21-Oct-2013 05:23:58 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:24:28 America/New_York] *******************************
+[21-Oct-2013 05:24:28 America/New_York] 1080P - Job Output Status -----------> Complete
+[21-Oct-2013 05:24:28 America/New_York] HLS - Job Output Status -----------> Complete
+[21-Oct-2013 05:24:28 America/New_York] WEB - Job Output Status -----------> Progressing
+[21-Oct-2013 05:24:28 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:24:58 America/New_York] *******************************
+[21-Oct-2013 05:24:58 America/New_York] 1080P - Job Output Status -----------> Complete
+[21-Oct-2013 05:24:58 America/New_York] HLS - Job Output Status -----------> Complete
+[21-Oct-2013 05:24:58 America/New_York] WEB - Job Output Status -----------> Complete
+[21-Oct-2013 05:24:58 America/New_York] About to find media entry by media_id -----------> 
+
+[21-Oct-2013 05:24:59 America/New_York] Found media entry by media_id -----------> 
+
+[21-Oct-2013 05:24:59 America/New_York] metadata before metadata -----------> {"S3_files":{"path":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/2012-10-18_19-14-24_259.mp4","Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/2012-10-18_19-14-24_259.mp4"},"local_filenames":{"device":{"unique_device_identifier1":"19292f84-3a18-11e3-91ae-12313913ddb0_354614666375243"}},"type":{"video":{"format":"mp4"}}}
+
+[21-Oct-2013 05:24:59 America/New_York] MemreasConstants::S3BUCKET ---> memreasdev
+
+[21-Oct-2013 05:24:59 America/New_York] About to fetch 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/
+
+[21-Oct-2013 05:24:59 America/New_York] Fetched 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/
+
+[21-Oct-2013 05:24:59 America/New_York] _1080p_thumbnails object ----> Array
+(
+    [Key] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/2012-10-18_19-14-24_259.mp4
+    [LastModified] => 2013-10-21T09:24:15.000Z
+    [ETag] => "4795f2ce13494e308c674168bbaacc40"
+    [Size] => 8352825
+    [Owner] => Array
+        (
+            [ID] => 2594a3e9bb88a57729e1f3719ca06727e4e0ec6035f24308228ac99af4a03a2f
+            [DisplayName] => jt_dylan
+        )
+
+    [StorageClass] => STANDARD
+)
+
+
+[21-Oct-2013 05:24:59 America/New_York] _1080p_thumbnails object ----> Array
+(
+    [Key] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+    [LastModified] => 2013-10-21T09:24:15.000Z
+    [ETag] => "f3aa29893e81f55ff93559f72131abf2"
+    [Size] => 47698
+    [Owner] => Array
+        (
+            [ID] => 2594a3e9bb88a57729e1f3719ca06727e4e0ec6035f24308228ac99af4a03a2f
+            [DisplayName] => jt_dylan
+        )
+
+    [StorageClass] => STANDARD
+)
+
+
+[21-Oct-2013 05:24:59 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:24:59 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:24:59 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:24:59 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:24:59 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:24:59 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:00 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:00 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:25:00 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:00 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:00 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:00 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:00 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:01 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:01 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:25:01 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:01 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:01 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:01 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:01 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] set 1080p thumnails[{"Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/2012-10-18_19-14-24_259.mp4-00001.png"},{"79x80":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/2012-10-18_19-14-24_259.mp4-00001.png"},{"448x306":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/2012-10-18_19-14-24_259.mp4-00001.png"},{"98x78":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/2012-10-18_19-14-24_259.mp4-00001.png"}]
+
+[21-Oct-2013 05:25:02 America/New_York] About to fetch 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/
+
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/79x80/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/79x80/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/448x306/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:02 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/448x306/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/98x78/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/98x78/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] set hls_thumbnails[{"Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/2012-10-18_19-14-24_259.mp4-00001.png"},{"79x80":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/79x80\/2012-10-18_19-14-24_259.mp4-00001.png"},{"448x306":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/448x306\/2012-10-18_19-14-24_259.mp4-00001.png"},{"98x78":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/98x78\/2012-10-18_19-14-24_259.mp4-00001.png"}]
+
+[21-Oct-2013 05:25:04 America/New_York] set hls_ts["19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/2012-10-18_19-14-24_259.mp400000.ts","19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/2012-10-18_19-14-24_259.mp400001.ts"]
+
+[21-Oct-2013 05:25:04 America/New_York] About to fetch 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/
+
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:04 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:05 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:05 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:25:05 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:05 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:05 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:05 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:05 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:06 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:06 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:25:06 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/
+    [1] => 2012-10-18_19-14-24_259.mp4-00001.png
+)
+
+[21-Oct-2013 05:25:06 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:25:06 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:06 America/New_York] Inside fetchResizeUpload - about to get 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:06 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:06 America/New_York] thumbnail_file ----> 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/2012-10-18_19-14-24_259.mp4-00001.png
+[21-Oct-2013 05:25:06 America/New_York] set web_thumbnails[{"Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/2012-10-18_19-14-24_259.mp4-00001.png"},{"79x80":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/2012-10-18_19-14-24_259.mp4-00001.png"},{"448x306":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/2012-10-18_19-14-24_259.mp4-00001.png"},{"98x78":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/2012-10-18_19-14-24_259.mp4-00001.png"}]
+
+[21-Oct-2013 05:25:06 America/New_York] About to set metadata ---> {"S3_files":{"path":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/2012-10-18_19-14-24_259.mp4","Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/2012-10-18_19-14-24_259.mp4","1080p":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/2012-10-18_19-14-24_259.mp4","1080p_thumbails":[{"Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/2012-10-18_19-14-24_259.mp4-00001.png"},{"79x80":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/2012-10-18_19-14-24_259.mp4-00001.png"},{"448x306":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/2012-10-18_19-14-24_259.mp4-00001.png"},{"98x78":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/2012-10-18_19-14-24_259.mp4-00001.png"}],"hls":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/2012-10-18_19-14-24_259.mp4.m3u8","hls_thumbnails":[{"Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/2012-10-18_19-14-24_259.mp4-00001.png"},{"79x80":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/79x80\/2012-10-18_19-14-24_259.mp4-00001.png"},{"448x306":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/448x306\/2012-10-18_19-14-24_259.mp4-00001.png"},{"98x78":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/98x78\/2012-10-18_19-14-24_259.mp4-00001.png"}],"hls_ts":["19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/2012-10-18_19-14-24_259.mp400000.ts","19292f84-3a18-11e3-91ae-12313913ddb0\/media\/hls\/2012-10-18_19-14-24_259.mp400001.ts"],"web":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/2012-10-18_19-14-24_259.mp4","web_thumbnails":[{"Full":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/2012-10-18_19-14-24_259.mp4-00001.png"},{"79x80":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/2012-10-18_19-14-24_259.mp4-00001.png"},{"448x306":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/2012-10-18_19-14-24_259.mp4-00001.png"},{"98x78":"19292f84-3a18-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/2012-10-18_19-14-24_259.mp4-00001.png"}]},"local_filenames":{"device":{"unique_device_identifier1":"19292f84-3a18-11e3-91ae-12313913ddb0_354614666375243"}},"type":{"video":{"format":"mp4"}}}
+
+[21-Oct-2013 05:25:06 America/New_York] CHECKOUT THE RESULT FROM THE SUBSCRIBE.... =====================
+Debug output of model
+=====================
+
+Model data
+-----------
+
+This data can be retrieved from the model object using the get() method of the model (e.g. $model->get($key)) or accessing the model like an associative array (e.g. $model['key']).
+
+    [Job] => Array
+        (
+            [Id] => 1382347438643-4rh67f
+            [Input] => Array
+                (
+                    [AspectRatio] => auto
+                    [Container] => auto
+                    [FrameRate] => auto
+                    [Interlaced] => auto
+                    [Key] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/2012-10-18_19-14-24_259.mp4
+                    [Resolution] => auto
+                )
+
+            [Output] => Array
+                (
+                    [AlbumArt] => 
+                    [Duration] => 9
+                    [Height] => 1080
+                    [Id] => 1
+                    [Key] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/2012-10-18_19-14-24_259.mp4
+                    [PresetId] => 1351620000001-000001
+                    [Rotate] => 0
+                    [SegmentDuration] => 
+                    [Status] => Complete
+                    [StatusDetail] => 
+                    [ThumbnailPattern] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/2012-10-18_19-14-24_259.mp4-{count}
+                    [Watermarks] => Array
+                        (
+                        )
+
+                    [Width] => 1920
+                )
+
+            [OutputKeyPrefix] => 
+            [Outputs] => Array
+                (
+                    [0] => Array
+                        (
+                            [AlbumArt] => 
+                            [Duration] => 9
+                            [Height] => 1080
+                            [Id] => 1
+                            [Key] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/2012-10-18_19-14-24_259.mp4
+                            [PresetId] => 1351620000001-000001
+                            [Rotate] => 0
+                            [SegmentDuration] => 
+                            [Status] => Complete
+                            [StatusDetail] => 
+                            [ThumbnailPattern] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/1080p/thumbnail/2012-10-18_19-14-24_259.mp4-{count}
+                            [Watermarks] => Array
+                                (
+                                )
+
+                            [Width] => 1920
+                        )
+
+                    [1] => Array
+                        (
+                            [AlbumArt] => 
+                            [Duration] => 9
+                            [Height] => 576
+                            [Id] => 2
+                            [Key] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/2012-10-18_19-14-24_259.mp4
+                            [PresetId] => 1351620000001-200010
+                            [Rotate] => 0
+                            [SegmentDuration] => 5.0
+                            [Status] => Complete
+                            [StatusDetail] => 
+                            [ThumbnailPattern] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/hls/thumbnail/2012-10-18_19-14-24_259.mp4-{count}
+                            [Watermarks] => Array
+                                (
+                                )
+
+                            [Width] => 1024
+                        )
+
+                    [2] => Array
+                        (
+                            [AlbumArt] => 
+                            [Duration] => 9
+                            [Height] => 720
+                            [Id] => 3
+                            [Key] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/2012-10-18_19-14-24_259.mp4
+                            [PresetId] => 1351620000001-100070
+                            [Rotate] => 0
+                            [SegmentDuration] => 
+                            [Status] => Complete
+                            [StatusDetail] => 
+                            [ThumbnailPattern] => 19292f84-3a18-11e3-91ae-12313913ddb0/media/web/thumbnail/2012-10-18_19-14-24_259.mp4-{count}
+                            [Watermarks] => Array
+                                (
+                                )
+
+                            [Width] => 1280
+                        )
+
+                )
+
+            [PipelineId] => 1370361326621-wu3cce
+            [Playlists] => Array
+                (
+                )
+
+            [Status] => Complete
+        )
+
+
+[21-Oct-2013 05:25:06 America/New_York] PHP Warning:  Cannot modify header information - headers already sent in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/module/Application/view/application/index/index.phtml on line 3
+[21-Oct-2013 05:25:06 America/New_York] PHP Warning:  Cannot modify header information - headers already sent in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/module/Application/view/application/index/index.phtml on line 4
+[21-Oct-2013 05:25:06 America/New_York] PHP Warning:  Cannot modify header information - headers already sent in /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/module/Application/view/application/index/index.phtml on line 5
+[21-Oct-2013 05:29:17 America/New_York] Inside backend.indexAction...
+
+[21-Oct-2013 05:29:17 America/New_York] Inside indexAction:isset(_REQUEST['action']....
+[21-Oct-2013 05:29:17 America/New_York] Inside transcoderAction
+
+[21-Oct-2013 05:29:17 America/New_York] Host : 192.168.1.13
+
+[21-Oct-2013 05:29:17 America/New_York] Content-Type : application/x-www-form-urlencoded; charset=utf-8
+
+[21-Oct-2013 05:29:17 America/New_York] User-Agent : Guzzle/3.7.4 curl/7.24.0 PHP/5.4.11
+
+[21-Oct-2013 05:29:17 America/New_York] x-amz-sns-message-type : Notification
+
+[21-Oct-2013 05:29:17 America/New_York] Inside transcoderAction:name == x-amz-sns-message-type
+
+[21-Oct-2013 05:29:17 America/New_York] Inside transcoderAction:Notification
+
+[21-Oct-2013 05:29:17 America/New_York] Inside transcoderAction:isset(_REQUEST['guzzle']) 
+
+[21-Oct-2013 05:29:17 America/New_York] **************************************
+[21-Oct-2013 05:29:17 America/New_York] data_user_id...... 4382322e-39f2-11e3-91ae-12313913ddb0
+[21-Oct-2013 05:29:17 America/New_York] data_media_id...... 4185ef4c-3a33-11e3-91ae-12313913ddb0
+[21-Oct-2013 05:29:17 America/New_York] data_content_type...... image/jpeg
+[21-Oct-2013 05:29:17 America/New_York] data_s3path...... 4382322e-39f2-11e3-91ae-12313913ddb0/image/
+[21-Oct-2013 05:29:17 America/New_York] data_s3file_name...... IMG_20131003_021347.jpg
+[21-Oct-2013 05:29:17 America/New_York] data_isVideo...... 0
+[21-Oct-2013 05:29:17 America/New_York] data_email...... chirag.patel@sufalamtech.com
+[21-Oct-2013 05:29:17 America/New_York] Inside AWSManagerReceiver contructor...
+
+[21-Oct-2013 05:29:17 America/New_York] Exit AWSManagerReceiver constructor
+[21-Oct-2013 05:29:17 America/New_York] Inside snsProcessMediaSubscribe ...
+
+[21-Oct-2013 05:29:17 America/New_York] Inside snsProcessMediaSubscribe else ...
+
+[21-Oct-2013 05:29:17 America/New_York] Inside snsProcessMediaSubscribe  else message_data ---> Array
+(
+    [user_id] => 4382322e-39f2-11e3-91ae-12313913ddb0
+    [media_id] => 4185ef4c-3a33-11e3-91ae-12313913ddb0
+    [content_type] => image/jpeg
+    [s3path] => 4382322e-39f2-11e3-91ae-12313913ddb0/image/
+    [s3file_name] => IMG_20131003_021347.jpg
+    [isVideo] => 0
+    [email] => chirag.patel@sufalamtech.com
+)
+
+
+[21-Oct-2013 05:30:54 America/New_York] Inside backend.indexAction...
+
+[21-Oct-2013 05:30:54 America/New_York] Inside indexAction:isset(_REQUEST['action']....
+[21-Oct-2013 05:30:54 America/New_York] Inside transcoderAction
+
+[21-Oct-2013 05:30:54 America/New_York] Host : 192.168.1.13
+
+[21-Oct-2013 05:30:54 America/New_York] Content-Type : application/x-www-form-urlencoded; charset=utf-8
+
+[21-Oct-2013 05:30:54 America/New_York] User-Agent : Guzzle/3.7.4 curl/7.24.0 PHP/5.4.11
+
+[21-Oct-2013 05:30:54 America/New_York] x-amz-sns-message-type : Notification
+
+[21-Oct-2013 05:30:54 America/New_York] Inside transcoderAction:name == x-amz-sns-message-type
+
+[21-Oct-2013 05:30:54 America/New_York] Inside transcoderAction:Notification
+
+[21-Oct-2013 05:30:54 America/New_York] Inside transcoderAction:isset(_REQUEST['guzzle']) 
+
+[21-Oct-2013 05:30:54 America/New_York] **************************************
+[21-Oct-2013 05:30:54 America/New_York] data_user_id...... 4382322e-39f2-11e3-91ae-12313913ddb0
+[21-Oct-2013 05:30:54 America/New_York] data_media_id...... 7bbf98f2-3a33-11e3-91ae-12313913ddb0
+[21-Oct-2013 05:30:54 America/New_York] data_content_type...... video/mp4
+[21-Oct-2013 05:30:54 America/New_York] data_s3path...... 4382322e-39f2-11e3-91ae-12313913ddb0/media/
+[21-Oct-2013 05:30:54 America/New_York] data_s3file_name...... VID_20130530_195807.mp4
+[21-Oct-2013 05:30:54 America/New_York] data_isVideo...... 1
+[21-Oct-2013 05:30:54 America/New_York] data_email...... chirag.patel@sufalamtech.com
+[21-Oct-2013 05:30:54 America/New_York] Inside AWSManagerReceiver contructor...
+
+[21-Oct-2013 05:30:54 America/New_York] Exit AWSManagerReceiver constructor
+[21-Oct-2013 05:30:54 America/New_York] Inside snsProcessMediaSubscribe ...
+
+[21-Oct-2013 05:30:54 America/New_York] Inside awsTranscode ...
+[21-Oct-2013 05:30:55 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:31:25 America/New_York] *******************************
+[21-Oct-2013 05:31:25 America/New_York] 1080P - Job Output Status -----------> Progressing
+[21-Oct-2013 05:31:25 America/New_York] HLS - Job Output Status -----------> Progressing
+[21-Oct-2013 05:31:25 America/New_York] WEB - Job Output Status -----------> Progressing
+[21-Oct-2013 05:31:25 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:31:55 America/New_York] *******************************
+[21-Oct-2013 05:31:55 America/New_York] 1080P - Job Output Status -----------> Progressing
+[21-Oct-2013 05:31:55 America/New_York] HLS - Job Output Status -----------> Progressing
+[21-Oct-2013 05:31:55 America/New_York] WEB - Job Output Status -----------> Progressing
+[21-Oct-2013 05:31:55 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:32:25 America/New_York] *******************************
+[21-Oct-2013 05:32:25 America/New_York] 1080P - Job Output Status -----------> Complete
+[21-Oct-2013 05:32:25 America/New_York] HLS - Job Output Status -----------> Progressing
+[21-Oct-2013 05:32:25 America/New_York] WEB - Job Output Status -----------> Progressing
+[21-Oct-2013 05:32:25 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:32:55 America/New_York] *******************************
+[21-Oct-2013 05:32:55 America/New_York] 1080P - Job Output Status -----------> Complete
+[21-Oct-2013 05:32:55 America/New_York] HLS - Job Output Status -----------> Progressing
+[21-Oct-2013 05:32:55 America/New_York] WEB - Job Output Status -----------> Progressing
+[21-Oct-2013 05:32:55 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:33:25 America/New_York] *******************************
+[21-Oct-2013 05:33:25 America/New_York] 1080P - Job Output Status -----------> Complete
+[21-Oct-2013 05:33:25 America/New_York] HLS - Job Output Status -----------> Complete
+[21-Oct-2013 05:33:25 America/New_York] WEB - Job Output Status -----------> Progressing
+[21-Oct-2013 05:33:25 America/New_York] About to sleep for 30...
+[21-Oct-2013 05:33:55 America/New_York] *******************************
+[21-Oct-2013 05:33:55 America/New_York] 1080P - Job Output Status -----------> Complete
+[21-Oct-2013 05:33:55 America/New_York] HLS - Job Output Status -----------> Complete
+[21-Oct-2013 05:33:55 America/New_York] WEB - Job Output Status -----------> Complete
+[21-Oct-2013 05:33:55 America/New_York] About to find media entry by media_id -----------> 
+
+[21-Oct-2013 05:33:56 America/New_York] Found media entry by media_id -----------> 
+
+[21-Oct-2013 05:33:56 America/New_York] metadata before metadata -----------> {"S3_files":{"path":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/VID_20130530_195807.mp4","Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/VID_20130530_195807.mp4"},"local_filenames":{"device":{"unique_device_identifier1":"4382322e-39f2-11e3-91ae-12313913ddb0_354614666375243"}},"type":{"video":{"format":"mp4"}}}
+
+[21-Oct-2013 05:33:56 America/New_York] MemreasConstants::S3BUCKET ---> memreasdev
+
+[21-Oct-2013 05:33:56 America/New_York] About to fetch 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+
+[21-Oct-2013 05:33:56 America/New_York] Fetched 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+
+[21-Oct-2013 05:33:56 America/New_York] _1080p_thumbnails object ----> Array
+(
+    [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/VID_20130530_195807.mp4
+    [LastModified] => 2013-10-21T09:31:50.000Z
+    [ETag] => "2b695572b81bf6715fc9794d124b740d-18"
+    [Size] => 93043447
+    [Owner] => Array
+        (
+            [ID] => 2594a3e9bb88a57729e1f3719ca06727e4e0ec6035f24308228ac99af4a03a2f
+            [DisplayName] => jt_dylan
+        )
+
+    [StorageClass] => STANDARD
+)
+
+
+[21-Oct-2013 05:33:56 America/New_York] _1080p_thumbnails object ----> Array
+(
+    [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00001.png
+    [LastModified] => 2013-10-21T09:32:00.000Z
+    [ETag] => "ee352a4204bb9b5135bf6ea03c8be83f"
+    [Size] => 46860
+    [Owner] => Array
+        (
+            [ID] => 2594a3e9bb88a57729e1f3719ca06727e4e0ec6035f24308228ac99af4a03a2f
+            [DisplayName] => jt_dylan
+        )
+
+    [StorageClass] => STANDARD
+)
+
+
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:56 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:56 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:58 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:58 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:33:58 America/New_York] _1080p_thumbnails object ----> Array
+(
+    [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00002.png
+    [LastModified] => 2013-10-21T09:32:00.000Z
+    [ETag] => "76385469dbeb6157760f8ebf5d745bd5"
+    [Size] => 45854
+    [Owner] => Array
+        (
+            [ID] => 2594a3e9bb88a57729e1f3719ca06727e4e0ec6035f24308228ac99af4a03a2f
+            [DisplayName] => jt_dylan
+        )
+
+    [StorageClass] => STANDARD
+)
+
+
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00002.png
+)
+
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:33:58 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:33:59 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:33:59 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:33:59 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00002.png
+)
+
+[21-Oct-2013 05:33:59 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:33:59 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:33:59 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:33:59 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:00 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00002.png
+)
+
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:00 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:00 America/New_York] _1080p_thumbnails object ----> Array
+(
+    [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00003.png
+    [LastModified] => 2013-10-21T09:32:00.000Z
+    [ETag] => "8314971b5634bb62505f49fbaeb4c9fc"
+    [Size] => 45377
+    [Owner] => Array
+        (
+            [ID] => 2594a3e9bb88a57729e1f3719ca06727e4e0ec6035f24308228ac99af4a03a2f
+            [DisplayName] => jt_dylan
+        )
+
+    [StorageClass] => STANDARD
+)
+
+
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00003.png
+)
+
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:00 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:02 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/79x80/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:02 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:34:02 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00003.png
+)
+
+[21-Oct-2013 05:34:02 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:02 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:02 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:02 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:05 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/448x306/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/
+    [1] => VID_20130530_195807.mp4-00003.png
+)
+
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:05 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/98x78/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:05 America/New_York] set 1080p thumnails[{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/VID_20130530_195807.mp4-00001.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/VID_20130530_195807.mp4-00001.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/VID_20130530_195807.mp4-00001.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/VID_20130530_195807.mp4-00001.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/VID_20130530_195807.mp4-00002.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/VID_20130530_195807.mp4-00002.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/VID_20130530_195807.mp4-00002.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/VID_20130530_195807.mp4-00002.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/VID_20130530_195807.mp4-00003.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/VID_20130530_195807.mp4-00003.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/VID_20130530_195807.mp4-00003.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/VID_20130530_195807.mp4-00003.png"}]
+
+[21-Oct-2013 05:34:05 America/New_York] About to fetch 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/
+
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/79x80/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:05 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:06 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/79x80/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:06 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:34:06 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:34:06 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:06 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/448x306/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:06 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:06 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/448x306/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/98x78/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/98x78/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] set hls_thumbnails[{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/VID_20130530_195807.mp4-00001.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/79x80\/VID_20130530_195807.mp4-00001.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/448x306\/VID_20130530_195807.mp4-00001.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/98x78\/VID_20130530_195807.mp4-00001.png"}]
+
+[21-Oct-2013 05:34:07 America/New_York] set hls_ts["4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400000.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400001.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400002.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400003.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400004.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400005.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400006.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400007.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400008.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400009.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400010.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400011.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400012.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400013.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400014.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400015.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400016.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400017.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400018.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400019.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400020.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400021.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400022.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400023.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400024.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400025.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400026.ts"]
+
+[21-Oct-2013 05:34:07 America/New_York] About to fetch 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:07 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:08 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:08 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:34:08 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:34:08 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:08 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:08 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:08 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:09 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:09 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:34:09 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00001.png
+)
+
+[21-Oct-2013 05:34:09 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:09 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:09 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:09 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:10 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/VID_20130530_195807.mp4-00001.png
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00002.png
+)
+
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:10 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00002.png
+)
+
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:10 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:12 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:12 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:34:12 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00002.png
+)
+
+[21-Oct-2013 05:34:12 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:12 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:12 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:12 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:13 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/VID_20130530_195807.mp4-00002.png
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload for 79x80
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00003.png
+)
+
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:13 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/79x80/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload for 448x306
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00003.png
+)
+
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:13 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:14 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/448x306/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:14 America/New_York] Inside fetchResizeUpload for 98x78
+[21-Oct-2013 05:34:14 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/
+    [1] => VID_20130530_195807.mp4-00003.png
+)
+
+[21-Oct-2013 05:34:14 America/New_York] Inside fetchResizeUpload - splitter --> Array
+(
+    [0] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/
+    [1] => 
+)
+
+[21-Oct-2013 05:34:14 America/New_York] Inside fetchResizeUpload - thumbnail_file --> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:14 America/New_York] Inside fetchResizeUpload - about to get 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:14 America/New_York] Inside fetchResizeUpload - about to save locally as /Users/johnmeah/AWS/memreasgit/memreas-dev-php-backend/data/4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:15 America/New_York] thumbnail_file ----> 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/98x78/VID_20130530_195807.mp4-00003.png
+[21-Oct-2013 05:34:15 America/New_York] set web_thumbnails[{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/VID_20130530_195807.mp4-00001.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/VID_20130530_195807.mp4-00001.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/VID_20130530_195807.mp4-00001.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/VID_20130530_195807.mp4-00001.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/VID_20130530_195807.mp4-00002.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/VID_20130530_195807.mp4-00002.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/VID_20130530_195807.mp4-00002.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/VID_20130530_195807.mp4-00002.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/VID_20130530_195807.mp4-00003.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/VID_20130530_195807.mp4-00003.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/VID_20130530_195807.mp4-00003.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/VID_20130530_195807.mp4-00003.png"}]
+
+[21-Oct-2013 05:34:15 America/New_York] About to set metadata ---> {"S3_files":{"path":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/VID_20130530_195807.mp4","Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/VID_20130530_195807.mp4","1080p":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/VID_20130530_195807.mp4","1080p_thumbails":[{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/VID_20130530_195807.mp4-00001.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/VID_20130530_195807.mp4-00001.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/VID_20130530_195807.mp4-00001.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/VID_20130530_195807.mp4-00001.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/VID_20130530_195807.mp4-00002.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/VID_20130530_195807.mp4-00002.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/VID_20130530_195807.mp4-00002.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/VID_20130530_195807.mp4-00002.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/VID_20130530_195807.mp4-00003.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/79x80\/VID_20130530_195807.mp4-00003.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/448x306\/VID_20130530_195807.mp4-00003.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/1080p\/thumbnail\/98x78\/VID_20130530_195807.mp4-00003.png"}],"hls":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp4.m3u8","hls_thumbnails":[{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/VID_20130530_195807.mp4-00001.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/79x80\/VID_20130530_195807.mp4-00001.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/448x306\/VID_20130530_195807.mp4-00001.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/thumbnail\/98x78\/VID_20130530_195807.mp4-00001.png"}],"hls_ts":["4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400000.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400001.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400002.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400003.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400004.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400005.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400006.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400007.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400008.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400009.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400010.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400011.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400012.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400013.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400014.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400015.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400016.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400017.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400018.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400019.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400020.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400021.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400022.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400023.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400024.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400025.ts","4382322e-39f2-11e3-91ae-12313913ddb0\/media\/hls\/VID_20130530_195807.mp400026.ts"],"web":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/VID_20130530_195807.mp4","web_thumbnails":[{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/VID_20130530_195807.mp4-00001.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/VID_20130530_195807.mp4-00001.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/VID_20130530_195807.mp4-00001.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/VID_20130530_195807.mp4-00001.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/VID_20130530_195807.mp4-00002.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/VID_20130530_195807.mp4-00002.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/VID_20130530_195807.mp4-00002.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/VID_20130530_195807.mp4-00002.png"},{"Full":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/VID_20130530_195807.mp4-00003.png"},{"79x80":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/79x80\/VID_20130530_195807.mp4-00003.png"},{"448x306":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/448x306\/VID_20130530_195807.mp4-00003.png"},{"98x78":"4382322e-39f2-11e3-91ae-12313913ddb0\/media\/web\/thumbnail\/98x78\/VID_20130530_195807.mp4-00003.png"}]},"local_filenames":{"device":{"unique_device_identifier1":"4382322e-39f2-11e3-91ae-12313913ddb0_354614666375243"}},"type":{"video":{"format":"mp4"}}}
+
+[21-Oct-2013 05:34:15 America/New_York] CHECKOUT THE RESULT FROM THE SUBSCRIBE.... =====================
+Debug output of model
+=====================
+
+Model data
+-----------
+
+This data can be retrieved from the model object using the get() method of the model (e.g. $model->get($key)) or accessing the model like an associative array (e.g. $model['key']).
+
+    [Job] => Array
+        (
+            [Id] => 1382347854973-m5pjat
+            [Input] => Array
+                (
+                    [AspectRatio] => auto
+                    [Container] => auto
+                    [FrameRate] => auto
+                    [Interlaced] => auto
+                    [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/VID_20130530_195807.mp4
+                    [Resolution] => auto
+                )
+
+            [Output] => Array
+                (
+                    [AlbumArt] => 
+                    [Duration] => 135
+                    [Height] => 720
+                    [Id] => 1
+                    [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/VID_20130530_195807.mp4
+                    [PresetId] => 1351620000001-000001
+                    [Rotate] => 0
+                    [SegmentDuration] => 
+                    [Status] => Complete
+                    [StatusDetail] => 
+                    [ThumbnailPattern] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-{count}
+                    [Watermarks] => Array
+                        (
+                        )
+
+                    [Width] => 1280
+                )
+
+            [OutputKeyPrefix] => 
+            [Outputs] => Array
+                (
+                    [0] => Array
+                        (
+                            [AlbumArt] => 
+                            [Duration] => 135
+                            [Height] => 720
+                            [Id] => 1
+                            [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/VID_20130530_195807.mp4
+                            [PresetId] => 1351620000001-000001
+                            [Rotate] => 0
+                            [SegmentDuration] => 
+                            [Status] => Complete
+                            [StatusDetail] => 
+                            [ThumbnailPattern] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/1080p/thumbnail/VID_20130530_195807.mp4-{count}
+                            [Watermarks] => Array
+                                (
+                                )
+
+                            [Width] => 1280
+                        )
+
+                    [1] => Array
+                        (
+                            [AlbumArt] => 
+                            [Duration] => 134
+                            [Height] => 576
+                            [Id] => 2
+                            [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/VID_20130530_195807.mp4
+                            [PresetId] => 1351620000001-200010
+                            [Rotate] => 0
+                            [SegmentDuration] => 5.0
+                            [Status] => Complete
+                            [StatusDetail] => 
+                            [ThumbnailPattern] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/hls/thumbnail/VID_20130530_195807.mp4-{count}
+                            [Watermarks] => Array
+                                (
+                                )
+
+                            [Width] => 1024
+                        )
+
+                    [2] => Array
+                        (
+                            [AlbumArt] => 
+                            [Duration] => 135
+                            [Height] => 720
+                            [Id] => 3
+                            [Key] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/VID_20130530_195807.mp4
+                            [PresetId] => 1351620000001-100070
+                            [Rotate] => 0
+                            [SegmentDuration] => 
+                            [Status] => Complete
+                            [StatusDetail] => 
+                            [ThumbnailPattern] => 4382322e-39f2-11e3-91ae-12313913ddb0/media/web/thumbnail/VID_20130530_195807.mp4-{count}
+                            [Watermarks] => Array
+                                (
+                                )
+
+                            [Width] => 1280
+                        )
+
+                )
+
+            [PipelineId] => 1370361326621-wu3cce
+            [Playlists] => Array
+                (
+                )
+
+            [Status] => Complete
+        )
+
+

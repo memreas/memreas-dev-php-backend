@@ -10,3 +10,5 @@ nbproject
 composer.lock
 .elasticbeanstalk/
 data/
+!vendor/memreas
+vendor/
