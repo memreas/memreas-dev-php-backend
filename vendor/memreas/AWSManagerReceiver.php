@@ -1,8 +1,5 @@
 <?php
 namespace memreas;
-//require_once 'config.php';
-//$vendor_autoloader = dirname(__DIR__) . '/' . 'vendor/autoload.php';
-//require $vendor_autoloader;
 
 use Guzzle\Http\Client;
 use Guzzle\Http\EntityBody;
@@ -16,7 +13,7 @@ use Application\Model\MemreasConstants;
 
 error_reporting(E_ALL & ~E_NOTICE);
 
-class AWSManager {
+class AWSManagerReceiver {
 
     private $aws = null;
     private $s3 = null;
@@ -28,36 +25,30 @@ class AWSManager {
     private $dbAdapter = null;
 
     public function __construct($service_locator) {
-        //print "In AWSManager constructor <br>";
-        error_log("Inside AWSManager contructor..." . PHP_EOL);
+        //print "In AWSManagerReceiver constructor <br>";
+        error_log("Inside AWSManagerReceiver contructor..." . PHP_EOL);
 
 		try {
 			$this->service_locator = $service_locator;
-error_log("Inside AWSManager contructor - got service_locator ..." . PHP_EOL);
 			$this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
 			//$this->dbAdapter = $service_locator->get('memreasbackenddb');
-error_log("Inside AWSManager contructor - got dbAdapter ..." . PHP_EOL);
 			$this->aws = Aws::factory(array(
 						'key' => 'AKIAJMXGGG4BNFS42LZA',
 						'secret' => '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',
 						'region' => 'us-east-1'
 			));
-error_log("Inside AWSManager contructor - got aws ..." . PHP_EOL);
 
 			//Fetch the S3 class
 			$this->s3 = $this->aws->get('s3');
-error_log("Inside AWSManager contructor - got s3 ..." . PHP_EOL);
 
 			//Fetch the AWS Elastic Transcoder class
 			$this->awsTranscode = $this->aws->get('ElasticTranscoder');
-error_log("Inside AWSManager contructor - got ElasticTranscoder ..." . PHP_EOL);
 
 			//Set the bucket
 			$this->bucket = "memreasdev";
 
 			//Fetch the SNS class
 			$this->sns = $this->aws->get('sns');
-error_log("Inside AWSManager contructor - got sns ..." . PHP_EOL);
 
 			//Set the topicArn
 			$this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
@@ -65,25 +56,8 @@ error_log("Inside AWSManager contructor - got sns ..." . PHP_EOL);
  		   error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
 		}
 
-        error_log("Exit AWSManager constructor", 0);
-        //print "Exit AWSManager constructor <br>";
-    }
-
-    function snsProcessMediaPublish($message_data) {
-
-        $json = json_encode($message_data);
-        error_log("INPUT JSON ----> " . $json);
-
-        //Debug without Topic publish
-        $result = $this->snsProcessMediaSubscribe($message_data);
-/*
-		$result = $this->sns->publish(array(
-           'TopicArn' => $this->topicArn,
-            'Message'  => $json,
-            'Subject'  => 'snsProcessMediaPublish',
-        	));
-*/
-        return $result;
+        error_log("Exit AWSManagerReceiver constructor", 0);
+        //print "Exit AWSManagerReceiver constructor <br>";
     }
 
     function snsProcessMediaSubscribe($message_data) {
@@ -94,6 +68,7 @@ error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);
             $result = $this->awsTranscodeExec($message_data);
         } else {
 error_log("Inside snsProcessMediaSubscribe else ..." . PHP_EOL);            
+error_log("Inside snsProcessMediaSubscribe  else message_data ---> " . print_r($message_data,true). PHP_EOL);            
             //Fetch image and create thumbnails
             $s3file_name = $message_data['s3file_name'];
             $user_id = $message_data['user_id'];
@@ -101,16 +76,20 @@ error_log("Inside snsProcessMediaSubscribe else ..." . PHP_EOL);
             $content_type = $message_data['content_type'];
             $s3path = $message_data['s3path'];
             //END
+
             //Saving image ugh - need to find way to not write to disk....
-            //$dirPath = dirname(__DIR__)."/media/79x80/";
-            //$dirPath = dirname(__DIR__) . "/media/";
-            $dirPath = getcwd() . "/data/media/";
+			//Create a temp job dir to create the thumbnails...
+			$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
+			$dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::MEDIA_PATH;
+			if (!file_exists($dirPath)) {
+				mkdir($dirPath, 0755, true);
+			}
 error_log("Inside snsProcessMediaSubscribe dirPath ----> $dirPath" . PHP_EOL);            
             $file = $dirPath . $s3file_name;
             $s3file = $s3path . $s3file_name;
 //            echo "s3file=$s3file<br/>file=$file<br/>dirpath=$dirPath<br/>s3path=$s3path<br/>s3path=$s3path<br>content=$content_type<br/>file_name=$s3file_name";
             $result = $this->s3->getObject(array(
-                'Bucket' => S3BUCKET,
+                'Bucket' => MemreasConstants::S3BUCKET,
                 'Key' => $s3file,
                 'SaveAs' => $file
             ));
@@ -137,6 +116,10 @@ error_log("Inside snsProcessMediaSubscribe json ----> $json" . PHP_EOL);
 error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
 			$this->dbAdapter->persist($media);
 			$this->dbAdapter->flush();
+
+			//Remove the work directory
+			$job_dir = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir;
+			rmdir($job_dir);
         }
         return $result;
     }
@@ -154,22 +137,24 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
 
         //Local server data
         //Saving image ugh - need to find way to not write to disk....
-        //$dirPath = dirname(__DIR__)."/media/79x80/";
-        $dirPath = dirname(__DIR__) . "/media/";
+        $dirPath = getcwd() . "/data/" . $user_id . "/media/";
+        if (!file_exists($dirPath)) {
+		    mkdir($dirPath, 0755, true);
+		}
         $splitter = explode("thumbnail/", $s3file);
-//error_log("Inside fetchResizeUpload - splitter --> " . print_r($splitter, true));                	
+error_log("Inside fetchResizeUpload - splitter --> " . print_r($splitter, true));                	
         $thumbnail_name = $splitter[1];
         $splitter = explode($thumbnail_name, $s3file);
-//error_log("Inside fetchResizeUpload - splitter --> " . print_r($splitter, true));                	
+error_log("Inside fetchResizeUpload - splitter --> " . print_r($splitter, true));                	
         $path = $splitter[0];
         $thumbnail_file = $path . $height . "x" . $width . "/" . $thumbnail_name;
-//error_log("Inside fetchResizeUpload - thumbnail_file --> " . $thumbnail_file);                	
+error_log("Inside fetchResizeUpload - thumbnail_file --> " . $thumbnail_file);                	
 
         $file = $dirPath . $thumbnail_name;
-//error_log("Inside fetchResizeUpload - about to get " . $s3file);                	
-//error_log("Inside fetchResizeUpload - about to save locally as " . $file);                	
+error_log("Inside fetchResizeUpload - about to get " . $s3file);                	
+error_log("Inside fetchResizeUpload - about to save locally as " . $file);                	
         $result = $this->s3->getObject(array(
-            'Bucket' => S3BUCKET,
+            'Bucket' => MemreasConstants::S3BUCKET,
             'Key' => $s3file,
             'SaveAs' => $file
         ));
@@ -181,26 +166,25 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
         $layer->resizeInPixel($height, $width);
 
         //Saving image ugh
-        $dirPath = dirname(__DIR__) . "/media/" . $height . "x" . $width . "/";
+        $dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" . $width . "/";
+        if (!file_exists($dirPath)) {
+		    mkdir($dirPath, 0777, true);
+		}
+
         $createFolders = true;
         $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
         $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
         $layer->save($dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality);
         $file = $dirPath . $thumbnail_name;
 
-//error_log("Inside fetchResizeUpload - resized and saved local file is now  --> " . $file);                	
-
         $body = EntityBody::factory(fopen($file, 'r+'));
-        //$s3_media_folder = "$s3output_path";
-        //$s3_media_path = $s3_media_folder . $s3file_name;
-        //$ec2_media_path = $dirPath . $s3file_name;
 //error_log("Inside fetchResizeUpload - thumbnail_file is  --> " . $thumbnail_file);                	
         /////////////////////////////////////////////////////////////////////
         //Upload images - section
         $uploader = UploadBuilder::newInstance()
                 ->setClient($this->s3)
                 ->setSource($body)
-                ->setBucket(S3BUCKET)
+                ->setBucket(MemreasConstants::S3BUCKET)
                 ->setMinPartSize(10 * Size::MB)
                 ->setOption('ContentType', $content_type)
                 ->setKey($thumbnail_file)
@@ -239,8 +223,6 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
         $hls_output_file = $s3path . "hls/" . $s3file_name;
         $hls_file_thumb = $s3path . 'hls/thumbnail/' . $s3file_name . "-{count}";
         $hls_name_file = $s3path . "hls/" . $s3file_name . '.m3u8';
-
-
 
         $result = $transcode_request = $this->awsTranscode->createJob(
                 array(
@@ -312,23 +294,29 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
             // It's completed ... get list object...
             ////////////////////////////////////////////////////////////////////
             //Fetch the metadata object
-            $query = "SELECT metadata FROM media WHERE media_id = '$media_id'";
-            $result = mysql_query($query) or die("SELECT FROM MEDIA FAILED");
-            $row = mysql_fetch_array($result);
-            $metadata = json_decode($row['metadata'], true);
+            //$query = "SELECT metadata FROM media WHERE media_id = '$media_id'";
+            //$result = mysql_query($query) or die("SELECT FROM MEDIA FAILED");
+            //$row = mysql_fetch_array($result);
+        	//$metadata = json_decode($row['metadata'], true);
+            
+error_log("About to find media entry by media_id -----------> " . PHP_EOL);
+            $media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
+            $metadata = json_decode($media->metadata, true);
+error_log("Found media entry by media_id -----------> " . PHP_EOL);
+error_log("metadata before metadata -----------> " . $media->metadata . PHP_EOL);
 
-            error_log("metadata before -----------> " . $row['metadata']);
-
+error_log("MemreasConstants::S3BUCKET ---> ". MemreasConstants::S3BUCKET . PHP_EOL);
+error_log("About to fetch ". $s3path . '1080p/' . PHP_EOL);
             ////////////////////////////////////////////////////////////////////
-            //Fetch the list of files form S3
+            //Fetch the list of files from S3 and add to metadata
             $_1080p_thumbnails = array();
             $objectsIterator = $this->s3->getIterator('ListObjects', array(
-                'Bucket' => S3BUCKET,
+                'Bucket' => MemreasConstants::S3BUCKET,
                 'Prefix' => $s3path . '1080p/'
             ));
+error_log("Fetched ". $s3path . '1080p/' . PHP_EOL);
             foreach ($objectsIterator as $object) {
-//               old condition if (strpos($object['Key'], 'thumbnail') !== false) {
-                //condition added by Sufalam STRAT
+error_log("_1080p_thumbnails object ----> " . print_r($object, true) . PHP_EOL);
                 if (strpos($object['Key'], 'thumbnail/' . $s3file_name) !== false) {
                     $_1080p_thumbnails[]['Full'] = $object['Key'];
                     $s3output_path = $s3path . "1080p/thumbnail/79x80/";
@@ -342,18 +330,17 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
                 }
             }
             $metadata['S3_files']['1080p_thumbails'] = $_1080p_thumbnails;
-            //resize and put to s3
+error_log("set 1080p thumnails" . json_encode($metadata['S3_files']['1080p_thumbails']). PHP_EOL);
 
 
+error_log("About to fetch ". $s3path . 'hls/' . PHP_EOL);
             $hls_thumbnails = array();
             $hls_ts = array();
             $objectsIterator = $this->s3->getIterator('ListObjects', array(
-                'Bucket' => S3BUCKET,
+                'Bucket' => MemreasConstants::S3BUCKET,
                 'Prefix' => $s3path . 'hls/'
             ));
             foreach ($objectsIterator as $object) {
-//                   if (strpos($object['Key'], 'thumbnail') !== false) 
-//                condition added by Sufalam STRAT
                 if (strpos($object['Key'], 'thumbnail/' . $s3file_name) !== false) {
                     $hls_thumbnails[]['Full'] = $object['Key'];
                     $s3output_path = $s3path . "hls/thumbnail/79x80/";
@@ -370,15 +357,17 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
                 $metadata['S3_files']['hls_thumbnails'] = $hls_thumbnails;
                 $metadata['S3_files']['hls_ts'] = $hls_ts;
             }
+error_log("set hls_thumbnails" . json_encode($metadata['S3_files']['hls_thumbnails']). PHP_EOL);
+error_log("set hls_ts" . json_encode($metadata['S3_files']['hls_ts']). PHP_EOL);
 
+
+error_log("About to fetch ". $s3path . 'web/' . PHP_EOL);
             $web_thumbnails = array();
             $objectsIterator = $this->s3->getIterator('ListObjects', array(
-                'Bucket' => S3BUCKET,
+                'Bucket' => MemreasConstants::S3BUCKET,
                 'Prefix' => $s3path . 'web/'
             ));
             foreach ($objectsIterator as $object) {
-//                                if (strpos($object['Key'], 'thumbnail') !== false) 
-//                condition added by Sufalam STRAT
                 if (strpos($object['Key'], 'thumbnail/' . $s3file_name) !== false) {
                     $web_thumbnails[]['Full'] = $object['Key'];
                     $s3output_path = $s3path . "web/thumbnail/79x80/";
@@ -392,13 +381,23 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
                 }
                 $metadata['S3_files']['web_thumbnails'] = $web_thumbnails;
             }
+error_log("set web_thumbnails" . json_encode($metadata['S3_files']['web_thumbnails']). PHP_EOL);
 
             ////////////////////////////////////////////////
             //Update the database with the updated metadata
+            $now = date('Y-m-d H:i:s');
             $json = json_encode($metadata);
-            error_log("metadata after -----------> " . $json);
-            $query = "UPDATE media SET metadata = '$json' WHERE media_id = '$media_id'";
-            $result = mysql_query($query) or die("UPDATE MEDIA FAILED");
+error_log("About to set metadata ---> " . $json . PHP_EOL);
+			$media->metadata = $json;
+			$media->update_date = $now;
+			$this->dbAdapter->persist($media);
+			$this->dbAdapter->flush();
+
+//            $json = json_encode($metadata);
+//            error_log("metadata after -----------> " . $json);
+//            $query = "UPDATE media SET metadata = '$json' WHERE media_id = '$media_id'";
+//            $result = mysql_query($query) or die("UPDATE MEDIA FAILED");
+
         } else {
             die("TRANSCODE ERROR: Job Id is not set!");
         }
@@ -449,7 +448,7 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
             $uploader = UploadBuilder::newInstance()
                     ->setClient($this->s3)
                     ->setSource($body)
-                    ->setBucket(S3BUCKET)
+                    ->setBucket(MemreasConstants::S3BUCKET)
                     ->setMinPartSize(10 * Size::MB)
                     ->setOption('ContentType', $content_type)
                     ->setKey($s3_media_path)
@@ -491,7 +490,7 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
             $uploader = UploadBuilder::newInstance()
                     ->setClient($this->s3)
                     ->setSource($body)
-                    ->setBucket(S3BUCKET)
+                    ->setBucket(MemreasConstants::S3BUCKET)
                     ->setMinPartSize(10 * Size::MB)
                     ->setOption('ContentType', $content_type)
                     ->setKey($s3_media_path)
@@ -534,7 +533,7 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
             $uploader = UploadBuilder::newInstance()
                     ->setClient($this->s3)
                     ->setSource($body)
-                    ->setBucket(S3BUCKET)
+                    ->setBucket(MemreasConstants::S3BUCKET)
                     ->setMinPartSize(10 * Size::MB)
                     ->setOption('ContentType', $content_type)
                     ->setKey($s3_media_path)
@@ -574,10 +573,12 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
         $valid_formats = array("jpg", "png", "gif", "bmp", "jpeg", "PNG", "JPG", "JPEG", "GIF", "BMP");
     }
 
-//added by Sufalam STRAT
     public function webserviceUpload($user_id, $s3file_name, $content_type) {
         //$dirPath = dirname(__DIR__) . "/media/";
-        $dirPath = getcwd() . MemreasConstants::DIR_PATH;
+		$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
+        
+        
+        $dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::USERIMAGE_PATH;
         $file = $dirPath . $s3file_name;
         $layer = ImageWorkshop::initFromPath($file);
         //Saving image ugh
@@ -596,7 +597,7 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
         $uploader = UploadBuilder::newInstance()
                 ->setClient($this->s3)
                 ->setSource($body)
-                ->setBucket(S3BUCKET)
+                ->setBucket(MemreasConstants::S3BUCKET)
                 ->setMinPartSize(10 * Size::MB)
                 ->setOption('ContentType', $content_type)
                 ->setKey($s3_media_path)
@@ -634,7 +635,7 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
   $uploader = UploadBuilder::newInstance()
   ->setClient($this->s3)
   ->setSource($file)
-  ->setBucket(S3BUCKET)
+  ->setBucket(MemreasConstants::S3BUCKET)
   ->setMinPartSize(10 * Size::MB)
   ->setOption('ContentType', $content_type)
   ->setKey($s3_media_path)
