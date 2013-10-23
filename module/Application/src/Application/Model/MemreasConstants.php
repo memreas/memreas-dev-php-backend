@@ -16,6 +16,7 @@ class MemreasConstants {
         //const SITEURL			= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";
         const DATA_PATH			= "/data/";
         const MEDIA_PATH		= "/media/";
+        const IMAGES_PATH		= "/media/images/";
         const USERIMAGE_PATH	= "/media/userimage/";
         const FOLDER_PATH		= "/data/media/";
         const FOLDER_AUDIO		= "upload_audio";
@@ -26,9 +27,8 @@ class MemreasConstants {
 
         const CLOUDFRONT_STREAMING_HOST		= 'http://s1iq2cbtodqqky.cloudfront.net/';
         const CLOUDFRONT_DOWNLOAD_HOST		= 'http://d1ckv7o9k6o3x9.cloudfront.net/';
-        const MEMREAS_TRANSCODER_URL		= 'http://memreasbackend.elasticbeanstalk.com/index/transcoder';
-        const MEMREAS_TRANSCODER_TOPIC_ARN	= 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
-        //Local debug only....
-        //const MEMREAS_TRANSCODER_URL		= 'http://192.168.1.13/memreas-dev-php-ws/app/index?action=transcoder';
+        const MEMREAS_TRANSCODER_URL		= 'http://memreasbackend.elasticbeanstalk.com/';
+        //const MEMREAS_TRANSCODER_URL		= 'http://192.168.1.13/memreas-dev-php-backend/app/';
+        //const MEMREAS_TRANSCODER_TOPIC_ARN	= 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
 
 }
