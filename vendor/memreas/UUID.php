@@ -18,6 +18,7 @@ class UUID {
             self::$instance = new UUID();
             if (isset($myadapter)) {
               self::$adapter = $myadapter;
+error_log("adapter is set...");
             }
         }
         return self::$instance;
@@ -35,6 +36,7 @@ class UUID {
 	public static function fetchUUID() 
 	{
 		
+error_log("Error is in fetchUUID");
 		self::$stmt = self::$adapter->query('SELECT UUID() AS UUID');
  		self::$result = self::$stmt->execute();
  		self::$row = self::$result->current();

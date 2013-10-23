@@ -10,6 +10,8 @@ use Aws\S3\Model\MultipartUpload\UploadBuilder;
 use Aws\ElasticTranscoder\ElasticTranscoderClient;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
+use memreas\RmWorkDir;
+use memreas\UUID;
 
 error_reporting(E_ALL & ~E_NOTICE);
 
@@ -31,7 +33,9 @@ class AWSManagerReceiver {
 		try {
 			$this->service_locator = $service_locator;
 			$this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
+			//UUID::getInstance($this->dbAdapter); //construct the UUID singleton...
 			//$this->dbAdapter = $service_locator->get('memreasbackenddb');
+			
 			$this->aws = Aws::factory(array(
 						'key' => 'AKIAJMXGGG4BNFS42LZA',
 						'secret' => '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',
@@ -76,11 +80,15 @@ error_log("Inside snsProcessMediaSubscribe  else message_data ---> " . print_r($
             $content_type = $message_data['content_type'];
             $s3path = $message_data['s3path'];
             //END
+error_log("Inside snsProcessMediaSubscribe set variables..." . PHP_EOL);            
 
             //Saving image ugh - need to find way to not write to disk....
 			//Create a temp job dir to create the thumbnails...
-			$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
-			$dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::MEDIA_PATH;
+			//$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
+			$temp_job_uuid_dir = date("Y.m.d") . '_' . uniqid();
+error_log("Inside snsProcessMediaSubscribe temp_job_uuid_dir ----> " . $temp_job_uuid_dir . PHP_EOL);            
+			$dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH;
+error_log("Inside snsProcessMediaSubscribe dirPath ----> " . $dirPath . PHP_EOL);            
 			if (!file_exists($dirPath)) {
 				mkdir($dirPath, 0755, true);
 			}
@@ -99,8 +107,7 @@ error_log("Inside snsProcessMediaSubscribe s3file ----> $s3file" . PHP_EOL);
 error_log("Inside snsProcessMediaSubscribe result ----> $result" . PHP_EOL);            
 
             //Use the s3upload code to resize and load to s3		
-            //$media_id add by sufalam
-            $paths = $this->s3upload($user_id, $media_id, $s3file_name, $content_type, $file);
+            $paths = $this->s3upload($user_id, $dirPath, $media_id, $s3file_name, $content_type, $file);
 
             ////////////////////////////////////////////////////////////////////
             //Retrieve media entry here...
@@ -118,8 +125,8 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
 			$this->dbAdapter->flush();
 
 			//Remove the work directory
-			$job_dir = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir;
-			rmdir($job_dir);
+			$dir = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir;
+			$dirRemoved = new RmWorkDir($dir);
         }
         return $result;
     }
@@ -201,6 +208,171 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 
         error_log("thumbnail_file ----> " . $thumbnail_file);
         return $thumbnail_file;
+    }
+
+    function s3upload($user_id, $temp_job_uuid_dir, $media_id, $s3file_name, $content_type, $file, $isVideo = false) {
+
+        error_log("Enter s3upload");
+
+        $s3_media_folder = null;
+        $s3_media_path = null;
+        $image79x80 = null;
+        $image448x306 = null;
+        $image98x78 = null;
+        $paths = array();
+
+
+        $metadata = null;
+		/////////////////////////////////////////////////////////////////////
+		//Resize images - 79x80 section
+		$layer = ImageWorkshop::initFromPath($file);
+		//$layer->resizeInPixel(79, 80, true, 0, 0, 'MM');  //Maintains image
+		$layer->resizeInPixel(79, 80);
+
+		//Saving image ugh
+		//$dirPath = dirname(__DIR__) . "/media/79x80/";
+
+		// dirPath = /data/temp_uuid/media/userimage/
+		//$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
+		//$temp_job_uuid_dir = date("Y.m.d") . '_' . uniqid();
+		$dirPath = array();
+		$dirPath['79x80'] = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH . '79x80/';
+		$dirPath['98x78'] = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH . '98x78/';
+		$dirPath['448x306'] = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::IMAGES_PATH . '448x306/';
+
+		foreach ($dirPath as $key => $value) {
+			if (!file_exists($value)) {
+				mkdir($value, 0755, true);
+			}
+		}
+
+		//delete me later...
+		//if (!file_exists($dirPath)) {
+		//	mkdir($dirPath, 0755, true);
+		//}
+
+		//$dirPath = getcwd() . "/data/media/79x80/";
+		$createFolders = true;
+		$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
+		$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
+		$layer->save($dirPath['79x80'], $s3file_name, $createFolders, $backgroundColor, $imageQuality);
+
+		//S3 Folder Setup
+		$s3_media_folder = "$user_id/images/79x80/";
+		$s3_media_path = $s3_media_folder . $s3file_name;
+		$ec2_media_path = $dirPath['79x80'] . $s3file_name;
+		$body = EntityBody::factory(fopen($ec2_media_path, 'r+'));
+
+		$uploader = UploadBuilder::newInstance()
+				->setClient($this->s3)
+				->setSource($body)
+				->setBucket(MemreasConstants::S3BUCKET)
+				->setMinPartSize(10 * Size::MB)
+				->setOption('ContentType', $content_type)
+				->setKey($s3_media_path)
+				->build();
+
+		//  Modified - Perform the upload to S3. Abort the upload if something goes wrong
+		try {
+			$uploader->upload();
+			//error_log( "Upload complete.\n", 0);
+		} catch (MultipartUploadException $e) {
+			$uploader->abort();
+			//error_log( "Upload failed.\n", 0);
+		}
+
+		$paths['79x80_Path'] = $s3_media_path;
+
+		error_log("79x80 PATH ----> " . $s3_media_path);
+
+		/////////////////////////////////////////////////////////////////////
+		//Resize images - 448x306 section
+		$layer = ImageWorkshop::initFromPath($file);
+		//$layer->resizeInPixel(448, 306, true, 0, 0, 'MM');  //Maintains image
+		$layer->resizeInPixel(448, 306);
+
+		//Saving image ugh
+		//$dirPath = dirname(__DIR__) . "/media/448x306/";
+		$createFolders = true;
+		$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
+		$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
+		$layer->save($dirPath['448x306'], $s3file_name, $createFolders, $backgroundColor, $imageQuality);
+
+		//S3 Folder Setup
+		$s3_media_folder = "$user_id/images/448x306/";
+		$s3_media_path = $s3_media_folder . $s3file_name;
+		$ec2_media_path = $dirPath['448x306'] . $s3file_name;
+		$body = EntityBody::factory(fopen($ec2_media_path, 'r+'));
+
+		$uploader = UploadBuilder::newInstance()
+				->setClient($this->s3)
+				->setSource($body)
+				->setBucket(MemreasConstants::S3BUCKET)
+				->setMinPartSize(10 * Size::MB)
+				->setOption('ContentType', $content_type)
+				->setKey($s3_media_path)
+				->build();
+
+		//  Modified - Perform the upload to S3. Abort the upload if something goes wrong
+		try {
+			$uploader->upload();
+			//error_log( "Upload complete.", 0);
+		} catch (MultipartUploadException $e) {
+			$uploader->abort();
+			//error_log( "Upload failed.", 0);
+		}
+
+		$paths['448x306_Path'] = $s3_media_path;
+
+		error_log("448x306 PATH ----> " . $s3_media_path);
+
+
+		/////////////////////////////////////////////////////////////////////
+		//Resize images - 98x78 section
+		$layer = ImageWorkshop::initFromPath($file);
+		//$layer->resizeInPixel(98, 78, true, 0, 0, 'MM');  //Maintains image
+		$layer->resizeInPixel(98, 78);
+
+		//Saving image ugh
+		//$dirPath = dirname(__DIR__) . "/media/98x78/";
+		$createFolders = true;
+		$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
+		$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
+		$layer->save($dirPath['98x78'], $s3file_name, $createFolders, $backgroundColor, $imageQuality);
+
+		//S3 Folder Setup
+		$s3_media_folder = "$user_id/images/98x78/";
+		$s3_media_path = $s3_media_folder . $s3file_name;
+		$ec2_media_path = $dirPath['98x78'] . $s3file_name;
+		$body = EntityBody::factory(fopen($ec2_media_path, 'r+'));
+
+		$uploader = UploadBuilder::newInstance()
+				->setClient($this->s3)
+				->setSource($body)
+				->setBucket(MemreasConstants::S3BUCKET)
+				->setMinPartSize(10 * Size::MB)
+				->setOption('ContentType', $content_type)
+				->setKey($s3_media_path)
+				->build();
+
+		//  Modified - Perform the upload to S3. Abort the upload if something goes wrong
+		try {
+			$uploader->upload();
+			error_log("Upload complete.\n", 0);
+		} catch (MultipartUploadException $e) {
+			$uploader->abort();
+			error_log("Upload failed.\n", 0);
+		}
+
+		$paths['98x78_Path'] = $s3_media_path;
+		error_log("98x78 PATH ----> " . $s3_media_path);
+		
+		//Delete the work directories
+		$dir = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir;
+		$dirRemoved = new RmWorkDir($dir);
+
+        //return the array of paths to the image or video
+        return $paths;
     }
 
     function awsTranscodeExec($message_data) {
@@ -407,158 +579,6 @@ error_log("About to set metadata ---> " . $json . PHP_EOL);
         error_log("Exit awsTranscode ...", 0);
     }
 
-    function s3upload($user_id, $media_id, $s3file_name, $content_type, $file, $isVideo = false) {
-
-        error_log("Enter s3upload");
-
-        $s3_media_folder = null;
-        $s3_media_path = null;
-        $image79x80 = null;
-        $image448x306 = null;
-        $image98x78 = null;
-        $paths = array();
-
-
-        $metadata = null;
-        if ($isVideo) {
-            //Do Nothing ... topic covers...
-            //$this->awsTranscodeExec($media_id, $s3_media_folder, $s3file_name); 
-        } else {
-
-            /////////////////////////////////////////////////////////////////////
-            //Resize images - 79x80 section
-            $layer = ImageWorkshop::initFromPath($file);
-            //$layer->resizeInPixel(79, 80, true, 0, 0, 'MM');  //Maintains image
-            $layer->resizeInPixel(79, 80);
-
-            //Saving image ugh
-            //$dirPath = dirname(__DIR__) . "/media/79x80/";
-            $dirPath = getcwd() . "/data/media/79x80/";
-            $createFolders = true;
-            $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
-            $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
-            $layer->save($dirPath, $s3file_name, $createFolders, $backgroundColor, $imageQuality);
-
-            //S3 Folder Setup
-            $s3_media_folder = "$user_id/images/79x80/";
-            $s3_media_path = $s3_media_folder . $s3file_name;
-            $ec2_media_path = $dirPath . $s3file_name;
-            $body = EntityBody::factory(fopen($ec2_media_path, 'r+'));
-
-            $uploader = UploadBuilder::newInstance()
-                    ->setClient($this->s3)
-                    ->setSource($body)
-                    ->setBucket(MemreasConstants::S3BUCKET)
-                    ->setMinPartSize(10 * Size::MB)
-                    ->setOption('ContentType', $content_type)
-                    ->setKey($s3_media_path)
-                    ->build();
-
-            //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
-            try {
-                $uploader->upload();
-                //error_log( "Upload complete.\n", 0);
-            } catch (MultipartUploadException $e) {
-                $uploader->abort();
-                //error_log( "Upload failed.\n", 0);
-            }
-
-            $paths['79x80_Path'] = $s3_media_path;
-
-            error_log("79x80 PATH ----> " . $s3_media_path);
-
-            /////////////////////////////////////////////////////////////////////
-            //Resize images - 448x306 section
-            $layer = ImageWorkshop::initFromPath($file);
-            //$layer->resizeInPixel(448, 306, true, 0, 0, 'MM');  //Maintains image
-            $layer->resizeInPixel(448, 306);
-
-            //Saving image ugh
-            //$dirPath = dirname(__DIR__) . "/media/448x306/";
-            $dirPath = getcwd() . "/data/media/448x306/";
-            $createFolders = true;
-            $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
-            $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
-            $layer->save($dirPath, $s3file_name, $createFolders, $backgroundColor, $imageQuality);
-
-            //S3 Folder Setup
-            $s3_media_folder = "$user_id/images/448x306/";
-            $s3_media_path = $s3_media_folder . $s3file_name;
-            $ec2_media_path = $dirPath . $s3file_name;
-            $body = EntityBody::factory(fopen($ec2_media_path, 'r+'));
-
-            $uploader = UploadBuilder::newInstance()
-                    ->setClient($this->s3)
-                    ->setSource($body)
-                    ->setBucket(MemreasConstants::S3BUCKET)
-                    ->setMinPartSize(10 * Size::MB)
-                    ->setOption('ContentType', $content_type)
-                    ->setKey($s3_media_path)
-                    ->build();
-
-            //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
-            try {
-                $uploader->upload();
-                //error_log( "Upload complete.", 0);
-            } catch (MultipartUploadException $e) {
-                $uploader->abort();
-                //error_log( "Upload failed.", 0);
-            }
-
-            $paths['448x306_Path'] = $s3_media_path;
-
-            error_log("448x306 PATH ----> " . $s3_media_path);
-
-
-            /////////////////////////////////////////////////////////////////////
-            //Resize images - 98x78 section
-            $layer = ImageWorkshop::initFromPath($file);
-            //$layer->resizeInPixel(98, 78, true, 0, 0, 'MM');  //Maintains image
-            $layer->resizeInPixel(98, 78);
-
-            //Saving image ugh
-            //$dirPath = dirname(__DIR__) . "/media/98x78/";
-            $dirPath = getcwd() . "/data/media/98x78/";
-            $createFolders = true;
-            $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
-            $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
-            $layer->save($dirPath, $s3file_name, $createFolders, $backgroundColor, $imageQuality);
-
-            //S3 Folder Setup
-            $s3_media_folder = "$user_id/images/98x78/";
-            $s3_media_path = $s3_media_folder . $s3file_name;
-            $ec2_media_path = $dirPath . $s3file_name;
-            $body = EntityBody::factory(fopen($ec2_media_path, 'r+'));
-
-            $uploader = UploadBuilder::newInstance()
-                    ->setClient($this->s3)
-                    ->setSource($body)
-                    ->setBucket(MemreasConstants::S3BUCKET)
-                    ->setMinPartSize(10 * Size::MB)
-                    ->setOption('ContentType', $content_type)
-                    ->setKey($s3_media_path)
-                    ->build();
-
-            //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
-            try {
-                $uploader->upload();
-                error_log("Upload complete.\n", 0);
-            } catch (MultipartUploadException $e) {
-                $uploader->abort();
-                error_log("Upload failed.\n", 0);
-            }
-
-            $paths['98x78_Path'] = $s3_media_path;
-
-            error_log("98x78 PATH ----> " . $s3_media_path);
-        }
-
-        //error_log("Exit s3upload");
-        //return the array of paths to the image or video
-
-        return $paths;
-    }
-
     //Useful but not used for now...
     function getExtension($str) {
         $i = strrpos($str, ".");
@@ -571,46 +591,6 @@ error_log("About to set metadata ---> " . $json . PHP_EOL);
 
         //Here you can add valid file extensions. 
         $valid_formats = array("jpg", "png", "gif", "bmp", "jpeg", "PNG", "JPG", "JPEG", "GIF", "BMP");
-    }
-
-    public function webserviceUpload($user_id, $s3file_name, $content_type) {
-        //$dirPath = dirname(__DIR__) . "/media/";
-		$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
-        
-        
-        $dirPath = getcwd() . MemreasConstants::DATA_PATH . $temp_job_uuid_dir . MemreasConstants::USERIMAGE_PATH;
-        $file = $dirPath . $s3file_name;
-        $layer = ImageWorkshop::initFromPath($file);
-        //Saving image ugh
-        $createFolders = true;
-        $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
-        $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
-        $layer->save($dirPath, $s3file_name, $createFolders, $backgroundColor, $imageQuality);
-
-
-        $s3_media_folder = "$user_id/image/";
-
-        $s3_media_path = $s3_media_folder . $s3file_name;
-        $ec2_media_path = $dirPath . $s3file_name;
-        $body = EntityBody::factory(fopen($ec2_media_path, 'r+'));
-
-        $uploader = UploadBuilder::newInstance()
-                ->setClient($this->s3)
-                ->setSource($body)
-                ->setBucket(MemreasConstants::S3BUCKET)
-                ->setMinPartSize(10 * Size::MB)
-                ->setOption('ContentType', $content_type)
-                ->setKey($s3_media_path)
-                ->build();
-
-        //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
-        try {
-            $uploader->upload();
-        } catch (MultipartUploadException $e) {
-            $uploader->abort();
-        }
-
-        return $s3_media_path;
     }
 
 //END

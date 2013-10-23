@@ -9,6 +9,6 @@ nbproject
 .log
 composer.lock
 .elasticbeanstalk/
-data/
 !vendor/memreas
 vendor/
+data/
