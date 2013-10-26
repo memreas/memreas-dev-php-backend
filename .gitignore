@@ -12,3 +12,4 @@ composer.lock
 !vendor/memreas
 vendor/
 data/
+php_errors.log
