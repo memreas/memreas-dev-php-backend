@@ -94,7 +94,7 @@ class AWSManagerReceiver {
 				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir . MemreasConstants::IMAGES_PATH;
 	error_log("Inside snsProcessMediaSubscribe dirPath ----> " . $dirPath . PHP_EOL);            
 				if (!file_exists($dirPath)) {
-					mkdir($dirPath, 0755, true);
+					mkdir($dirPath, 0777, true);
 				}
 	error_log("Inside snsProcessMediaSubscribe dirPath ----> $dirPath" . PHP_EOL);            
 				$file = $dirPath . $s3file_name;
@@ -111,6 +111,7 @@ class AWSManagerReceiver {
 						'Key' => $s3file,
 						'SaveAs' => $file
 					));
+					chmod($file, 0777);
 	error_log("Inside try - just got file..."  . PHP_EOL); 
 	error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 	error_log("Inside try - is the result above?????..."  . PHP_EOL); 
@@ -173,7 +174,7 @@ class AWSManagerReceiver {
         $dirPath = getcwd() . "/data/" . $user_id . "/media/";
         //$dirPath = $job_dir;
         //if (!file_exists($dirPath)) {
-		//    mkdir($dirPath, 0755, true);
+		//    mkdir($dirPath, 0777, true);
 		//}
         $splitter = explode("thumbnail/", $s3file);
 error_log("Inside fetchResizeUpload - splitter --> " . print_r($splitter, true));                	
@@ -204,15 +205,16 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
         //$dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" . $width . "/";
         $dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" . $width . "/";
         $job_sub_dir = $job_dir . $height . "x" . $width . "/";
-        //if (!file_exists($job_sub_dir)) {
-		//    mkdir($job_sub_dir, 0755, true);
-		//}
+        if (!file_exists($job_sub_dir)) {
+		    mkdir($job_sub_dir, 0777, true);
+		}
 
         $createFolders = true;
         $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
         $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
         $layer->save($job_sub_dir, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality);
-        $file = $dirPath . $thumbnail_name;
+        //$file = $dirPath . $thumbnail_name;
+        $file = $job_sub_dir . $thumbnail_name;
 
         $body = EntityBody::factory(fopen($file, 'r+'));
 //error_log("Inside fetchResizeUpload - thumbnail_file is  --> " . $thumbnail_file);                	
@@ -333,7 +335,7 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 				$this->temp_job_uuid_dir = date("Y.m.d") . '_' . uniqid();
 				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir . MemreasConstants::MEDIA_PATH;
 				if (!file_exists($dirPath)) {
-					mkdir($dirPath, 0755, true);
+					mkdir($dirPath, 0777, true);
 				}
 
 				//Time to fetch files and store in metadata
@@ -497,13 +499,13 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 
 		foreach ($dirPath as $key => $value) {
 			if (!file_exists($value)) {
-				mkdir($value, 0755, true);
+				mkdir($value, 0777, true);
 			}
 		}
 
 		//delete me later...
 		//if (!file_exists($dirPath)) {
-		//	mkdir($dirPath, 0755, true);
+		//	mkdir($dirPath, 0777, true);
 		//}
 
 		//$dirPath = getcwd() . "/data/media/79x80/";

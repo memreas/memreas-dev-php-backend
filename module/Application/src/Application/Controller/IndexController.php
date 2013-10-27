@@ -74,15 +74,17 @@ error_log("Inside ipnListenerAction....");
 	}
 	
     public function indexAction() {
-error_log("Inside backend.indexAction...".PHP_EOL);
-error_log("Inside indexAction....");
-error_log("Inside indexAction _REQUEST ----> " . print_r($_REQUEST, true) . PHP_EOL);
-error_log("Inside indexAction _POST ----> " . print_r($_POST, true) . PHP_EOL);
+    	$this->transcoderAction();
+	    exit;
+//error_log("Inside backend.indexAction...".PHP_EOL);
+//error_log("Inside indexAction....");
+//error_log("Inside indexAction _REQUEST ----> " . print_r($_REQUEST, true) . PHP_EOL);
+//error_log("Inside indexAction _POST ----> " . print_r($_POST, true) . PHP_EOL);
 	    
 //	    if (isset($_REQUEST['action']) && ($_REQUEST['action'] == "transcoder") ) {
-error_log("Inside indexAction:isset(_REQUEST['action']....");
-    		$this->transcoderAction();
-	    	exit;
+//error_log("Inside indexAction:isset(_REQUEST['action']....");
+//    		$this->transcoderAction();
+//	    	exit;
 //	    }
 	    
 	    //Base response if called from URL...
@@ -94,7 +96,7 @@ error_log("Inside indexAction:isset(_REQUEST['action']....");
 
    public function transcoderAction() {
 
-error_log("Inside transcoderAction" . PHP_EOL);
+//error_log("Inside transcoderAction" . PHP_EOL);
 	    //$path = $this->security("application/index/tcode.phtml");
 		UUID::getInstance($this->getServiceLocator()->get('memreasbackenddb'));
 		
@@ -103,7 +105,7 @@ error_log("Inside transcoderAction" . PHP_EOL);
 			//echo "$name : $value\n<p>";
 			error_log("$name : $value\n", 0);
 			if ( $name == "x-amz-sns-message-type" ) {
-error_log("Inside transcoderAction:name == x-amz-sns-message-type" . PHP_EOL);
+//error_log("Inside transcoderAction:name == x-amz-sns-message-type" . PHP_EOL);
 			
 				if ( $value == "SubscriptionConfirmation" ) {
 					$inputJSON = file_get_contents('php://input');
@@ -115,12 +117,12 @@ error_log("Inside transcoderAction:name == x-amz-sns-message-type" . PHP_EOL);
 					flush();            // Unless both are called !
 					exit;
 				} elseif ( $value == "Notification" ) {
-error_log("Inside transcoderAction:Notification" . PHP_EOL);
+//error_log("Inside transcoderAction:Notification" . PHP_EOL);
 					if ( isset($_REQUEST['guzzle']) ) {
-error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) " . PHP_EOL);
+//error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) " . PHP_EOL);
 						$message_data = json_decode($_REQUEST['json'], true);
 					} else {
-error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) else" . PHP_EOL);
+//error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) else" . PHP_EOL);
 						$inputJSON = file_get_contents('php://input');
 						error_log("inputJSON...... $inputJSON");
 						$input= json_decode($inputJSON, true); 
@@ -149,7 +151,7 @@ error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) else" . PHP_EOL);
 					$aws_manager = new AWSManagerReceiver($this->getServiceLocator());
 					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
 
-					error_log ("CHECKOUT THE RESULT FROM THE SUBSCRIBE.... $result");
+//error_log ("CHECKOUT THE RESULT FROM THE SUBSCRIBE.... $result");
 			
 					return $result;
 
@@ -157,7 +159,7 @@ error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) else" . PHP_EOL);
 			}  //End if ( $name == "x-amz-sns-message-type" )
 		} //End foreach (getallheaders() as $name => $value)			
 			
-error_log("Inside transcoderAction:missed both conditions..." . PHP_EOL);
+//error_log("Inside transcoderAction:missed both conditions..." . PHP_EOL);
 			
 			
 
