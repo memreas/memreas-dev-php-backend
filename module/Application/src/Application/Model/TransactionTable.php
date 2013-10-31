@@ -2,7 +2,7 @@
 namespace Application\Model;
 
 use Zend\Db\TableGateway\TableGateway;
-use memreas\UUID;
+use Application\memreas\UUID;
 
 class TransactionTable {
 	protected $tableGateway;

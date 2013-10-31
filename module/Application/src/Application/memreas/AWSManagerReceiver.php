@@ -1,5 +1,5 @@
 <?php
-namespace memreas;
+namespace Application\memreas;
 
 use Guzzle\Http\Client;
 use Guzzle\Http\EntityBody;
@@ -10,8 +10,8 @@ use Aws\S3\Model\MultipartUpload\UploadBuilder;
 use Aws\ElasticTranscoder\ElasticTranscoderClient;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
-use memreas\RmWorkDir;
-use memreas\UUID;
+use Application\memreas\RmWorkDir;
+use Application\memreas\UUID;
 
 error_reporting(E_ALL & ~E_NOTICE);
 
@@ -25,7 +25,7 @@ class AWSManagerReceiver {
     private $awsTranscode = null;
     private $service_locator = null;
     private $dbAdapter = null;
-    private $temp_job_uuid_dir = null;
+    private $temp_job_uuid = null;
 
     public function __construct($service_locator) {
         //print "In AWSManagerReceiver constructor <br>";
@@ -75,6 +75,95 @@ class AWSManagerReceiver {
 				$result = $this->awsTranscodeExec($message_data);
 			} 
 			else {
+				
+				////////////////////////
+				// In here the image is already on S3
+				//  so we just need to create the thumbnails and upload....
+
+				////////////////////////
+				//Fetch the message data
+				$s3file_name = $message_data['s3file_name'];
+				$user_id = $message_data['user_id'];
+				$media_id = $message_data['media_id'];
+				$content_type = $message_data['content_type'];
+				$s3path = $message_data['s3path'];
+				
+				
+				////////////////////////
+				//Create the job dir here...
+				$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
+	error_log("Inside snsProcessMediaSubscribe temp_job_uuid ----> " . $this->temp_job_uuid . PHP_EOL);            
+				$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH;
+	error_log("Inside snsProcessMediaSubscribe dir ----> " . $dir . PHP_EOL);            
+				if (!file_exists($dir)) {
+					$oldumask = umask(0);
+					mkdir($dir, 01777, true);
+					umask($oldumask);
+				}
+				$file = $dir.$s3file_name;
+				////////////////////////////////////////////////////////////////////
+				//Retrieve media entry here...
+				$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
+				$metadata = json_decode($media->metadata, true);
+
+				////////////////////////
+				// Fetch from S3 here...
+				$result = $this->pullMediaFromS3($s3path.$s3file_name, $file);				
+				if ($result) {
+					//Setup an array for each of the sizes
+					$sizes = array();
+					$sizes['small'] = array ( "height" => 79, "width" => 80);
+					$sizes['medium'] = array ( "height" => 98, "width" => 78);
+					$sizes['large'] = array ( "height" => 448, "width" => 306);
+
+					//Resize and upload for each size thumbnail					
+					foreach ($sizes as &$size) {
+						//$value = $value * 2;
+						
+						$height = $size['height'];
+						$width = $size['width'];
+						////////////////////////
+						// Resize here...
+						$file = $this->resize($dir, $s3file_name, $height, $width);
+
+						////////////////////////
+						// Push to S3 here...
+						$s3thumbnail_file = $s3path.$height.'x'.$width.'/'.$s3file_name;
+error_log("About to Push to S3 here....s3thumbnail_file ----> " . $s3thumbnail_file . PHP_EOL);            
+						$s3thumbnail = $this->pushMediaToS3($file, $s3thumbnail_file, $content_type);
+error_log("About to Push to S3 here....s3thumbnail ----> " . $s3thumbnail . PHP_EOL);            
+
+						////////////////////////
+						// Updated the metadata...
+						$dim = "'".$height.'x'.$width."'";
+						$metadata['S3_files'][$dim] = $s3thumbnail['Key'];
+						
+					}
+
+//					foreach ($sizes as $ke => $v) {
+//						echo "\$a[$k] => $v.\n";
+//					}
+
+
+				}
+
+	error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
+
+//				$metadata['S3_files']['448x306'] = $paths['448x306_Path'];
+//				$metadata['S3_files']['98x78'] = $paths['98x78_Path'];
+
+				////////////////////////////////////////////////////////////////////
+				// Store the metadata here...
+				$json = json_encode($metadata);
+	error_log("Inside snsProcessMediaSubscribe json ----> $json" . PHP_EOL);            
+				$media->metadata = $json;
+	error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
+				$this->dbAdapter->persist($media);
+				$this->dbAdapter->flush();
+/*/
+
+/*			
+			
 	error_log("Inside snsProcessMediaSubscribe else ..." . PHP_EOL);            
 	error_log("Inside snsProcessMediaSubscribe  else message_data ---> " . print_r($message_data,true). PHP_EOL);            
 				//Fetch image and create thumbnails
@@ -86,12 +175,13 @@ class AWSManagerReceiver {
 				//END
 	error_log("Inside snsProcessMediaSubscribe set variables..." . PHP_EOL);            
 
+
 				//Saving image ugh - need to find way to not write to disk....
 				//Create a temp job dir to create the thumbnails...
-				//$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
-				$this->temp_job_uuid_dir = date("Y.m.d") . '_' . uniqid();
-	error_log("Inside snsProcessMediaSubscribe temp_job_uuid_dir ----> " . $this->temp_job_uuid_dir . PHP_EOL);            
-				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir . MemreasConstants::IMAGES_PATH;
+				//$temp_job_uuid = UUID::getInstance()->fetchUUID();
+				$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
+	error_log("Inside snsProcessMediaSubscribe temp_job_uuid ----> " . $this->temp_job_uuid . PHP_EOL);            
+				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH;
 	error_log("Inside snsProcessMediaSubscribe dirPath ----> " . $dirPath . PHP_EOL);            
 				if (!file_exists($dirPath)) {
 					mkdir($dirPath, 0777, true);
@@ -99,7 +189,25 @@ class AWSManagerReceiver {
 	error_log("Inside snsProcessMediaSubscribe dirPath ----> $dirPath" . PHP_EOL);            
 				$file = $dirPath . $s3file_name;
 				$s3file = $s3path . $s3file_name;
-	//            echo "s3file=$s3file<br/>file=$file<br/>dirpath=$dirPath<br/>s3path=$s3path<br/>s3path=$s3path<br>content=$content_type<br/>file_name=$s3file_name";
+*
+//////Trying fetchResizeUpload
+/*
+				$paths = array();
+				$s3output_path = $s3path . "thumbnails/79x80/";
+				$paths['79x80'] = $this->fetchResizeUpload($message_data, $dirPath, $s3file, $s3output_path, 79, 80);
+				$s3output_path = $s3path . "thumbnails/98x78/";
+				$paths['98x78'] = $this->fetchResizeUpload($message_data, $dirPath, $s3file, $s3output_path, 98, 78);
+				$s3output_path = $s3path . "thumbnails/448x306/";
+				$paths['79x80'] = $this->fetchResizeUpload($message_data, $dirPath, $s3file, $s3output_path, 448, 306);
+
+		$dirPath['79x80'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '79x80/';
+		$dirPath['98x78'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '98x78/';
+		$dirPath['448x306'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '448x306/';
+
+
+*/
+
+/*	
 	error_log("About to fetch from S3" . PHP_EOL);            
 	error_log("About to fetch from S3 -> MemreasConstants::S3BUCKET " . MemreasConstants::S3BUCKET  . PHP_EOL);            
 	error_log("About to fetch from S3 -> s3file " . $s3file  . PHP_EOL);            
@@ -111,7 +219,6 @@ class AWSManagerReceiver {
 						'Key' => $s3file,
 						'SaveAs' => $file
 					));
-					chmod($file, 0777);
 	error_log("Inside try - just got file..."  . PHP_EOL); 
 	error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 	error_log("Inside try - is the result above?????..."  . PHP_EOL); 
@@ -128,10 +235,11 @@ class AWSManagerReceiver {
 	error_log("Inside snsProcessMediaSubscribe file ----> $file" . PHP_EOL);            
 	error_log("Inside snsProcessMediaSubscribe s3file ----> $s3file" . PHP_EOL);            
 	error_log("Inside snsProcessMediaSubscribe result ----> $result" . PHP_EOL);            
-
 				//Use the s3upload code to resize and load to s3		
 				$paths = $this->s3upload($user_id, $dirPath, $media_id, $s3file_name, $content_type, $file);
+*/
 
+/*
 				////////////////////////////////////////////////////////////////////
 				//Retrieve media entry here...
 				$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
@@ -146,18 +254,97 @@ class AWSManagerReceiver {
 	error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
 				$this->dbAdapter->persist($media);
 				$this->dbAdapter->flush();
+*/
 
 				//Remove the work directory
-				$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir;
+				$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
 				$dirRemoved = new RmWorkDir($dir);
 			}
-	        return $result;
+	        return true;
         
 		} catch (Exception $e) {
 		    error_log("Caught exception: $e->getMessage()" . PHP_EOL);
 		}
     }
 
+    function pullMediaFromS3($s3file, $file) {
+error_log("Inside pullMediaFromS3"  . PHP_EOL); 
+		try {
+			$result = $this->s3->getObject(array(
+				'Bucket' => MemreasConstants::S3BUCKET,
+				'Key' => $s3file,
+				'SaveAs' => $file
+			));
+	error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
+		} catch(Aws\S3\Exception\S3Exception $e) {
+			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
+			throw $e;
+		}
+		return true;
+    }
+
+    function resize($dir, $file_name, $height, $width) {
+error_log("Inside resize"  . PHP_EOL); 
+error_log("Inside resize dir.file_name ----> " . $dir.$file_name . PHP_EOL); 
+        //////////////////////////
+        // Initialize Sybio ...
+        $layer = ImageWorkshop::initFromPath($dir.$file_name);
+        //$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');  //Maintains image
+        $layer->resizeInPixel($height, $width);
+
+        //////////////////////////
+        // create a thumbnail dir
+        $job_sub_dir = $dir . $height . "x" . $width . "/";
+error_log("Inside resize job_sub_dir ----> " . $job_sub_dir . PHP_EOL); 
+        if (!file_exists($job_sub_dir)) {
+			$oldumask = umask(0);
+		    mkdir($job_sub_dir, 01777, true);
+			umask($oldumask);
+		}
+
+        //////////////////////////
+        // build the image and save the file...
+        $createFolders = true;
+        $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
+        $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
+        $layer->save($job_sub_dir, $file_name, $createFolders, $backgroundColor, $imageQuality);
+        //$file = $dirPath . $thumbnail_name;
+        $file = $job_sub_dir . $file_name;
+error_log("Inside resize file ----> " . $file . PHP_EOL); 
+        
+        return $file;    	
+	}
+
+    function pushMediaToS3($file, $s3file, $content_type) {
+error_log("Inside pushMediaToS3"  . PHP_EOL); 
+error_log("Inside pushMediaToS3 file ---> $file" . PHP_EOL); 
+error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL); 
+error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL); 
+        $body = EntityBody::factory(fopen($file, 'r+'));
+//error_log("Inside fetchResizeUpload - thumbnail_file is  --> " . $thumbnail_file);                	
+        /////////////////////////////////////////////////////////////////////
+        //Upload images - section
+        $uploader = UploadBuilder::newInstance()
+                ->setClient($this->s3)
+                ->setSource($body)
+                ->setBucket(MemreasConstants::S3BUCKET)
+                ->setMinPartSize(10 * Size::MB)
+                ->setOption('ContentType', $content_type)
+                ->setKey($s3file)
+                ->build();
+
+        //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
+        try {
+            $result = $uploader->upload();
+            error_log( "Upload complete.\n", 0);
+        } catch (MultipartUploadException $e) {
+            $uploader->abort();
+            error_log( "Upload failed.\n", 0);
+        }
+error_log("Exit pushMediaToS3" . print_r($result,true)  . PHP_EOL); 
+    	return $result;
+    }
+	
     function fetchResizeUpload($message_data, $job_dir, $s3file, $s3output_path, $height, $width) {
 
         error_log("Inside fetchResizeUpload for $height" . "x" . "$width");
@@ -206,7 +393,9 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
         $dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" . $width . "/";
         $job_sub_dir = $job_dir . $height . "x" . $width . "/";
         if (!file_exists($job_sub_dir)) {
-		    mkdir($job_sub_dir, 0777, true);
+			$oldumask = umask(0);
+		    mkdir($job_sub_dir, 01777, true);
+			umask($oldumask);
 		}
 
         $createFolders = true;
@@ -331,11 +520,13 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 				}
 
 				//Create a temp directory for the images 
-				//$this->temp_job_uuid_dir = UUID::getUUID($this->dbAdapter);
-				$this->temp_job_uuid_dir = date("Y.m.d") . '_' . uniqid();
-				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir . MemreasConstants::MEDIA_PATH;
+				//$this->temp_job_uuid = UUID::getUUID($this->dbAdapter);
+				$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
+				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::MEDIA_PATH;
 				if (!file_exists($dirPath)) {
-					mkdir($dirPath, 0777, true);
+					$oldumask = umask(0);
+					mkdir($dirPath, 01777, true);
+					umask($oldumask);
 				}
 
 				//Time to fetch files and store in metadata
@@ -454,20 +645,20 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 			}
 
 			//Remove the work directory
-			$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir;
+			$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
 			$dirRemoved = new RmWorkDir($dir);
 
 			return $result;
 		} catch (Exception $e) {
 		    error_log("Caught exception: $e->getMessage()" . PHP_EOL);
 			//Remove the work directory
-			$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir;
+			$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
 			$dirRemoved = new RmWorkDir($dir);
 		}
         error_log("Exit awsTranscode ...", 0);
     }
 
-    function s3upload($user_id, $temp_job_uuid_dir, $media_id, $s3file_name, $content_type, $file, $isVideo = false) {
+    function s3upload($user_id, $temp_job_uuid, $media_id, $s3file_name, $content_type, $file, $isVideo = false) {
 
         error_log("Enter s3upload");
 
@@ -490,12 +681,12 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 		//$dirPath = dirname(__DIR__) . "/media/79x80/";
 
 		// dirPath = /data/temp_uuid/media/userimage/
-		//$this->temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
-		//$this->temp_job_uuid_dir = date("Y.m.d") . '_' . uniqid();
+		//$this->temp_job_uuid = UUID::getInstance()->fetchUUID();
+		//$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
 		$dirPath = array();
-		$dirPath['79x80'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir . MemreasConstants::IMAGES_PATH . '79x80/';
-		$dirPath['98x78'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir . MemreasConstants::IMAGES_PATH . '98x78/';
-		$dirPath['448x306'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir . MemreasConstants::IMAGES_PATH . '448x306/';
+		$dirPath['79x80'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '79x80/';
+		$dirPath['98x78'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '98x78/';
+		$dirPath['448x306'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '448x306/';
 
 		foreach ($dirPath as $key => $value) {
 			if (!file_exists($value)) {
@@ -625,7 +816,7 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 		error_log("98x78 PATH ----> " . $s3_media_path);
 		
 		//Delete the work directories
-		$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid_dir;
+		$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
 		$dirRemoved = new RmWorkDir($dir);
 
         //return the array of paths to the image or video

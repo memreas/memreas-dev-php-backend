@@ -1,5 +1,5 @@
 <?php
-namespace memreas;
+namespace Application\memreas;
 
 //require_once 'config.php';
 //$vendor_autoloader = dirname(__DIR__) . '/' . 'vendor/autoload.php';

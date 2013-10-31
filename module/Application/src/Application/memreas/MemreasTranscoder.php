@@ -1,13 +1,13 @@
 <?php
-namespace memreas;
+namespace Application\memreas;
 
 use Zend\Session\Container;
 use PHPImageWorkshop\ImageWorkshop;
 
 //memreas custom
-use memreas\MemreasAWSTranscoder;
-use memreas\MemreasTranscoderTables;
-use memreas\UUID;
+use Application\memreas\MemreasAWSTranscoder;
+use Application\memreas\MemreasTranscoderTables;
+use Application\memreas\UUID;
 //memreas models
 use Application\Model\MemreasConstants;
 use Application\Model\Media;

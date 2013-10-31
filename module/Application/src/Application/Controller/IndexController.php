@@ -23,12 +23,12 @@ use Application\Form;
 use Guzzle\Http\Client;
 
 use Application\Model\MemreasConstants;
-use memreas\AWSManagerReceiver;
-use memreas\MemreasTranscoder;
-use memreas\MemreasTranscoderTables;
-use memreas\MemreasPayPal;
-use memreas\MemreasPayPalTables;
-use memreas\UUID;
+use Application\memreas\AWSManagerReceiver;
+use Application\memreas\MemreasTranscoder;
+use Application\memreas\MemreasTranscoderTables;
+use Application\memreas\MemreasPayPal;
+use Application\memreas\MemreasPayPalTables;
+use Application\memreas\UUID;
 
 class IndexController extends AbstractActionController
 {
