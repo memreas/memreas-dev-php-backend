@@ -35,7 +35,7 @@ use PayPal\IPN\PPIPNMessage;
 define('PP_CONFIG_PATH', dirname(__FILE__) . "/config/");
 
 //memreas models
-use memreas\DBProfiler;
+use Application\memreas\DBProfiler;
 use Application\Model\User;
 use Application\Model\Account;
 use Application\Model\AccountBalances;

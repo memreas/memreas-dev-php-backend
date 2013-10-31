@@ -6,7 +6,7 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Where;
-use memreas\UUID;
+use Application\memreas\UUID;
 
 class PaymentMethodTable {
 	protected $tableGateway;

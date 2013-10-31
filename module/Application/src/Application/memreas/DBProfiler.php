@@ -1,5 +1,5 @@
 <?php
-namespace memreas;
+namespace Application\memreas;
 
 use Zend\ServiceManager\ServiceManager;
 

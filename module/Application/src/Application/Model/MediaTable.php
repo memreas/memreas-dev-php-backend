@@ -10,7 +10,7 @@ use Zend\Db\Sql\Where;
 use Zend\Db\ResultSet;
 use Zend\Db\Sql\Select;
 
-use memreas\UUID;
+use Application\memreas\UUID;
 use Application\Model\MemreasTranscoderTables;
 
 class MediaTable
