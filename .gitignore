@@ -9,7 +9,6 @@ nbproject
 .log
 composer.lock
 .elasticbeanstalk/
-!vendor/memreas
-vendor/
 data/
+vendor
 php_errors.log
