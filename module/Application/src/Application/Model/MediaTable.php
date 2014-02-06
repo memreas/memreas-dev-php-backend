@@ -10,7 +10,7 @@ use Zend\Db\Sql\Where;
 use Zend\Db\ResultSet;
 use Zend\Db\Sql\Select;
 
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 use Application\Model\MemreasTranscoderTables;
 
 class MediaTable
@@ -67,9 +67,8 @@ error_log("Inside isset data->media_id");
 				throw new \Exception ( 'Form media_id does not exist' );
 			}
 		} else {
-			$media_id = UUID::getInstance()->fetchUUID();
+			$media_id = MUUID::fetchUUID();
 error_log("Inside else !isset media->media_id ----> $media_id" . PHP_EOL);
-			//$media_id = $uuid->fetchUUID();
 			//$transcode_transaction->transcode_transaction_id = $transcode_transaction_id;	
 			$data['media_id'] = $media_id;	
 			$this->tableGateway->insert ( $data );

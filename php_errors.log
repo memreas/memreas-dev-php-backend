@@ -2173,3 +2173,63 @@ This data can be retrieved from the model object using the get() method of the m
 
 [08-Nov-2013 00:44:40 America/New_York] Exit rmWorkDir
 
+[19-Nov-2013 10:14:58 America/New_York] adapter is set...
+[19-Nov-2013 10:14:58 America/New_York] Host : memreas-dev-php-backend.localhost
+
+[19-Nov-2013 10:14:58 America/New_York] Connection : keep-alive
+
+[19-Nov-2013 10:14:58 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[19-Nov-2013 10:14:58 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36
+
+[19-Nov-2013 10:14:58 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[19-Nov-2013 10:14:58 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[19-Nov-2013 10:14:58 America/New_York] Cookie : myapp=4ni9o7i8s3a7f0p8i75ba82rf4
+
+[19-Nov-2013 10:15:04 America/New_York] adapter is set...
+[19-Nov-2013 10:15:04 America/New_York] Host : memreas-dev-php-backend.localhost
+
+[19-Nov-2013 10:15:04 America/New_York] Connection : keep-alive
+
+[19-Nov-2013 10:15:04 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[19-Nov-2013 10:15:04 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36
+
+[19-Nov-2013 10:15:04 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[19-Nov-2013 10:15:04 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[19-Nov-2013 10:15:04 America/New_York] Cookie : myapp=bkeve3uq3ncb6mlnch1fjiat31
+
+[19-Nov-2013 10:29:04 America/New_York] adapter is set...
+[19-Nov-2013 10:29:04 America/New_York] Host : memreas-dev-php-backend.localhost
+
+[19-Nov-2013 10:29:04 America/New_York] Connection : keep-alive
+
+[19-Nov-2013 10:29:04 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[19-Nov-2013 10:29:04 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36
+
+[19-Nov-2013 10:29:04 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[19-Nov-2013 10:29:04 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[19-Nov-2013 10:29:04 America/New_York] Cookie : myapp=bkeve3uq3ncb6mlnch1fjiat31
+
+[19-Nov-2013 10:29:06 America/New_York] adapter is set...
+[19-Nov-2013 10:29:06 America/New_York] Host : memreas-dev-php-backend.localhost
+
+[19-Nov-2013 10:29:06 America/New_York] Connection : keep-alive
+
+[19-Nov-2013 10:29:06 America/New_York] Accept : text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
+[19-Nov-2013 10:29:06 America/New_York] User-Agent : Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36
+
+[19-Nov-2013 10:29:06 America/New_York] Accept-Encoding : gzip,deflate,sdch
+
+[19-Nov-2013 10:29:06 America/New_York] Accept-Language : en-US,en;q=0.8
+
+[19-Nov-2013 10:29:06 America/New_York] Cookie : myapp=bkeve3uq3ncb6mlnch1fjiat31
+

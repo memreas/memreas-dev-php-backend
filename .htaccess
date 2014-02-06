@@ -1,21 +1,7 @@
 <IfModule mod_php5.c>
 
-#setup for zf2 redirect to app - doesn't work well...
-#RewriteEngine On
-#RewriteRule ^\.htaccess$ - [F]
-#RewriteCond %{REQUEST_URI} =""
-#RewriteRule ^.*$ /app/index.php [NC,L]
-#RewriteCond %{REQUEST_URI} !^/app/.*$
-#RewriteRule ^(.*)$ /app/$1
-#RewriteCond %{REQUEST_FILENAME} -f
-#RewriteRule ^.*$ - [NC,L]
-#RewriteRule ^/app/.*$ /app/index.php [NC,L]
-
-#set index.php as the default for directories
-DirectoryIndex index.php
-
 #Limits for file uploads
-php_value memory_limit 200M
+php_value memory_limit 500M
 php_value max_execution_time 259200
 php_value max_input_time 259200
 php_value session.gc_maxlifetime 1200
@@ -54,5 +40,3 @@ php_value log_errors_max_len 0
 </Files>
 
 </IfModule>
-
-

@@ -2,7 +2,7 @@
 namespace Application\Model;
 
 use Zend\Db\TableGateway\TableGateway;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 
 class TranscodeTransactionTable {
 	protected $tableGateway;
@@ -51,7 +51,7 @@ error_log("Inside isset transcode_transaction_id");
 			}
 		} else {
 error_log("Inside else !isset transcode_transaction_id");
-			$transcode_transaction_id = UUID::fetchUUID();
+			$transcode_transaction_id = MUUID::fetchUUID();
 			//$transcode_transaction->transcode_transaction_id = $transcode_transaction_id;	
 			$data['transcode_transaction_id'] = $transcode_transaction_id;	
 			$this->tableGateway->insert ( $data );

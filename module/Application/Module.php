@@ -22,7 +22,6 @@ use Zend\Authentication\Adapter\DbTable as DbTableAuthAdapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 
-use memreas\UUID;
 
 use Application\Model\MemreasConstants;
 
@@ -163,16 +162,6 @@ class Module
 	            		        return $authService;
 			                },							  
 
-							/*
-							//memreas UUID
-			                'memreas\UUID' => function($sm) {
-			                	$adapter = $sm->get('memreasbackenddb');
-			                	$uuid = new UUID($adapter);
-			                	return $uuid->fetchUUID();
-			                },
-			                */
-
-
 							//Database Tables...
 							//memreas base tables
 			                'Application\Model\UserTable' => function($sm) {
@@ -247,87 +236,6 @@ class Module
 									$resultSetPrototype = new ResultSet ();
 									$resultSetPrototype->setArrayObjectPrototype ( new TranscodeTransaction () );
 									return new TableGateway ( 'transcode_transaction', $dbAdapter, null, $resultSetPrototype );
-							},
-
-
-
-							//Paypal related tables
-							'Application\Model\TransactionTable' => function ($sm) {
-									$tableGateway = $sm->get ( 'TransactionTableGateway' );
-									$table = new TransactionTable ( $tableGateway );
-									return $table;
-							}, 
-							'TransactionTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreaspaymentsdb' );
-									$resultSetPrototype = new ResultSet ();
-									$resultSetPrototype->setArrayObjectPrototype ( new Transaction () );
-									return new TableGateway ( 'transaction', $dbAdapter, null, $resultSetPrototype );
-							},
-							'Application\Model\AccountTable' => function ($sm) {
-									$tableGateway = $sm->get ( 'AccountTableGateway' );
-									$table = new AccountTable ( $tableGateway );
-									return $table;
-							},
-							'AccountTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreaspaymentsdb' );
-									$resultSetPrototype = new ResultSet ();
-									$resultSetPrototype->setArrayObjectPrototype ( new Account());
-									return new TableGateway ( 'account', $dbAdapter, null, $resultSetPrototype );
-							},
-							'Application\Model\AccountBalancesTable' => function ($sm) {
-									$tableGateway = $sm->get ( 'AccountBalancesTableGateway' );
-									$table = new AccountBalancesTable( $tableGateway );
-									return $table;
-							},
-							'AccountBalancesTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreaspaymentsdb' );
-									$resultSetPrototype = new ResultSet ();
-									$resultSetPrototype->setArrayObjectPrototype ( new AccountBalances());
-									return new TableGateway ( 'account_balances', $dbAdapter, null, $resultSetPrototype );
-							},
-							'Application\Model\AccountDetailTable' => function ($sm) {
-									$tableGateway = $sm->get ( 'AccountDetailTableGateway' );
-									$table = new AccountDetailTable( $tableGateway );
-									return $table;
-							},
-							'AccountDetailTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreaspaymentsdb' );
-									$resultSetPrototype = new ResultSet ();
-									$resultSetPrototype->setArrayObjectPrototype ( new AccountDetail());
-									return new TableGateway ( 'account_detail', $dbAdapter, null, $resultSetPrototype );
-							},
-							'Application\Model\SubscriptionTable' => function ($sm) {
-									$tableGateway = $sm->get ( 'SubscriptionTableGateway' );
-									$table = new SubscriptionTable( $tableGateway );
-									return $table;
-							},
-							'SubscriptionTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreaspaymentsdb' );
-									$resultSetPrototype = new ResultSet ();
-									$resultSetPrototype->setArrayObjectPrototype ( new Subscription());
-									return new TableGateway ( 'subscription', $dbAdapter, null, $resultSetPrototype );
-							},
-							'Application\Model\TransactionReceiverTable' => function ($sm) {
-									$tableGateway = $sm->get ( 'TransactionReceiverTableGateway' );
-									$table = new SubscriptionTable( $tableGateway );
-									return $table;
-							},
-							'TransactionReceiverTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreaspaymentsdb' );
-									$resultSetPrototype = new ResultSet ();
-									$resultSetPrototype->setArrayObjectPrototype ( new TransactionReceiver());
-									return new TableGateway ( 'transaction_receiver', $dbAdapter, null, $resultSetPrototype );
-							},
-							'Application\Model\PaymentMethodTable' => function ($sm) {
-									$tableGateway = $sm->get ( 'PaymentMethodTableGateway' );
-									$table = new PaymentMethodTable( $tableGateway );
-									return $table;
-							},
-							'PaymentMethodTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreaspaymentsdb' );
-									$resultSetPrototype = new ResultSet ();
-									$resultSetPrototype->setArrayObjectPrototype ( new PaymentMethod());
-									return new TableGateway ( 'payment_method', $dbAdapter, null, $resultSetPrototype );
 							},
 						) 
 					);

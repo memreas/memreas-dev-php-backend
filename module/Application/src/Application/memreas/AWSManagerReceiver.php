@@ -11,7 +11,6 @@ use Aws\ElasticTranscoder\ElasticTranscoderClient;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 use Application\memreas\RmWorkDir;
-use Application\memreas\UUID;
 
 error_reporting(E_ALL & ~E_NOTICE);
 
@@ -34,8 +33,6 @@ class AWSManagerReceiver {
 		try {
 			$this->service_locator = $service_locator;
 			$this->dbAdapter = $service_locator->get('doctrine.entitymanager.orm_default');
-			//UUID::getInstance($this->dbAdapter); //construct the UUID singleton...
-			//$this->dbAdapter = $service_locator->get('memreasbackenddb');
 			
 			$this->aws = Aws::factory(array(
 						'key' => 'AKIAJMXGGG4BNFS42LZA',
@@ -105,11 +102,14 @@ class AWSManagerReceiver {
 				//Retrieve media entry here...
 				$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
 				$metadata = json_decode($media->metadata, true);
-
+error_log("metadata before ----> " . $media->metadata . PHP_EOL);
+				
 				////////////////////////
 				// Fetch from S3 here...
 				$result = $this->pullMediaFromS3($s3path.$s3file_name, $file);				
+error_log("What is the result of pull from S3? ----> ".$result.PHP_EOL);
 				if ($result) {
+error_log("About to create thumbnails...".PHP_EOL);
 					//Setup an array for each of the sizes
 					$sizes = array();
 					$sizes['small'] = array ( "height" => 79, "width" => 80);
@@ -119,6 +119,7 @@ class AWSManagerReceiver {
 					//Resize and upload for each size thumbnail					
 					foreach ($sizes as &$size) {
 						//$value = $value * 2;
+error_log("Inside for loop...".PHP_EOL);
 						
 						$height = $size['height'];
 						$width = $size['width'];
@@ -140,13 +141,17 @@ error_log("About to Push to S3 here....s3thumbnail ----> " . $s3thumbnail . PHP_
 						
 					}
 
-				}
-
-//error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
+				} else {
+error_log("What went wrong? result ----> ".$result.PHP_EOL);					
+				} 
+					
+				
+error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
 
 				////////////////////////////////////////////////////////////////////
 				// Store the metadata here...
 				$json = json_encode($metadata);
+error_log("metadata after ----> " . $json . PHP_EOL);
 //error_log("Inside snsProcessMediaSubscribe json ----> $json" . PHP_EOL);            
 				$media->metadata = $json;
 //error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
@@ -166,13 +171,18 @@ error_log("About to Push to S3 here....s3thumbnail ----> " . $s3thumbnail . PHP_
 
     function pullMediaFromS3($s3file, $file) {
 error_log("Inside pullMediaFromS3"  . PHP_EOL); 
-		try {
+error_log("Bucket ---> ".MemreasConstants::S3BUCKET. PHP_EOL); 
+error_log("Key ---> ".$s3file. PHP_EOL); 
+error_log("SaveAs ---> ".$file. PHP_EOL); 
+
+	try {
 			$result = $this->s3->getObject(array(
 				'Bucket' => MemreasConstants::S3BUCKET,
 				'Key' => $s3file,
 				'SaveAs' => $file
 			));
-	error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
+error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
+error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 		} catch(Aws\S3\Exception\S3Exception $e) {
 			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
 			throw $e;
@@ -415,7 +425,6 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 				}
 
 				//Create a temp directory for the images 
-				//$this->temp_job_uuid = UUID::getUUID($this->dbAdapter);
 				$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
 				$dirPath = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::MEDIA_PATH;
 				if (!file_exists($dirPath)) {
@@ -566,8 +575,6 @@ error_log("Inside fetchResizeUpload - about to save locally as " . $file);
 		//$dirPath = dirname(__DIR__) . "/media/79x80/";
 
 		// dirPath = /data/temp_uuid/media/userimage/
-		//$this->temp_job_uuid = UUID::getInstance()->fetchUUID();
-		//$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
 		$dirPath = array();
 		$dirPath['79x80'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '79x80/';
 		$dirPath['98x78'] = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH . '98x78/';

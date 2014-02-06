@@ -28,7 +28,6 @@ use Application\memreas\MemreasTranscoder;
 use Application\memreas\MemreasTranscoderTables;
 use Application\memreas\MemreasPayPal;
 use Application\memreas\MemreasPayPalTables;
-use Application\memreas\UUID;
 
 class IndexController extends AbstractActionController
 {
@@ -98,7 +97,6 @@ error_log("Inside ipnListenerAction....");
 
 //error_log("Inside transcoderAction" . PHP_EOL);
 	    //$path = $this->security("application/index/tcode.phtml");
-		UUID::getInstance($this->getServiceLocator()->get('memreasbackenddb'));
 		
 		//Fetch the post data
 		foreach (getallheaders() as $name => $value) {
@@ -166,8 +164,6 @@ error_log("Inside ipnListenerAction....");
 /*
 		$memreasTranscoder = new MemreasTranscoder();
 		$memreas_transcoder_tables = new MemreasTranscoderTables($this->getServiceLocator());
-		//Create an instance of UUID;
-		UUID::getInstance($this->getServiceLocator()->get('memreasbackenddb'));
 		if(isset($_POST['json'])) {
 			//Fetch from S3
 			$result = $memreasTranscoder->exec($memreas_transcoder_tables, $this->getServiceLocator(), false);		
