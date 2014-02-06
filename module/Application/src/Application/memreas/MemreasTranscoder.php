@@ -7,7 +7,7 @@ use PHPImageWorkshop\ImageWorkshop;
 //memreas custom
 use Application\memreas\MemreasAWSTranscoder;
 use Application\memreas\MemreasTranscoderTables;
-use Application\memreas\UUID;
+use Application\memreas\MUUID;
 //memreas models
 use Application\Model\MemreasConstants;
 use Application\Model\Media;
@@ -96,7 +96,7 @@ error_log("!found /var/app/current" . PHP_EOL);
 				}
 
 				//Make directories here - create a unique directory by user_id
-				$temp_job_uuid_dir = UUID::getInstance()->fetchUUID();
+				$temp_job_uuid_dir = MUUID::fetchUUID;
 error_log("temp_job_uuid_dir ----> $temp_job_uuid_dir" . PHP_EOL);
 
 				//Some Settings

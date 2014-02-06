@@ -98,7 +98,7 @@ return array(
 				//integration db
                 'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
                 'params' => array(
-                    'host' => 'aa1qhjij4wk4yji.co0fw2snbu92.us-east-1.rds.amazonaws.com',
+                    'host' => 'memreasdev-db.co0fw2snbu92.us-east-1.rds.amazonaws.com',
                     'port' => '3306',
                     'dbname' => 'memreasintdb',
                     'user'     => 'memreasdbuser',

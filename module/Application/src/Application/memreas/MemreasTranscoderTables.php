@@ -1,8 +1,6 @@
 <?php
 namespace Application\memreas;
 
-use memreas\UUID;
-
 class MemreasTranscoderTables {
 
     protected $service_locator = NULL;

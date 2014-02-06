@@ -15,8 +15,7 @@
         "zendframework/zendframework": "2.*",
         "ext-curl": "*",
         "ext-json": "*",
-        "paypal/sdk-core-php": "2.4.*",
-        "paypal/merchant-sdk-php":"*",
+		"rhumsaa/uuid": "2.5.0",
         "aws/aws-sdk-php": "2.*",
 		"sybio/image-workshop": "2.0.0",
 		"doctrine/doctrine-orm-module": "0.*"
