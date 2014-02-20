@@ -10,5 +10,5 @@ nbproject
 composer.lock
 .elasticbeanstalk/
 data/
-vendor
+vendor/
 php_errors.log
