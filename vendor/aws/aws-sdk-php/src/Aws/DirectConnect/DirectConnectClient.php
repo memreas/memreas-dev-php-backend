@@ -27,15 +27,23 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
 /**
  * Client to interact with AWS Direct Connect
  *
+ * @method Model allocateConnectionOnInterconnect(array $args = array()) {@command DirectConnect AllocateConnectionOnInterconnect}
+ * @method Model allocatePrivateVirtualInterface(array $args = array()) {@command DirectConnect AllocatePrivateVirtualInterface}
+ * @method Model allocatePublicVirtualInterface(array $args = array()) {@command DirectConnect AllocatePublicVirtualInterface}
+ * @method Model confirmConnection(array $args = array()) {@command DirectConnect ConfirmConnection}
+ * @method Model confirmPrivateVirtualInterface(array $args = array()) {@command DirectConnect ConfirmPrivateVirtualInterface}
+ * @method Model confirmPublicVirtualInterface(array $args = array()) {@command DirectConnect ConfirmPublicVirtualInterface}
  * @method Model createConnection(array $args = array()) {@command DirectConnect CreateConnection}
+ * @method Model createInterconnect(array $args = array()) {@command DirectConnect CreateInterconnect}
  * @method Model createPrivateVirtualInterface(array $args = array()) {@command DirectConnect CreatePrivateVirtualInterface}
  * @method Model createPublicVirtualInterface(array $args = array()) {@command DirectConnect CreatePublicVirtualInterface}
  * @method Model deleteConnection(array $args = array()) {@command DirectConnect DeleteConnection}
+ * @method Model deleteInterconnect(array $args = array()) {@command DirectConnect DeleteInterconnect}
  * @method Model deleteVirtualInterface(array $args = array()) {@command DirectConnect DeleteVirtualInterface}
- * @method Model describeConnectionDetail(array $args = array()) {@command DirectConnect DescribeConnectionDetail}
  * @method Model describeConnections(array $args = array()) {@command DirectConnect DescribeConnections}
- * @method Model describeOfferingDetail(array $args = array()) {@command DirectConnect DescribeOfferingDetail}
- * @method Model describeOfferings(array $args = array()) {@command DirectConnect DescribeOfferings}
+ * @method Model describeConnectionsOnInterconnect(array $args = array()) {@command DirectConnect DescribeConnectionsOnInterconnect}
+ * @method Model describeInterconnects(array $args = array()) {@command DirectConnect DescribeInterconnects}
+ * @method Model describeLocations(array $args = array()) {@command DirectConnect DescribeLocations}
  * @method Model describeVirtualGateways(array $args = array()) {@command DirectConnect DescribeVirtualGateways}
  * @method Model describeVirtualInterfaces(array $args = array()) {@command DirectConnect DescribeVirtualInterfaces}
  * @method ResourceIteratorInterface getDescribeConnectionsIterator(array $args = array()) The input array uses the parameters of the DescribeConnections operation
@@ -43,8 +51,8 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeVirtualGatewaysIterator(array $args = array()) The input array uses the parameters of the DescribeVirtualGateways operation
  * @method ResourceIteratorInterface getDescribeVirtualInterfacesIterator(array $args = array()) The input array uses the parameters of the DescribeVirtualInterfaces operation
  *
- * @link http://docs.aws.amazon.com/aws-sdk-php-2/guide/latest/service-directconnect.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php-2/latest/class-Aws.DirectConnect.DirectConnectClient.html API docs
+ * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-directconnect.html User guide
+ * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.DirectConnect.DirectConnectClient.html API docs
  */
 class DirectConnectClient extends AbstractClient
 {

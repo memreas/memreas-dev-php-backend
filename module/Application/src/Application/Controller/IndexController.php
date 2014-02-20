@@ -62,49 +62,31 @@ error_log("Inside fetchXML response $response ....");
 		return $data = $response->getBody(true);
 	}
 
-    public function ipnListenerAction() {
-error_log("Inside ipnListenerAction....");
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->ipnListener(null, $memreas_paypal_tables, $this->getServiceLocator());
-			http_response_code(200);
-			exit;
-	}
-	
     public function indexAction() {
-    	$this->transcoderAction();
-	    exit;
-//error_log("Inside backend.indexAction...".PHP_EOL);
-//error_log("Inside indexAction....");
-//error_log("Inside indexAction _REQUEST ----> " . print_r($_REQUEST, true) . PHP_EOL);
-//error_log("Inside indexAction _POST ----> " . print_r($_POST, true) . PHP_EOL);
-	    
-//	    if (isset($_REQUEST['action']) && ($_REQUEST['action'] == "transcoder") ) {
-//error_log("Inside indexAction:isset(_REQUEST['action']....");
-//    		$this->transcoderAction();
-//	    	exit;
-//	    }
-	    
-	    //Base response if called from URL...
-	    //$path = $this->security("application/index/tcode.phtml");
-		//$view = new ViewModel();
-		//$view->setTemplate($path); // path to phtml file under view folder
-		//return $view;	
+    	$this->memreasTranscoderAction();
+    	//$this->transcoderAction();
+    	exit;
     }
 
-   public function transcoderAction() {
+	public function memreasTranscoderAction() {
+		
+	}
+	
+    public function transcoderAction() {
 
-//error_log("Inside transcoderAction" . PHP_EOL);
+error_log("Inside transcoderAction bew..." . PHP_EOL);
 	    //$path = $this->security("application/index/tcode.phtml");
+	    
+		//Fetch AWS Handle
+		$aws_manager = new AWSManagerReceiver($this->getServiceLocator());
 		
 		//Fetch the post data
 		foreach (getallheaders() as $name => $value) {
-			//echo "$name : $value\n<p>";
-			error_log("$name : $value\n", 0);
+//error_log("$name : $value\n", 0);
+			/*
+			 * SNS Topic Section - deprecated
+			 */
 			if ( $name == "x-amz-sns-message-type" ) {
-//error_log("Inside transcoderAction:name == x-amz-sns-message-type" . PHP_EOL);
-			
 				if ( $value == "SubscriptionConfirmation" ) {
 					$inputJSON = file_get_contents('php://input');
 					error_log($inputJSON, 0); // manually get the URL here and paste into browser to subscribe
@@ -115,30 +97,15 @@ error_log("Inside ipnListenerAction....");
 					flush();            // Unless both are called !
 					exit;
 				} elseif ( $value == "Notification" ) {
-//error_log("Inside transcoderAction:Notification" . PHP_EOL);
 					if ( isset($_REQUEST['guzzle']) ) {
-//error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) " . PHP_EOL);
 						$message_data = json_decode($_REQUEST['json'], true);
 					} else {
-//error_log("Inside transcoderAction:isset(_REQUEST['guzzle']) else" . PHP_EOL);
 						$inputJSON = file_get_contents('php://input');
 						error_log("inputJSON...... $inputJSON");
 						$input= json_decode($inputJSON, true); 
 						//Fetch the json from message
 						$message_data = json_decode($input['Message'], true);
 					}
-
-					error_log("**************************************");
-//					error_log("Message only...... $inputMessage");
-
-					error_log("data_user_id...... " . $message_data['user_id']);
-					error_log("data_media_id...... " . $message_data['media_id']);
-					error_log("data_content_type...... " . $message_data['content_type']);
-					error_log("data_s3path...... " . $message_data['s3path']);
-					error_log("data_s3file_name...... " . $message_data['s3file_name']);
-					error_log("data_isVideo...... " . $message_data['isVideo']);
-					error_log("data_email...... " . $message_data['email']);
-
 					//Return the status code here so that the SNS topic won't keep resending the message
 					ob_start();
 					http_response_code(200);
@@ -146,546 +113,38 @@ error_log("Inside ipnListenerAction....");
 					flush();            // Unless both are called !
 
 					//Process Message here - 
-					$aws_manager = new AWSManagerReceiver($this->getServiceLocator());
 					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
 
-//error_log ("CHECKOUT THE RESULT FROM THE SUBSCRIBE.... $result");
-			
 					return $result;
-
 				} //End else if "notification"
-			}  //End if ( $name == "x-amz-sns-message-type" )
+			} else if (($name == 'User-Agent') && ($value == 'aws-sqsd')) {
+				/*
+				 * SQS Worker Tier Section
+				 */
+error_log("Inside transcoderAction:isset('User-Agent') " . PHP_EOL);
+				
+					$inputJSON = file_get_contents('php://input');
+error_log("inputJSON...... $inputJSON");
+
+					//Fetch the json from message
+					$message_data= json_decode($inputJSON, true);
+error_log("**************************************");
+					//Return the status code here so that the SNS topic won't keep resending the message
+					ob_start();
+					http_response_code(200);
+					ob_end_flush(); 	// Strange behaviour, will not work
+					flush();            // Unless both are called !
+					
+					//Process Message here -
+					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
+					
+					return $result;
+			} //End else if (($name == 'User-Agent') && ($value == 'aws-sqsd'))
 		} //End foreach (getallheaders() as $name => $value)			
 			
-//error_log("Inside transcoderAction:missed both conditions..." . PHP_EOL);
-			
-			
-
-/*
-		$memreasTranscoder = new MemreasTranscoder();
-		$memreas_transcoder_tables = new MemreasTranscoderTables($this->getServiceLocator());
-		if(isset($_POST['json'])) {
-			//Fetch from S3
-			$result = $memreasTranscoder->exec($memreas_transcoder_tables, $this->getServiceLocator(), false);		
-		} else if(!empty($_FILES)) {
-			//Web direct upload
-			//Memreas Transcoder related calls...
-			$result = $memreasTranscoder->exec($memreas_transcoder_tables, $this->getServiceLocator(), true);
-		}
-
-		$view = new ViewModel();
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
-*/		
     }
 
-
-    public function moreAction() {
-	    $path = $this->security("application/index/more.phtml");
-		$view = new ViewModel();
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
-    }
-
-
-    public function payPalListMassPayeeAction() {
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->payPalListMassPayee($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;	
-	}
-	
-    public function paypalPayoutMassPayeesAction() {
-error_log("Inside paypalPayoutMassPayeesAction..." . PHP_EOL);		
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->paypalPayoutMassPayees($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;	
-	}
-
-    public function payPalAddSellerAction() {
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->payPalAddSeller($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;		  
-     }
-     public function paypalDecrementValueAction() {
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->paypalDecrementValue($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;		  
-     }
-
-     public function paypalAddValueAction() {
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->paypalAddValue($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;			
-    }
-
-    public function paypalListCardsAction() {
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->paypalListCards($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;			
-    }
-
-     public function paypalDeleteCardsAction() {
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->paypalDeleteCards($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-			
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;			
-    }
-
-    public function paypalAccountHistoryAction() {
-error_log("Inside payPalAccountHistory...");
-
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->paypalAccountHistory($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;			
-    }
-    
-   public function paypalAction() {
-	    $path = $this->security("application/index/paypal.phtml");
-
-		if (isset($_REQUEST['callback'])) {
-			//Fetch parms
-			$callback = $_REQUEST['callback'];
-			$json = $_REQUEST['json'];
-			$jsonArr = json_decode($json, true);
-			$actionname = $jsonArr['action'];
-			$type = $jsonArr['type'];
-			$message_data = $jsonArr['json'];
-
-			//PayPal related calls...
-			$memreasPayPal = new MemreasPayPal();
-			$memreas_paypal_tables = new MemreasPayPalTables($this->getServiceLocator());
-			$result = $memreasPayPal->storeCreditCard($message_data, $memreas_paypal_tables, $this->getServiceLocator());
-				
-			$json = json_encode($result);
-			//Return the ajax call...
-			$callback_json = $callback . "(" . $json . ")";
-			$output = ob_get_clean();
-			header("Content-type: plain/text");
-			echo $callback_json;
-			//Need to exit here to avoid ZF2 framework view.
-			exit;
-		} else {
-			$view = new ViewModel();
-			$view->setTemplate($path); // path to phtml file under view folder
-		}
-
-		return $view;			
-    }
-
-
-    public function galleryAction() {
-	    $path = $this->security("application/index/gallery.phtml");
-
-		$action = 'listallmedia';
-		$session = new Container('user');        
-		$xml = "<xml><listallmedia><event_id></event_id><user_id>" . $session->offsetGet('user_id') . "</user_id><device_id></device_id><limit>10</limit><page>1</page></listallmedia></xml>";
-		$result = $this->fetchXML($action, $xml);
-
-		$view = new ViewModel(array('xml'=>$result));
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
-        //return new ViewModel();
-    }
-
-    public function eventAction() {
-	    $path = $this->security("application/index/event.phtml");
-
-		$action = 'listallmedia';
-		$session = new Container('user');        
-		$xml = "<xml><listallmedia><event_id></event_id><user_id>" . $session->offsetGet('user_id') . "</user_id><device_id></device_id><limit>10</limit><page>1</page></listallmedia></xml>";
-		$result = $this->fetchXML($action, $xml);
-
-		$view = new ViewModel(array('xml'=>$result));
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
-        //return new ViewModel();
-    }
-
-    public function shareAction() {
-	    $path = $this->security("application/index/share.phtml");
-		$view = new ViewModel();
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
-    }
-
-    public function queueAction() {
-	    $path = $this->security("application/index/queue.phtml");
-		$view = new ViewModel();
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
-    }
-
-    public function eventGalleryAction() {
-	    $path = $this->security("application/index/event-gallery.phtml");
-		$view = new ViewModel();
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;			
-    }
-
-    public function memreasMeFriendsAction() {
-	    $path = $this->security("application/index/memreas-me-friends.phtml");
-		$view = new ViewModel();
-		$view->setTemplate($path); // path to phtml file under view folder
-		return $view;		
-    }
-
-    public function loginAction() {
-error_log("Inside loginAction....");
-		//Fetch the post data
-		$request = $this->getRequest();
-		$postData = $request->getPost()->toArray();
-		$username = $postData ['username'];
-		$password = $postData ['password'];
-
-		//Setup the URL and action
-		$action = 'login';
-		$xml = "<xml><login><username>$username</username><password>$password</password></login></xml>";
-		$redirect = 'paypal';
-		
-		//Guzzle the LoginWeb Service		
-		$result = $this->fetchXML($action, $xml);
-		$data = simplexml_load_string($result);
-
-		//ZF2 Authenticate
-		if ($data->loginresponse->status == 'success') {
-error_log("Inside loginAction success....");
-			$this->setSession($username);
-            //Redirect here
-			return $this->redirect()->toRoute('index', array('action' => $redirect));
-		} else {
-			return $this->redirect()->toRoute('index', array('action' => "index"));
-		}
-    }
-
-    public function logoutAction() {
-		$this->getSessionStorage()->forgetMe();
-        $this->getAuthService()->clearIdentity();
-        $session = new Container('user');
-        $session->getManager()->destroy(); 
-         
-        $view = new ViewModel();
-		$view->setTemplate('application/index/index.phtml'); // path to phtml file under view folder
-		return $view;			
-    }
-
-    public function setSession($username) {
-		//Fetch the user's data and store it in the session...
-   	    $user = $this->getUserTable()->getUserByUsername($username);
-        unset($user->password);
-       	unset($user->disable_account);
-   	    unset($user->create_date);
-        unset($user->update_time);
-		$session = new Container('user');        
-		$session->offsetSet('user_id', $user->user_id);
-		$session->offsetSet('username', $username);
-        $session->offsetSet('user', json_encode($user));    
-    }
-     
-    public function registrationAction()
-    {
-		//Fetch the post data
-		$postData = $this->getRequest()->getPost()->toArray();
-		$email = $postData ['email'];
-		$username = $postData ['username'];
-		$password = $postData ['password'];
-
-		//Setup the URL and action
-		$action = 'registration';
-		$xml = "<xml><registration><email>$email</email><username>$username</username><password>$password</password></registration></xml>";
-		$redirect = 'event';
-		
-		//Guzzle the Registration Web Service		
-		$result = $this->fetchXML($action, $xml);
-		$data = simplexml_load_string($result);
-
-		//ZF2 Authenticate
-		if ($data->registrationresponse->status == 'success') {
-			$this->setSession($username);
-			
-			//If there's a profile pic upload it...
-			if (isset($_FILES['file'])) { 
-    	 		$file = $_FILES['file'];
-		     	$fileName = $file['name'];
-    	 		$filetype = $file['type'];
-    		 	$filetmp_name = $file['tmp_name'];
-	     		$filesize = $file['size'];
-     	
-				$guzzle = new Client();
-				$session = new Container('user');        
-				$request = $guzzle->post($media_url)
-								->addPostFields(
-									array(
-										'user_id' => $session->offsetGet('user_id'),
-										'filename' => $fileName,
-										'event_id' => "",
-										'device_id' => "",
-										'is_profile_pic' => 1,
-										'is_server_image' => 0,
-									)
-								)
-								->addPostFiles(
-									array(
-										'f' => $filetmp_name,
-									)
-								);
-			}
-			$response = $request->send();
-			$data = $response->getBody(true);
-			$xml = simplexml_load_string($result);
-
-			//ZF2 Authenticate
-			error_log("addmediaevent result -----> " . $data);
-			if ($xml->addmediaeventresponse->status == 'success') {
-				//Do nothing even if it fails...
-			}
-			
-            //Redirect here
-			return $this->redirect()->toRoute('index', array('action' => $redirect));
-		} else {
-			return $this->redirect()->toRoute('index', array('action' => "index"));
-		}
-    }
-    public function getUserTable() {
-        if (!$this->userTable) {
-            $sm = $this->getServiceLocator();
-            $this->userTable = $sm->get('Admin\Model\UserTable');
-        }
-        return $this->userTable;
-    }
-
-    public function getAuthService() {
-        if (!$this->authservice) {
-            $this->authservice = $this->getServiceLocator()
-                    ->get('AuthService');
-        }
-
-        return $this->authservice;
-    }
-
-    public function getSessionStorage() {
-        if (!$this->storage) {
-            $this->storage = $this->getServiceLocator()
-                    ->get('admin\Model\MyAuthStorage');
-        }
-
-        return $this->storage;
-    }
-
+    /*
     public function security($path) {
     	//if already login do nothing
 		$session = new Container("user");
@@ -697,5 +156,5 @@ error_log("Inside loginAction success....");
 		return $path;			
         //return $this->redirect()->toRoute('index', array('action' => 'login'));
     }
-	
+	*/
 } // end class IndexController

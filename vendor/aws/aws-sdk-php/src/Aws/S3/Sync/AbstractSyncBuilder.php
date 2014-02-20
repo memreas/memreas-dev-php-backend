@@ -275,6 +275,7 @@ abstract class AbstractSyncBuilder
 
         // Only wrap the source iterator in a changed files iterator if we are not forcing the transfers
         if (!$this->forcing) {
+            $this->sourceIterator->rewind();
             $this->sourceIterator = new ChangedFilesIterator(
                 new \NoRewindIterator($this->sourceIterator),
                 $this->getTargetIterator(),
@@ -391,11 +392,6 @@ abstract class AbstractSyncBuilder
             function (Event $e) use ($params) {
                 if ($e['command'] instanceof CommandInterface) {
                     $e['command']->overwriteWith($params);
-                } elseif ($e['command'] instanceof TransferInterface) {
-                    // Multipart upload transfer object
-                    foreach ($params as $k => $v) {
-                        $e['command']->setOption($k, $v);
-                    }
                 }
             }
         );

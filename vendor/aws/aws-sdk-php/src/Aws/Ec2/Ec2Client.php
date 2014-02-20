@@ -19,6 +19,7 @@ namespace Aws\Ec2;
 use Aws\Common\Client\AbstractClient;
 use Aws\Common\Client\ClientBuilder;
 use Aws\Common\Enum\ClientOptions as Options;
+use Aws\Common\Signature\SignatureV4;
 use Guzzle\Common\Collection;
 use Guzzle\Service\Resource\Model;
 use Guzzle\Service\Resource\ResourceIteratorInterface;
@@ -230,12 +231,12 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeVpnConnectionsIterator(array $args = array()) The input array uses the parameters of the DescribeVpnConnections operation
  * @method ResourceIteratorInterface getDescribeVpnGatewaysIterator(array $args = array()) The input array uses the parameters of the DescribeVpnGateways operation
  *
- * @link http://docs.aws.amazon.com/aws-sdk-php-2/guide/latest/service-ec2.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php-2/latest/class-Aws.Ec2.Ec2Client.html API docs
+ * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-ec2.html User guide
+ * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.Ec2.Ec2Client.html API docs
  */
 class Ec2Client extends AbstractClient
 {
-    const LATEST_API_VERSION = '2013-10-01';
+    const LATEST_API_VERSION = '2013-10-15';
 
     /**
      * Factory method to create a new AWS Elastic Beanstalk client using an array of configuration options.
@@ -247,6 +248,10 @@ class Ec2Client extends AbstractClient
      */
     public static function factory($config = array())
     {
+        if (isset($config['region']) && substr($config['region'], 0, 3) == 'cn-') {
+            $config[Options::SIGNATURE] = new SignatureV4();
+        }
+
         return ClientBuilder::factory(__NAMESPACE__)
             ->setConfig($config)
             ->setConfigDefaults(array(

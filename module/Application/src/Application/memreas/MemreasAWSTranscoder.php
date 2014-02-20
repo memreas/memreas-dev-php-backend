@@ -137,7 +137,7 @@ class MemreasAWSTranscoder {
 			//error_log( "Upload failed.\n", 0);
 		}
 
-		error_log("s3_media_path PATH ----> " . $s3_media_path);
+		//error_log("s3_media_path PATH ----> " . $s3_media_path);
 
         return $s3_media_path;
     }

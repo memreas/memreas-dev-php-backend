@@ -9,11 +9,11 @@ class MemreasConstants {
         const MEMREASDB     = 'memreasintdb';
         const S3BUCKET     	= "memreasdev";
         const TOPICARN		= "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
-        const ORIGINAL_URL	= "http://memreasint.elasticbeanstalk.com/app/";
-        const MEDIA_URL		= "http://memreasint.elasticbeanstalk.com/app/?action=addmediaevent";
+		const QUEUEURL 		= 'https://sqs.us-east-1.amazonaws.com/004184890641/awseb-e-8zdmyxfwy5-stack-AWSEBWorkerQueue-1RTF4RETMQXT8';
+        const ORIGINAL_URL	= "http://memreasdev-ws.elasticbeanstalk.com/";
+        const MEDIA_URL		= "http://memreasdev-ws.elasticbeanstalk.com/?action=addmediaevent";
         const URL			= "/index";
 
-        //const SITEURL			= "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1";
         const DATA_PATH			= "/data/";
         const MEDIA_PATH		= "/media/";
         const IMAGES_PATH		= "/images/";

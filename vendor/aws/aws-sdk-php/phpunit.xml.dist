@@ -44,6 +44,8 @@
                 <directory suffix="Exception.php">./src/Aws/AutoScaling/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/CloudFormation/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/CloudFront/Exception</directory>
+                <directory suffix="Exception.php">./src/Aws/CloudSearch/Exception</directory>
+                <directory suffix="Exception.php">./src/Aws/CloudTrail/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/CloudWatch/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/DataPipeline/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/DirectConnect/Exception</directory>
@@ -57,6 +59,7 @@
                 <directory suffix="Exception.php">./src/Aws/Glacier/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/Iam/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/ImportExport/Exception</directory>
+                <directory suffix="Exception.php">./src/Aws/Kinesis/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/OpsWorks/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/Rds/Exception</directory>
                 <directory suffix="Exception.php">./src/Aws/Redshift/Exception</directory>
