@@ -11,8 +11,8 @@ operations. Every magic method supported by a client is documented in the docblo
 annotations. Several PHP IDEs, including `PHPStorm <http://www.jetbrains.com/phpstorm/>`_ and
 `Zend Studio <http://www.zend.com/en/products/studio/>`_, are able to autocomplete based on ``@method`` annotations.
 You can find a full list of methods available for a web service client in the
-`API documentation <http://docs.aws.amazon.com/aws-sdk-php-2/latest/index.html>`_ of the client or in the
-`user guide <http://docs.aws.amazon.com/aws-sdk-php-2/guide/latest/index.html>`_ for that client.
+`API documentation <http://docs.aws.amazon.com/aws-sdk-php/latest/index.html>`_ of the client or in the
+`user guide <http://docs.aws.amazon.com/aws-sdk-php/guide/latest/index.html>`_ for that client.
 
 For example, the Amazon S3 client supports the following operations: :ref:`S3_operations`
 
@@ -143,3 +143,78 @@ shows how to add an ``X-Foo-Baz`` header to an Amazon S3 PutObject operation.
         )
     ));
 
+Does the SDK follow semantic versioning?
+----------------------------------------
+
+Yes. The SDK follows a semantic versioning scheme similar to – but not the same as – `semver <http://semver.org>`_.
+Instead of the **MAJOR.MINOR.PATCH** scheme specified by semver, the SDK actually follows a scheme that looks like
+**PARADIGM.MAJOR.MINOR** where:
+
+1. The **PARADIGM** version number is incremented when **drastic, breaking changes** are made to the SDK, such that the
+   fundamental way of using the SDK is different. You are probably aware that version 1.x and version 2.x of the AWS SDK
+   for PHP are *very* different.
+2. The **MAJOR** version number is incremented when **breaking changes** are made to the API. These are usually small
+   changes, and only occur when one of the services makes breaking changes changes to their API. Make sure to check the
+   `CHANGELOG <https://github.com/aws/aws-sdk-php/blob/master/CHANGELOG.md>`_ and
+   `UPGRADING <https://github.com/aws/aws-sdk-php/blob/master/UPGRADING.md>`_ documents when these changes occur.
+3. The **MINOR** version number is incremented when any **backwards-compatible** change is made, whether it's a new
+   feature or a bug fix.
+
+The best way to ensure that you are not affected by breaking changes is to set your dependency on the SDK in Composer to
+stay within a particular **PARADIGM.MAJOR** version. This can be done using the wildcard syntax:
+
+.. code-block:: json
+
+    {
+        "require": {
+            "aws/aws-sdk-php": "2.4.*"
+        }
+    }
+
+...Or by using the the tilde operator. The following statement is equivalent to `>=2.4.9,<2.5`:
+
+.. code-block:: json
+
+    {
+        "require": {
+            "aws/aws-sdk-php": "~2.4.9"
+        }
+    }
+
+See the `Composer documentation <http://getcomposer.org/doc/01-basic-usage.md#package-versions>`_ for more information
+on configuring your dependencies.
+
+The SDK may at some point adopt the semver standard, but this will probably not happen until the next paradigm-type
+change.
+
+Why am I seeing a "Cannot redeclare class" error?
+-------------------------------------------------
+
+We have observed this error a few times when using the ``aws.phar`` from the CLI with APC enabled. This is due to some
+kind of issue with phars and APC. Luckily there are a few ways to get around this. Please choose the one that makes the
+most sense for your environment and application.
+
+1. **Disable APC for CLI** - Change the ``apc.enable_cli`` INI setting to ``Off``.
+2. **Tell APC not to cache phars** - Change the ``apc.filters`` INI setting to include ``"^phar://"``.
+3. **Don't use APC** - PHP 5.5, for example, comes with Zend OpCache built in. This problem has not been observed with
+   Zend OpCache.
+4. **Don't use the phar** - You can install the SDK through Composer (recommended) or by using the zip file.
+
+What is an InstanceProfileCredentialsException?
+-----------------------------------------------
+
+If you are seeing an ``Aws\Common\Exception\InstanceProfileCredentialsException`` while using the SDK, this means that
+the SDK was not provided with any credentials.
+
+If you instantiate a client *without* credentials, on the first time that you perform a service operation, the SDK will
+attempt to find credentials. It first checks in some specific environment variables, then it looks for instance profile
+credentials, which are only available on configured Amazon EC2 instances. If absolutely no credentials are provided or
+found, an ``Aws\Common\Exception\InstanceProfileCredentialsException`` is thrown.
+
+If you are seeing this error and you are intending to use instance profile credentials, then you need to make sure that
+the Amazon EC2 instance that the SDK is running on is configured with an appropriate IAM role.
+
+If you are seeing this error and you are **not** intending to use instance profile credentials, then you need to make
+sure that you are properly providing credentials to the SDK.
+
+For more information, see :doc:`credentials`.

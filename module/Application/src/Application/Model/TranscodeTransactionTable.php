@@ -54,8 +54,13 @@ error_log("Inside else !isset transcode_transaction_id");
 			$transcode_transaction_id = MUUID::fetchUUID();
 			//$transcode_transaction->transcode_transaction_id = $transcode_transaction_id;	
 			$data['transcode_transaction_id'] = $transcode_transaction_id;	
-			$this->tableGateway->insert ( $data );
+			try {
+				$this->tableGateway->insert ( $data );				
+			} catch (\Exception $e) {
+				error_log("Error message ---> ".$e->getMessage().PHP_WOL);
+			}
 		}
+error_log("Inside else !isset transcode_transaction_id ---> ".$data['transcode_transaction_id'].PHP_EOL);
 		return $data['transcode_transaction_id'];
 	}
 	

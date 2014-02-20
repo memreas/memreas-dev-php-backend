@@ -20,6 +20,7 @@ class AWSManagerReceiver {
     private $s3 = null;
     private $bucket = null;
     private $sns = null;
+    public $sqs = null;
     private $topicArn = null;
     private $awsTranscode = null;
     private $service_locator = null;
@@ -52,6 +53,9 @@ class AWSManagerReceiver {
 			//Fetch the SNS class
 			$this->sns = $this->aws->get('sns');
 
+			//Fetch the SQS class
+			$this->sqs = $this->aws->get('sqs');
+			
 			//Set the topicArn
 			$this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
 		} catch (Exception $e) {
@@ -65,11 +69,18 @@ class AWSManagerReceiver {
     function snsProcessMediaSubscribe($message_data) {
     
     	try {
-
-	error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
+error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
 			if ($message_data['isVideo']) {
 				//Transcode, fetch thumbnail and resize as needed
-				$result = $this->awsTranscodeExec($message_data);
+				if ($message_data['memreastranscoder']) {
+error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data['memreastranscoder']. PHP_EOL);
+						
+					$memreasTranscoder = new MemreasTranscoder();
+					$memreas_transcoder_tables = new MemreasTranscoderTables($this->service_locator);
+					$result = $memreasTranscoder->exec($message_data, $memreas_transcoder_tables, $this->service_locator, false);
+				} else {
+					$result = $this->awsTranscodeExec($message_data);
+				}
 			} 
 			else {
 				
