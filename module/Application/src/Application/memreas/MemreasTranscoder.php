@@ -101,8 +101,8 @@ error_log("_REQUEST----> " . print_r($_REQUEST, true) .PHP_EOL);
 				$p1080 					= '1080p/'; // Your 1080p Dir, end with slash (/)
 				$thumbnails				= 'thumbnails/';  // Your thumbnails Dir, end with slash (/)
 				$hls 					= 'hls/';  // Your hls Dir, end with slash (/)
-				$webm					= 'webm/';  // Your web Dir, end with slash (/)
-				$mpeg4					= 'mpeg4/';  // Your xmpeg4 Dir, end with slash (/)
+				$webm					= 'webm/';  // Your webm Dir, end with slash (/)
+				$web					= 'web/';  // Your base mpeg4 Dir, end with slash (/)
 				/*
 				 * TODO - Add 125x98 as thumbnail
 				 */
@@ -130,7 +130,7 @@ error_log("_REQUEST----> " . print_r($_REQUEST, true) .PHP_EOL);
 					$HomeDirectory.$DestinationDirectory.$thumbnails.$_448x306, // data/temp_job_uuid_dir/media/thumbnails/448x306/
 					$HomeDirectory.$DestinationDirectory.$thumbnails.$_384x216, // data/temp_job_uuid_dir/media/thumbnails/384x216/
 					$HomeDirectory.$DestinationDirectory.$thumbnails.$_98x78, // data/temp_job_uuid_dir/media/thumbnails/98x78/
-					$HomeDirectory.$DestinationDirectory.$mpeg4, // data/temp_job_uuid_dir/media/mpeg4/
+					$HomeDirectory.$DestinationDirectory.$web, // data/temp_job_uuid_dir/media/web/
 					$HomeDirectory.$DestinationDirectory.$webm, // data/temp_job_uuid_dir/media/web/
 					$HomeDirectory.$DestinationDirectory.$hls, // data/temp_job_uuid_dir/media/hls/
 					$HomeDirectory.$DestinationDirectory.$p1080, // data/temp_job_uuid_dir/media/p1080/
@@ -353,15 +353,16 @@ error_log("result  $op" . PHP_EOL);
 									$filename, basename($filename), 98, 78),
 					);
 					$s3paths = array (
-						"mpeg4"=>array (
-						//mpeg4
-							"base"=>$this->user_id.'/media/mpeg4/thumbnail/',
-							"79x80"=>$this->user_id.'/media/mpeg4/thumbnail/79x80/',
-							"448x306"=>$this->user_id.'/media/mpeg4/thumbnail/448x306/',
-							"384x216"=>$this->user_id.'/media/mpeg4/thumbnail/384x216/',
-							"98x78"=>$this->user_id.'/media/mpeg4/thumbnail/98x78/',
+						"web"=>array (
+						//web
+							"base"=>$this->user_id.'/media/web/thumbnail/',
+							"79x80"=>$this->user_id.'/media/web/thumbnail/79x80/',
+							"448x306"=>$this->user_id.'/media/web/thumbnail/448x306/',
+							"384x216"=>$this->user_id.'/media/web/thumbnail/384x216/',
+							"98x78"=>$this->user_id.'/media/web/thumbnail/98x78/',
 						),
-						"webm"=>array (
+/*
+							"webm"=>array (
 							//webm
 							"base"=>$this->user_id.'/media/webm/thumbnail/',
 							"79x80"=>$this->user_id.'/media/webm/thumbnail/79x80/',
@@ -377,6 +378,7 @@ error_log("result  $op" . PHP_EOL);
 							"384x216"=>$this->user_id.'/media/hls/thumbnail/384x216/',
 							"98x78"=>$this->user_id.'/media/hls/thumbnail/98x78/',
 						),
+*/
 						"1080p"=>array (
 						//1080p
 							"base"=>$this->user_id.'/media/1080p/thumbnail/',
@@ -401,9 +403,8 @@ error_log("result  $op" . PHP_EOL);
 							$this->memreas_aws_transcoder->s3videoUpload($message_data);
 						}
 					}
-				}
+				} //End for each thumbnail
 				$html .= "<br><br>\n\n";
-
 
 				// Custom Settings
 
@@ -452,397 +453,83 @@ error_log("result  $op" . PHP_EOL);
 				$customParams[] 	 = '-y';	// Overwrite existing file
 
 
-// 				////////////////////////
-// 				// mpeg4 section
-// 				////////////////////////
-// 				if (isset($_POST['encoding_mpeg4']) || (!$isUpload)) {
+				////////////////////////
+				// web section
+				////////////////////////
+				if (isset($_POST['encoding_web']) || (!$isUpload)) {
 		
-// 					if ($audioEnabled) {
-// 						$ae[] = '-acodec';
-// 						$ae[] =	'libfaac';
-// 					}
+					if ($audioEnabled) {
+						$ae[] = '-acodec';
+						$ae[] =	'libfaac';
+					}
 		
-// 					//$command =array_merge(array( '-i',$DestRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($HomeDirectory.$ConvertedDirectory.$mpeg4.$NewVideoName.'x264.mp4','2>&1'));
-// 					$transcoded_mp4_file = $HomeDirectory.$ConvertedDirectory.$mpeg4.$NewVideoName.'.mp4';
+					//$command =array_merge(array( '-i',$DestRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'x264.mp4','2>&1'));
+					$transcoded_mp4_file = $HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'.mp4';
 					
-// 					$command =array_merge(
-// 								array( 
-// 									'-i',
-// 									$DestRandVideoName,
-// 									//'-vcodec', 'mpeg4',
-// 									//'-c:v', 'mpeg4', 
-// 									//'-vtag', 'xvid',
-// 									//'-ss',
-// 									//'-vsync', '1',
-// 									//'-bt', '50k',
-// 									//'-movflags', 'frag_keyframe+empty_moov'
-										
-// 									// works ??
-// 									'-vcodec', 'copy', 
-// 									'-acodec', 'aac', 
-// 									'-strict', ' experimental',
+					$command = array( 
+									'-i',
+									$DestRandVideoName,
+									$transcoded_mp4_file,
+									'2>&1'
+								);
+					$cmd = $ffmpegcmd ." ".$cmd;
+					$html .= "Generating MPEG4 (Web Quality)\n<br>\n\n";
+					$pass = 0;
+					$output_start_time = date("Y-m-d H:i:s");
+					try{
+						$op = shell_exec($cmd);
+error_log("**********************************************".PHP_EOL);
+error_log("FFMPEG MPEG4 NORMAL CMD -----> $cmd".PHP_EOL);
+error_log("**********************************************".PHP_EOL);
+error_log("OUTPUT OF FFMPEG MPEG4 CMD -----> $op".PHP_EOL);
+error_log("**********************************************".PHP_EOL);
+						$pass = 1;
+					}
+					catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
 
-// 									// http://askubuntu.com/questions/285542/convert-mov-files-to-home-theater-compartible-mp4	
-// 									//'-q:a', '0',
-// 									//'-q:v', '0',
-// 									//'-strict', '-2'										
-// 								),
-										
-// 									//'-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),
-// 									//$ae,
-// 									//$customParams,
-// 									array($transcoded_mp4_file,'2>&1')
-// 								);
-// 					$cmd = join(" ",$command);
-// 					$cmd = $ffmpegcmd ." ".$cmd;
-// 					$html .= "Generating MPEG4 (Web Quality)\n<br>\n\n";
-// 					$pass = 0;
-// 					$output_start_time = date("Y-m-d H:i:s");
-// 					try{
-// 						$op = shell_exec($cmd);
-// error_log("**********************************************".PHP_EOL);
-// error_log("**********************************************".PHP_EOL);
-// error_log("FFMPEG MPEG4 CMD -----> $cmd".PHP_EOL);
-// error_log("**********************************************".PHP_EOL);
-// error_log("OUTPUT OF FFMPEG MPEG4 CMD -----> $op".PHP_EOL);
-// error_log("**********************************************".PHP_EOL);
-// 						//echo "$cmd<br><br><br>";
-// 						//echo "$op<br><br><br>";
-// 						$pass = 1;
-// 						// echo $driver->command($command);
-// 					}
-// 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
-
-// 					//Put to S3 here...
-// 					$message_data = array (
-// 						"s3file_name"=>$original_file_name.'.mp4',
-// 						"file"=>$transcoded_mp4_file,
-// 						"user_id"=>$this->user_id,
-// 						"media_id"=>"placeholder",
-// 						"content_type"=>"video/mp4", //specific to webm for aws metadata
-// 						"s3path"=>$this->user_id.'/media/mpeg4/',
-// 					);
-// 					$this->memreas_aws_transcoder->s3videoUpload($message_data);
-// 					$mpeg4arr = array(
-// 						"ffmpeg_cmd"=>$cmd,
-// 						"ffmpeg_cmd_output"=>$op,
-// 						"output_size"=>filesize($transcoded_mp4_file),
-// 						"pass_fail"=>$pass,
-// 						"error_message"=>$errstr,
-// 						"output_start_time"=>$output_start_time,
-// 						"output_end_time"=>date("Y-m-d H:i:s"),
-// 					);
+					//Put to S3 here...
+					$message_data = array (
+						"s3file_name"=>$original_file_name.'.mp4',
+						"file"=>$transcoded_mp4_file,
+						"user_id"=>$this->user_id,
+						"media_id"=>"placeholder",
+						"content_type"=>"video/mp4", //specific to webm for aws metadata
+						"s3path"=>$this->user_id.'/media/web/',
+					);
+					$this->memreas_aws_transcoder->s3videoUpload($message_data);
+					$webarr = array(
+						"ffmpeg_cmd"=>$cmd,
+						"ffmpeg_cmd_output"=>$op,
+						"output_size"=>filesize($transcoded_mp4_file),
+						"pass_fail"=>$pass,
+						"error_message"=>$errstr,
+						"output_start_time"=>$output_start_time,
+						"output_end_time"=>date("Y-m-d H:i:s"),
+					);
 		
-// 					$html .= '<a href="/'.$transcoded_mp4_file.'" alt="Thumbnail">mpeg4</a><br>';
+					$html .= '<a href="/'.$transcoded_mp4_file.'" alt="Thumbnail">web</a><br>';
 					
-// 				}		
-
-// 				////////////////////////
-// 				// webm section
-// 				////////////////////////
-// 				if (isset($_POST['encoding_webm']) || (!$isUpload)) {
-		
-// 					$command =array_merge(
-// 							array(
-// 									'-i',
-// 									$DestRandVideoName,
-// 									'-c:v', 'libvpx',
-// 									'-b:v', '1M',
-// 									'-c:a', 'libvorbis'
-// 							),
-					
-// 							//'-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),
-// 							//$ae,
-// 							//$customParams,
-// 							array($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm','2>&1')
-// 					);
-						
-// 					$cmd = join(" ",$command);
-// 					$cmd = $ffmpegcmd ." ".$cmd;
-// 					$html .= "Generating Webm\n<br>\n\n";
-// 					$pass = 0;
-// 					$output_start_time = date("Y-m-d H:i:s");
-// 					try{
-// 						$op = shell_exec($cmd);
-// error_log("**********************************************".PHP_EOL);
-// error_log("FFMPEG WEBMM CMD -----> $cmd".PHP_EOL);
-// error_log("**********************************************".PHP_EOL);
-// error_log("OUTPUT OF FFMPEG WEBM CMD -----> $op".PHP_EOL);
-// error_log("**********************************************".PHP_EOL);
-// 						//echo "$cmd<br><br><br>";
-// 						//echo "$op<br><br><br>";
-// 						$pass = 1;
-// 						// echo $driver->command($command);
-// 					}
-// 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
-
-// 					//Put to S3 here...
-// 					$message_data = array (
-// 						"s3file_name"=>$original_file_name.'.webm',
-// 						"file"=>$HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm',
-// 						"user_id"=>$this->user_id,
-// 						"media_id"=>"placeholder",
-// 						"content_type"=>"video/ogg", //specific to webm for aws metadata
-// 						"s3path"=>$this->user_id.'/media/webm/',
-// 					);
-// 					$this->memreas_aws_transcoder->s3videoUpload($message_data);
-		
-// 					$webmarr = array(
-// 						"ffmpeg_cmd"=>$cmd,
-// 						"ffmpeg_cmd_output"=>$op,
-// 						"output_size"=>filesize($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm'),
-// 						"pass_fail"=>$pass,
-// 						"error_message"=>$errstr,
-// 						"output_start_time"=>$output_start_time,
-// 						"output_end_time"=>date("Y-m-d H:i:s"),
-// 					);
-// 					$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$webm.$NewVideoName.'.webm'.'" alt="Thumbnail">Webm</a><br>';
-// 				}
-
-				
-				
-				
-				
-// 				/*
-// 				 * TODO: HLS still not working
-// 				 */
-				
-// 				////////////////////////
-// 				// hls section -
-// 				////////////////////////
-// 				if (isset($_POST['encoding_hls']) || (!$isUpload)) {
-		
-// 					//////////////////////////
-// 					// MPEG-2 section for HLS
-// 					//////////////////////////
-// 					//$ ffmpeg -i video.VOB -target ntsc-dvd -q:a 0 -q:v 0 output.mpg
-// 					$transcoded_mp2_file = $HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.mp2';
-						
-// 					$command =array_merge(
-// 							array(
-// 									'-i',
-// 									$DestRandVideoName,
-// 									'-target', 'ntsc-dvd',
-// 									'-q:a', '0',
-// 									'-q:v', '0'
-// 							),
-								
-// 							//'-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),
-// 							//$ae,
-// 							//$customParams,
-// 							array($transcoded_mp2_file,'2>&1')
-// 					);
-					
-// 					$cmd = join(" ",$command);
-// 					$cmd = $ffmpegcmd ." ".$cmd;
-// 					$html .= "Generating MPEG-2\n<br>\n\n";
-// 					$pass = 0;
-// 					$output_start_time = date("Y-m-d H:i:s");
-// 					try{
-// 						$op = shell_exec($cmd);
-// 						error_log("**********************************************".PHP_EOL);
-// 						error_log("FFMPEG MPEG-2 CMD -----> $cmd".PHP_EOL);
-// 						error_log("**********************************************".PHP_EOL);
-// 						error_log("OUTPUT OF FFMPEG WEBM CMD -----> $op".PHP_EOL);
-// 						error_log("**********************************************".PHP_EOL);
-// 						$pass = 1;
-// 					}
-// 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}								
-					
-					
-// 					// ffmpeg -y -i 720/sintel_trailer_2k_%4d.png -i sintel_trailer-audio.flac -c:a libvo_aacenc -ac 1 -b:a 32k -ar 22050 -c:v libx264 -pix_fmt yuv420p -profile:v baseline -level 13 -b:v 200K -r 12 -g 36 -f hls -hls_time 10 -hls_list_size 999 -s 320x180 ts/320x180.m3u8
-// 					$command =array_merge(
-// 								array(
-// 										'-re',
-// 										'-i',
-// 										$transcoded_mp2_file,
-// 										'-map', '0',
-// 										'-codec', 'copy',
-// 										'-f', 'segment',
-// 										'-segment_list', $HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8',
-// 										'-segment_list_flags', '+live', 
-// 										'-segment_time', '10',
-// 										$HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'%03d.ts',
-// 										'2>&1'
-// 								)
-
-// /*Original
-// 										'-i',
-// 										$DestRandVideoName,
-// 										'-vcodec', 'copy', 
-// 										'-pix_fmt', 
-// 										'yuv420p', 
-// 										'-profile:v', 
-// 										'baseline', 
-// 										'-level', 
-// 										'13'
-// 								),
-// 								$customParams,
-// 								array(
-// 										'-f', 
-// 										'hls', 
-// 										'-hls_time', 
-// 										'10', 
-// 										'-hls_list_size', 
-// 										'999',
-// 										$HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8',
-// 										'2>&1'
-// 								)
-// */										
-
-										
-// 					);
-// 					$cmd = join(" ",$command);
-// 					$cmd = $ffmpegcmd ." ".$cmd;
-// 					$html .= "Generating HLS \n<br>\n\n";
-// 					$pass = 0;
-// 					$output_start_time = date("Y-m-d H:i:s");
-// 					try{
-// 						$op = shell_exec($cmd);
-// error_log("**********************************************".PHP_EOL);
-// error_log("FFMPEG HLS CMD -----> $cmd".PHP_EOL);
-// error_log("**********************************************".PHP_EOL);
-// error_log("OUTPUT OF FFMPEG HLS CMD -----> $op".PHP_EOL);
-// error_log("**********************************************".PHP_EOL);
-// 						//echo "$cmd<br><br><br>";
-// 						//echo "$op<br><br><br>";
-// 						$pass = 1;
-// 						// echo $driver->command($command);
-// 					}
-// 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage();}
-// 					$fs = 0;
-// 					foreach(glob($HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'*.ts') as $filename){
-// 						$fs += filesize($filename);
-// 						$short_filename = explode("hls/", $filename);
-// 						error_log("filename ------> " . $filename . PHP_EOL); 
-// 						error_log("short_filename ------> " . $short_filename[1] . PHP_EOL); 
-// 						//Put to S3 here...
-// 						$message_data = array (
-// 							"s3file_name"=>$short_filename[1],
-// 							"file"=>$filename,
-// 							"user_id"=>$this->user_id,
-// 							"media_id"=>"placeholder",
-// 							"content_type"=>"video/MP2T", //specific to webm for aws metadata
-// 							"s3path"=>$this->user_id.'/media/hls/',
-// 						);
-// 						$this->memreas_aws_transcoder->s3videoUpload($message_data);
-// 					}
-		
-// 					//Put to S3 here...
-// 					$message_data = array (
-// 						"s3file_name"=>$original_file_name.'.m3u8',
-// 						"file"=>$HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8',
-// 						"user_id"=>$this->user_id,
-// 						"media_id"=>"placeholder",
-// 						"content_type"=>"application/x-mpegURL", //specific to webm for aws metadata
-// 						"s3path"=>$this->user_id.'/media/hls/',
-// 					);
-// 					$this->memreas_aws_transcoder->s3videoUpload($message_data);
-		
-// 					$hlsarr = array(
-// 						"ffmpeg_cmd"=>$cmd,
-// 						"ffmpeg_cmd_output"=>$op,
-// 						"output_size"=>$fs+filesize($HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8'),
-// 						"pass_fail"=>$pass,
-// 						"error_message"=>$errstr,
-// 						"output_start_time"=>$output_start_time,
-// 						"output_end_time"=>date("Y-m-d H:i:s"),
-// 					);
-// 					$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8'.'" alt="Thumbnail">HLS</a><br>';
-// 				}
+				} //End web section
 
 				////////////////////////
 				// 1080p section
 				////////////////////////
 				if (isset($_POST['encoding_1080']) || (!$isUpload)) {
-					$customParams = '';
-		
-					$customParams[]  = '-vf'; 
-					$customParams[]  = '"scale=640:360"'; // Format the video size
-		
-					$customParams[]  = '-b:v';
-					$customParams[]  = '700k'; // Format the video bit rate
-		
-					$customParams[]  = '-r';
-					$customParams[]  = $videoFramerate;	// Format the video frame rate
-
-					if ($videoDeinterlace) {
-						$customParams[] = '-deinterlace ';	// Deinterlace the video
-					}
-					if ($audioEnabled) {
-						$customParams[]  = '-ar';
-						$customParams[]  = $audioSamplerate;	// Audio sample rate
-			
-						$customParams[]  = '-ab';
-						$customParams[]  = $audioBitrate.'k';	// Audio bit rate
-			
-						$customParams[]  = '-ac';
-						$customParams[]  = $audioChannels;	// Audio Channels
-						$ae = '';
-						$ae[] = '-acodec';
-						$ae[] =	'libfaac';
-					}
-					else
-					{
-						$customParams[]  = '-an'; // Disable audio
-					}
-		
-
-					$customParams[]  = '-f';
-					$customParams[]  = 'mp4';			
-					//'-vcodec', 'mpeg2video'
-					//$command =array_merge(array('-y', '-i',$DestRandVideoName,'-c:v', 'libx264', '-preset', 'ultrafast', '-qp', '0','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'p1080.mp4','2>&1'));
-		
-					//https://wiki.archlinux.org/index.php/FFmpeg#Encoding_examples
-					// ffmpeg -i video.mpg -acodec libvorbis -aq 8 -ar 48000 -vcodec mpeg4 -pass 2 -vpre vhq -b 3000k output.mp4
-					$transcoded_1080p_file = $HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4';
-					$command =array_merge(
-									array(
-											'-i',
-											$DestRandVideoName,
-											//'-vcodec', 'mpeg4',
-											//'-c:v', 'mpeg4', 
-											//'-vtag', 'xvid',
-											'-acodec', 'libvorbis', 
-											'-aq', '8', 
-											'-ar', '48000', 
-											'-vcodec', 'mpeg4', 
-											'-pass', '2', 
-											'-b:v', '3000k',
-												
-											//'-fpre', '/memreas_ffmpeg_install/ffmpeg_build/share/ffmpeg/libavcodec-vhq.ffpreset', 
-											//'-vpre', 'vhq', 
-											//Preset data
-											'-vtag', 'DX50',
-											'-mbd', '2',
-											'-trellis', '2',
-											'-flags', '+cbp+mv0',
-											'-pre_dia_size', '4',
-											'-dia_size', '4',
-											'-precmp', '4',
-											'-cmp', '4',
-											'-subcmp', '4',
-											'-preme', '2',
-											'-quantizer_noise_shaping', '2',
-											
-									),
-							
-									//'-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),
-									//$ae,
-									//$customParams,
-									array($transcoded_1080p_file,'2>&1')
-							
-					);
-						
-					$cmd = join(" ",$command);
-					$cmd = $ffmpegcmd ." ".$cmd;
-					$html .= "Generating MPEG4 (1080)\n<br>";
-					$pass = 0;
-					$output_start_time = date("Y-m-d H:i:s");
-					try{
+				
+						$transcoded_1080p_file = $HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4';
+						$command = array(
+										'-i', $DestRandVideoName,
+										'-q:v', '1',
+										$transcoded_mp4_file,
+										'2>&1'
+									);
+				
+						$cmd = $ffmpegcmd ." ".$cmd;
+						$html .= "Generating MPEG4 (1080)\n<br>";
+						$pass = 0;
+						$output_start_time = date("Y-m-d H:i:s");
+						try{
 						$op = shell_exec($cmd);
-						//echo "$cmd<br><br><br>";
-						//echo "$op<br><br><br>";
 error_log("**********************************************".PHP_EOL);
 error_log("FFMPEG 1080P CMD -----> $cmd".PHP_EOL);
 error_log("**********************************************".PHP_EOL);
@@ -850,64 +537,43 @@ error_log("OUTPUT OF FFMPEG 1080P CMD -----> $op".PHP_EOL);
 error_log("**********************************************".PHP_EOL);
 						$pass = 1;
 						// echo $driver->command($command);
-					}
-					catch(Exception $e){$pass = 0; $errstr = $e->getMessage();}
-		
-					//Put to S3 here...
-					$message_data = array (
+						}
+						catch(Exception $e){$pass = 0; $errstr = $e->getMessage();}
+				
+						//Put to S3 here...
+						$message_data = array (
 						"s3file_name"=>$original_file_name.'.mp4',
-						"file"=>$HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4',
+											"file"=>$HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4',
 						"user_id"=>$this->user_id,
 						"media_id"=>"placeholder",
 						"content_type"=>"video/mp4", //specific to mp4 for aws metadata
 						"s3path"=>$this->user_id.'/media/1080p/',
-					);
-					$this->memreas_aws_transcoder->s3videoUpload($message_data);
-
-					$p1080arr = array(
-						"ffmpeg_cmd"=>$cmd,
-						"ffmpeg_cmd_output"=>$op,
-						"output_size"=>filesize($HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4'),
-						"pass_fail"=>$pass,
-						"error_message"=>$errstr,
-						"output_start_time"=>$output_start_time,
-						"output_end_time"=>date("Y-m-d H:i:s"),
-					);
-		
-					$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4'.'" alt="Thumbnail">MPEG 1080</a><br>';
-				}	
-
-	
-				$html .= "Completed <br>";
-	
-				$tnstring = join("\",\n		\"",$tns);
-				$tnstring = '"'.$tnstring.'"';
-	
-				$tsstring;
-	
-				$ts;
-				if (isset($_POST['encoding_hls']) || (!$isUpload)) {
-					foreach(glob($HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'*.ts') as $filename){
-						$ts[] = $WebHome.$DestinationDirectory.$hls.basename($filename);
-					}
-		
-					$tsstring = join("\",\n		\"",$ts);
-					$tsstring = '"'.$tsstring.'"';
-				}
-	
-				$transcode_end_time = date("Y-m-d H:i:s");
-			
+								);
+								$this->memreas_aws_transcoder->s3videoUpload($message_data);
+				
+								$p1080arr = array(
+								"ffmpeg_cmd"=>$cmd,
+								"ffmpeg_cmd_output"=>$op,
+								"output_size"=>filesize($HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4'),
+								"pass_fail"=>$pass,
+								"error_message"=>$errstr,
+										"output_start_time"=>$output_start_time,
+										"output_end_time"=>date("Y-m-d H:i:s"),
+								);
+				
+							$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4'.'" alt="Thumbnail">MPEG 1080</a><br>';
+				}				
+				
+				
 error_log("Finished transcoding for each type....".PHP_EOL);
 				$metadata = array(
 				  "1080p"=>$p1080arr,
-				  "WebM"=>$webmarr,
-				  "Web"=>$mpeg4arr,
-				  "HLS"=>$hlsarr,
+				  "Web"=>$webarr,
 				);
 				$json_metadata = json_encode($metadata);				
 
-//error_log("Finished transcoding for each json below....".PHP_EOL);
-//error_log($json_metadata.PHP_EOL);
+error_log("Finished transcoding for each json below....".PHP_EOL);
+error_log($json_metadata.PHP_EOL);
 				$transcode_job_duration = strtotime($transcode_end_time) - strtotime($transcode_start_time);
 				 //Insert transcode_transaction
 				 $now = date('Y-m-d H:i:s');
@@ -941,19 +607,8 @@ error_log("Inserted transcode_transaction....".PHP_EOL);
 						"1080p_thumbails": [
 							'.$tnstring.'
 						],
-						"hls": "'.$WebHome.$DestinationDirectory.$hls.$NewVideoName.'.m3u8",
-						"hls_thumbnails": [
-							'.$tnstring.'
-						],
-						"hls_ts": [
-							'.$tsstring.'
-						],
 						"web": "'.$WebHome.$DestinationDirectory.$webm.$NewVideoName.'.web",
 						"web_thumbnails": [
-							'.$tnstring.'
-						]
-						"mpeg4": "'.$WebHome.$DestinationDirectory.$mpeg4.$NewVideoName.'mpeg4.mp4",
-						"mpeg4_thumbnails": [
 							'.$tnstring.'
 						]
 					},
@@ -973,8 +628,8 @@ error_log("Inserted transcode_transaction....".PHP_EOL);
 
 				//echo $html;
 				//echo '{ "files": [ { "url": "http://url.to/file/or/page", "thumbnail_url": "http://url.to/thumnail.jpg ", "name": "thumb2.jpg", "type": "image/jpeg", "size": 46353, "delete_url": "http://url.to/delete /file/", "delete_type": "DELETE" } ] }';
-//error_log( '{"files":[{"url":"'.$DestinationDirectory.$NewVideoName.'","thumbnailUrl":['.$tnstring.'],"name":"'.$NewVideoName.'","type":"'.$VideoFileType.'","size":"'.$filesize.'","deleteUrl":"","deleteType":"","webm":"'.$ConvertedDirectory.$webm.$NewVideoName.'.webm","webmsize":'.filesize($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm').',"mpeg4":"'.$ConvertedDirectory.$mpeg4.$NewVideoName.'mpeg4.mp4","mpeg4size":'.filesize($HomeDirectory.$ConvertedDirectory.$mpeg4.$NewVideoName.'mpeg4.mp4').'}]}');
-//echo '{"files":[{"url":"'.$DestinationDirectory.$NewVideoName.'","thumbnailUrl":['.$tnstring.'],"name":"'.$NewVideoName.'","type":"'.$VideoFileType.'","size":"'.$filesize.'","deleteUrl":"","deleteType":"","webm":"'.$ConvertedDirectory.$web.$NewVideoName.'.webm","webmsize":'.filesize($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm').',"mpeg4":"'.$ConvertedDirectory.$mpeg4.$NewVideoName.'mpeg4.mp4","mpeg4size":'.filesize($HomeDirectory.$ConvertedDirectory.$mpeg4.$NewVideoName.'mpeg4.mp4').'}]}';
+				//error_log( '{"files":[{"url":"'.$DestinationDirectory.$NewVideoName.'","thumbnailUrl":['.$tnstring.'],"name":"'.$NewVideoName.'","type":"'.$VideoFileType.'","size":"'.$filesize.'","deleteUrl":"","deleteType":"","webm":"'.$ConvertedDirectory.$webm.$NewVideoName.'.webm","webmsize":'.filesize($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm').',"web":"'.$ConvertedDirectory.$web.$NewVideoName.'web.mp4","websize":'.filesize($HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'web.mp4').'}]}');
+				//echo '{"files":[{"url":"'.$DestinationDirectory.$NewVideoName.'","thumbnailUrl":['.$tnstring.'],"name":"'.$NewVideoName.'","type":"'.$VideoFileType.'","size":"'.$filesize.'","deleteUrl":"","deleteType":"","webm":"'.$ConvertedDirectory.$web.$NewVideoName.'.webm","webmsize":'.filesize($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm').',"web":"'.$ConvertedDirectory.$web.$NewVideoName.'web.mp4","websize":'.filesize($HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'web.mp4').'}]}';
 
 				//Update the media table entry here
 				$now = date('Y-m-d H:i:s');
@@ -1005,6 +660,368 @@ error_log("Just updated $media_id" . PHP_EOL);
 			$result = $this->rmWorkDir($HomeDirectory);
 		}
 
+
+	
+	
 	}
 }
+
+
+/*
+ * Samples from prior coding 
+ */
+// 				/*
+// 				 * TODO: HLS still not working
+// 				 */
+
+// 				////////////////////////
+// 				// hls section -
+// 				////////////////////////
+// 				if (isset($_POST['encoding_hls']) || (!$isUpload)) {
+
+// 					//////////////////////////
+// 					// MPEG-2 section for HLS
+// 					//////////////////////////
+// 					//$ ffmpeg -i video.VOB -target ntsc-dvd -q:a 0 -q:v 0 output.mpg
+// 					$transcoded_mp2_file = $HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.mp2';
+
+// 					$command =array_merge(
+// 							array(
+// 									'-i',
+// 									$DestRandVideoName,
+// 									'-target', 'ntsc-dvd',
+// 									'-q:a', '0',
+// 									'-q:v', '0'
+// 							),
+
+// 							//'-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),
+// 							//$ae,
+// 							//$customParams,
+// 							array($transcoded_mp2_file,'2>&1')
+// 					);
+	
+// 					$cmd = join(" ",$command);
+// 					$cmd = $ffmpegcmd ." ".$cmd;
+// 					$html .= "Generating MPEG-2\n<br>\n\n";
+// 					$pass = 0;
+// 					$output_start_time = date("Y-m-d H:i:s");
+// 					try{
+// 						$op = shell_exec($cmd);
+// 						error_log("**********************************************".PHP_EOL);
+// 						error_log("FFMPEG MPEG-2 CMD -----> $cmd".PHP_EOL);
+// 						error_log("**********************************************".PHP_EOL);
+// 						error_log("OUTPUT OF FFMPEG WEBM CMD -----> $op".PHP_EOL);
+// 						error_log("**********************************************".PHP_EOL);
+// 						$pass = 1;
+// 					}
+// 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
+	
+	
+// 					// ffmpeg -y -i 720/sintel_trailer_2k_%4d.png -i sintel_trailer-audio.flac -c:a libvo_aacenc -ac 1 -b:a 32k -ar 22050 -c:v libx264 -pix_fmt yuv420p -profile:v baseline -level 13 -b:v 200K -r 12 -g 36 -f hls -hls_time 10 -hls_list_size 999 -s 320x180 ts/320x180.m3u8
+// 					$command =array_merge(
+// 								array(
+// 										'-re',
+// 										'-i',
+// 										$transcoded_mp2_file,
+// 										'-map', '0',
+// 										'-codec', 'copy',
+// 										'-f', 'segment',
+// 										'-segment_list', $HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8',
+// 										'-segment_list_flags', '+live',
+// 										'-segment_time', '10',
+// 										$HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'%03d.ts',
+// 										'2>&1'
+// 								)
+
+// /*Original
+// 										'-i',
+// 										$DestRandVideoName,
+// 										'-vcodec', 'copy',
+// 										'-pix_fmt',
+// 										'yuv420p',
+// 										'-profile:v',
+// 										'baseline',
+// 										'-level',
+// 										'13'
+// 								),
+// 								$customParams,
+// 								array(
+// 										'-f',
+// 										'hls',
+// 										'-hls_time',
+// 										'10',
+// 										'-hls_list_size',
+// 										'999',
+// 										$HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8',
+// 										'2>&1'
+// 								)
+// */
+
+
+// 					);
+// 					$cmd = join(" ",$command);
+// 					$cmd = $ffmpegcmd ." ".$cmd;
+// 					$html .= "Generating HLS \n<br>\n\n";
+// 					$pass = 0;
+// 					$output_start_time = date("Y-m-d H:i:s");
+// 					try{
+// 						$op = shell_exec($cmd);
+// error_log("**********************************************".PHP_EOL);
+// error_log("FFMPEG HLS CMD -----> $cmd".PHP_EOL);
+// error_log("**********************************************".PHP_EOL);
+// error_log("OUTPUT OF FFMPEG HLS CMD -----> $op".PHP_EOL);
+// error_log("**********************************************".PHP_EOL);
+// 						//echo "$cmd<br><br><br>";
+// 						//echo "$op<br><br><br>";
+// 						$pass = 1;
+// 						// echo $driver->command($command);
+// 					}
+// 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage();}
+// 					$fs = 0;
+// 					foreach(glob($HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'*.ts') as $filename){
+// 						$fs += filesize($filename);
+// 						$short_filename = explode("hls/", $filename);
+// 						error_log("filename ------> " . $filename . PHP_EOL);
+// 						error_log("short_filename ------> " . $short_filename[1] . PHP_EOL);
+// 						//Put to S3 here...
+// 						$message_data = array (
+// 							"s3file_name"=>$short_filename[1],
+// 							"file"=>$filename,
+// 							"user_id"=>$this->user_id,
+// 							"media_id"=>"placeholder",
+// 							"content_type"=>"video/MP2T", //specific to webm for aws metadata
+// 							"s3path"=>$this->user_id.'/media/hls/',
+// 						);
+// 						$this->memreas_aws_transcoder->s3videoUpload($message_data);
+// 					}
+
+// 					//Put to S3 here...
+// 					$message_data = array (
+// 						"s3file_name"=>$original_file_name.'.m3u8',
+// 						"file"=>$HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8',
+// 						"user_id"=>$this->user_id,
+// 						"media_id"=>"placeholder",
+// 						"content_type"=>"application/x-mpegURL", //specific to webm for aws metadata
+// 						"s3path"=>$this->user_id.'/media/hls/',
+// 					);
+// 					$this->memreas_aws_transcoder->s3videoUpload($message_data);
+
+// 					$hlsarr = array(
+// 						"ffmpeg_cmd"=>$cmd,
+// 						"ffmpeg_cmd_output"=>$op,
+// 						"output_size"=>$fs+filesize($HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8'),
+// 						"pass_fail"=>$pass,
+// 						"error_message"=>$errstr,
+// 						"output_start_time"=>$output_start_time,
+// 						"output_end_time"=>date("Y-m-d H:i:s"),
+// 					);
+// 					$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$hls.$NewVideoName.'.m3u8'.'" alt="Thumbnail">HLS</a><br>';
+// 				}
+// ////////////////////////
+// // webm section
+// ////////////////////////
+// if (isset($_POST['encoding_webm']) || (!$isUpload)) {
+
+// 	$command =array_merge(
+// 			array(
+// 					'-i',
+// 					$DestRandVideoName,
+// 					'-c:v', 'libvpx',
+// 					'-b:v', '1M',
+// 					'-c:a', 'libvorbis'
+// 			),
+				
+// 			//'-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),
+// 			//$ae,
+// 			//$customParams,
+// 			array($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm','2>&1')
+// 	);
+
+// 	$cmd = join(" ",$command);
+// 	$cmd = $ffmpegcmd ." ".$cmd;
+// 	$html .= "Generating Webm\n<br>\n\n";
+// 	$pass = 0;
+// 	$output_start_time = date("Y-m-d H:i:s");
+// 	try{
+// 		$op = shell_exec($cmd);
+// 		error_log("**********************************************".PHP_EOL);
+// 		error_log("FFMPEG WEBMM CMD -----> $cmd".PHP_EOL);
+// 		error_log("**********************************************".PHP_EOL);
+// 		error_log("OUTPUT OF FFMPEG WEBM CMD -----> $op".PHP_EOL);
+// 		error_log("**********************************************".PHP_EOL);
+// 		//echo "$cmd<br><br><br>";
+// 		//echo "$op<br><br><br>";
+// 		$pass = 1;
+// 		// echo $driver->command($command);
+// 	}
+// 	catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
+
+// 	//Put to S3 here...
+// 	$message_data = array (
+// 	"s3file_name"=>$original_file_name.'.webm',
+// 	"file"=>$HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm',
+// 	"user_id"=>$this->user_id,
+// 	"media_id"=>"placeholder",
+// 	"content_type"=>"video/ogg", //specific to webm for aws metadata
+// 						"s3path"=>$this->user_id.'/media/webm/',
+// 	);
+// 	$this->memreas_aws_transcoder->s3videoUpload($message_data);
+
+// 	$webmarr = array(
+// 			"ffmpeg_cmd"=>$cmd,
+// 			"ffmpeg_cmd_output"=>$op,
+// 			"output_size"=>filesize($HomeDirectory.$ConvertedDirectory.$webm.$NewVideoName.'.webm'),
+// 			"pass_fail"=>$pass,
+// 			"error_message"=>$errstr,
+// 			"output_start_time"=>$output_start_time,
+// 			"output_end_time"=>date("Y-m-d H:i:s"),
+// 					);
+// 					$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$webm.$NewVideoName.'.webm'.'" alt="Thumbnail">Webm</a><br>';
+// }
+
+// $html .= "Completed <br>";
+
+// $tnstring = join("\",\n		\"",$tns);
+// 				$tnstring = '"'.$tnstring.'"';
+
+// 				$tsstring;
+
+// 	$ts;
+// 	if (isset($_POST['encoding_hls']) || (!$isUpload)) {
+// 			foreach(glob($HomeDirectory.$ConvertedDirectory.$hls.$NewVideoName.'*.ts') as $filename){
+// 			$ts[] = $WebHome.$DestinationDirectory.$hls.basename($filename);
+// 	}
+
+// 	$tsstring = join("\",\n		\"",$ts);
+// 		$tsstring = '"'.$tsstring.'"';
+// 	}
+
+// 	$transcode_end_time = date("Y-m-d H:i:s");
+			
+// ////////////////////////
+// // 1080p section
+// ////////////////////////
+// if (isset($_POST['encoding_1080']) || (!$isUpload)) {
+// 	$customParams = '';
+
+// 	$customParams[]  = '-vf';
+// 	$customParams[]  = '"scale=640:360"'; // Format the video size
+
+// 	$customParams[]  = '-b:v';
+// 	$customParams[]  = '700k'; // Format the video bit rate
+
+// 	$customParams[]  = '-r';
+// 	$customParams[]  = $videoFramerate;	// Format the video frame rate
+
+// 	if ($videoDeinterlace) {
+// 		$customParams[] = '-deinterlace ';	// Deinterlace the video
+// 	}
+// 	if ($audioEnabled) {
+// 		$customParams[]  = '-ar';
+// 		$customParams[]  = $audioSamplerate;	// Audio sample rate
+			
+// 		$customParams[]  = '-ab';
+// 		$customParams[]  = $audioBitrate.'k';	// Audio bit rate
+			
+// 		$customParams[]  = '-ac';
+// 		$customParams[]  = $audioChannels;	// Audio Channels
+// 		$ae = '';
+// 		$ae[] = '-acodec';
+// 		$ae[] =	'libfaac';
+// 	}
+// 	else
+// 	{
+// 		$customParams[]  = '-an'; // Disable audio
+// 	}
+
+
+// 	$customParams[]  = '-f';
+// 	$customParams[]  = 'mp4';
+// 	//'-vcodec', 'mpeg2video'
+// 	//$command =array_merge(array('-y', '-i',$DestRandVideoName,'-c:v', 'libx264', '-preset', 'ultrafast', '-qp', '0','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'p1080.mp4','2>&1'));
+
+// 	//https://wiki.archlinux.org/index.php/FFmpeg#Encoding_examples
+// 	// ffmpeg -i video.mpg -acodec libvorbis -aq 8 -ar 48000 -vcodec mpeg4 -pass 2 -vpre vhq -b 3000k output.mp4
+// 	$transcoded_1080p_file = $HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4';
+// 	$command =array_merge(
+// 			array(
+// 					'-i',
+// 					$DestRandVideoName,
+// 					//'-vcodec', 'mpeg4',
+// 					//'-c:v', 'mpeg4',
+// 					//'-vtag', 'xvid',
+// 					'-vcodec', 'mpeg4',
+// 					'-acodec', 'libvorbis',
+// 	'-aq', '8',
+// 					'-ar', '48000',
+// 					'-pass', '2',
+// 					'-b:v', '3000k',
+
+// 					//'-fpre', '/memreas_ffmpeg_install/ffmpeg_build/share/ffmpeg/libavcodec-vhq.ffpreset',
+// 					//'-vpre', 'vhq',
+// 	//Preset data
+// 	'-vtag', 'DX50',
+// 	'-mbd', '2',
+// 	'-trellis', '2',
+// 	'-flags', '+cbp+mv0',
+// 	'-pre_dia_size', '4',
+// 	'-dia_size', '4',
+// 					'-precmp', '4',
+// 					'-cmp', '4',
+// 					'-subcmp', '4',
+// 					'-preme', '2',
+// 					'-quantizer_noise_shaping', '2',
+						
+// 			),
+				
+// 									//'-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),
+// 									//$ae,
+// 									//$customParams,
+// 									array($transcoded_1080p_file,'2>&1')
+				
+// 					);
+
+// 											$cmd = join(" ",$command);
+// 											$cmd = $ffmpegcmd ." ".$cmd;
+// 	$html .= "Generating MPEG4 (1080)\n<br>";
+// 	$pass = 0;
+// 	$output_start_time = date("Y-m-d H:i:s");
+// 	try{
+// 	$op = shell_exec($cmd);
+// 			//echo "$cmd<br><br><br>";
+// 	//echo "$op<br><br><br>";
+// 	error_log("**********************************************".PHP_EOL);
+// error_log("FFMPEG 1080P CMD -----> $cmd".PHP_EOL);
+// error_log("**********************************************".PHP_EOL);
+// 	error_log("OUTPUT OF FFMPEG 1080P CMD -----> $op".PHP_EOL);
+// 	error_log("**********************************************".PHP_EOL);
+// 	$pass = 1;
+// 	// echo $driver->command($command);
+// 	}
+// 	catch(Exception $e){$pass = 0; $errstr = $e->getMessage();}
+
+// 	//Put to S3 here...
+// 	$message_data = array (
+// 	"s3file_name"=>$original_file_name.'.mp4',
+// 						"file"=>$HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4',
+// 	"user_id"=>$this->user_id,
+// 	"media_id"=>"placeholder",
+// 	"content_type"=>"video/mp4", //specific to mp4 for aws metadata
+// 	"s3path"=>$this->user_id.'/media/1080p/',
+// 			);
+// 			$this->memreas_aws_transcoder->s3videoUpload($message_data);
+
+// 			$p1080arr = array(
+// 			"ffmpeg_cmd"=>$cmd,
+// 			"ffmpeg_cmd_output"=>$op,
+// 			"output_size"=>filesize($HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4'),
+// 			"pass_fail"=>$pass,
+// 			"error_message"=>$errstr,
+// 					"output_start_time"=>$output_start_time,
+// 					"output_end_time"=>date("Y-m-d H:i:s"),
+// 			);
+
+// 			$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4'.'" alt="Thumbnail">MPEG 1080</a><br>';
+// }
+
 ?>
