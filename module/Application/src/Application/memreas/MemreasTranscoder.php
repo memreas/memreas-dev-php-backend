@@ -65,6 +65,7 @@ class MemreasTranscoder {
 	public function exec($message_data, $memreas_transcoder_tables, $service_locator, $isUpload=false) {
 	
 error_log("_REQUEST----> " . print_r($_REQUEST, true) .PHP_EOL);
+error_log("message_data----> " . print_r($message_data, true) .PHP_EOL);
 
 		try {
 			//date_default_timezone_set('UTC');
@@ -78,7 +79,7 @@ error_log("_REQUEST----> " . print_r($_REQUEST, true) .PHP_EOL);
 
 				$mysqli = NULL;
 				if (getcwd()=='/var/app/current') {
-//error_log("found /var/app/current" . PHP_EOL);
+error_log("found /var/app/current" . PHP_EOL);
 					$ffmpegcmd = '/memreas_ffmpeg_install/bin/ffmpeg';		//  :::: Your ffmpeg installation
 					$ffprobecmd = '/memreas_ffmpeg_install/bin/ffprobe';		//  :::: Your ffmpeg installation
 				} else {
@@ -131,17 +132,19 @@ error_log("_REQUEST----> " . print_r($_REQUEST, true) .PHP_EOL);
 					$HomeDirectory.$DestinationDirectory.$thumbnails.$_384x216, // data/temp_job_uuid_dir/media/thumbnails/384x216/
 					$HomeDirectory.$DestinationDirectory.$thumbnails.$_98x78, // data/temp_job_uuid_dir/media/thumbnails/98x78/
 					$HomeDirectory.$DestinationDirectory.$web, // data/temp_job_uuid_dir/media/web/
-					$HomeDirectory.$DestinationDirectory.$webm, // data/temp_job_uuid_dir/media/web/
+					$HomeDirectory.$DestinationDirectory.$webm, // data/temp_job_uuid_dir/media/webm/
 					$HomeDirectory.$DestinationDirectory.$hls, // data/temp_job_uuid_dir/media/hls/
 					$HomeDirectory.$DestinationDirectory.$p1080, // data/temp_job_uuid_dir/media/p1080/
 				);
 
+error_log("About to create folders..." . PHP_EOL);	
 				$permissions = 0777;
 				foreach ($toCreate as $dir) {
 				  	//mkdir($dir, $permissions, TRUE);
 					$save = umask(0);
 				    if (mkdir($dir)) chmod($dir, $permissions);
 				    umask($save);
+error_log("mkdir ----> $dir" . PHP_EOL);	
 				}				
 
 				if (!$isUpload) {
@@ -163,10 +166,11 @@ $email = $message_data['email'];
 */
 
 
+error_log("user_id ----> " . $message_data['user_id'] . PHP_EOL);	
 					$this->user_id = $message_data['user_id'];
 					//get the file from S3 here
 					$tmp_file = $HomeDirectory.$DestinationDirectory.$message_data['s3file_name'];
-
+						
 /*
 error_log("About to get " . $message_data['s3path'].$message_data['s3file_name'] . PHP_EOL);	
 error_log("About to save as  " . $tmp_file . PHP_EOL);	
@@ -174,16 +178,19 @@ error_log('MemreasConstants::S3BUCKET ----> ' . MemreasConstants::S3BUCKET . PHP
 error_log('message_data[s3path] ----> ' . $message_data['s3path'] . PHP_EOL);	
 error_log('message_data[s3file_name] ----> ' . $message_data['s3file_name'] . PHP_EOL);
 */	
+error_log("About to fetch S3 file ... ".PHP_EOL);	
 					$response = $this->memreas_aws_transcoder->s3->getObject(array(
 						'Bucket' => MemreasConstants::S3BUCKET, 
 						'Key'	 =>	$message_data['s3path'].$message_data['s3file_name'], 
 						'SaveAs' =>	$tmp_file,
 					));
 
+error_log("Fetched S3 file ... ".PHP_EOL);	
 					//$VideoFileName 	= str_replace(' ','-',strtolower($message_data['s3file_name'])); 
 					$VideoFileName 	= str_replace(' ','-',$message_data['s3file_name']); 
 					//$TempSrc	 	= $_FILES['VideoFile']['tmp_name'][0]; // Tmp name of video file stored in PHP tmp folder
-					$VideoFileType	= $response['ContentType']; //Obtain file type, returns "video/png", video/jpeg, text/plain etc.
+					//$VideoFileType	= $response['ContentType']; //Obtain file type, returns "video/png", video/jpeg, text/plain etc.
+					$VideoFileType = $message_data['content_type'];
 					//Get file extension from Video name, this will be re-added after random name
 					$VideoExt = substr($VideoFileName, strrpos($VideoFileName, '.'));
 					$VideoExt = str_replace('.','',$VideoExt);
@@ -226,25 +233,24 @@ error_log("Leaving ... Inside if videofile and is uploaded...." . PHP_EOL);
 						die('Something went wrong with Upload!'); // output error when above checks fail.
 				}
 	
+error_log("Fetched S3 file ... ".PHP_EOL);	
+error_log("VIDEO FILE TYPE ----------> $VideoFileType" . PHP_EOL);
 				//Let's use $VideoFileType variable to check wheather uploaded file is supported.
 				//We use PHP SWITCH statement to check valid video format, PHP SWITCH is similar to IF/ELSE statements 
 				//suitable if we want to compare the a variable with many different values
 				switch(strtolower($VideoFileType))
 				{
-					case 'video/mp4':
-					case 'video/quicktime':
-					case 'video/x-msvideo':
-					case 'video/x-ms-wmv':
-					case 'video/x-flv':
-					case 'video/3gpp':
-					case 'video/webm':
-					case 'video/mp1s':
-					case 'video/mp2p':		
-						break;
-					default:
-						die('Unsupported File!'); //output error and exit
+					case 'video/mp4': break;
+					case 'video/quicktime': break;
+					case 'video/x-msvideo': break;
+					case 'video/x-ms-wmv': break;
+					case 'video/x-flv': break;
+					case 'video/3gpp': break;
+					case 'video/webm': break;
+					case 'video/mp1s': break;
+					case 'video/mp2p': break;
+					default: die('Unsupported File!'); //output error and exit
 				}
-error_log("VIDEO FILE TYPE ----------> $VideoFileType" . PHP_EOL);
 				
 				// Save file in upload destination
 				if ($isUpload) {
@@ -465,14 +471,7 @@ error_log("result  $op" . PHP_EOL);
 		
 					//$command =array_merge(array( '-i',$DestRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'x264.mp4','2>&1'));
 					$transcoded_mp4_file = $HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'.mp4';
-					
-					$command = array( 
-									'-i',
-									$DestRandVideoName,
-									$transcoded_mp4_file,
-									'2>&1'
-								);
-					$cmd = $ffmpegcmd ." ".$cmd;
+					$cmd = $ffmpegcmd ." -i $DestRandVideoName $transcoded_mp4_file ".'2>&1';
 					$html .= "Generating MPEG4 (Web Quality)\n<br>\n\n";
 					$pass = 0;
 					$output_start_time = date("Y-m-d H:i:s");
@@ -517,14 +516,7 @@ error_log("**********************************************".PHP_EOL);
 				if (isset($_POST['encoding_1080']) || (!$isUpload)) {
 				
 						$transcoded_1080p_file = $HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4';
-						$command = array(
-										'-i', $DestRandVideoName,
-										'-q:v', '1',
-										$transcoded_mp4_file,
-										'2>&1'
-									);
-				
-						$cmd = $ffmpegcmd ." ".$cmd;
+						$cmd = $ffmpegcmd ." -i $DestRandVideoName -q:v 1 $transcoded_1080p_file ".'2>&1';
 						$html .= "Generating MPEG4 (1080)\n<br>";
 						$pass = 0;
 						$output_start_time = date("Y-m-d H:i:s");
@@ -565,16 +557,28 @@ error_log("**********************************************".PHP_EOL);
 				}				
 				
 				
-error_log("Finished transcoding for each type....".PHP_EOL);
+//error_log("Finished transcoding for each type....".PHP_EOL);
 				$metadata = array(
 				  "1080p"=>$p1080arr,
 				  "Web"=>$webarr,
 				);
 				$json_metadata = json_encode($metadata);				
 
-error_log("Finished transcoding for each json below....".PHP_EOL);
-error_log($json_metadata.PHP_EOL);
-				$transcode_job_duration = strtotime($transcode_end_time) - strtotime($transcode_start_time);
+//error_log("Finished transcoding for each json below....".PHP_EOL);
+//error_log($json_metadata.PHP_EOL);
+
+error_log("this->user_id".$this->user_id.PHP_EOL);
+error_log("VideoFileType".$VideoFileType.PHP_EOL);
+error_log("VideoExt".$VideoExt.PHP_EOL);
+error_log("NewVideoName".$NewVideoName.PHP_EOL);
+error_log("duration".$duration.PHP_EOL);
+error_log("filesize".$filesize.PHP_EOL);
+error_log("pass".$pass.PHP_EOL);
+error_log("transcode_job_duration".$transcode_job_duration.PHP_EOL);
+error_log("transcode_start_time".$transcode_start_time.PHP_EOL);
+error_log("transcode_end_time".$transcode_end_time.PHP_EOL);
+				
+				 $transcode_job_duration = strtotime($transcode_end_time) - strtotime($transcode_start_time);
 				 //Insert transcode_transaction
 				 $now = date('Y-m-d H:i:s');
 				 $transcode_transaction = new TranscodeTransaction();
