@@ -235,7 +235,7 @@ class Module
 									$dbAdapter = $sm->get ( 'memreasbackenddb' );
 									$resultSetPrototype = new ResultSet ();
 									$resultSetPrototype->setArrayObjectPrototype ( new TranscodeTransaction () );
-									return new TableGateway ( 'transcode_transaction', $dbAdapter, null, $resultSetPrototype );
+									return new TableGateway ( 'transcodetransaction', $dbAdapter, null, $resultSetPrototype );
 							},
 						) 
 					);

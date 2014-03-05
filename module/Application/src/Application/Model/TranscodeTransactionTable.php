@@ -55,9 +55,15 @@ error_log("Inside else !isset transcode_transaction_id");
 			//$transcode_transaction->transcode_transaction_id = $transcode_transaction_id;	
 			$data['transcode_transaction_id'] = $transcode_transaction_id;	
 			try {
-				$this->tableGateway->insert ( $data );				
+				//$insert = $this->tableGateway->insert();
+				//$profiler = $this->tableGateway->getAdapter()->getProfiler();
+				//$profiler->setEnabled(true);				
+				$this->tableGateway->insert($data);				
 			} catch (\Exception $e) {
-				error_log("Error message ---> ".$e->getMessage().PHP_WOL);
+				error_log("Error message ---> ".$e->getMessage().PHP_EOL);
+				//Debug
+				//error_log("Profiler.getLastQueryProfile. ----> ".$profiler->getLastQueryProfile()->getQuery().PHP_EOL);				
+				//End Debug
 			}
 		}
 error_log("Inside else !isset transcode_transaction_id ---> ".$data['transcode_transaction_id'].PHP_EOL);
