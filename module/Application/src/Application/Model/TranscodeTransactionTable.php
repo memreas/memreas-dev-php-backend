@@ -26,7 +26,7 @@ class TranscodeTransactionTable {
 	}
 	
 	public function saveTranscodeTransaction(TranscodeTransaction $transcode_transaction) {
-error_log("Inside saveTranscodeTransaction");
+//error_log("Inside saveTranscodeTransaction");
 		$data = array (
 					'transcode_transaction_id' => $transcode_transaction->transcode_transaction_id, 
 					'user_id' => $transcode_transaction->user_id, 
@@ -42,31 +42,25 @@ error_log("Inside saveTranscodeTransaction");
 					'transcode_start_time' => $transcode_transaction->transcode_start_time, 
 					'transcode_end_time' => $transcode_transaction->transcode_end_time, 
 				);
-		if (isset($transcode_transaction->transcode_transaction_id)) {
-error_log("Inside isset transcode_transaction_id");
-			if ($this->getTransaction($transcode_transaction->transcode_transaction_id )) {
-				$this->tableGateway->update ( $data, array ('transcode_transaction_id' => $transcode_transaction->transcode_transaction_id ) );
+		try {
+			if (isset($transcode_transaction->transcode_transaction_id)) {
+//error_log("Inside isset transcode_transaction_id");
+				if ($this->getTransaction($transcode_transaction->transcode_transaction_id )) {
+					$this->tableGateway->update ( $data, array ('transcode_transaction_id' => $transcode_transaction->transcode_transaction_id ) );
+				} else {
+					throw new \Exception ( 'Form transaction_id does not exist' );
+				}
 			} else {
-				throw new \Exception ( 'Form transaction_id does not exist' );
+//error_log("Inside else !isset transcode_transaction_id");
+				$transcode_transaction_id = MUUID::fetchUUID();
+				$data['transcode_transaction_id'] = $transcode_transaction_id;	
+					$this->tableGateway->insert($data);				
 			}
-		} else {
-error_log("Inside else !isset transcode_transaction_id");
-			$transcode_transaction_id = MUUID::fetchUUID();
-			//$transcode_transaction->transcode_transaction_id = $transcode_transaction_id;	
-			$data['transcode_transaction_id'] = $transcode_transaction_id;	
-			try {
-				//$insert = $this->tableGateway->insert();
-				//$profiler = $this->tableGateway->getAdapter()->getProfiler();
-				//$profiler->setEnabled(true);				
-				$this->tableGateway->insert($data);				
-			} catch (\Exception $e) {
-				error_log("Error message ---> ".$e->getMessage().PHP_EOL);
-				//Debug
-				//error_log("Profiler.getLastQueryProfile. ----> ".$profiler->getLastQueryProfile()->getQuery().PHP_EOL);				
-				//End Debug
-			}
+		} catch (\Exception $e) {
+			error_log("Error message ---> ".$e->getMessage().PHP_EOL);
+			throw $e;
 		}
-error_log("Inside else !isset transcode_transaction_id ---> ".$data['transcode_transaction_id'].PHP_EOL);
+		error_log("Inside else !isset transcode_transaction_id ---> ".$data['transcode_transaction_id'].PHP_EOL);
 		return $data['transcode_transaction_id'];
 	}
 	

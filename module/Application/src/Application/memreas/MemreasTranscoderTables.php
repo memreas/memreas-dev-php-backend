@@ -16,7 +16,6 @@ class MemreasTranscoderTables {
 	public function getTranscodeTransactionTable()
 	{
 		if (!$this->transcodeTransactionTable) {
-error_log("Inside else !transcodeTransactionTable");
 			$this->transcodeTransactionTable = $this->service_locator->get('Application\Model\TranscodeTransactionTable');
 		}
 		return $this->transcodeTransactionTable;
@@ -26,10 +25,8 @@ error_log("Inside else !transcodeTransactionTable");
 	public function getMediaTable()
 	{
 		if (!$this->mediaTable) {
-error_log("Inside else !mediaTable");
 			$this->mediaTable = $this->service_locator->get('Application\Model\MediaTable');
 		}
-error_log("got mediaTable...");
 		return $this->mediaTable;
 	}
 }
