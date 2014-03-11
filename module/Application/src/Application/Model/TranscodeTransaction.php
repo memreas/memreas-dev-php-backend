@@ -20,7 +20,6 @@ class TranscodeTransaction{
 	
 	public function exchangeArray($data)
 	{
-error_log("Inside exchangeArray");
 		$this->transcode_transaction_id = (isset($data['transcode_transaction_id'])) ?  $data['transcode_transaction_id'] : $this->transcode_transaction_id;
 		$this->user_id = (isset($data['user_id'])) ?  $data['user_id'] : $this->user_id;
 		$this->media_type = (isset($data['media_type'])) ?  $data['media_type'] : $this->media_type;

@@ -638,11 +638,16 @@ error_log("Inserted transcode_transaction....".PHP_EOL);
 				//Update the media table entry here
 				$now = date('Y-m-d H:i:s');
 				$memreas_media = $memreas_transcoder_tables->getMediaTable()->getMedia($media_id);
+error_log("**************************************************************************".PHP_EOL);				
+error_log("memreas media json metadata before ----> ".$memreas_media->metadata.PHP_EOL);				
+error_log("**************************************************************************".PHP_EOL);				
 				$memreas_media->exchangeArray(array(
 							'metadata' => $json_metadata, 
 							'update_date' => $now, 
 						));
 				$media_id = $memreas_transcoder_tables->getMediaTable()->saveMedia($memreas_media);
+error_log("memreas media json metadata after ----> ".$json_metadata.PHP_EOL);
+error_log("**************************************************************************".PHP_EOL);
 
 error_log("Just updated $media_id" . PHP_EOL);
 
