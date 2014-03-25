@@ -35,7 +35,7 @@ class MediaTable
         $rowset = $this->tableGateway->select(array('media_id' => $id));
         $row = $rowset->current();
         if (!$row) {
-            throw new \Exception("Could not find row $id");
+        	throw new \Exception("Could not find media row for ---> $id");
         }
         return $row;
     }

@@ -95,7 +95,6 @@ class Module
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
                     'PayPal' => __DIR__ . '/../../vendor/PayPal',
-                    'memreas' => __DIR__ . '/../../vendor/memreas',
                 ),
             ) );
 	}
@@ -232,7 +231,7 @@ class Module
 									return $table;
 							}, 
 							'TranscodeTransactionTableGateway' => function ($sm) {
-									$dbAdapter = $sm->get ( 'memreasbackenddb' );
+									$dbAdapter = $sm->get ( MemreasConstants::MEMREASBEDB );
 									$resultSetPrototype = new ResultSet ();
 									$resultSetPrototype->setArrayObjectPrototype ( new TranscodeTransaction () );
 									return new TableGateway ( 'transcodetransaction', $dbAdapter, null, $resultSetPrototype );
