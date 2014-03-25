@@ -49,28 +49,29 @@ class MediaTable
 	public function saveMedia(Media $media) {
 error_log("Inside saveMedia media ---> " . print_r($media, true) . PHP_EOL);
 	
+error_log("Inside saveMedia media->media_id ---> " . $media->media_id . PHP_EOL);
 		$data = array (
-					'media_id' => $media->media_id, 
-					'user_id' => $media->user_id, 
-					'is_profile_pic' => $media->is_profile_pic, 
-					'sync_status' => $media->sync_status, 
-					'metadata' => $media->metadata, 
-					'report_flag' => $media->report_flag, 
-					'create_date' => $media->create_date, 
-					'update_date' => $media->update_date, 
-				);
-		if (isset($data->media_id)) {
-error_log("Inside isset data->media_id");
-			if ($this->getTransaction($data->media_id )) {
-				$this->tableGateway->update ( $data, array ('media_id' => $data->media_id ) );
+				'media_id' => $media->media_id, 
+				'user_id' => $media->user_id, 
+				'is_profile_pic' => $media->is_profile_pic, 
+				'sync_status' => $media->sync_status, 
+				'metadata' => $media->metadata, 
+				'report_flag' => $media->report_flag, 
+				'create_date' => $media->create_date, 
+				'update_date' => $media->update_date, 
+			);
+error_log("Inside saveMedia data->media_id ---> " . $data->media_id . PHP_EOL);
+		
+		
+		if (isset($media->media_id)) {
+			if ($this->getMedia ( $media->media_id )) {
+				$this->tableGateway->update ( $data, array ('media_id' =>  $media->media_id ) );
 			} else {
 				throw new \Exception ( 'Form media_id does not exist' );
 			}
 		} else {
 			$media_id = MUUID::fetchUUID();
-error_log("Inside else !isset media->media_id ----> $media_id" . PHP_EOL);
-			//$transcode_transaction->transcode_transaction_id = $transcode_transaction_id;	
-			$data['media_id'] = $media_id;	
+			$data['media_id'] = $media_id;
 			$this->tableGateway->insert ( $data );
 		}
 		return $data['media_id'];

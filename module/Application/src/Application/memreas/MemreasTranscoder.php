@@ -180,7 +180,7 @@ error_log("temp_job_uuid_dir ----> $temp_job_uuid_dir" . PHP_EOL);
 $memreas_media_metadata['S3_files']['status'][] = 'transcode_folders_created';
 						
 					
-
+/*
 error_log("About to get " . $message_data['s3path'].$message_data['s3file_name'] . PHP_EOL);	
 error_log("About to save as  " . $tmp_file . PHP_EOL);	
 error_log('MemreasConstants::S3BUCKET ----> ' . MemreasConstants::S3BUCKET . PHP_EOL);	
@@ -189,16 +189,17 @@ error_log('message_data[s3file_name] ----> ' . $message_data['s3file_name'] . PH
 error_log("About to fetch S3 file ... ".PHP_EOL);	
 error_log("About to fetch S3 file - Key ---> ".$message_data['s3path'].$message_data['s3file_name'].PHP_EOL);	
 error_log("About to fetch S3 file - SaveAs ---> ".$tmp_file.PHP_EOL);	
-	
+*/	
 					$response = $this->memreas_aws_transcoder->s3->getObject(array(
 						'Bucket' => MemreasConstants::S3BUCKET, 
 						'Key'	 =>	$message_data['s3path'].$message_data['s3file_name'], 
 						'SaveAs' =>	$tmp_file,
 					));
+					$memreas_media_metadata['S3_files']['status'][] = 'transcode_S3_file_saved';
 
 error_log("Fetched S3 file ... ".PHP_EOL);	
 //Debugging
-$memreas_media_metadata['S3_files']['status'][] = 'transcode_S3_file_saved';
+
 //$VideoFileName 	= str_replace(' ','-',strtolower($message_data['s3file_name'])); 
 					$VideoFileName 	= str_replace(' ','-',$message_data['s3file_name']); 
 					//$TempSrc	 	= $_FILES['VideoFile']['tmp_name'][0]; // Tmp name of video file stored in PHP tmp folder
@@ -346,14 +347,9 @@ error_log("filesize of video is ----> $filesize" . PHP_EOL);
 				$cmd = $ffmpegcmd ." ".$cmd;
 				//echo "$cmd<br>";
 				$op = shell_exec($cmd);
+				$memreas_media_metadata['S3_files']['status'][] = 'transcode_built_thumbnails';
 				
 error_log("Just finished thumbnail operation  $cmd" . PHP_EOL);
-//error_log("result  $op" . PHP_EOL);
-//Debugging
-$memreas_media_metadata['S3_files']['status'][] = 'transcode_built_thumbnails';
-//$memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:'.$VideoFileType;
-
-				$tns;
 				foreach(glob($HomeDirectory.$ConvertedDirectory.$thumbnails.'thumbnail_'.$NewVideoName.'_media-*.png') as $filename){
 						
 //error_log("WebHome  DestinationDirectory  thumbnails basename(filename)  ---->  " . $WebHome.$DestinationDirectory.$thumbnails.basename($filename) . PHP_EOL);
@@ -387,32 +383,6 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_built_thumbnails';
 							"384x216"=>$this->user_id.'/media/thumbnail/384x216/',
 							"98x78"=>$this->user_id.'/media/thumbnail/98x78/',
 						),
-/*
-							"webm"=>array (
-							//webm
-							"base"=>$this->user_id.'/media/webm/thumbnail/',
-							"79x80"=>$this->user_id.'/media/webm/thumbnail/79x80/',
-							"448x306"=>$this->user_id.'/media/webm/thumbnail/448x306/',
-							"384x216"=>$this->user_id.'/media/webm/thumbnail/384x216/',
-							"98x78"=>$this->user_id.'/media/webm/thumbnail/98x78/',
-						),
-						"hls"=>array (
-							//hls
-							"base"=>$this->user_id.'/media/hls/thumbnail/',
-							"79x80"=>$this->user_id.'/media/hls/thumbnail/79x80/',
-							"448x306"=>$this->user_id.'/media/hls/thumbnail/448x306/',
-							"384x216"=>$this->user_id.'/media/hls/thumbnail/384x216/',
-							"98x78"=>$this->user_id.'/media/hls/thumbnail/98x78/',
-						),
-						"1080p"=>array (
-						//1080p
-							"base"=>$this->user_id.'/media/1080p/thumbnail/',
-							"79x80"=>$this->user_id.'/media/1080p/thumbnail/79x80/',
-							"448x306"=>$this->user_id.'/media/1080p/thumbnail/448x306/',
-							"384x216"=>$this->user_id.'/media/1080p/thumbnail/384x216/',
-							"98x78"=>$this->user_id.'/media/1080p/thumbnail/98x78/',
-						)
-*/
 					);
 
 					//Put original thumbnail to S3 here...
@@ -431,11 +401,8 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_built_thumbnails';
 						}
 					}
 				} //End for each thumbnail
+				$memreas_media_metadata['S3_files']['status'][] = 'transcode_stored_thumbnails';
 
-//Debugging
-$memreas_media_metadata['S3_files']['status'][] = 'transcode_stored_thumbnails';
-//$memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:'.$VideoFileType;
-				
 				////////////////////////
 				// web section
 				////////////////////////
@@ -458,9 +425,6 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_stored_thumbnails';
 					}
 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
 
-//Debugging
-$memreas_media_metadata['S3_files']['status'][] = 'transcode_web_upload_S3';
-//$memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:'.$VideoFileType;
 					//Put to S3 here...
 					$message_data = array (
 						"s3file_name"=>$original_file_name.'.mp4',
@@ -471,6 +435,7 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_web_upload_S3';
 						"s3path"=>$this->user_id.'/media/web/',
 					);
 					$this->memreas_aws_transcoder->s3videoUpload($message_data);
+					$memreas_media_metadata['S3_files']['status'][] = 'transcode_web_upload_S3';
 					$webarr = array(
 						"ffmpeg_cmd"=>$cmd,
 						"ffmpeg_cmd_output"=>$op,
@@ -481,11 +446,8 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_web_upload_S3';
 						"output_end_time"=>date("Y-m-d H:i:s"),
 					);
 					$memreas_media_metadata['S3_files']['web'] = $this->user_id.'/media/web/'.$original_file_name.'.mp4';
+					$memreas_media_metadata['S3_files']['status'][] = 'transcode_web_completed';
 				} //End web section
-				
-//Debugging
-$memreas_media_metadata['S3_files']['status'][] = 'transcode_web_completed';
-//$memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:'.$VideoFileType;
 				
 				////////////////////////
 				// 1080p section
@@ -499,19 +461,11 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_web_completed';
 						$output_start_time = date("Y-m-d H:i:s");
 						try{
 						$op = shell_exec($cmd);
-error_log("**********************************************".PHP_EOL);
-error_log("FFMPEG 1080P CMD -----> $cmd".PHP_EOL);
-error_log("**********************************************".PHP_EOL);
-error_log("OUTPUT OF FFMPEG 1080P CMD -----> $op".PHP_EOL);
-error_log("**********************************************".PHP_EOL);
 						$pass = 1;
 						// echo $driver->command($command);
 						}
 						catch(Exception $e){$pass = 0; $errstr = $e->getMessage();}
 				
-//Debugging
-$memreas_media_metadata['S3_files']['status'][] = 'transcode_1080p_upload_S3';
-//$memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:'.$VideoFileType;
 						//Put to S3 here...
 						$message_data = array (
 									"s3file_name"=>$original_file_name.'.mp4',
@@ -522,6 +476,7 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_1080p_upload_S3';
 									"s3path"=>$this->user_id.'/media/1080p/',
 								);
 						$this->memreas_aws_transcoder->s3videoUpload($message_data);
+						$memreas_media_metadata['S3_files']['status'][] = 'transcode_1080p_upload_S3';
 				
 						$p1080arr = array(
 								"ffmpeg_cmd"=>$cmd,
@@ -535,23 +490,14 @@ $memreas_media_metadata['S3_files']['status'][] = 'transcode_1080p_upload_S3';
 				
 						$html .= '<a href="/'.$WebHome.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4'.'" alt="Thumbnail">MPEG 1080</a><br>';
 						$memreas_media_metadata['S3_files']['1080p'] = $this->user_id.'/media/1080p/'.$original_file_name.'.mp4';
-						
+						$memreas_media_metadata['S3_files']['status'][] = 'transcode_1080p_completed';
 				}				
-				
-//Debugging
-$memreas_media_metadata['S3_files']['status'][] = 'transcode_1080p_completed';
-//$memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:'.$VideoFileType;
-				
-				
-//error_log("Finished transcoding for each type....".PHP_EOL);
 				//Update the metadata here for the transcoded files
 				$transcode_job_meta = array();
 				$transcode_job_meta['1080p'] = $p1080arr;
 				$transcode_job_meta['Web'] = $webarr;
 				$json_metadata = json_encode($transcode_job_meta);				
 
-error_log("Finished transcoding json below....".PHP_EOL);
-error_log($json_metadata.PHP_EOL);
 /*
 error_log("this->user_id".$this->user_id.PHP_EOL);
 error_log("VideoFileType".$VideoFileType.PHP_EOL);
@@ -584,43 +530,9 @@ error_log("transcode_end_time".$transcode_end_time.PHP_EOL);
 				 $transcode_transaction_id =  $memreas_transcoder_tables->getTranscodeTransactionTable()->saveTranscodeTransaction($transcode_transaction);
 error_log("Inserted transcode_transaction....".PHP_EOL);
 				
-
-				$html .= '<pre>
-				Output:
-					{
-					"S3_files": {
-						"path":
-							"'.$_SERVER['SERVER_NAME'].'/'.$WebHome.$DestinationDirectory.'",
-						"Full":
-							"'.$_SERVER['SERVER_NAME'].'/'.$WebHome.$DestinationDirectory.'",
-						"1080p":
-							"'.$WebHome.$DestinationDirectory.$p1080.$NewVideoName.'p1080.mp4",
-						"1080p_thumbails": [
-							'.$tnstring.'
-						],
-						"web": "'.$WebHome.$DestinationDirectory.$webm.$NewVideoName.'.web",
-						"web_thumbnails": [
-							'.$tnstring.'
-						]
-					},
-					"local_filenames": {
-						"device": {
-							"unique_device_identifier1":
-							"'.$identifier.'"
-						}
-					},
-					"type": {
-						"video": {
-							"format": "mp4"
-						}
-					}
-					}
-							</pre>';
-
 				//Update the media table entry here
 				$now = date('Y-m-d H:i:s');
 				$json_metadata = json_encode($memreas_media_metadata);
-				//$memreas_media = $memreas_transcoder_tables->getMediaTable()->getMedia($media_id);
 error_log("**************************************************************************".PHP_EOL);				
 error_log("memreas media json metadata before ----> ".$memreas_media->metadata.PHP_EOL);				
 error_log("**************************************************************************".PHP_EOL);				
