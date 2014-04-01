@@ -47,9 +47,8 @@ class MediaTable
     }
     
 	public function saveMedia(Media $media) {
-error_log("Inside saveMedia media ---> " . print_r($media, true) . PHP_EOL);
+//error_log("Inside saveMedia media ---> " . print_r($media, true) . PHP_EOL);
 	
-error_log("Inside saveMedia media->media_id ---> " . $media->media_id . PHP_EOL);
 		$data = array (
 				'media_id' => $media->media_id, 
 				'user_id' => $media->user_id, 
@@ -60,8 +59,6 @@ error_log("Inside saveMedia media->media_id ---> " . $media->media_id . PHP_EOL)
 				'create_date' => $media->create_date, 
 				'update_date' => $media->update_date, 
 			);
-error_log("Inside saveMedia data->media_id ---> " . $data->media_id . PHP_EOL);
-		
 		
 		if (isset($media->media_id)) {
 			if ($this->getMedia ( $media->media_id )) {
