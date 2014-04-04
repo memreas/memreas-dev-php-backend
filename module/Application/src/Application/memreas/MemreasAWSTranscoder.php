@@ -20,7 +20,7 @@ error_reporting(E_ALL & ~E_NOTICE);
 class MemreasAWSTranscoder {
 
     private $aws = null;
-    public $s3 = null;
+    private $s3 = null;
     private $bucket = null;
     private $sns = null;
     private $topicArn = null;
@@ -30,26 +30,6 @@ class MemreasAWSTranscoder {
         //print "In MemreasAWSTranscoder constructor <br>";
         error_log("Inside MemreasAWSTranscoder contructor...", 0);
 
-        $this->aws = Aws::factory(array(
-                    'key' => 'AKIAJMXGGG4BNFS42LZA',
-                    'secret' => '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',
-                    'region' => 'us-east-1'
-        ));
-
-        //Fetch the S3 class
-        $this->s3 = $this->aws->get('s3');
-
-        //Fetch the AWS Elastic Transcoder class
-        $this->awsTranscode = $this->aws->get('ElasticTranscoder');
-
-        //Set the bucket
-        $this->bucket = MemreasConstants::S3BUCKET;
-
-        //Fetch the SNS class
-        $this->sns = $this->aws->get('sns');
-
-        //Set the topicArn
-        $this->topicArn = MemreasConstants::TOPICARN;
 
 
         error_log("Exit MemreasAWSTranscoder constructor", 0);
@@ -105,42 +85,7 @@ class MemreasAWSTranscoder {
         return $result;
     }
 
-    function s3videoUpload($message_data, $isThumbnail=false) {
 
-		$s3file_name = $message_data['s3file_name'];
-		$file = $message_data['file'];
-		$user_id = $message_data['user_id'];
-		$media_id = $message_data['media_id'];
-		$content_type = $message_data['content_type'];
-		$output_type = $message_data['output_type'];
-		$s3path = $message_data['s3path'];
-
-        $s3_media_path = $s3path.$s3file_name;
-
-		//S3 Folder Setup
-		$body = EntityBody::factory(fopen($file, 'r+'));
-		$uploader = UploadBuilder::newInstance()
-				->setClient($this->s3)
-				->setSource($body)
-				->setBucket(MemreasConstants::S3BUCKET)
-				->setMinPartSize(10 * Size::MB)
-				->setOption('Content-Type', $content_type)
-				->setKey($s3_media_path)
-				->build();
-
-		//  Modified - Perform the upload to S3. Abort the upload if something goes wrong
-		try {
-			$uploader->upload();
-			//error_log( "Upload complete.\n", 0);
-		} catch (MultipartUploadException $e) {
-			$uploader->abort();
-			//error_log( "Upload failed.\n", 0);
-		}
-
-		//error_log("s3_media_path PATH ----> " . $s3_media_path);
-
-        return $s3_media_path;
-    }
 
 //END
 }

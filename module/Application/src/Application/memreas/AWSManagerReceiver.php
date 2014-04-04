@@ -78,7 +78,7 @@ error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);
 				//Transcode, fetch thumbnail and resize as needed
 				if ($message_data['memreastranscoder']) {
 error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data['memreastranscoder']. PHP_EOL);
-					$memreasTranscoder = new MemreasTranscoder();
+					$memreasTranscoder = new MemreasTranscoder($this);
 					$memreas_transcoder_tables = new MemreasTranscoderTables($this->service_locator);
 					$result = $memreasTranscoder->exec($message_data, $memreas_transcoder_tables, $this->service_locator, false);
 				} else {
@@ -86,7 +86,7 @@ error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." 
 				}
 			} else {
 				
-				////////////////////////
+				////////////////////////////////////////////////////////////
 				// In here the image is already on S3
 				//  so we just need to create the thumbnails and upload....
 
@@ -99,7 +99,7 @@ error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." 
 				$s3path = $message_data['s3path'];
 				
 				
-				////////////////////////
+				////////////////////////////
 				//Create the job dir here...
 				$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
 error_log("Inside snsProcessMediaSubscribe temp_job_uuid ----> " . $this->temp_job_uuid . PHP_EOL);            
@@ -182,6 +182,9 @@ error_log("metadata after ----> " . $json . PHP_EOL);
         
 		} catch (Exception $e) {
 		    error_log("Caught exception: $e->getMessage()" . PHP_EOL);
+			//Remove the work directory
+			$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
+			$dirRemoved = new RmWorkDir($dir);
 		    return false;
 		}
     }
