@@ -404,14 +404,15 @@ error_log("Just finished thumbnail operation  $cmd" . PHP_EOL);
 		
 					//$command =array_merge(array( '-i',$DestRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'x264.mp4','2>&1'));
 					$transcoded_mp4_file = $HomeDirectory.$ConvertedDirectory.$web.$NewVideoName.'.mp4';
-					//$cmd = $ffmpegcmd ." -i $DestRandVideoName $transcoded_mp4_file ".'2>&1';
-					$cmd = $ffmpegcmd ." -i $DestRandVideoName -c:v mpeg4 -q:v 5 $transcoded_mp4_file ".'2>&1';
+					$cmd = $ffmpegcmd ." -i $DestRandVideoName $transcoded_mp4_file ".'2>&1';
+					//$cmd = $ffmpegcmd ." -i $DestRandVideoName -c:v mpeg4 -q:v 5 $transcoded_mp4_file ".'2>&1';
 					
 					$html .= "Generating MPEG4 (Web Quality)\n<br>\n\n";
 					$pass = 0;
 					$output_start_time = date("Y-m-d H:i:s");
 					try{
 						$op = shell_exec($cmd);
+error_log("op ---> " . $op . PHP_EOL);						
 						$pass = 1;
 					}
 					catch(Exception $e){$pass = 0; $errstr = $e->getMessage(); error_log("error string ---> " . $errstr . PHP_EOL);}
@@ -446,12 +447,13 @@ error_log("Just finished thumbnail operation  $cmd" . PHP_EOL);
 				if (isset($_POST['encoding_1080']) || (!$isUpload)) {
 				
 						$transcoded_1080p_file = $HomeDirectory.$ConvertedDirectory.$p1080.$NewVideoName.'.mp4';
-						//$cmd = $ffmpegcmd ." -i $DestRandVideoName -q:v 1 $transcoded_1080p_file ".'2>&1';
-						$cmd = $ffmpegcmd ." -i $DestRandVideoName c:v mpeg4 -q:v 1 $transcoded_1080p_file ".'2>&1';
+						$cmd = $ffmpegcmd ." -i $DestRandVideoName -q:v 1 $transcoded_1080p_file ".'2>&1';
+						//$cmd = $ffmpegcmd ." -i $DestRandVideoName c:v mpeg4 -q:v 1 $transcoded_1080p_file ".'2>&1';
 						$pass = 0;
 						$output_start_time = date("Y-m-d H:i:s");
 						try{
 							$op = shell_exec($cmd);
+error_log("op ---> " . $op . PHP_EOL);						
 							$pass = 1;
 							// echo $driver->command($command);
 						} catch(Exception $e){$pass = 0; $errstr = $e->getMessage();}

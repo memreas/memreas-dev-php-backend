@@ -63,8 +63,9 @@ error_log("Inside fetchXML response $response ....");
 	}
 
     public function indexAction() {
-    	$this->memreasTranscoderAction();
-    	//$this->transcoderAction();
+error_log("Inside indexAction bew..." . PHP_EOL);
+    	//$this->memreasTranscoderAction();
+    	$this->transcoderAction();
     	exit;
     }
 
