@@ -5,6 +5,12 @@ namespace Application\memreas;
 use Zend\Session\Container;
 use PHPImageWorkshop\ImageWorkshop;
 
+use Guzzle\Http\Client;
+use Guzzle\Http\EntityBody;
+use Aws\Common\Aws;
+use Aws\Common\Enum\Size;
+use Aws\Common\Exception\MultipartUploadException;
+use Aws\S3\Model\MultipartUpload\UploadBuilder;
 // memreas custom
 use Application\memreas\MemreasAWSTranscoder;
 use Application\memreas\MemreasTranscoderTables;
@@ -18,6 +24,11 @@ use Application\Model\TranscodeTransactionTable;
 
 class MemreasTranscoder {
 	protected $user_id;
+	protected $media_id;
+	protected $content_type;
+	protected $s3path;
+	protected $s3file_name;
+	protected $isVideo;
 	protected $session;
 	protected $aws_manager_receiver;
 	protected $memreas_media_metadata;
@@ -28,6 +39,8 @@ class MemreasTranscoder {
 	// Directory related variables - create a unique directory by user_id
 	protected $temp_job_uuid_dir;
 	protected $homeDir;
+	protected $destRandVideoName;
+	protected $original_file_name;
 	const WEBHOME = '/var/app/current/data/';
 	const DESTDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const CONVDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
@@ -38,7 +51,7 @@ class MemreasTranscoder {
 	const WEBDIR = 'web/'; // Your web Dir, end with slash (/)
 	const WEBMDIR = 'webm/'; // Your webm Dir, end with slash (/)
 	const _79X80 = '79x80/'; // Your 79x80 Dir, end with slash (/)
-	const _448x306 = '448x306/'; // Your 448x306 Dir, end with slash (/)
+	const _448X306 = '448x306/'; // Your 448x306 Dir, end with slash (/)
 	const _384X216 = '384x216/'; // Your 384x216 Dir, end with slash (/)
 	const _98X78 = '98x78/'; // Your 98x78 Dir, end with slash (/)
 	
@@ -48,36 +61,7 @@ class MemreasTranscoder {
 	public function __construct($aws_manager_receiver) {
 		$this->aws_manager_receiver = $aws_manager_receiver;
 		$this->temp_job_uuid_dir = MUUID::fetchUUID ();
-		$this->homeDirectory = self::WEBHOME . $temp_job_uuid_dir . '/'; // Home Directory ends with / (slash) :::: Your AMAZON home
-	}
-	public function resizeImage($dirPath, $file, $thumbnail_name, $height, $width) {
-		$layer = ImageWorkshop::initFromPath ( $file );
-		// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM'); //Maintains image
-		$layer->resizeInPixel ( $height, $width );
-		$createFolders = true;
-		$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
-		$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
-		$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
-		$file = $dirPath . $thumbnail_name;
-		
-		// error_log("Inside fetchResizeUpload - resized and saved local file is now --> " . $file);
-		
-		return $file;
-	}
-	private function rmWorkDir($dir) {
-		$it = new \RecursiveDirectoryIterator ( $dir );
-		$files = new \RecursiveIteratorIterator ( $it, \RecursiveIteratorIterator::CHILD_FIRST );
-		foreach ( $files as $file ) {
-			if ($file->getFilename () === '.' || $file->getFilename () === '..') {
-				continue;
-			}
-			if ($file->isDir ()) {
-				rmdir ( $file->getRealPath () );
-			} else {
-				unlink ( $file->getRealPath () );
-			}
-		}
-		rmdir ( $dir );
+		$this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/'; // Home Directory ends with / (slash) :::: Your AMAZON home
 	}
 	public function exec($message_data, $memreas_transcoder_tables, $service_locator, $isUpload = false) {
 		error_log ( "_REQUEST----> " . print_r ( $_REQUEST, true ) . PHP_EOL );
@@ -85,15 +69,15 @@ class MemreasTranscoder {
 		
 		try {
 			// $message_data entries
-			$user_id = $message_data ['user_id'];
-			$media_id = $message_data ['media_id'];
-			$content_type = $message_data ['content_type'];
-			$s3path = $message_data ['s3path'];
+			$this->user_id = $message_data ['user_id'];
+			$this->media_id = $message_data ['media_id'];
+			$this->content_type = $message_data ['content_type'];
+			$this->s3path = $message_data ['s3path'];
 			$s3file_name = $message_data ['s3file_name'];
 			$isVideo = $message_data ['isVideo'];
 			
 			// Fetch the media entry here:
-			$memreas_media = $memreas_transcoder_tables->getMediaTable ()->getMedia ( $media_id );
+			$memreas_media = $memreas_transcoder_tables->getMediaTable ()->getMedia ( $this->media_id );
 			$this->memreas_media_metadata = json_decode ( $memreas_media->metadata, true );
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start';
 			
@@ -106,10 +90,6 @@ class MemreasTranscoder {
 			$message_data;
 			// $metadata = array();
 			if (isset ( $message_data )) {
-				// HomeDirectory.self::DESTDIR.$NewVideoName
-				// AWS Settings
-				
-				$mysqli = NULL;
 				if (getcwd () == '/var/app/current') {
 					error_log ( "found /var/app/current" . PHP_EOL );
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; // :::: AWS ffmpeg installation
@@ -120,7 +100,6 @@ class MemreasTranscoder {
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL; // :::: Your ffmpeg installation
 				}
 				
-				
 				////////////////////////
 				// create work folders
 				$this->createFolders ();
@@ -128,9 +107,10 @@ class MemreasTranscoder {
 				
 				if (! $isUpload) {
 					// Fetch the json from the post
-					if (isset ( $_POST ['json'] )) {
-						$message_data = json_decode ( $_POST ['json'], true );
-					}
+					//if (isset ( $_POST ['json'] )) {
+					//	$message_data = json_decode ( $_POST ['json'], true );
+					//	error_log("")
+					//}
 					
 					$this->user_id = $message_data ['user_id'];
 					// Fetch the file to transcode:
@@ -158,13 +138,13 @@ class MemreasTranscoder {
 					$VideoFileName = preg_replace ( "/\\.[^.\\s]{3,4}$/", "", $VideoFileName );
 					
 					// Construct a new video name (with random number added) for our new video.
-					$original_file_name = $VideoFileName . "." . $VideoExt;
-					$NewVideoName = $original_file_name;
-					$filesize = filesize ( $DestRandVideoName );
+					$this->original_file_name = $VideoFileName . "." . $VideoExt;
+					$NewVideoName = $this->original_file_name;
+					$filesize = filesize ( $this->destRandVideoName );
 					// set the Destination Video
 					
-					$DestRandVideoName = $this->homeDir . self::DESTDIR . $NewVideoName; // Name for Big Video
-						                                                                 // $DestRandVideoName = $tmp_file;
+					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $NewVideoName; // Name for Big Video
+						                                                                 // $this->destRandVideoName = $tmp_file;
 				} else if (isset ( $_FILES ['VideoFile'] ) && is_uploaded_file ( $_FILES ['VideoFile'] ['tmp_name'] [0] )) {
 					
 					error_log ( "Inside if videofile and is uploaded...." . PHP_EOL );
@@ -181,11 +161,11 @@ class MemreasTranscoder {
 					$VideoFileName = preg_replace ( "/\\.[^.\\s]{3,4}$/", "", $VideoFileName );
 					
 					// Construct a new video name (with random number added) for our new video.
-					$original_file_name = $VideoFileName . "." . $VideoExt;
-					$NewVideoName = $original_file_name;
+					$this->original_file_name = $VideoFileName . "." . $VideoExt;
+					$NewVideoName = $this->original_file_name;
 					// set the Destination Video
 					
-					$DestRandVideoName = $this->homeDir . self::DESTDIR . $NewVideoName; // Name for Big Video
+					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $NewVideoName; // Name for Big Video
 					error_log ( "Leaving ... Inside if videofile and is uploaded...." . PHP_EOL );
 				} else if (! isset ( $_FILES ['VideoFile'] ) || ! is_uploaded_file ( $_FILES ['VideoFile'] ['tmp_name'] [0] )) {
 					error_log ( 'Something went wrong with Upload!' );
@@ -229,16 +209,17 @@ class MemreasTranscoder {
 				
 				// Save file in upload destination
 				if ($isUpload) {
-					move_uploaded_file ( $TempSrc, $DestRandVideoName );
+					move_uploaded_file ( $TempSrc, $this->destRandVideoName );
 					// Put to S3 here...
 					$message_data = array (
-							"s3file_name" => $original_file_name,
-							"file" => $DestRandVideoName,
+							"s3file_name" => $this->original_file_name,
+							"file" => $this->destRandVideoName,
 							"user_id" => $this->user_id,
 							"media_id" => "placeholder",
 							"content_type" => "video/mpeg", // must be mpeg for lgpl ffmpeg conversions
 							"s3path" => $this->user_id . '/media/' 
 					);
+error_log("message_data ---> ".json_encode($message_data).PHP_EOL);					
 					$media_s3_path = $this->s3videoUpload ( $message_data );
 					// Store the metadata
 					$metadata ['S3_files'] ['path'] = $media_s3_path;
@@ -255,24 +236,25 @@ class MemreasTranscoder {
 							'create_date' => $now,
 							'update_date' => $now 
 					) );
-					$media_id = $memreas_transcoder_tables->getMediaTable ()->saveMedia ( $memreas_media );
+					$this->media_id = $memreas_transcoder_tables->getMediaTable ()->saveMedia ( $memreas_media );
 				} else {
-					// error_log("Do nothing we have the media_id ----> $media_id" . PHP_EOL);
+					// error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
 				}
 				
-				// error_log("About to build thumbnails..." . PHP_EOL);
 				if ($isVideo) {
 					
 					// Create Thumbnails
 					$this->createThumbNails ();
-					
+error_log("Finished thumbnails..." . PHP_EOL);
+								
 					// Create web quality mpeg
 					$transcode_job_meta = array ();
 					$transcode_job_meta ['web'] = $this->transcode ( 'web' );
-					
+error_log("Finished web..." . PHP_EOL);
 					// Create high quality mpeg
 					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
-					
+error_log("Finished web..." . PHP_EOL);
+						
 					// Update the metadata here for the transcoded files
 					$json_metadata = json_encode ( $transcode_job_meta );
 				} // End if ($isVideo)
@@ -286,7 +268,7 @@ class MemreasTranscoder {
 						'user_id' => $this->user_id,
 						'media_type' => $VideoFileType,
 						'media_extension' => $VideoExt,
-						'file_name' => $NewVideoName,
+						'file_name' => $this->original_file_name,
 						'media_duration' => $duration,
 						'media_size' => $filesize,
 						'pass_fail' => $pass,
@@ -309,11 +291,11 @@ class MemreasTranscoder {
 						'metadata' => $json_metadata,
 						'update_date' => $now 
 				) );
-				$media_id = $memreas_transcoder_tables->getMediaTable ()->saveMedia ( $memreas_media );
+				$this->media_id = $memreas_transcoder_tables->getMediaTable ()->saveMedia ( $memreas_media );
 				error_log ( "memreas media json metadata after ----> " . $json_metadata . PHP_EOL );
 				error_log ( "**************************************************************************" . PHP_EOL );
 				
-				error_log ( "Just updated $media_id" . PHP_EOL );
+				error_log ( "Just updated $this->media_id" . PHP_EOL );
 			} // End if(isset($_POST))
 		} catch ( \Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
@@ -321,7 +303,8 @@ class MemreasTranscoder {
 		// Always delete the temp dir...
 		// Delete the temp dir if we got this far...
 		try {
-			$result = $this->rmWorkDir ( $this->homeDir );
+//error_log("Recursive delete $this->homeDir".PHP_EOL);			
+			//$result = $this->rmWorkDir ( $this->homeDir );
 		} catch ( \Exception $e ) {
 			$pass = 0;
 			$errstr = $e->getMessage ();
@@ -332,11 +315,14 @@ class MemreasTranscoder {
 		// //////////////////////
 		// Thumbnails section
 		// //////////////////////
-		$duration = str_replace ( ",", "", shell_exec ( "$this->ffmpegcmd -i $DestRandVideoName 2>&1 | grep 'Duration' | cut -d ' ' -f 4" ) );
+		$tnWidth = 448; 
+		$tnHeight = 306; 
+		$tnfreqency = 60;
+		$duration = str_replace ( ",", "", shell_exec ( "$this->ffmpegcmd -i $this->destRandVideoName 2>&1 | grep 'Duration' | cut -d ' ' -f 4" ) );
 		$timed = explode ( ":", $duration );
 		$duration = (( float ) $timed [0]) * 3600 + (( float ) $timed [1]) * 60 + ( float ) $timed [2];
 		error_log ( "duration of video is ----> $duration" . PHP_EOL );
-		$filesize = filesize ( $DestRandVideoName );
+		$filesize = filesize ( $this->destRandVideoName );
 		error_log ( "filesize of video is ----> $filesize" . PHP_EOL );
 		$pass_fail = 0;
 		$transcode_start_time = date ( "Y-m-d H:i:s" );
@@ -344,7 +330,7 @@ class MemreasTranscoder {
 		$imagename = 'thumbnail_' . $NewVideoName . '_media-%5d.png';
 		$command = array (
 				'-i',
-				$DestRandVideoName,
+				$this->destRandVideoName,
 				'-s',
 				$tnWidth . 'x' . $tnHeight,
 				'-f',
@@ -356,7 +342,7 @@ class MemreasTranscoder {
 		);
 		
 		$cmd = join ( " ", $command );
-		$cmd = $ffmpegcmd . " " . $cmd;
+		$cmd = $this->ffmpegcmd . " " . $cmd;
 		// echo "$cmd<br>";
 		$op = shell_exec ( $cmd );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_built_thumbnails';
@@ -381,32 +367,42 @@ class MemreasTranscoder {
 			$s3paths = array (
 					"thumbnails" => array (
 							// web
-							"base" => $this->user_id . '/media/thumbnails/',
+							"full" => $this->user_id . '/media/thumbnails/',
 							"79x80" => $this->user_id . '/media/thumbnails/79x80/',
 							"448x306" => $this->user_id . '/media/thumbnails/448x306/',
 							"384x216" => $this->user_id . '/media/thumbnails/384x216/',
 							"98x78" => $this->user_id . '/media/thumbnails/98x78/' 
 					) 
 			);
-			
 			// Put original thumbnail to S3 here...
 			foreach ( $s3paths as $fmt ) {
 				foreach ( $tns_sized as $key => $file ) {
+error_log("s3file_name->".basename ( $filename ).PHP_EOL);			
+error_log("file->".$file.PHP_EOL);			
+error_log("user_id->".$this->user_id.PHP_EOL);			
+error_log("media_id->".$this->media_id.PHP_EOL);			
+error_log("s3path->".$fmt [$key].PHP_EOL);
+/*			
 					$message_data = array (
 							"s3file_name" => basename ( $filename ),
 							"file" => $file,
 							"user_id" => $this->user_id,
-							"media_id" => $media_id,
+							"media_id" => $this->media_id,
 							"content_type" => "image/png",
 							"s3path" => $fmt [$key] 
 					);
 					$this->s3videoUpload ( $message_data );
+*/
+					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
+					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
+error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] = $fmt [$key] . basename ( $filename );
 				}
 			}
 		} // End for each thumbnail
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
 	} // end createThumNails()
+	
 	public function createFolders() {
 		// Make directories here - create a unique directory by user_id
 		$toCreate = array (
@@ -430,23 +426,26 @@ class MemreasTranscoder {
 			if (mkdir ( $dir ))
 				chmod ( $dir, $permissions );
 			umask ( $save );
+$op = shell_exec("ls -al $dir 2>&1");error_log("ls -al $dir...".PHP_EOL);error_log(json_encode($op).PHP_EOL);
+			
 		}
 		// error_log("created directories...." . PHP_EOL);
 	}
+	
 	public function s3videoUpload($message_data, $isThumbnail = false) {
-		$s3file_name = $message_data ['s3file_name'];
+		$this->s3file_name = $message_data ['s3file_name'];
 		$file = $message_data ['file'];
-		$user_id = $message_data ['user_id'];
-		$media_id = $message_data ['media_id'];
-		$content_type = $message_data ['content_type'];
+		$this->user_id = $message_data ['user_id'];
+		$this->media_id = $message_data ['media_id'];
+		$this->content_type = $message_data ['content_type'];
 		$output_type = $message_data ['output_type'];
-		$s3path = $message_data ['s3path'];
+		$this->s3path = $message_data ['s3path'];
 		
-		$s3_media_path = $s3path . $s3file_name;
+		$s3_media_path = $this->s3path . $this->s3file_name;
 		
 		// S3 Folder Setup
 		$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
-		$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( MemreasConstants::S3BUCKET )->setMinPartSize ( 10 * Size::MB )->setOption ( 'Content-Type', $content_type )->setKey ( $s3_media_path )->build ();
+		$uploader = UploadBuilder::newInstance ()->setClient ( $this->aws_manager_receiver->s3 )->setSource ( $body )->setBucket ( MemreasConstants::S3BUCKET )->setMinPartSize ( 10 * Size::MB )->setOption ( 'Content-Type', $this->content_type )->setKey ( $s3_media_path )->build ();
 		
 		// Modified - Perform the upload to S3. Abort the upload if something goes wrong
 		try {
@@ -461,41 +460,16 @@ class MemreasTranscoder {
 		
 		return $s3_media_path;
 	}
+	
 	public function transcode($type) {
 		if ($type == 'web') {
-			// //////////////////////
-			// web section
-			// //////////////////////
-			// $command =array_merge(array( '-i',$DestRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($this->homeDir.self::CONVDIR.self::WEBDIR.$NewVideoName.'x264.mp4','2>&1'));
-			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEB . $NewVideoName . '.mp4';
-			// $cmd = $this->ffmpegcmd ." -i $DestRandVideoName $transcoded_mp4_file ".'2>&1';
-			$cmd = $this->ffmpegcmd . " -i $DestRandVideoName -c:v mpeg4 -q:v 5 $transcoded_mp4_file " . '2>&1';
-			
-			$pass = 0;
-			$output_start_time = date ( "Y-m-d H:i:s" );
-			try {
-				$op = shell_exec ( $cmd );
-				if ($op) {
-					$pass = 1;
-				}
-			} catch ( Exception $e ) {
-				$pass = 0;
-				$errstr = $e->getMessage ();
-				error_log ( "error string ---> " . $errstr . PHP_EOL );
-				throw $e;
-			}
-			
-			// Put to S3 here...
-			$message_data = array (
-					"s3file_name" => $original_file_name . '.mp4',
-					"file" => $transcoded_mp4_file,
-					"user_id" => $this->user_id,
-					"media_id" => $media_id,
-					"content_type" => "video/mpeg", // must be mpeg for lgpl ffmpeg conversion
-					"s3path" => $this->user_id . '/media/web/' 
-			);
-			$this->s3videoUpload ( $message_data );
-			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_web_upload_S3';
+			$q="";
+			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->original_file_name . '.mp4';
+		} else if ($type == '1080p') {
+			$qv='-q:v 1';
+			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->original_file_name . '.mp4';
+/*			
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_1080p_upload_S3';
 			$arr = array (
 					"ffmpeg_cmd" => $cmd,
 					"ffmpeg_cmd_output" => $op,
@@ -503,57 +477,83 @@ class MemreasTranscoder {
 					"pass_fail" => $pass,
 					"error_message" => $errstr,
 					"output_start_time" => $output_start_time,
-					"output_end_time" => date ( "Y-m-d H:i:s" ) 
+					"output_end_time" => date ( "Y-m-d H:i:s" )
 			);
-			$this->memreas_media_metadata ['S3_files'] ['web'] = $this->user_id . '/media/web/' . $original_file_name . '.mp4';
-			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_web_completed';
-		} else if ($type == '1080p') {
-			// //////////////////////
-			// 1080p section
-			// //////////////////////
-			$transcoded_1080p_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $NewVideoName . '.mp4';
-			// $cmd = $this->ffmpegcmd ." -i $DestRandVideoName -q:v 1 $transcoded_1080p_file ".'2>&1';
-			$cmd = $this->ffmpegcmd . " -i $DestRandVideoName c:v mpeg4 -q:v 1 $transcoded_1080p_file " . '2>&1';
-			$pass = 0;
-			$output_start_time = date ( "Y-m-d H:i:s" );
-			try {
-				$op = shell_exec ( $cmd );
-				$pass = 1;
-				// echo $driver->command($command);
-			} catch ( Exception $e ) {
-				$pass = 0;
-				$errstr = $e->getMessage ();
-				error_log ( "transcoder 1080p failed - op -->" . $op . PHP_EOL );
-			}
-			
-			// Put to S3 here...
-			$message_data = array (
-					"s3file_name" => $original_file_name . '.mp4',
-					"file" => $transcoded_1080p_file,
-					"user_id" => $this->user_id,
-					"media_id" => $media_id,
-					"content_type" => "video/mp4", // specific to mp4 for aws metadata
-					"s3path" => $this->user_id . '/media/1080p/' 
-			);
-			$this->s3videoUpload ( $message_data );
-			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_1080p_upload_S3';
-			
-			$arr = array (
-					"ffmpeg_cmd" => $cmd,
-					"ffmpeg_cmd_output" => $op,
-					"output_size" => filesize ( $this->homeDir . self::CONVDIR . self::_1080PDIR . $NewVideoName . '.mp4' ),
-					"pass_fail" => $pass,
-					"error_message" => $errstr,
-					"output_start_time" => $output_start_time,
-					"output_end_time" => date ( "Y-m-d H:i:s" ) 
-			);
-			
-			$this->memreas_media_metadata ['S3_files'] ['1080p'] = $this->user_id . '/media/1080p/' . $original_file_name . '.mp4';
+				
+			$this->memreas_media_metadata ['S3_files'] ['1080p'] = $this->user_id . '/media/1080p/' . $this->original_file_name . '.mp4';
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_1080p_completed';
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_completed';
+*/				
+		} else
+			throw new \Exception("MemreasTranscoder $type not found.");
+
+		// FFMPEG transcode to mpeg
+		// $command =array_merge(array( '-i',$this->destRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($this->homeDir.self::CONVDIR.self::WEBDIR.$NewVideoName.'x264.mp4','2>&1'));
+		$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_mp4_file ".'2>&1';
+		
+error_log("cmd ---> $cmd".PHP_EOL);				
+		$pass = 0;
+		$output_start_time = date ( "Y-m-d H:i:s" );
+		try {
+			$op = shell_exec ( $cmd );
+			if (!file_exists($transcoded_mp4_file))
+				throw new \Exception($op);
+		} catch ( Exception $e ) {
+			$pass = 0;
+			error_log ( "transcoder $type failed - op -->" . $op . PHP_EOL );
+			throw $e;
 		}
+
+		//Push to S3
+		$s3file = $this->user_id.'/media/'.$type.'/'.$this->original_file_name.'.mp4';
+		$this->aws_manager_receiver->pushMediaToS3($transcoded_mp4_file, $s3file, "video/mpeg");
+
+		//Log status
+		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_'.$type.'_upload_S3';
+		$arr = array (
+				"ffmpeg_cmd" => $cmd,
+				"ffmpeg_cmd_output" => $op,
+				"output_size" => filesize ( $transcoded_mp4_file ),
+				"pass_fail" => $pass,
+				"error_message" => $errstr,
+				"output_start_time" => $output_start_time,
+				"output_end_time" => date ( "Y-m-d H:i:s" ) 
+		);
+		$this->memreas_media_metadata ['S3_files'] [$type] = $this->user_id . '/media/'.$type.'/' . $this->original_file_name . '.mp4';
+		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_'.$type.'_completed';
+
 		return $arr;
 	} // End transcode
+
+	private function rmWorkDir($dir) {
+		$it = new \RecursiveDirectoryIterator ( $dir );
+		$files = new \RecursiveIteratorIterator ( $it, \RecursiveIteratorIterator::CHILD_FIRST );
+		foreach ( $files as $file ) {
+			if ($file->getFilename () === '.' || $file->getFilename () === '..') {
+				continue;
+			}
+			if ($file->isDir ()) {
+				rmdir ( $file->getRealPath () );
+			} else {
+				unlink ( $file->getRealPath () );
+			}
+		}
+		rmdir ( $dir );
+	}
+	public function resizeImage($dirPath, $file, $thumbnail_name, $height, $width) {
+		$layer = ImageWorkshop::initFromPath ( $file );
+		// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM'); //Maintains image
+		$layer->resizeInPixel ( $height, $width );
+		$createFolders = true;
+		$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
+		$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
+		$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
+		$file = $dirPath . $thumbnail_name;
+		
+		// error_log("Inside fetchResizeUpload - resized and saved local file is now --> " . $file);
+		
+		return $file;
+	}
 } //End class
 
 

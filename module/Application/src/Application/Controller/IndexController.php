@@ -63,8 +63,8 @@ error_log("Inside fetchXML response $response ....");
 	}
 
     public function indexAction() {
-    	$this->memreasTranscoderAction();
-    	//$this->transcoderAction();
+    	//$this->memreasTranscoderAction();
+    	$this->transcoderAction();
     	exit;
     }
 
