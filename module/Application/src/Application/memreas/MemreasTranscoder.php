@@ -211,16 +211,9 @@ class MemreasTranscoder {
 				if ($isUpload) {
 					move_uploaded_file ( $TempSrc, $this->destRandVideoName );
 					// Put to S3 here...
-					$message_data = array (
-							"s3file_name" => $this->original_file_name,
-							"file" => $this->destRandVideoName,
-							"user_id" => $this->user_id,
-							"media_id" => "placeholder",
-							"content_type" => "video/mpeg", // must be mpeg for lgpl ffmpeg conversions
-							"s3path" => $this->user_id . '/media/' 
-					);
-error_log("message_data ---> ".json_encode($message_data).PHP_EOL);					
-					$media_s3_path = $this->s3videoUpload ( $message_data );
+					$s3file = $this->user_id . '/media/' . $this->original_file_name;
+					$this->aws_manager_receiver->pushMediaToS3($this->destRandVideoName, $s3file, "video/mpeg");
+						
 					// Store the metadata
 					$metadata ['S3_files'] ['path'] = $media_s3_path;
 					$metadata ['S3_files'] ['full'] = $media_s3_path;
@@ -242,22 +235,45 @@ error_log("message_data ---> ".json_encode($message_data).PHP_EOL);
 				}
 				
 				if ($isVideo) {
-					
 					// Create Thumbnails
 					$this->createThumbNails ();
 error_log("Finished thumbnails..." . PHP_EOL);
-								
 					// Create web quality mpeg
 					$transcode_job_meta = array ();
 					$transcode_job_meta ['web'] = $this->transcode ( 'web' );
 error_log("Finished web..." . PHP_EOL);
 					// Create high quality mpeg
 					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
-error_log("Finished web..." . PHP_EOL);
-						
-					// Update the metadata here for the transcoded files
+error_log("Finished 1080p..." . PHP_EOL);
+					// Create high quality mpeg
+					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
+error_log("Finished hls..." . PHP_EOL);
+// Update the metadata here for the transcoded files
 					$json_metadata = json_encode ( $transcode_job_meta );
 				} // End if ($isVideo)
+				else {  
+					//Audio section
+					// Create web quality mp3
+					$transcode_job_meta = array ();
+					$transcode_job_meta ['audio'] = $this->transcode ( 'audio' );
+error_log("Finished audio..." . PHP_EOL);
+					// Update the metadata here for the transcoded files
+					$json_metadata = json_encode ( $transcode_job_meta );
+				}
+//Debugging
+error_log("Insert transcode_transaction values...".PHP_EOL);
+error_log("user_id --> ".$this->user_id.PHP_EOL);
+error_log("media_type --> ".$VideoFileType.PHP_EOL);
+error_log("media_extension --> ".$VideoExt.PHP_EOL);
+error_log("file_name --> ".$this->original_file_name.PHP_EOL);
+error_log("media_duration --> ".$duration.PHP_EOL);
+error_log("media_size --> ".$filesize.PHP_EOL);
+error_log("pass_fail --> ".$pass.PHP_EOL);
+error_log("metadata --> ".$json_metadata.PHP_EOL);
+error_log("transcode_job_duration --> ".$transcode_job_duration.PHP_EOL);
+error_log("transcode_start_time --> ".$transcode_start_time.PHP_EOL);
+error_log("transcode_end_time --> ".$transcode_end_time.PHP_EOL);
+				
 				
 				///////////////////////////////
 				// Insert transcode_transaction
@@ -307,8 +323,7 @@ error_log("Finished web..." . PHP_EOL);
 			//$result = $this->rmWorkDir ( $this->homeDir );
 		} catch ( \Exception $e ) {
 			$pass = 0;
-			$errstr = $e->getMessage ();
-			error_log ( "error string ---> " . $errstr . PHP_EOL );
+			error_log ( "error string ---> " . $e->getMessage () . PHP_EOL );
 		}
 	}
 	public function createThumbnails() {
@@ -377,26 +392,11 @@ error_log("Finished web..." . PHP_EOL);
 			// Put original thumbnail to S3 here...
 			foreach ( $s3paths as $fmt ) {
 				foreach ( $tns_sized as $key => $file ) {
-error_log("s3file_name->".basename ( $filename ).PHP_EOL);			
-error_log("file->".$file.PHP_EOL);			
-error_log("user_id->".$this->user_id.PHP_EOL);			
-error_log("media_id->".$this->media_id.PHP_EOL);			
-error_log("s3path->".$fmt [$key].PHP_EOL);
-/*			
-					$message_data = array (
-							"s3file_name" => basename ( $filename ),
-							"file" => $file,
-							"user_id" => $this->user_id,
-							"media_id" => $this->media_id,
-							"content_type" => "image/png",
-							"s3path" => $fmt [$key] 
-					);
-					$this->s3videoUpload ( $message_data );
-*/
+					//Push to S3
 					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
-error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] = $fmt [$key] . basename ( $filename );
+error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 				}
 			}
 		} // End for each thumbnail
@@ -415,8 +415,8 @@ error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, // data/temp_job_uuid_dir/media/thumbnails/98x78/
 				$this->homeDir . self::DESTDIR . self::WEBDIR, // data/temp_job_uuid_dir/media/web/
 				$this->homeDir . self::DESTDIR . self::AUDIODIR, // data/temp_job_uuid_dir/media/webm/
-				                                             // $this->homeDir.self::DESTDIR.$hls, // data/temp_job_uuid_dir/media/hls/
-				$this->homeDir . self::DESTDIR . self::_1080PDIR  // data/temp_job_uuid_dir/media/p1080/
+				$this->homeDir . self::DESTDIR . self::_1080PDIR,  // data/temp_job_uuid_dir/media/p1080/
+				$this->homeDir . self::DESTDIR . self::HLSDIR,  // data/temp_job_uuid_dir/media/hls/
 		);
 		
 		$permissions = 0777;
@@ -426,79 +426,65 @@ error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_
 			if (mkdir ( $dir ))
 				chmod ( $dir, $permissions );
 			umask ( $save );
-$op = shell_exec("ls -al $dir 2>&1");error_log("ls -al $dir...".PHP_EOL);error_log(json_encode($op).PHP_EOL);
-			
 		}
-		// error_log("created directories...." . PHP_EOL);
-	}
-	
-	public function s3videoUpload($message_data, $isThumbnail = false) {
-		$this->s3file_name = $message_data ['s3file_name'];
-		$file = $message_data ['file'];
-		$this->user_id = $message_data ['user_id'];
-		$this->media_id = $message_data ['media_id'];
-		$this->content_type = $message_data ['content_type'];
-		$output_type = $message_data ['output_type'];
-		$this->s3path = $message_data ['s3path'];
-		
-		$s3_media_path = $this->s3path . $this->s3file_name;
-		
-		// S3 Folder Setup
-		$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
-		$uploader = UploadBuilder::newInstance ()->setClient ( $this->aws_manager_receiver->s3 )->setSource ( $body )->setBucket ( MemreasConstants::S3BUCKET )->setMinPartSize ( 10 * Size::MB )->setOption ( 'Content-Type', $this->content_type )->setKey ( $s3_media_path )->build ();
-		
-		// Modified - Perform the upload to S3. Abort the upload if something goes wrong
-		try {
-			$uploader->upload ();
-			// error_log( "Upload complete.\n", 0);
-		} catch ( MultipartUploadException $e ) {
-			$uploader->abort ();
-			// error_log( "Upload failed.\n", 0);
-		}
-		
-		// error_log("s3_media_path PATH ----> " . $s3_media_path);
-		
-		return $s3_media_path;
 	}
 	
 	public function transcode($type) {
+
+		// FFMPEG transcode to mpeg (samples)
+		// $command =array_merge(array( '-i',$this->destRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($this->homeDir.self::CONVDIR.self::WEBDIR.$NewVideoName.'x264.mp4','2>&1'));
+		// $cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_mp4_file ".'2>&1';
+		
 		if ($type == 'web') {
 			$q="";
-			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->original_file_name . '.mp4';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->original_file_name . '.mp4';
+			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == '1080p') {
 			$qv='-q:v 1';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->original_file_name . '.mp4';
+			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
+		} else if ($type == 'hls') {
+			//Note: this section uses the transcoded 1080p file above 
 			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->original_file_name . '.mp4';
-/*			
-			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_1080p_upload_S3';
-			$arr = array (
-					"ffmpeg_cmd" => $cmd,
-					"ffmpeg_cmd_output" => $op,
-					"output_size" => filesize ( $transcoded_mp4_file ),
-					"pass_fail" => $pass,
-					"error_message" => $errstr,
-					"output_start_time" => $output_start_time,
-					"output_end_time" => date ( "Y-m-d H:i:s" )
-			);
-				
-			$this->memreas_media_metadata ['S3_files'] ['1080p'] = $this->user_id . '/media/1080p/' . $this->original_file_name . '.mp4';
-			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_1080p_completed';
-			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_completed';
-*/				
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->original_file_name . '.m3u8';
+			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->original_file_name;
+			// Sample: http://sinclairmediatech.com/encoding-hls-with-ffmpeg/
+			$cmd = $this->ffmpegcmd .
+				" -re -y -i ".$transcoded_mp4_file.
+				" -map 0 ".
+				" -f segment ".
+				" -segment_list ".$transcoded_file.
+				" -segment_list_flags +live ".
+				" -segment_time 1 ".
+				" -segment_list_type m3u8 ".$transcoded_hls_ts_file."%05d.ts".
+				' 2>&1';
+			
+/* 			/var/app/memreas_ffmpeg_install/bin/ffmpeg 
+			x-re 
+			-y 
+			-i /var/app/current/data//dd387190-bd4a-487f-a9df-ab707a9f1c41/media/1080p/MVI_3055.MOV.mp4 
+			-map 0 
+			-f segment 
+			-segment_list playlist.m3u8 
+			-segment_list_flags +live 
+			-segment_time 1 
+			out%03d.ts			
+ */			
+		} else if ($type == 'audio') {
+			/*
+			 * TODO: add audio cmd
+			 */
 		} else
 			throw new \Exception("MemreasTranscoder $type not found.");
 
-		// FFMPEG transcode to mpeg
-		// $command =array_merge(array( '-i',$this->destRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($this->homeDir.self::CONVDIR.self::WEBDIR.$NewVideoName.'x264.mp4','2>&1'));
-		$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_mp4_file ".'2>&1';
-		
 error_log("cmd ---> $cmd".PHP_EOL);				
 		$pass = 0;
 		$output_start_time = date ( "Y-m-d H:i:s" );
 		try {
 			$op = shell_exec ( $cmd );
-			if (!file_exists($transcoded_mp4_file))
+			if (!file_exists($transcoded_file))
 				throw new \Exception($op);
-		} catch ( Exception $e ) {
+		} catch ( \Exception $e ) {
 			$pass = 0;
 			error_log ( "transcoder $type failed - op -->" . $op . PHP_EOL );
 			throw $e;
@@ -506,20 +492,37 @@ error_log("cmd ---> $cmd".PHP_EOL);
 
 		//Push to S3
 		$s3file = $this->user_id.'/media/'.$type.'/'.$this->original_file_name.'.mp4';
-		$this->aws_manager_receiver->pushMediaToS3($transcoded_mp4_file, $s3file, "video/mpeg");
+		if ($type == "hls") {
+			$s3file = $this->user_id.'/media/'.$type.'/'.$this->original_file_name.'.m3u8';
+			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "application/x-mpegurl");
+			//Push all .ts files
+			$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->original_file_name . "*.ts";
+			$fsize = 0;
+error_log("pat ---> $pat".PHP_EOL);
+			foreach (glob($pat) as $filename) {
+				$fsize += filesize($filename);
+				$s3file = $this->user_id.'/media/'.$type.'/'.basename($filename);
+error_log("filename ---> $filename".PHP_EOL);
+error_log("s3file ---> $s3file".PHP_EOL);
+				$this->aws_manager_receiver->pushMediaToS3($filename, $s3file, "video/mp2t");
+			}
+		} else {
+			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "video/mpeg");
+			$fsize = filesize ( $transcoded_file );
+		}
 
 		//Log status
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_'.$type.'_upload_S3';
 		$arr = array (
 				"ffmpeg_cmd" => $cmd,
 				"ffmpeg_cmd_output" => $op,
-				"output_size" => filesize ( $transcoded_mp4_file ),
+				"output_size" => $fsize,
 				"pass_fail" => $pass,
-				"error_message" => $errstr,
+				"error_message" => "",
 				"output_start_time" => $output_start_time,
 				"output_end_time" => date ( "Y-m-d H:i:s" ) 
 		);
-		$this->memreas_media_metadata ['S3_files'] [$type] = $this->user_id . '/media/'.$type.'/' . $this->original_file_name . '.mp4';
+		$this->memreas_media_metadata ['S3_files'] [$type] = $s3file; //$this->user_id . '/media/'.$type.'/' . $this->original_file_name . '.mp4';
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_'.$type.'_completed';
 
 		return $arr;
@@ -549,8 +552,6 @@ error_log("cmd ---> $cmd".PHP_EOL);
 		$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
 		$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
 		$file = $dirPath . $thumbnail_name;
-		
-		// error_log("Inside fetchResizeUpload - resized and saved local file is now --> " . $file);
 		
 		return $file;
 	}
