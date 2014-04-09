@@ -68,10 +68,6 @@ error_log("Inside fetchXML response $response ....");
     	exit;
     }
 
-	public function memreasTranscoderAction() {
-		
-	}
-	
     public function transcoderAction() {
 
 error_log("Inside transcoderAction bew..." . PHP_EOL);
@@ -128,15 +124,20 @@ error_log("inputJSON...... $inputJSON");
 
 					//Fetch the json from message
 					$message_data= json_decode($inputJSON, true);
-error_log("**************************************");
-					//Return the status code here so that the SNS topic won't keep resending the message
-					ob_start();
-					http_response_code(200);
-					ob_end_flush(); 	// Strange behaviour, will not work
-					flush();            // Unless both are called !
+					//Fetch the receipt handle
+					$message_data[''] = $_REQUEST['json'];
 					
+error_log("**************************************");
 					//Process Message here -
 					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
+					
+					//Return the status code here so that the SQS topic won't keep resending the message
+					//ob_start();
+					//ob_get_clean();
+					//http_response_code(200);
+					//ob_end_flush(); 	// Strange behaviour, will not work
+					//flush();            // Unless both are called !
+					header("HTTP/1.1 200 OK", true, 200); 
 					
 					return $result;
 			} //End else if (($name == 'User-Agent') && ($value == 'aws-sqsd'))

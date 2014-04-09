@@ -30,6 +30,7 @@ class TranscodeTransactionTable {
 		$data = array (
 					'transcode_transaction_id' => $transcode_transaction->transcode_transaction_id, 
 					'user_id' => $transcode_transaction->user_id, 
+					'media_id' => $transcode_transaction->media_id, 
 					'media_type' => $transcode_transaction->media_type, 
 					'media_extension' => $transcode_transaction->media_extension, 
 					'file_name' => $transcode_transaction->file_name, 
