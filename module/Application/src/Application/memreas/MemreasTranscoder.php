@@ -82,8 +82,9 @@ class MemreasTranscoder {
 			$this->media_id = $message_data ['media_id'];
 			$this->content_type = $message_data ['content_type'];
 			$this->s3path = $message_data ['s3path'];
-			$s3file_name = $message_data ['s3file_name'];
-			$isVideo = $message_data ['isVideo'];
+			$this->s3file_name = $message_data ['s3file_name'];
+			$this->isVideo = $message_data ['isVideo'];
+			$this->json_metadata = json_encode($message_data);
 			
 			// Fetch the media entry here:
 			$memreas_media = $memreas_transcoder_tables->getMediaTable ()->getMedia ( $this->media_id );
@@ -91,11 +92,10 @@ class MemreasTranscoder {
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start';
 			
 //Debugging
-error_log ( "input meta------>" . $memreas_media->metadata . PHP_EOL );
+error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_EOL );
 			
 			// date_default_timezone_set('UTC');
 			$starttime = date ( 'Y-m-d H:i:s' );
-			// $metadata = array();
 			if (isset ( $message_data )) {
 				if (getcwd () == '/var/app/current') {
 					error_log ( "found /var/app/current" . PHP_EOL );
@@ -113,16 +113,11 @@ error_log ( "input meta------>" . $memreas_media->metadata . PHP_EOL );
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_folders_created';
 				
 				if (! $isUpload) {
-					// Fetch the json from the post
-					//if (isset ( $_POST ['json'] )) {
-					//	$message_data = json_decode ( $_POST ['json'], true );
-					//	error_log("")
-					//}
-					
+					$this->user_id = $message_data ['user_id'];
 					// Fetch the file to transcode:
 					$s3file = $message_data ['s3path'] . $message_data ['s3file_name'];
-					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $message_data ['s3file_name'];
-					$response = $this->aws_manager_receiver->pullMediaFromS3 ( $s3file, $this->destRandVideoName );
+					$tmp_file = $this->homeDir . self::DESTDIR . $message_data ['s3file_name'];
+					$response = $this->aws_manager_receiver->pullMediaFromS3 ( $s3file, $tmp_file );
 					if ($response) {
 						$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_S3_file_saved';
 					} else {
@@ -145,9 +140,10 @@ error_log ( "input meta------>" . $memreas_media->metadata . PHP_EOL );
 					// Construct a new video name (with random number added) for our new video.
 					$this->original_file_name = $VideoFileName . "." . $this->VideoExt;
 					$this->filesize = filesize ( $this->destRandVideoName );
-					$this->duration = str_replace ( ",", "", shell_exec ( "$this->ffmpegcmd -i $this->destRandVideoName 2>&1 | grep 'Duration' | cut -d ' ' -f 4" ) );
-					$timed = explode ( ":", $this->duration );
-					$this->duration = (( float ) $timed [0]) * 3600 + (( float ) $timed [1]) * 60 + ( float ) $timed [2];
+					// set the Destination Video
+					
+					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $this->original_file_name; // Name for Big Video
+						                                                                 // $this->destRandVideoName = $tmp_file;
 				} else if (isset ( $_FILES ['VideoFile'] ) && is_uploaded_file ( $_FILES ['VideoFile'] ['tmp_name'] [0] )) {
 					
 					error_log ( "Inside if videofile and is uploaded...." . PHP_EOL );
@@ -232,7 +228,7 @@ error_log ( "input meta------>" . $memreas_media->metadata . PHP_EOL );
 					) );
 					$this->media_id = $memreas_transcoder_tables->getMediaTable ()->saveMedia ( $memreas_media );
 				} else {
-					// error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
+error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
 				}
 				
 				if ($this->isVideo) {
@@ -242,39 +238,48 @@ error_log ( "input meta------>" . $memreas_media->metadata . PHP_EOL );
 					$this->duration = (( float ) $timed [0]) * 3600 + (( float ) $timed [1]) * 60 + ( float ) $timed [2];
 					$this->filesize = filesize ( $this->destRandVideoName );
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
-error_log ( "transcode_start_time --> $this->transcode_start_time");
 				}
-/*				
+				
 error_log ( "media_type --> $this->VideoFileType");
 error_log ( "media_extension --> $this->VideoExt");
 error_log ( "file_name --> $this->original_file_name");
 error_log ( "media_duration --> $this->duration");
 error_log ( "media_size --> $this->filesize");
 error_log ( "pass_fail --> $this->pass");
-error_log ( "input metadata --> ".json_encode($message_data));
+error_log ( "metadata --> $this->json_metadata");
+error_log ( "transcode_job_duration --> $this->transcode_job_duration");
 error_log ( "transcode_start_time --> $this->transcode_start_time");
-*/
+error_log ( "insert data: user_id ---> $this->user_id".PHP_EOL);
+error_log ( "insert data: media_id ---> $this->media_id".PHP_EOL);
+error_log ( "insert data: media_type ---> $this->VideoFileType".PHP_EOL);
+error_log ( "insert data: media_extension ---> $this->VideoExt".PHP_EOL);
+error_log ( "insert data: file_name ---> $this->original_file_name".PHP_EOL);
+error_log ( "insert data: media_duration ---> $this->duration".PHP_EOL);
+error_log ( "insert data: media_size ---> $this->filesize".PHP_EOL);
+error_log ( "insert data: pass_fail ---> $this->pass".PHP_EOL);
+error_log ( "insert data: metadata ---> $this->json_metadata".PHP_EOL);
+
 				/*
 				 * Insert transcode_transaction so we have a record
 				 */
-				$this->transcode_start_time = date ( 'Y-m-d H:i:s' );
+				$now = date ( 'Y-m-d H:i:s' );
 				$transcode_transaction = new TranscodeTransaction();
 				$transcode_transaction->exchangeArray ( array (
 						'user_id' => $this->user_id,
 						'media_id' => $this->media_id,
+						'file_name' => $this->original_file_name,
 						'media_type' => $this->VideoFileType,
 						'media_extension' => $this->VideoExt,
-						'file_name' => $this->original_file_name,
 						'media_duration' => $this->duration,
 						'media_size' => $this->filesize,
 						'pass_fail' => $this->pass,
-						'metadata' => json_encode($message_data),
+						'metadata' => $this->json_metadata, //set later
 						'transcode_start_time' => $this->transcode_start_time
 				) );
 				$transcode_transaction_id = $memreas_transcoder_tables->getTranscodeTransactionTable ()->saveTranscodeTransaction ( $transcode_transaction );
 error_log ( "Inserted transcode_transaction --> $transcode_transaction_id" . PHP_EOL );
 				
-				if ($isVideo) {
+				if ($this->isVideo) {
 					// Create Thumbnails
 					$this->createThumbNails ();
 error_log("Finished thumbnails..." . PHP_EOL);
@@ -301,7 +306,6 @@ error_log("Finished audio..." . PHP_EOL);
 					$this->json_metadata = json_encode ( $transcode_job_meta );
 				}
 //Debugging
-/*
 error_log("Insert transcode_transaction values...".PHP_EOL);
 error_log("user_id --> ".$this->user_id.PHP_EOL);
 error_log("media_type --> ".$this->VideoFileType.PHP_EOL);
@@ -314,7 +318,7 @@ error_log("metadata --> ".$this->json_metadata.PHP_EOL);
 error_log("transcode_job_duration --> ".$this->transcode_job_duration.PHP_EOL);
 error_log("transcode_start_time --> ".$this->transcode_start_time.PHP_EOL);
 error_log("transcode_end_time --> ".$this->transcode_end_time.PHP_EOL);
-*/				
+				
 				
 				///////////////////////////////
 				// Update transcode_transaction
@@ -353,8 +357,8 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		// Always delete the temp dir...
 		// Delete the temp dir if we got this far...
 		try {
-error_log("Recursive delete $this->homeDir".PHP_EOL);			
-			$result = $this->rmWorkDir ( $this->homeDir );
+//error_log("Recursive delete $this->homeDir".PHP_EOL);			
+//			$result = $this->rmWorkDir ( $this->homeDir );
 		} catch ( \Exception $e ) {
 			$this->pass = 0;
 			error_log ( "error string ---> " . $e->getMessage () . PHP_EOL );
@@ -421,7 +425,7 @@ error_log("Recursive delete $this->homeDir".PHP_EOL);
 					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
 					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] = $fmt [$key] . basename ( $filename );
-//error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
+error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 				}
 			}
 		} // End for each thumbnail
@@ -451,6 +455,7 @@ error_log("Recursive delete $this->homeDir".PHP_EOL);
 			if (mkdir ( $dir ))
 				chmod ( $dir, $permissions );
 			umask ( $save );
+error_log("created dir ---> $dir".PHP_EOL);			
 		}
 	}
 	
@@ -544,6 +549,7 @@ error_log("pushed to S3 --> $s3file ---> $s3file".PHP_EOL);
 	} // End transcode
 
 	private function rmWorkDir($dir) {
+		return; //DEBUGGING
 		$it = new \RecursiveDirectoryIterator ( $dir );
 		$files = new \RecursiveIteratorIterator ( $it, \RecursiveIteratorIterator::CHILD_FIRST );
 		foreach ( $files as $file ) {

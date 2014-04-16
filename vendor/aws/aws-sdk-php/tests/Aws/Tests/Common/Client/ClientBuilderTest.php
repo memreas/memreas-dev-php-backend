@@ -20,6 +20,7 @@ use Aws\Common\Client\ClientBuilder;
 use Aws\Common\Enum\ClientOptions as Options;
 use Aws\Common\Exception\Parser\JsonQueryExceptionParser;
 use Aws\Common\Credentials\Credentials;
+use Aws\Common\Iterator\AwsResourceIterator;
 use Aws\DynamoDb\DynamoDbClient;
 use Guzzle\Common\Collection;
 use Guzzle\Plugin\Backoff\BackoffPlugin;
@@ -36,7 +37,7 @@ class ClientBuilderTest extends \Guzzle\Tests\GuzzleTestCase
 
     public function setUp()
     {
-        $this->dynamoDbDescription = __DIR__ . '/../../../../../src/Aws/DynamoDb/Resources/dynamodb-2011-12-05.php';
+        $this->dynamoDbDescription = __DIR__ . '/../../../../../src/Aws/DynamoDb/Resources/dynamodb-2012-08-10.php';
         $this->stsDescription = __DIR__ . '/../../../../../src/Aws/Sts/Resources/sts-2011-06-15.php';
     }
 
@@ -52,7 +53,7 @@ class ClientBuilderTest extends \Guzzle\Tests\GuzzleTestCase
             ))
             ->setConfigRequirements(array('scheme'))
             ->setExceptionParser(new JsonQueryExceptionParser())
-            ->setIteratorsConfig(array('token_param' => 'foo'))
+            ->setIteratorsConfig(array('input_token' => 'foo'))
             ->build();
 
         $this->assertInstanceOf('Aws\DynamoDb\DynamoDbClient', $client);
@@ -230,7 +231,7 @@ class ClientBuilderTest extends \Guzzle\Tests\GuzzleTestCase
             $this->assertInstanceOf('Aws\Common\Exception\InstanceProfileCredentialsException', $e);
         }
 
-        // Ensure that environment credentials are picked up if supplied via putenv
+        // Ensure that environment credentials are picked up if supplied via $_SERVER
         $_SERVER[Credentials::ENV_KEY] = 'server-key';
         $_SERVER[Credentials::ENV_SECRET] = 'server-secret';
         $client3 = ClientBuilder::factory('Aws\\DynamoDb')->setConfig($config)->build();
@@ -238,12 +239,24 @@ class ClientBuilderTest extends \Guzzle\Tests\GuzzleTestCase
         $this->assertEquals('server-secret', $client3->getCredentials()->getSecretKey());
         unset($_SERVER[Credentials::ENV_KEY], $_SERVER[Credentials::ENV_SECRET]);
 
+        // Ensure that environment credentials are picked up if supplied via AWS_SECRET_ACCESS_KEY
+        $_SERVER[Credentials::ENV_KEY] = 'server-key';
+        // Remove the old key name
+        unset($_SERVER[Credentials::ENV_SECRET]);
+        putenv(Credentials::ENV_SECRET);
+        $_SERVER[Credentials::ENV_SECRET_ACCESS_KEY] = 'server-secret';
+        $client4 = ClientBuilder::factory('Aws\\DynamoDb')->setConfig($config)->build();
+        $this->assertEquals('server-key', $client4->getCredentials()->getAccessKeyId());
+        $this->assertEquals('server-secret', $client4->getCredentials()->getSecretKey());
+        unset($_SERVER[Credentials::ENV_KEY], $_SERVER[Credentials::ENV_SECRET]);
+        putenv(Credentials::ENV_SECRET_ACCESS_KEY);
+
         // Ensure that environment credentials are picked up if supplied via putenv
         putenv(Credentials::ENV_KEY . '=env-key');
         putenv(Credentials::ENV_SECRET . '=env-secret');
-        $client4 = ClientBuilder::factory('Aws\\DynamoDb')->setConfig($config)->build();
-        $this->assertEquals('env-key', $client4->getCredentials()->getAccessKeyId());
-        $this->assertEquals('env-secret', $client4->getCredentials()->getSecretKey());
+        $client5 = ClientBuilder::factory('Aws\\DynamoDb')->setConfig($config)->build();
+        $this->assertEquals('env-key', $client5->getCredentials()->getAccessKeyId());
+        $this->assertEquals('env-secret', $client5->getCredentials()->getSecretKey());
         putenv(Credentials::ENV_KEY); putenv(Credentials::ENV_SECRET);
     }
 

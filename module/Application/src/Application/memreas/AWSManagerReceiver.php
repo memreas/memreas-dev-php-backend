@@ -168,7 +168,8 @@ error_log("metadata after ----> " . $json . PHP_EOL);
 				$dirRemoved = new RmWorkDir($dir);
 			}
 
-	        return true;
+			header("HTTP/1.1 200 OK", true, 200); 
+	        //return true;
         
 		} catch (Exception $e) {
 		    error_log("Caught exception: $e->getMessage()" . PHP_EOL);
@@ -180,10 +181,10 @@ error_log("metadata after ----> " . $json . PHP_EOL);
     }
 
     function pullMediaFromS3($s3file, $file) {
-//error_log("Inside pullMediaFromS3"  . PHP_EOL); 
-//error_log("Bucket ---> ".MemreasConstants::S3BUCKET. PHP_EOL); 
-//error_log("Key ---> ".$s3file. PHP_EOL); 
-//error_log("SaveAs ---> ".$file. PHP_EOL); 
+error_log("Inside pullMediaFromS3"  . PHP_EOL); 
+error_log("Bucket ---> ".MemreasConstants::S3BUCKET. PHP_EOL); 
+error_log("Key ---> ".$s3file. PHP_EOL); 
+error_log("SaveAs ---> ".$file. PHP_EOL); 
 
 	try {
 			$result = $this->s3->getObject(array(
@@ -192,7 +193,7 @@ error_log("metadata after ----> " . $json . PHP_EOL);
 				'SaveAs' => $file
 			));
 error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
-//error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
+error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 		} catch(Aws\S3\Exception\S3Exception $e) {
 			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
 			throw $e;
@@ -543,7 +544,7 @@ error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL);
 	//            $result = mysql_query($query) or die("UPDATE MEDIA FAILED");
 
 			} else {
-				throw new \Exception("TRANSCODE ERROR: Job Id is not set!");
+				die("TRANSCODE ERROR: Job Id is not set!");
 			}
 
 			//Remove the work directory

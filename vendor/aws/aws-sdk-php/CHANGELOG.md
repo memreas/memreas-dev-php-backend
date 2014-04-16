@@ -1,6 +1,56 @@
 CHANGELOG
 =========
 
+2.6.0 (2014-03-25)
+------------------
+
+* [BC] Updated the Amazon CloudSearch client to use the new 2013-01-01 API version (see [their release
+  notes](http://aws.amazon.com/releasenotes/6125075708216342)). This API version of CloudSearch is significantly
+  different than the previous one, and is not backwards compatible. See the
+  [Upgrading Guide](https://github.com/aws/aws-sdk-php/blob/master/UPGRADING.md) for more details.
+* Added support for the VPC peering features to the Amazon EC2 client.
+* Updated the Amazon EC2 client to use the new 2014-02-01 API version.
+* Added support for [resize progress data and the Cluster Revision Number
+  parameter](http://aws.amazon.com/releasenotes/0485739709714318) to the Amazon Redshift client.
+* Added the `ap-northeast-1`, `ap-southeast-2`, and `sa-east-1` regions to the Amazon CloudSearch client.
+
+2.5.4 (2014-03-20)
+------------------
+
+* Added support for [access logs](http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/access-log-collection.html)
+  to the Elastic Load Balancing client.
+* Updated the Elastic Load Balancing client to the latest API version.
+* Added support for the `AWS_SECRET_ACCESS_KEY` environment variables.
+* Updated the Amazon CloudFront client to use the 2014-01-31 API version. See [their release
+  notes](http://aws.amazon.com/releasenotes/1900016175520505).
+* Updates the AWS OpsWorks client to the latest API version.
+* Amazon S3 Stream Wrapper now works correctly with pseudo folder keys created by the AWS Management Console.
+* Amazon S3 Stream Wrapper now implements `mkdir()` for nested folders similar to the AWS Management Console.
+* Addressed an issue with Amazon S3 presigned-URLs where X-Amz-* headers were not being added to the query string.
+* Addressed an issue with the Amazon S3 directory sync where paths that contained dot-segments were not properly.
+  resolved. Removing the dot segments consistently helps to ensure that files are uploaded to their intended.
+  destinations and that file key comparisons are accurately performed when determining which files to upload.
+
+2.5.3 (2014-02-27)
+------------------
+
+* Added support for HTTP and HTTPS string-match health checks and HTTPS health checks to the Amazon Route 53 client
+* Added support for the UPSERT action for the Amazon Route 53 ChangeResourceRecordSets operation
+* Added support for SerialNumber and TokenCode to the AssumeRole operation of the IAM Security Token Service (STS).
+* Added support for RequestInterval and FailureThreshold to the Amazon Route53 client.
+* Added support for smooth streaming to the Amazon CloudFront client.
+* Added the us-west-2, eu-west-1, ap-southeast-2, and ap-northeast-1 regions to the AWS Data Pipeline client.
+* Added iterators to the Amazon Kinesis client
+* Updated iterator configurations for all services to match our new iterator config spec (care was taken to continue
+  supporting manually-specified configurations in the old format to prevent BC)
+* Updated the Amazon EC2 model to include the latest updates and documentation. Removed deprecated license-related
+  operations (this is not considered a BC since we have confirmed that these operations are not used by customers)
+* Updated the Amazon Route 53 client to use the 2013-04-01 API version
+* Fixed several iterator configurations for various services to better support existing operations and parameters
+* Fixed an issue with the Amazon S3 client where an exception was thrown when trying to add a default Content-MD5
+  header to a request that uses a non-rewindable stream.
+* Updated the Amazon S3 PostObject class to work with CNAME style buckets.
+
 2.5.2 (2014-01-29)
 ------------------
 

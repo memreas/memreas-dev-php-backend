@@ -27,7 +27,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
 /**
  * Client to interact with Amazon Elastic Compute Cloud
  *
- * @method Model activateLicense(array $args = array()) {@command Ec2 ActivateLicense}
+ * @method Model acceptVpcPeeringConnection(array $args = array()) {@command Ec2 AcceptVpcPeeringConnection}
  * @method Model allocateAddress(array $args = array()) {@command Ec2 AllocateAddress}
  * @method Model assignPrivateIpAddresses(array $args = array()) {@command Ec2 AssignPrivateIpAddresses}
  * @method Model associateAddress(array $args = array()) {@command Ec2 AssociateAddress}
@@ -68,10 +68,10 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model createTags(array $args = array()) {@command Ec2 CreateTags}
  * @method Model createVolume(array $args = array()) {@command Ec2 CreateVolume}
  * @method Model createVpc(array $args = array()) {@command Ec2 CreateVpc}
+ * @method Model createVpcPeeringConnection(array $args = array()) {@command Ec2 CreateVpcPeeringConnection}
  * @method Model createVpnConnection(array $args = array()) {@command Ec2 CreateVpnConnection}
  * @method Model createVpnConnectionRoute(array $args = array()) {@command Ec2 CreateVpnConnectionRoute}
  * @method Model createVpnGateway(array $args = array()) {@command Ec2 CreateVpnGateway}
- * @method Model deactivateLicense(array $args = array()) {@command Ec2 DeactivateLicense}
  * @method Model deleteCustomerGateway(array $args = array()) {@command Ec2 DeleteCustomerGateway}
  * @method Model deleteDhcpOptions(array $args = array()) {@command Ec2 DeleteDhcpOptions}
  * @method Model deleteInternetGateway(array $args = array()) {@command Ec2 DeleteInternetGateway}
@@ -89,6 +89,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model deleteTags(array $args = array()) {@command Ec2 DeleteTags}
  * @method Model deleteVolume(array $args = array()) {@command Ec2 DeleteVolume}
  * @method Model deleteVpc(array $args = array()) {@command Ec2 DeleteVpc}
+ * @method Model deleteVpcPeeringConnection(array $args = array()) {@command Ec2 DeleteVpcPeeringConnection}
  * @method Model deleteVpnConnection(array $args = array()) {@command Ec2 DeleteVpnConnection}
  * @method Model deleteVpnConnectionRoute(array $args = array()) {@command Ec2 DeleteVpnConnectionRoute}
  * @method Model deleteVpnGateway(array $args = array()) {@command Ec2 DeleteVpnGateway}
@@ -108,7 +109,6 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model describeInstances(array $args = array()) {@command Ec2 DescribeInstances}
  * @method Model describeInternetGateways(array $args = array()) {@command Ec2 DescribeInternetGateways}
  * @method Model describeKeyPairs(array $args = array()) {@command Ec2 DescribeKeyPairs}
- * @method Model describeLicenses(array $args = array()) {@command Ec2 DescribeLicenses}
  * @method Model describeNetworkAcls(array $args = array()) {@command Ec2 DescribeNetworkAcls}
  * @method Model describeNetworkInterfaceAttribute(array $args = array()) {@command Ec2 DescribeNetworkInterfaceAttribute}
  * @method Model describeNetworkInterfaces(array $args = array()) {@command Ec2 DescribeNetworkInterfaces}
@@ -131,6 +131,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model describeVolumeStatus(array $args = array()) {@command Ec2 DescribeVolumeStatus}
  * @method Model describeVolumes(array $args = array()) {@command Ec2 DescribeVolumes}
  * @method Model describeVpcAttribute(array $args = array()) {@command Ec2 DescribeVpcAttribute}
+ * @method Model describeVpcPeeringConnections(array $args = array()) {@command Ec2 DescribeVpcPeeringConnections}
  * @method Model describeVpcs(array $args = array()) {@command Ec2 DescribeVpcs}
  * @method Model describeVpnConnections(array $args = array()) {@command Ec2 DescribeVpnConnections}
  * @method Model describeVpnGateways(array $args = array()) {@command Ec2 DescribeVpnGateways}
@@ -159,6 +160,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model purchaseReservedInstancesOffering(array $args = array()) {@command Ec2 PurchaseReservedInstancesOffering}
  * @method Model rebootInstances(array $args = array()) {@command Ec2 RebootInstances}
  * @method Model registerImage(array $args = array()) {@command Ec2 RegisterImage}
+ * @method Model rejectVpcPeeringConnection(array $args = array()) {@command Ec2 RejectVpcPeeringConnection}
  * @method Model releaseAddress(array $args = array()) {@command Ec2 ReleaseAddress}
  * @method Model replaceNetworkAclAssociation(array $args = array()) {@command Ec2 ReplaceNetworkAclAssociation}
  * @method Model replaceNetworkAclEntry(array $args = array()) {@command Ec2 ReplaceNetworkAclEntry}
@@ -178,24 +180,24 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model terminateInstances(array $args = array()) {@command Ec2 TerminateInstances}
  * @method Model unassignPrivateIpAddresses(array $args = array()) {@command Ec2 UnassignPrivateIpAddresses}
  * @method Model unmonitorInstances(array $args = array()) {@command Ec2 UnmonitorInstances}
- * @method waitUntilInstanceRunning(array $input) Wait using the InstanceRunning waiter. The input array uses the parameters of the DescribeInstances operation and waiter specific settings
- * @method waitUntilInstanceStopped(array $input) Wait using the InstanceStopped waiter. The input array uses the parameters of the DescribeInstances operation and waiter specific settings
- * @method waitUntilInstanceTerminated(array $input) Wait using the InstanceTerminated waiter. The input array uses the parameters of the DescribeInstances operation and waiter specific settings
- * @method waitUntilExportTaskCompleted(array $input) Wait using the ExportTaskCompleted waiter. The input array uses the parameters of the DescribeExportTasks operation and waiter specific settings
- * @method waitUntilExportTaskCancelled(array $input) Wait using the ExportTaskCancelled waiter. The input array uses the parameters of the DescribeExportTasks operation and waiter specific settings
- * @method waitUntilSnapshotCompleted(array $input) Wait using the SnapshotCompleted waiter. The input array uses the parameters of the DescribeSnapshots operation and waiter specific settings
- * @method waitUntilSubnetAvailable(array $input) Wait using the SubnetAvailable waiter. The input array uses the parameters of the DescribeSubnets operation and waiter specific settings
- * @method waitUntilVolumeAvailable(array $input) Wait using the VolumeAvailable waiter. The input array uses the parameters of the DescribeVolumes operation and waiter specific settings
- * @method waitUntilVolumeInUse(array $input) Wait using the VolumeInUse waiter. The input array uses the parameters of the DescribeVolumes operation and waiter specific settings
- * @method waitUntilVolumeDeleted(array $input) Wait using the VolumeDeleted waiter. The input array uses the parameters of the DescribeVolumes operation and waiter specific settings
- * @method waitUntilVpcAvailable(array $input) Wait using the VpcAvailable waiter. The input array uses the parameters of the DescribeVpcs operation and waiter specific settings
- * @method waitUntilVpnConnectionAvailable(array $input) Wait using the VpnConnectionAvailable waiter. The input array uses the parameters of the DescribeVpnConnections operation and waiter specific settings
- * @method waitUntilVpnConnectionDeleted(array $input) Wait using the VpnConnectionDeleted waiter. The input array uses the parameters of the DescribeVpnConnections operation and waiter specific settings
- * @method waitUntilBundleTaskComplete(array $input) Wait using the BundleTaskComplete waiter. The input array uses the parameters of the DescribeBundleTasks operation and waiter specific settings
- * @method waitUntilConversionTaskCompleted(array $input) Wait using the ConversionTaskCompleted waiter. The input array uses the parameters of the DescribeConversionTasks operation and waiter specific settings
- * @method waitUntilConversionTaskCancelled(array $input) Wait using the ConversionTaskCancelled waiter. The input array uses the parameters of the DescribeConversionTasks operation and waiter specific settings
- * @method waitUntilCustomerGatewayAvailable(array $input) Wait using the CustomerGatewayAvailable waiter. The input array uses the parameters of the DescribeCustomerGateways operation and waiter specific settings
- * @method waitUntilConversionTaskDeleted(array $input) Wait using the ConversionTaskDeleted waiter. The input array uses the parameters of the DescribeCustomerGateways operation and waiter specific settings
+ * @method waitUntilInstanceRunning(array $input) The input array uses the parameters of the DescribeInstances operation and waiter specific settings
+ * @method waitUntilInstanceStopped(array $input) The input array uses the parameters of the DescribeInstances operation and waiter specific settings
+ * @method waitUntilInstanceTerminated(array $input) The input array uses the parameters of the DescribeInstances operation and waiter specific settings
+ * @method waitUntilExportTaskCompleted(array $input) The input array uses the parameters of the DescribeExportTasks operation and waiter specific settings
+ * @method waitUntilExportTaskCancelled(array $input) The input array uses the parameters of the DescribeExportTasks operation and waiter specific settings
+ * @method waitUntilSnapshotCompleted(array $input) The input array uses the parameters of the DescribeSnapshots operation and waiter specific settings
+ * @method waitUntilSubnetAvailable(array $input) The input array uses the parameters of the DescribeSubnets operation and waiter specific settings
+ * @method waitUntilVolumeAvailable(array $input) The input array uses the parameters of the DescribeVolumes operation and waiter specific settings
+ * @method waitUntilVolumeInUse(array $input) The input array uses the parameters of the DescribeVolumes operation and waiter specific settings
+ * @method waitUntilVolumeDeleted(array $input) The input array uses the parameters of the DescribeVolumes operation and waiter specific settings
+ * @method waitUntilVpcAvailable(array $input) The input array uses the parameters of the DescribeVpcs operation and waiter specific settings
+ * @method waitUntilVpnConnectionAvailable(array $input) The input array uses the parameters of the DescribeVpnConnections operation and waiter specific settings
+ * @method waitUntilVpnConnectionDeleted(array $input) The input array uses the parameters of the DescribeVpnConnections operation and waiter specific settings
+ * @method waitUntilBundleTaskComplete(array $input) The input array uses the parameters of the DescribeBundleTasks operation and waiter specific settings
+ * @method waitUntilConversionTaskCompleted(array $input) The input array uses the parameters of the DescribeConversionTasks operation and waiter specific settings
+ * @method waitUntilConversionTaskCancelled(array $input) The input array uses the parameters of the DescribeConversionTasks operation and waiter specific settings
+ * @method waitUntilCustomerGatewayAvailable(array $input) The input array uses the parameters of the DescribeCustomerGateways operation and waiter specific settings
+ * @method waitUntilConversionTaskDeleted(array $input) The input array uses the parameters of the DescribeCustomerGateways operation and waiter specific settings
  * @method ResourceIteratorInterface getDescribeAccountAttributesIterator(array $args = array()) The input array uses the parameters of the DescribeAccountAttributes operation
  * @method ResourceIteratorInterface getDescribeAddressesIterator(array $args = array()) The input array uses the parameters of the DescribeAddresses operation
  * @method ResourceIteratorInterface getDescribeAvailabilityZonesIterator(array $args = array()) The input array uses the parameters of the DescribeAvailabilityZones operation
@@ -209,7 +211,6 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeInstancesIterator(array $args = array()) The input array uses the parameters of the DescribeInstances operation
  * @method ResourceIteratorInterface getDescribeInternetGatewaysIterator(array $args = array()) The input array uses the parameters of the DescribeInternetGateways operation
  * @method ResourceIteratorInterface getDescribeKeyPairsIterator(array $args = array()) The input array uses the parameters of the DescribeKeyPairs operation
- * @method ResourceIteratorInterface getDescribeLicensesIterator(array $args = array()) The input array uses the parameters of the DescribeLicenses operation
  * @method ResourceIteratorInterface getDescribeNetworkAclsIterator(array $args = array()) The input array uses the parameters of the DescribeNetworkAcls operation
  * @method ResourceIteratorInterface getDescribeNetworkInterfacesIterator(array $args = array()) The input array uses the parameters of the DescribeNetworkInterfaces operation
  * @method ResourceIteratorInterface getDescribePlacementGroupsIterator(array $args = array()) The input array uses the parameters of the DescribePlacementGroups operation
@@ -227,6 +228,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeTagsIterator(array $args = array()) The input array uses the parameters of the DescribeTags operation
  * @method ResourceIteratorInterface getDescribeVolumeStatusIterator(array $args = array()) The input array uses the parameters of the DescribeVolumeStatus operation
  * @method ResourceIteratorInterface getDescribeVolumesIterator(array $args = array()) The input array uses the parameters of the DescribeVolumes operation
+ * @method ResourceIteratorInterface getDescribeVpcPeeringConnectionsIterator(array $args = array()) The input array uses the parameters of the DescribeVpcPeeringConnections operation
  * @method ResourceIteratorInterface getDescribeVpcsIterator(array $args = array()) The input array uses the parameters of the DescribeVpcs operation
  * @method ResourceIteratorInterface getDescribeVpnConnectionsIterator(array $args = array()) The input array uses the parameters of the DescribeVpnConnections operation
  * @method ResourceIteratorInterface getDescribeVpnGatewaysIterator(array $args = array()) The input array uses the parameters of the DescribeVpnGateways operation
@@ -236,7 +238,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  */
 class Ec2Client extends AbstractClient
 {
-    const LATEST_API_VERSION = '2013-10-15';
+    const LATEST_API_VERSION = '2014-02-01';
 
     /**
      * Factory method to create a new AWS Elastic Beanstalk client using an array of configuration options.
@@ -244,7 +246,7 @@ class Ec2Client extends AbstractClient
      * @param array|Collection $config Client configuration data
      *
      * @return self
-     * @see \Aws\Common\Client\DefaultClient for a list of available configuration options
+     * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/configuration.html#client-configuration-options
      */
     public static function factory($config = array())
     {
