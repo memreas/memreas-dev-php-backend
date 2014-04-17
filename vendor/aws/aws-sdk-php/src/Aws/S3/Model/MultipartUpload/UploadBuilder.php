@@ -264,6 +264,7 @@ class UploadBuilder extends AbstractUploadBuilder
      */
     protected function initiateMultipartUpload()
     {
+error_log("mime type ---> $mimeType".PHP_EOL);
         // Determine Content-Type
         if ($mimeType = $this->source->getContentType()) {
             $this->commandOptions['ContentType'] = $mimeType;

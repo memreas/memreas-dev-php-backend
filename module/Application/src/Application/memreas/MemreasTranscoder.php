@@ -50,6 +50,7 @@ class MemreasTranscoder {
 	protected $homeDir;
 	protected $destRandVideoName;
 	protected $original_file_name;
+	protected $VideoFileName;
 	const WEBHOME = '/var/app/current/data/';
 	const DESTDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const CONVDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
@@ -127,18 +128,18 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 						throw new \Exception ( "Transcoder: S3 file fetch and save failed!" );
 					}
 
-					$VideoFileName = str_replace ( ' ', '-', $message_data ['s3file_name'] );
+					$this->VideoFileName = str_replace ( ' ', '-', $message_data ['s3file_name'] );
 					$this->VideoFileType = $message_data ['content_type'];
 					
 					// Get file extension from Video name, this will be re-added after random name
-					$this->VideoExt = substr ( $VideoFileName, strrpos ( $VideoFileName, '.' ) );
+					$this->VideoExt = substr ( $this->VideoFileName, strrpos ( $this->VideoFileName, '.' ) );
 					$this->VideoExt = str_replace ( '.', '', $this->VideoExt );
 					
 					// remove extension from filename
-					$VideoFileName = preg_replace ( "/\\.[^.\\s]{3,4}$/", "", $VideoFileName );
+					$this->VideoFileName = preg_replace ( "/\\.[^.\\s]{3,4}$/", "", $this->VideoFileName );
 					
 					// Construct a new video name (with random number added) for our new video.
-					$this->original_file_name = $VideoFileName . "." . $this->VideoExt;
+					$this->original_file_name = $this->VideoFileName . "." . $this->VideoExt;
 					$this->filesize = filesize ( $this->destRandVideoName );
 					// set the Destination Video
 					
@@ -149,18 +150,18 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 					error_log ( "Inside if videofile and is uploaded...." . PHP_EOL );
 					// Elements (values) of $_FILES['VideoFile'] array
 					// let's access these values by using their index position
-					$VideoFileName = str_replace ( ' ', '-', strtolower ( $_FILES ['VideoFile'] ['name'] [0] ) );
+					$this->VideoFileName = str_replace ( ' ', '-', strtolower ( $_FILES ['VideoFile'] ['name'] [0] ) );
 					$TempSrc = $_FILES ['VideoFile'] ['tmp_name'] [0]; // Tmp name of video file stored in PHP tmp folder
 					$this->VideoFileType = $_FILES ['VideoFile'] ['type'] [0]; // Obtain file type, returns "video/png", video/jpeg, text/plain etc.
 					                                                  // Get file extension from Video name, this will be re-added after random name
-					$this->VideoExt = substr ( $VideoFileName, strrpos ( $VideoFileName, '.' ) );
+					$this->VideoExt = substr ( $this->VideoFileName, strrpos ( $this->VideoFileName, '.' ) );
 					$this->VideoExt = str_replace ( '.', '', $this->VideoExt );
 					
 					// remove extension from filename
-					$VideoFileName = preg_replace ( "/\\.[^.\\s]{3,4}$/", "", $VideoFileName );
+					$this->VideoFileName = preg_replace ( "/\\.[^.\\s]{3,4}$/", "", $this->VideoFileName );
 					
 					// Construct a new video name (with random number added) for our new video.
-					$this->original_file_name = $VideoFileName . "." . $this->VideoExt;
+					$this->original_file_name = $this->VideoFileName . "." . $this->VideoExt;
 					// set the Destination Video
 					
 					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $this->original_file_name; 
@@ -466,18 +467,18 @@ error_log("created dir ---> $dir".PHP_EOL);
 		// $cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_mp4_file ".'2>&1';
 		
 		if ($type == 'web') {
-			$q="";
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->original_file_name . '.mp4';
+			$qv="";
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->VideoFileName . '.mp4';
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == '1080p') {
 			$qv='-q:v 1';
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->original_file_name . '.mp4';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.mp4';
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == 'hls') {
 			//Note: this section uses the transcoded 1080p file above 
-			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->original_file_name . '.mp4';
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->original_file_name . '.m3u8';
-			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->original_file_name;
+			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.mp4';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName . '.m3u8';
+			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName;
 			// Sample: http://sinclairmediatech.com/encoding-hls-with-ffmpeg/
 			$cmd = $this->ffmpegcmd .
 				" -re -y -i ".$transcoded_mp4_file.
@@ -509,13 +510,13 @@ error_log("cmd ---> $cmd".PHP_EOL);
 		}
 
 		//Push to S3
-		$s3file = $this->user_id.'/media/'.$type.'/'.$this->original_file_name.'.mp4';
+		$s3file = $this->user_id.'/media/'.$type.'/'.$this->VideoFileName.'.mp4';
 		if ($type == "hls") {
-			$s3file = $this->user_id.'/media/'.$type.'/'.$this->original_file_name.'.m3u8';
+			$s3file = $this->user_id.'/media/'.$type.'/'.$this->VideoFileName.'.m3u8';
 			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "application/x-mpegurl");
 error_log("pushed to S3 --> $s3file ---> $s3file".PHP_EOL);
 			//Push all .ts files
-			$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->original_file_name . "*.ts";
+			$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName . "*.ts";
 			$fsize = 0;
 //error_log("pat ---> $pat".PHP_EOL);
 			foreach (glob($pat) as $filename) {

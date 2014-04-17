@@ -233,10 +233,10 @@ error_log("Inside resize file ----> " . $file . PHP_EOL);
 	}
 
     function pushMediaToS3($file, $s3file, $content_type) {
-//error_log("Inside pushMediaToS3"  . PHP_EOL); 
-//error_log("Inside pushMediaToS3 file ---> $file" . PHP_EOL); 
+error_log("Inside pushMediaToS3"  . PHP_EOL); 
+error_log("Inside pushMediaToS3 file ---> $file" . PHP_EOL); 
 error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL); 
-//error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL); 
+error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL); 
         $body = EntityBody::factory(fopen($file, 'r+'));
 //error_log("Inside fetchResizeUpload - thumbnail_file is  --> " . $thumbnail_file);                	
         /////////////////////////////////////////////////////////////////////
@@ -245,8 +245,10 @@ error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL);
                 ->setClient($this->s3)
                 ->setSource($body)
                 ->setBucket(MemreasConstants::S3BUCKET)
-                ->setMinPartSize(10 * Size::MB)
-                ->setOption('ContentType', $content_type)
+                //->setMinPartSize(10 * Size::MB)
+		        //->setOption('Metadata', array('ContentType' => $content_type)) //Doesn't work
+        		->setOption('CacheControl', 'max-age=3600')
+                //->setOption('ContentType', $content_type) //Doesn't work anymore
                 ->setKey($s3file)
                 ->build();
 
