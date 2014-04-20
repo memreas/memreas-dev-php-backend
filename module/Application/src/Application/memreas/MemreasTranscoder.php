@@ -467,16 +467,16 @@ error_log("created dir ---> $dir".PHP_EOL);
 		// $cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_mp4_file ".'2>&1';
 		
 		if ($type == 'web') {
-			$qv="";
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->VideoFileName . '.mp4';
+			$qv="-vcodec mpeg4";
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->VideoFileName . '.m4v';
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == '1080p') {
-			$qv='-q:v 1';
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.mp4';
+			$qv='-vcodec mpeg4 -q:v 1';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.m4v';
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == 'hls') {
 			//Note: this section uses the transcoded 1080p file above 
-			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.mp4';
+			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.m4v';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName . '.m3u8';
 			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName;
 			// Sample: http://sinclairmediatech.com/encoding-hls-with-ffmpeg/
@@ -510,7 +510,7 @@ error_log("cmd ---> $cmd".PHP_EOL);
 		}
 
 		//Push to S3
-		$s3file = $this->user_id.'/media/'.$type.'/'.$this->VideoFileName.'.mp4';
+		$s3file = $this->user_id.'/media/'.$type.'/'.$this->VideoFileName.'.m4v';
 		if ($type == "hls") {
 			$s3file = $this->user_id.'/media/'.$type.'/'.$this->VideoFileName.'.m3u8';
 			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "application/x-mpegurl");
