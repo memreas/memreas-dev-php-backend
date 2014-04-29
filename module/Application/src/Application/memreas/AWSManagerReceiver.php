@@ -232,7 +232,7 @@ error_log("Inside resize file ----> " . $file . PHP_EOL);
         return $file;    	
 	}
 
-    function pushMediaToS3($file, $s3file, $content_type) {
+    function pushMediaToS3($file, $s3file, $content_type, $isVideo = false) {
 error_log("Inside pushMediaToS3"  . PHP_EOL); 
 error_log("Inside pushMediaToS3 file ---> $file" . PHP_EOL); 
 error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL); 
@@ -248,9 +248,11 @@ error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
                 //->setMinPartSize(10 * Size::MB)
 		        //->setOption('Metadata', array('ContentType' => $content_type)) //Doesn't work
         		->setOption('CacheControl', 'max-age=3600')
-                //->setOption('ContentType', $content_type) //Doesn't work anymore
+                ->setOption('ContentType', $content_type) //Doesn't work anymore
                 ->setKey($s3file)
                 ->build();
+error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
+//error_log("Inside pushMediaToS3 uploader ----> " . print_r($uploader,true)  . PHP_EOL); 
 
         //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
         try {
@@ -260,8 +262,28 @@ error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
             $uploader->abort();
             error_log( "Upload failed.\n", 0);
         }
-//error_log("Exit pushMediaToS3" . print_r($result,true)  . PHP_EOL); 
-    	return $result;
+//error_log("Inside pushMediaToS3" . print_r($result,true)  . PHP_EOL); 
+error_log("Inside pushMediaToS3 - past uploader->upload" . PHP_EOL);
+        
+        //Set the content type - why is this soooo difficult?
+        $opt = array();     
+        $opt['CacheControl'] = 'max-age=3600';
+           
+//         if ($isVideo) {
+// error_log("Inside pushMediaToS3 isVideo is true". PHP_EOL); 
+// error_log("Inside pushMediaToS3 uploader ----> " . print_r($uploader,true)  . PHP_EOL); 
+// 			//$cct = $this->s3->change_content_type(MemreasConstants::S3BUCKET, $s3file, $content_type, $opt);
+// 			/*
+// 			 * This code below results in the Guzzle error - why is this so hard? 
+// 			 */
+//         	$cct = $this->s3->change_content_type(MemreasConstants::S3BUCKET, $s3file, $content_type);
+//         	if ($cct->isOK())
+//         		error_log("Inside pushMediaToS3 - SUCCESS - set content type".PHP_EOL);
+//         	else
+//         		error_log("Inside pushMediaToS3 - FAIL - set content type".PHP_EOL);
+//         }	
+        	
+        return $result;
     }
 	
     function fetchResizeUpload($message_data, $job_dir, $s3file, $s3output_path, $height, $width) {

@@ -51,19 +51,20 @@ class MemreasTranscoder {
 	protected $destRandVideoName;
 	protected $original_file_name;
 	protected $VideoFileName;
-	const WEBHOME = '/var/app/current/data/';
-	const DESTDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
-	const CONVDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
-	const _1080PDIR = '1080p/'; // Your 1080p Dir, end with slash (/)
+	const WEBHOME 		= '/var/app/current/data/';
+	const DESTDIR 		= 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
+	const CONVDIR 		= 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
+	const _1080PDIR 	= '1080p/'; // Your 1080p Dir, end with slash (/)
 	const THUMBNAILSDIR = 'thumbnails/'; // Your thumbnails Dir, end with slash (/)
-	const AUDIODIR = 'audio/'; // Your audio Dir, end with slash (/)
-	const HLSDIR = 'hls/'; // Your hls Dir, end with slash (/)
-	const WEBDIR = 'web/'; // Your web Dir, end with slash (/)
-	const WEBMDIR = 'webm/'; // Your webm Dir, end with slash (/)
-	const _79X80 = '79x80/'; // Your 79x80 Dir, end with slash (/)
-	const _448X306 = '448x306/'; // Your 448x306 Dir, end with slash (/)
-	const _384X216 = '384x216/'; // Your 384x216 Dir, end with slash (/)
-	const _98X78 = '98x78/'; // Your 98x78 Dir, end with slash (/)
+	const AUDIODIR 		= 'audio/'; // Your audio Dir, end with slash (/)
+	const HLSDIR 		= 'hls/'; // Your hls Dir, end with slash (/)
+	const WEBDIR		= 'web/'; // Your web Dir, end with slash (/)
+	const WEBMDIR 		= 'webm/'; // Your webm Dir, end with slash (/)
+	const FLVDIR 		= 'flv/'; // Your flv Dir, end with slash (/)
+	const _79X80 		= '79x80/'; // Your 79x80 Dir, end with slash (/)
+	const _448X306 		= '448x306/'; // Your 448x306 Dir, end with slash (/)
+	const _384X216 		= '384x216/'; // Your 384x216 Dir, end with slash (/)
+	const _98X78 		= '98x78/'; // Your 98x78 Dir, end with slash (/)
 	
 	/*
 	 * Thumbnail settings $tnWidth = 448; $tnHeight = 306; $tnfreqency = 60; // in seconds - 60 means every 60 seconds (minute) $errstr = '';
@@ -188,6 +189,8 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 						break;
 					case 'video/3gpp' :
 						break;
+					case 'video/3gp' :
+						break;
 					case 'video/webm' :
 						break;
 					case 'video/mp1s' :
@@ -278,7 +281,7 @@ error_log ( "insert data: metadata ---> $this->json_metadata".PHP_EOL);
 						'transcode_start_time' => $this->transcode_start_time
 				) );
 				$transcode_transaction_id = $memreas_transcoder_tables->getTranscodeTransactionTable ()->saveTranscodeTransaction ( $transcode_transaction );
-error_log ( "Inserted transcode_transaction --> $transcode_transaction_id" . PHP_EOL );
+//error_log ( "Inserted transcode_transaction --> $transcode_transaction_id" . PHP_EOL );
 				
 				if ($this->isVideo) {
 					// Create Thumbnails
@@ -291,7 +294,16 @@ error_log("Finished web..." . PHP_EOL);
 					// Create high quality mpeg
 					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
 error_log("Finished 1080p..." . PHP_EOL);
-// Create high quality mpeg
+					// Create webm file
+//					$transcode_job_meta ['webm'] = $this->transcode ( 'webm' );
+//error_log("Finished webm..." . PHP_EOL);
+					// Create flash file
+//					$transcode_job_meta ['flv'] = $this->transcode ( 'flv' );
+//error_log("Finished flv..." . PHP_EOL);
+					// Create ts
+					$transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
+error_log("Finished ts..." . PHP_EOL);
+					// Create hls
 					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
 error_log("Finished hls..." . PHP_EOL);
 					// Update the metadata here for the transcoded files
@@ -318,8 +330,7 @@ error_log("pass_fail --> ".$this->pass.PHP_EOL);
 error_log("metadata --> ".$this->json_metadata.PHP_EOL);
 error_log("transcode_job_duration --> ".$this->transcode_job_duration.PHP_EOL);
 error_log("transcode_start_time --> ".$this->transcode_start_time.PHP_EOL);
-error_log("transcode_end_time --> ".$this->transcode_end_time.PHP_EOL);
-				
+error_log("transcode_end_time --> ".$this->transcode_end_time.PHP_EOL);				
 				
 				///////////////////////////////
 				// Update transcode_transaction
@@ -426,7 +437,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
 					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] = $fmt [$key] . basename ( $filename );
-error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
+//error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 				}
 			}
 		} // End for each thumbnail
@@ -456,7 +467,7 @@ error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_
 			if (mkdir ( $dir ))
 				chmod ( $dir, $permissions );
 			umask ( $save );
-error_log("created dir ---> $dir".PHP_EOL);			
+//error_log("created dir ---> $dir".PHP_EOL);			
 		}
 	}
 	
@@ -466,17 +477,41 @@ error_log("created dir ---> $dir".PHP_EOL);
 		// $command =array_merge(array( '-i',$this->destRandVideoName,'-vcodec', 'libx264', '-vsync', '1', '-bt', '50k','-movflags', 'frag_keyframe+empty_moov'),$ae,$customParams,array($this->homeDir.self::CONVDIR.self::WEBDIR.$this->original_file_name.'x264.mp4','2>&1'));
 		// $cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_mp4_file ".'2>&1';
 		
+		$mpeg4ext = '.MP4';
+		$tsext = '.ts';
 		if ($type == 'web') {
-			$qv="-vcodec mpeg4";
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->VideoFileName . '.m4v';
+			$qv=' -c:v mpeg4 ';
+			//$qv='';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->VideoFileName . $mpeg4ext;
+			$transcoded_file_name = $this->VideoFileName . $mpeg4ext;
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == '1080p') {
-			$qv='-vcodec mpeg4 -q:v 1';
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.m4v';
+			$qv=' -c:v mpeg4 -q:v 1 ';
+			//$qv='-vcodec mpeg4 -q:v 1';
+			$qv='';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . $mpeg4ext; 
+			$transcoded_file_name = $this->VideoFileName . $mpeg4ext;
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
+		} else if ($type == 'ts') {
+			$qv='';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . $tsext; 
+			$transcoded_file_name = $this->VideoFileName . $tsext;
+			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
+//		} else if ($type == 'webm') {
+//			$qv=' -c:v libvpx -c:a libvorbis  -b:v 2000k -q:a 3 ';
+//			$transcoded_file = $this->homeDir . self::CONVDIR . self::FLVDIR . $this->VideoFileName . '.webm';
+//			$transcoded_file_name = $this->VideoFileName . '.webm';
+//			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
+//		} else if ($type == 'flv') {
+//			$qv='';
+//			$transcoded_file = $this->homeDir . self::CONVDIR . self::FLVDIR . $this->VideoFileName . '.flv';
+//			$transcoded_file_name = $this->VideoFileName . '.flv';
+//			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == 'hls') {
 			//Note: this section uses the transcoded 1080p file above 
-			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . '.m4v';
+			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . $mpeg4ext;
+			$transcoded_file_name = $this->VideoFileName . $mpeg4ext;
+			//$transcoded_mp4_file = $this->destRandVideoName;
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName . '.m3u8';
 			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName;
 			// Sample: http://sinclairmediatech.com/encoding-hls-with-ffmpeg/
@@ -510,7 +545,7 @@ error_log("cmd ---> $cmd".PHP_EOL);
 		}
 
 		//Push to S3
-		$s3file = $this->user_id.'/media/'.$type.'/'.$this->VideoFileName.'.m4v';
+		$s3file = $this->user_id.'/media/'.$type.'/'.$transcoded_file_name;
 		if ($type == "hls") {
 			$s3file = $this->user_id.'/media/'.$type.'/'.$this->VideoFileName.'.m3u8';
 			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "application/x-mpegurl");
@@ -528,7 +563,7 @@ error_log("pushed to S3 --> $s3tsfile ---> $s3tsfile".PHP_EOL);
 			}
 		} else {
 error_log("pushed to S3 --> $s3file ---> $s3file".PHP_EOL);
-			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "video/mpeg");
+			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "video/mpeg", true);
 			$fsize = filesize ( $transcoded_file );
 		}
 
