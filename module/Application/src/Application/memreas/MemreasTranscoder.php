@@ -59,6 +59,7 @@ class MemreasTranscoder {
 	const THUMBNAILSDIR = 'thumbnails/'; // Your thumbnails Dir, end with slash (/)
 	const AUDIODIR 		= 'audio/'; // Your audio Dir, end with slash (/)
 	const HLSDIR 		= 'hls/'; // Your hls Dir, end with slash (/)
+	const TSDIR 		= 'ts/'; // Your hls Dir, end with slash (/)
 	const WEBDIR		= 'web/'; // Your web Dir, end with slash (/)
 	const WEBMDIR 		= 'webm/'; // Your webm Dir, end with slash (/)
 	const FLVDIR 		= 'flv/'; // Your flv Dir, end with slash (/)
@@ -255,24 +256,24 @@ error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
 				}
 				
-error_log ( "media_type --> $this->VideoFileType");
-error_log ( "media_extension --> $this->VideoExt");
-error_log ( "file_name --> $this->original_file_name");
-error_log ( "media_duration --> $this->duration");
-error_log ( "media_size --> $this->filesize");
-error_log ( "pass_fail --> $this->pass");
-error_log ( "metadata --> $this->json_metadata");
-error_log ( "transcode_job_duration --> $this->transcode_job_duration");
-error_log ( "transcode_start_time --> $this->transcode_start_time");
-error_log ( "insert data: user_id ---> $this->user_id".PHP_EOL);
-error_log ( "insert data: media_id ---> $this->media_id".PHP_EOL);
-error_log ( "insert data: media_type ---> $this->VideoFileType".PHP_EOL);
-error_log ( "insert data: media_extension ---> $this->VideoExt".PHP_EOL);
-error_log ( "insert data: file_name ---> $this->original_file_name".PHP_EOL);
-error_log ( "insert data: media_duration ---> $this->duration".PHP_EOL);
-error_log ( "insert data: media_size ---> $this->filesize".PHP_EOL);
-error_log ( "insert data: pass_fail ---> $this->pass".PHP_EOL);
-error_log ( "insert data: metadata ---> $this->json_metadata".PHP_EOL);
+// error_log ( "media_type --> $this->VideoFileType");
+// error_log ( "media_extension --> $this->VideoExt");
+// error_log ( "file_name --> $this->original_file_name");
+// error_log ( "media_duration --> $this->duration");
+// error_log ( "media_size --> $this->filesize");
+// error_log ( "pass_fail --> $this->pass");
+// error_log ( "metadata --> $this->json_metadata");
+// error_log ( "transcode_job_duration --> $this->transcode_job_duration");
+// error_log ( "transcode_start_time --> $this->transcode_start_time");
+// error_log ( "insert data: user_id ---> $this->user_id".PHP_EOL);
+// error_log ( "insert data: media_id ---> $this->media_id".PHP_EOL);
+// error_log ( "insert data: media_type ---> $this->VideoFileType".PHP_EOL);
+// error_log ( "insert data: media_extension ---> $this->VideoExt".PHP_EOL);
+// error_log ( "insert data: file_name ---> $this->original_file_name".PHP_EOL);
+// error_log ( "insert data: media_duration ---> $this->duration".PHP_EOL);
+// error_log ( "insert data: media_size ---> $this->filesize".PHP_EOL);
+// error_log ( "insert data: pass_fail ---> $this->pass".PHP_EOL);
+// error_log ( "insert data: metadata ---> $this->json_metadata".PHP_EOL);
 
 				/*
 				 * Insert transcode_transaction so we have a record
@@ -311,9 +312,9 @@ error_log("Finished 1080p..." . PHP_EOL);
 					// Create flash file
 //					$transcode_job_meta ['flv'] = $this->transcode ( 'flv' );
 //error_log("Finished flv..." . PHP_EOL);
-					// Create ts
-					$transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
-error_log("Finished ts..." . PHP_EOL);
+// 					// Create ts
+// 					$transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
+// error_log("Finished ts..." . PHP_EOL);
 					// Create hls
 					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
 error_log("Finished hls..." . PHP_EOL);
@@ -330,18 +331,18 @@ error_log("Finished audio..." . PHP_EOL);
 					$this->json_metadata = json_encode ( $transcode_job_meta );
 				}
 //Debugging
-error_log("Insert transcode_transaction values...".PHP_EOL);
-error_log("user_id --> ".$this->user_id.PHP_EOL);
-error_log("media_type --> ".$this->VideoFileType.PHP_EOL);
-error_log("media_extension --> ".$this->VideoExt.PHP_EOL);
-error_log("file_name --> ".$this->original_file_name.PHP_EOL);
-error_log("media_duration --> ".$this->duration.PHP_EOL);
-error_log("media_size --> ".$this->filesize.PHP_EOL);
-error_log("pass_fail --> ".$this->pass.PHP_EOL);
-error_log("metadata --> ".$this->json_metadata.PHP_EOL);
-error_log("transcode_job_duration --> ".$this->transcode_job_duration.PHP_EOL);
-error_log("transcode_start_time --> ".$this->transcode_start_time.PHP_EOL);
-error_log("transcode_end_time --> ".$this->transcode_end_time.PHP_EOL);				
+// error_log("Insert transcode_transaction values...".PHP_EOL);
+// error_log("user_id --> ".$this->user_id.PHP_EOL);
+// error_log("media_type --> ".$this->VideoFileType.PHP_EOL);
+// error_log("media_extension --> ".$this->VideoExt.PHP_EOL);
+// error_log("file_name --> ".$this->original_file_name.PHP_EOL);
+// error_log("media_duration --> ".$this->duration.PHP_EOL);
+// error_log("media_size --> ".$this->filesize.PHP_EOL);
+// error_log("pass_fail --> ".$this->pass.PHP_EOL);
+// error_log("metadata --> ".$this->json_metadata.PHP_EOL);
+// error_log("transcode_job_duration --> ".$this->transcode_job_duration.PHP_EOL);
+// error_log("transcode_start_time --> ".$this->transcode_start_time.PHP_EOL);
+// error_log("transcode_end_time --> ".$this->transcode_end_time.PHP_EOL);				
 				
 				///////////////////////////////
 				// Update transcode_transaction
@@ -381,7 +382,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		// Delete the temp dir if we got this far...
 		try {
 //error_log("Recursive delete $this->homeDir".PHP_EOL);			
-//			$result = $this->rmWorkDir ( $this->homeDir );
+			$result = $this->rmWorkDir ( $this->homeDir );
 		} catch ( \Exception $e ) {
 			$this->pass = 0;
 			error_log ( "error string ---> " . $e->getMessage () . PHP_EOL );
@@ -468,6 +469,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 				$this->homeDir . self::DESTDIR . self::WEBDIR, // data/temp_job_uuid_dir/media/web/
 				$this->homeDir . self::DESTDIR . self::AUDIODIR, // data/temp_job_uuid_dir/media/webm/
 				$this->homeDir . self::DESTDIR . self::_1080PDIR,  // data/temp_job_uuid_dir/media/p1080/
+				$this->homeDir . self::DESTDIR . self::TSDIR,  // data/temp_job_uuid_dir/media/hls/
 				$this->homeDir . self::DESTDIR . self::HLSDIR,  // data/temp_job_uuid_dir/media/hls/
 		);
 		
@@ -492,23 +494,26 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		$tsext = '.ts';
 		$aacext = '.m4a';
 		if ($type == 'web') {
-			$qv=' -c:v mpeg4 ';
+			//$qv=' -c:v mpeg4 ';
+			$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
 			//$qv='';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->VideoFileName . $mpeg4ext;
 			$transcoded_file_name = $this->VideoFileName . $mpeg4ext;
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
 		} else if ($type == '1080p') {
-			$qv=' -c:v mpeg4 -q:v 1 ';
-			//$qv='-vcodec mpeg4 -q:v 1';
-			$qv='';
+			//$qv=' -c:v mpeg4 -q:v 1 ';
+			$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . $mpeg4ext; 
 			$transcoded_file_name = $this->VideoFileName . $mpeg4ext;
 			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
-		} else if ($type == 'ts') {
-			$qv='';
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . $tsext; 
-			$transcoded_file_name = $this->VideoFileName . $tsext;
-			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
+// 		} else if ($type == 'ts') {
+// 			//$qv=' -c:v mpeg2video -q:v 3 -strict experimental -c:a aac ';
+// 			//$qv=' -vcodec copy -acodec copy -f mpegts ';
+// 			$qv=' -codec copy -bsf:v h264_mp4toannexb -f mpegts ';
+// 			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . $mpeg4ext;
+// 			$transcoded_file = $this->homeDir . self::CONVDIR . self::TSDIR . $this->VideoFileName . $tsext; 
+// 			$transcoded_file_name = $this->VideoFileName . $tsext;
+// 			$cmd = $this->ffmpegcmd ." -i $transcoded_mp4_file $qv $transcoded_file ".'2>&1';
 //		} else if ($type == 'webm') {
 //			$qv=' -c:v libvpx -c:a libvorbis  -b:v 2000k -q:a 3 ';
 //			$transcoded_file = $this->homeDir . self::CONVDIR . self::FLVDIR . $this->VideoFileName . '.webm';
@@ -523,18 +528,44 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 			//Note: this section uses the transcoded 1080p file above 
 			$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->VideoFileName . $mpeg4ext;
 			$transcoded_file_name = $this->VideoFileName . $mpeg4ext;
+			//$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::TSDIR . $this->VideoFileName . $tsext;
+			//$transcoded_file_name = $this->VideoFileName . $tsext;
 			//$transcoded_mp4_file = $this->destRandVideoName;
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName . '.m3u8';
 			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->VideoFileName;
 			// Sample: http://sinclairmediatech.com/encoding-hls-with-ffmpeg/
+// 			$cmd = $this->ffmpegcmd .
+// 				" -re -y -i ".$transcoded_mp4_file.
+// 				" -map 0 ".
+// 				" -f segment ".
+// 				" -segment_list ".$transcoded_file.
+// 				//" -segment_list_flags +live ".
+// 				" -segment_time 5 ".
+// 				" -segment_format mpegts ".
+// 				" -segment_list_type m3u8 ".
+// 				$transcoded_hls_ts_file."%05d.ts".
+// 				' 2>&1';
+			
 			$cmd = $this->ffmpegcmd .
 				" -re -y -i ".$transcoded_mp4_file.
 				" -map 0 ".
-				" -f segment ".
+				" -pix_fmt yuv420p ". 
+				" -vcodec libx264 ". 
+				" -acodec libfdk_aac ". 
+				" -r 25 ". 
+				//" -profile:v baseline ". 
+				" -profile:v main -level 4.0 ". 
+				" -b:v 1500k ". 
+				" -maxrate 2000k ". 
+				" -force_key_frames 50 ". 
+				//" -s 640x360 ". 
+				" -flags -global_header ". 
+				" -f segment ". 
+				" -segment_list_type m3u8 ".
 				" -segment_list ".$transcoded_file.
-				" -segment_list_flags +live ".
-				" -segment_time 1 ".
-				" -segment_list_type m3u8 ".$transcoded_hls_ts_file."%05d.ts".
+				" -segment_time 10 ". 
+				" -segment_format mpeg_ts ". 
+				$transcoded_hls_ts_file."%05d.ts".
 				' 2>&1';
 		} else if ($type == 'audio') {
 			/*
@@ -549,13 +580,15 @@ error_log("Inside transcode type=audio ...".PHP_EOL);
 		} else
 			throw new \Exception("MemreasTranscoder $type not found.");
 
-error_log("cmd ---> $cmd".PHP_EOL);				
+error_log("cmd2 ---> $cmd".PHP_EOL);				
 		$this->pass = 0;
 		$output_start_time = date ( "Y-m-d H:i:s" );
 		try {
 			$op = shell_exec ( $cmd );
 			if (!file_exists($transcoded_file))
 				throw new \Exception($op);
+			else 
+				$pass = 1;
 		} catch ( \Exception $e ) {
 			$this->pass = 0;
 			error_log ( "transcoder $type failed - op -->" . $op . PHP_EOL );

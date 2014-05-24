@@ -181,10 +181,10 @@ error_log("metadata after ----> " . $json . PHP_EOL);
     }
 
     function pullMediaFromS3($s3file, $file) {
-error_log("Inside pullMediaFromS3"  . PHP_EOL); 
-error_log("Bucket ---> ".MemreasConstants::S3BUCKET. PHP_EOL); 
-error_log("Key ---> ".$s3file. PHP_EOL); 
-error_log("SaveAs ---> ".$file. PHP_EOL); 
+//error_log("Inside pullMediaFromS3"  . PHP_EOL); 
+//error_log("Bucket ---> ".MemreasConstants::S3BUCKET. PHP_EOL); 
+//error_log("Key ---> ".$s3file. PHP_EOL); 
+//error_log("SaveAs ---> ".$file. PHP_EOL); 
 
 	try {
 			$result = $this->s3->getObject(array(
@@ -192,13 +192,12 @@ error_log("SaveAs ---> ".$file. PHP_EOL);
 				'Key' => $s3file,
 				'SaveAs' => $file
 			));
-//error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
+error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
 //error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 		} catch(Aws\S3\Exception\S3Exception $e) {
 			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
 			throw $e;
 		}
-
 		return true;
     }
 
@@ -248,8 +247,9 @@ error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
                 ->setBucket(MemreasConstants::S3BUCKET)
                 //->setMinPartSize(10 * Size::MB)
 		        //->setOption('Metadata', array('ContentType' => $content_type)) //Doesn't work
-        		->setOption('CacheControl', 'max-age=3600')
-                ->setOption('ContentType', $content_type) //Doesn't work anymore
+        		//->setOption('CacheControl', 'max-age=3600')
+                //->setOption('ContentType', $content_type) //Doesn't work anymore
+                ->setHeaders(array('Content-Type' => $content_type))
                 ->setKey($s3file)
                 ->build();
 error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
