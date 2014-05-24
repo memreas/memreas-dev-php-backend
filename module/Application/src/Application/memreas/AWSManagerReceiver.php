@@ -70,7 +70,7 @@ class AWSManagerReceiver {
     	try {
     		
 error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
-			if ($message_data['isVideo']) {
+			if ($message_data['isVideo'] || $message_data['isAudio']) {
 				//Transcode, fetch thumbnail and resize as needed
 				if ($message_data['memreastranscoder']) {
 error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data['memreastranscoder']. PHP_EOL);
@@ -192,12 +192,13 @@ error_log("SaveAs ---> ".$file. PHP_EOL);
 				'Key' => $s3file,
 				'SaveAs' => $file
 			));
-error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
-error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
+//error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
+//error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 		} catch(Aws\S3\Exception\S3Exception $e) {
 			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
 			throw $e;
 		}
+
 		return true;
     }
 

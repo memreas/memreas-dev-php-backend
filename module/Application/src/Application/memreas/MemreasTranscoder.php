@@ -28,6 +28,7 @@ class MemreasTranscoder {
 	protected $s3path;
 	protected $s3file_name;
 	protected $isVideo;
+	protected $isAudio;
 	protected $session;
 	protected $aws_manager_receiver;
 	protected $memreas_media_metadata;
@@ -86,6 +87,7 @@ class MemreasTranscoder {
 			$this->s3path = $message_data ['s3path'];
 			$this->s3file_name = $message_data ['s3file_name'];
 			$this->isVideo = $message_data ['isVideo'];
+			$this->isAudio = $message_data ['isAudio'];
 			$this->json_metadata = json_encode($message_data);
 			
 			// Fetch the media entry here:
@@ -147,7 +149,7 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $this->original_file_name; // Name for Big Video
 						                                                                 // $this->destRandVideoName = $tmp_file;
 				} else if (isset ( $_FILES ['VideoFile'] ) && is_uploaded_file ( $_FILES ['VideoFile'] ['tmp_name'] [0] )) {
-					
+/*					
 					error_log ( "Inside if videofile and is uploaded...." . PHP_EOL );
 					// Elements (values) of $_FILES['VideoFile'] array
 					// let's access these values by using their index position
@@ -165,7 +167,9 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 					$this->original_file_name = $this->VideoFileName . "." . $this->VideoExt;
 					// set the Destination Video
 					
-					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $this->original_file_name; 
+					$this->destRandVideoName = $this->homeDir . self::DESTDIR . $this->original_file_name;
+*/
+error_log("Inside Memreas Transcode reach Upload section - error - this shouldn't occur".PHP_EOL);										 
 				} else if (! isset ( $_FILES ['VideoFile'] ) || ! is_uploaded_file ( $_FILES ['VideoFile'] ['tmp_name'] [0] )) {
 					throw new \Exception ( 'Something went wrong with Upload!' ); // output error when above checks fail.
 				}
@@ -199,6 +203,10 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 						break;
 					case 'audio/caf' :
 						break;
+					case 'audio/vnd.wav' :
+						break;
+					case 'audio/mpeg' :
+						break;												
 					default :
 						{
 							// Set status
@@ -210,6 +218,8 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 				
 				// Save file in upload destination
 				if ($isUpload) {
+error_log("Inside Memreas Transcode reach Upload section - error - this shouldn't occur".PHP_EOL);										 
+/*
 					move_uploaded_file ( $TempSrc, $this->destRandVideoName );
 					// Put to S3 here...
 					$s3file = $this->user_id . '/media/' . $this->original_file_name;
@@ -231,11 +241,12 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 							'update_date' => $now 
 					) );
 					$this->media_id = $memreas_transcoder_tables->getMediaTable ()->saveMedia ( $memreas_media );
+*/
 				} else {
 error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
 				}
 				
-				if ($this->isVideo) {
+				if ($this->isVideo  || $this->isAudio) {
 					//Calc video vars
 					$this->duration = str_replace ( ",", "", shell_exec ( "$this->ffmpegcmd -i $this->destRandVideoName 2>&1 | grep 'Duration' | cut -d ' ' -f 4" ) );
 					$timed = explode ( ":", $this->duration );
@@ -479,6 +490,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		
 		$mpeg4ext = '.MP4';
 		$tsext = '.ts';
+		$aacext = '.m4a';
 		if ($type == 'web') {
 			$qv=' -c:v mpeg4 ';
 			//$qv='';
@@ -528,6 +540,12 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 			/*
 			 * TODO: add audio cmd
 			 */
+error_log("Inside transcode type=audio ...".PHP_EOL);
+			$qv=' -c:a libfdk_aac -movflags +faststart ';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::AUDIODIR . $this->VideoFileName . $aacext; 
+			$transcoded_file_name = $this->VideoFileName . $mpeg4ext;
+			$cmd = $this->ffmpegcmd ." -i $this->destRandVideoName $qv $transcoded_file ".'2>&1';
+			
 		} else
 			throw new \Exception("MemreasTranscoder $type not found.");
 
@@ -561,9 +579,13 @@ error_log("pushed to S3 --> $s3file ---> $s3file".PHP_EOL);
 error_log("pushed to S3 --> $s3tsfile ---> $s3tsfile".PHP_EOL);
 				$this->aws_manager_receiver->pushMediaToS3($filename, $s3tsfile, "video/mp2t");
 			}
+		} else if ($this->isAudio) {
+error_log("pushed to S3 --> $s3file ---> $s3file".PHP_EOL);
+			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "audio/mp4", true);
+			$fsize = filesize ( $transcoded_file );
 		} else {
 error_log("pushed to S3 --> $s3file ---> $s3file".PHP_EOL);
-			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "video/mpeg", true);
+			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "video/mp4", true);
 			$fsize = filesize ( $transcoded_file );
 		}
 
