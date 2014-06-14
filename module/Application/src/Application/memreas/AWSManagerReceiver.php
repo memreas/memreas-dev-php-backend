@@ -70,7 +70,7 @@ class AWSManagerReceiver {
     	try {
     		
 error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
-			if ($message_data['isVideo'] || $message_data['isAudio']) {
+			if ($message_data['is_video'] || $message_data['is_audio']) {
 				//Transcode, fetch thumbnail and resize as needed
 				if ($message_data['memreastranscoder']) {
 error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data['memreastranscoder']. PHP_EOL);
@@ -146,17 +146,14 @@ error_log("About to create thumbnails...".PHP_EOL);
 						$metadata['S3_files']['thumbnails'][$dim] = $s3thumbnail['Key'];
 						
 					}
-				} else {
-error_log("What went wrong? result ----> ".$result.PHP_EOL);					
 				} 
-					
-				
+
 error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
 
 				////////////////////////////////////////////////////////////////////
 				// Store the metadata here...
 				$json = json_encode($metadata);
-error_log("metadata after ----> " . $json . PHP_EOL);
+// error_log("metadata after ----> " . $json . PHP_EOL);
 //error_log("Inside snsProcessMediaSubscribe json ----> $json" . PHP_EOL);            
 				$media->metadata = $json;
 //error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
@@ -192,7 +189,7 @@ error_log("metadata after ----> " . $json . PHP_EOL);
 				'Key' => $s3file,
 				'SaveAs' => $file
 			));
-error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
+// error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
 //error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 		} catch(Aws\S3\Exception\S3Exception $e) {
 			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
@@ -227,16 +224,16 @@ error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.
         $layer->save($job_sub_dir, $file_name, $createFolders, $backgroundColor, $imageQuality);
         //$file = $dirPath . $thumbnail_name;
         $file = $job_sub_dir . $file_name;
-error_log("Inside resize file ----> " . $file . PHP_EOL); 
+// error_log("Inside resize file ----> " . $file . PHP_EOL); 
         
         return $file;    	
 	}
 
     function pushMediaToS3($file, $s3file, $content_type, $isVideo = false) {
-error_log("Inside pushMediaToS3"  . PHP_EOL); 
-error_log("Inside pushMediaToS3 file ---> $file" . PHP_EOL); 
-error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL); 
-error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL); 
+// error_log("Inside pushMediaToS3"  . PHP_EOL); 
+// error_log("Inside pushMediaToS3 file ---> $file" . PHP_EOL); 
+// error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL); 
+// error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL); 
         $body = EntityBody::factory(fopen($file, 'r+'));
 //error_log("Inside fetchResizeUpload - thumbnail_file is  --> " . $thumbnail_file);                	
         /////////////////////////////////////////////////////////////////////
@@ -245,14 +242,11 @@ error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
                 ->setClient($this->s3)
                 ->setSource($body)
                 ->setBucket(MemreasConstants::S3BUCKET)
-                //->setMinPartSize(10 * Size::MB)
-		        //->setOption('Metadata', array('ContentType' => $content_type)) //Doesn't work
-        		//->setOption('CacheControl', 'max-age=3600')
-                //->setOption('ContentType', $content_type) //Doesn't work anymore
                 ->setHeaders(array('Content-Type' => $content_type))
+        		->setOption('CacheControl', 'max-age=3600')
                 ->setKey($s3file)
                 ->build();
-error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
+//error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
 //error_log("Inside pushMediaToS3 uploader ----> " . print_r($uploader,true)  . PHP_EOL); 
 
         //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
@@ -264,26 +258,12 @@ error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
             error_log( "Upload failed.\n", 0);
         }
 //error_log("Inside pushMediaToS3" . print_r($result,true)  . PHP_EOL); 
-error_log("Inside pushMediaToS3 - past uploader->upload" . PHP_EOL);
+//error_log("Inside pushMediaToS3 - past uploader->upload" . PHP_EOL);
         
         //Set the content type - why is this soooo difficult?
         $opt = array();     
         $opt['CacheControl'] = 'max-age=3600';
-           
-//         if ($isVideo) {
-// error_log("Inside pushMediaToS3 isVideo is true". PHP_EOL); 
-// error_log("Inside pushMediaToS3 uploader ----> " . print_r($uploader,true)  . PHP_EOL); 
-// 			//$cct = $this->s3->change_content_type(MemreasConstants::S3BUCKET, $s3file, $content_type, $opt);
-// 			/*
-// 			 * This code below results in the Guzzle error - why is this so hard? 
-// 			 */
-//         	$cct = $this->s3->change_content_type(MemreasConstants::S3BUCKET, $s3file, $content_type);
-//         	if ($cct->isOK())
-//         		error_log("Inside pushMediaToS3 - SUCCESS - set content type".PHP_EOL);
-//         	else
-//         		error_log("Inside pushMediaToS3 - FAIL - set content type".PHP_EOL);
-//         }	
-        	
+                   	
         return $result;
     }
 	
