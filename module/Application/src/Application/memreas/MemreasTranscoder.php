@@ -81,6 +81,8 @@ class MemreasTranscoder {
 		error_log ( "message_data----> " . print_r ( $message_data, true ) . PHP_EOL );
 		
 		try {
+			// date_default_timezone_set('UTC');
+			$starttime = date ( 'Y-m-d H:i:s' );
 			// $message_data entries
 			$this->user_id = $message_data ['user_id'];
 			$this->media_id = $message_data ['media_id'];
@@ -94,13 +96,13 @@ class MemreasTranscoder {
 			// Fetch the media entry here:
 			$memreas_media = $memreas_transcoder_tables->getMediaTable ()->getMedia ( $this->media_id );
 			$this->memreas_media_metadata = json_decode ( $memreas_media->metadata, true );
-			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start';
+			// date_default_timezone_set('UTC');
+			$starttime = date ( 'Y-m-d H:i:s' );
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@'.$starttime;
 			
 //Debugging
 error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_EOL );
 			
-			// date_default_timezone_set('UTC');
-			$starttime = date ( 'Y-m-d H:i:s' );
 			if (isset ( $message_data )) {
 				if (getcwd () == '/var/app/current') {
 					error_log ( "found /var/app/current" . PHP_EOL );
@@ -279,6 +281,8 @@ error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
 				 * Insert transcode_transaction so we have a record
 				 */
 				$now = date ( 'Y-m-d H:i:s' );
+				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@'.$now;
+				
 				$transcode_transaction = new TranscodeTransaction();
 				$transcode_transaction->exchangeArray ( array (
 						'user_id' => $this->user_id,
@@ -318,8 +322,6 @@ error_log("Finished 1080p..." . PHP_EOL);
 					// Create hls
 					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
 error_log("Finished hls..." . PHP_EOL);
-					// Update the metadata here for the transcoded files
-					$this->json_metadata = json_encode ( $transcode_job_meta );
 				} // End if ($is_video)
 				else {  
 					//Audio section
@@ -328,8 +330,12 @@ error_log("Finished hls..." . PHP_EOL);
 					$transcode_job_meta ['audio'] = $this->transcode ( 'audio' );
 error_log("Finished audio..." . PHP_EOL);
 					// Update the metadata here for the transcoded files
-					$this->json_metadata = json_encode ( $transcode_job_meta );
 				}
+				// Update the metadata here for the transcoded files
+				$now = date ( 'Y-m-d H:i:s' );
+				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_end@'.$now;
+				$this->json_metadata = json_encode ( $transcode_job_meta );
+				
 //Debugging
 // error_log("Insert transcode_transaction values...".PHP_EOL);
 // error_log("user_id --> ".$this->user_id.PHP_EOL);
@@ -448,7 +454,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 					//Push to S3
 					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
-					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] = $fmt [$key] . basename ( $filename );
+					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [] = $fmt [$key] . basename ( $filename );
 //error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 				}
 			}
