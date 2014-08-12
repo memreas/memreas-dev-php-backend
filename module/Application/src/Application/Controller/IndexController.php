@@ -82,7 +82,7 @@ error_log("Inside transcoderAction bew..." . PHP_EOL);
 		
 		//Fetch the post data
 		foreach (getallheaders() as $name => $value) {
-//error_log("$name : $value\n", 0);
+error_log("$name : $value\n", 0);
 			/*
 			 * SNS Topic Section - deprecated
 			 */
