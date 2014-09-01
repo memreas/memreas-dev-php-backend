@@ -411,7 +411,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 				'-f',
 				'image2',
 				'-vf',
-				'fps=fps=1/' . $tnfreqency,
+				'fps=fps=' . $tnfreqency,
 				$this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . $imagename,
 				'2>&1' 
 		);
