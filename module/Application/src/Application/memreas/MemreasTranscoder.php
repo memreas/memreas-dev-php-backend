@@ -400,7 +400,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		// //////////////////////
 		$tnWidth = 448; 
 		$tnHeight = 306; 
-		$tnfreqency = 60;
+		$tnfreqency = 10;  //every 10 seconds take a thumbshot
 		
 		$imagename = 'thumbnail_' . $this->original_file_name . '_media-%5d.png';
 		$command = array (
