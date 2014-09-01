@@ -402,7 +402,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		$tnHeight = 306; 
 		$tnfreqency = 10;  //every 10 seconds take a thumbshot
 		
-		$imagename = 'thumbnail_' . $this->original_file_name . '_media-%5d.png';
+		$imagename = 'thumbnail_' . $this->original_file_name . '_media-%d.png';
 		$command = array (
 				'-i',
 				$this->destRandMediaName,
@@ -450,12 +450,14 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 			);
 			// Put original thumbnail to S3 here...
 			foreach ( $s3paths as $fmt ) {
+				$i=0;
 				foreach ( $tns_sized as $key => $file ) {
 					//Push to S3
 					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
-					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [] = $fmt [$key] . basename ( $filename );
-//error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
+					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i] = $fmt [$key] . basename ( $filename );
+					$i = $i + 1;
+error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 				}
 			}
 		} // End for each thumbnail
