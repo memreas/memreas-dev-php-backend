@@ -459,7 +459,7 @@ error_log("filename ----> $filename".PHP_EOL);
 					//Push to S3
 					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
-					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i] = $fmt [$key] . basename ( $filename );
+					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i] = $fmt [$key] . $filename;
 error_log("thumb in meta ---> ".$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i].PHP_EOL);
 					$i = $i + 1;
 //error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
