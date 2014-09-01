@@ -423,7 +423,8 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_built_thumbnails';
 		
 		foreach ( glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . 'thumbnail_' . $this->original_file_name . '_media-*.png' ) as $filename ) {
-			
+error_log("filename ----> $filename".PHP_EOL);
+				
 			// error_log("WebHome DestinationDirectory thumbnails basename(filename) ----> " . self::WEBHOME.self::DESTDIR.self::THUMBNAILSDIR.basename($filename) . PHP_EOL);
 			// error_log("basename(filename) ----> " . basename($filename) . PHP_EOL);
 			// error_log("filename ----> " . $filename . PHP_EOL);
@@ -450,18 +451,18 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 			);
 			// Put original thumbnail to S3 here...
 			foreach ( $s3paths as $fmt ) {
-error_log("fmt ----> $fmt".PHP_EOL);					
+//error_log("fmt ----> $fmt".PHP_EOL);					
 				$i=0;
 				foreach ( $tns_sized as $key => $file ) {
-error_log("key ----> $key".PHP_EOL);					
-error_log("file ----> $file".PHP_EOL);					
+//error_log("key ----> $key".PHP_EOL);					
+//error_log("file ----> $file".PHP_EOL);					
 					//Push to S3
 					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
 					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i] = $fmt [$key] . basename ( $filename );
 error_log("thumb in meta ---> ".$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i].PHP_EOL);
 					$i = $i + 1;
-error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
+//error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
 				}
 			}
 		} // End for each thumbnail
