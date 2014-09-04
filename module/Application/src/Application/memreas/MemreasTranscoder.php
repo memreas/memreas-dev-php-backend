@@ -44,6 +44,7 @@ class MemreasTranscoder {
 	protected $transcode_job_duration;
 	protected $transcode_start_time;
 	protected $transcode_end_time;
+	protected $url_signer;
 	
 	
 	// Directory related variables - create a unique directory by user_id
@@ -92,6 +93,10 @@ class MemreasTranscoder {
 			$this->is_video = $message_data ['is_video'];
 			$this->is_audio = $message_data ['is_audio'];
 			$this->json_metadata = json_encode($message_data);
+			$this->url_signer = new MemreasSignedURL($message_data, $memreas_tables, $service_locator);
+			
+			//Sign URL to fetch media
+			
 			
 			// Fetch the media entry here:
 			$memreas_media = $memreas_transcoder_tables->getMediaTable ()->getMedia ( $this->media_id );
@@ -121,8 +126,17 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 				
 				if (! $isUpload) {
 					$this->user_id = $message_data ['user_id'];
-					// Fetch the file to transcode:
+					
+					//$s3file_unsigned = $message_data ['s3path'] . $message_data ['s3file_name'];
+//error_log("********* s3file_unsigned -------> ".$s3file_unsigned.PHP_EOL);
+					//$s3file_unsigned = $message_data ['s3path'] . $message_data ['s3file_name'];
+					//$s3file = $this->url_signer->fetchSignedURL($s3file_unsigned);
+											
+error_log("********* s3file_unsigned -------> ".$s3file_unsigned.PHP_EOL);
 					$s3file = $message_data ['s3path'] . $message_data ['s3file_name'];
+ 					error_log("********* s3file -------> ".$s3file.PHP_EOL);
+						
+					// Fetch the file to transcode:
 					$tmp_file = $this->homeDir . self::DESTDIR . $message_data ['s3file_name'];
 					$response = $this->aws_manager_receiver->pullMediaFromS3 ( $s3file, $tmp_file );
 					if ($response) {
@@ -400,7 +414,7 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		// //////////////////////
 		$tnWidth = 448; 
 		$tnHeight = 306; 
-		$tnfreqency = 1/15;  //every 30 seconds take a thumbshot
+		$tnfreqency = 1/20;  //every 20 seconds take a thumbshot
 		
 		$imagename = 'thumbnail_' . $this->original_file_name . '_media-%d.png';
 		$command = array (
@@ -451,19 +465,20 @@ error_log("filename ----> $filename".PHP_EOL);
 			);
 			// Put original thumbnail to S3 here...
 			foreach ( $s3paths as $fmt ) {
-//error_log("fmt ----> $fmt".PHP_EOL);					
+error_log("$ ----> $fmt".PHP_EOL);					
 				$i=0;
 				foreach ( $tns_sized as $key => $file ) {
-//error_log("key ----> $key".PHP_EOL);					
-//error_log("file ----> $file".PHP_EOL);					
+error_log("key ----> $key".PHP_EOL);					
+error_log("file ----> $file".PHP_EOL);					
 					//Push to S3
-					$s3thumbnail_file = $fmt [$key] . basename ( $filename );
+					$s3thumbnail_file = $fmt [$key] . $filename;
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
 					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i] = $fmt [$key] . $filename;
 error_log("thumb in meta ---> ".$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i].PHP_EOL);
 					$i = $i + 1;
-//error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
-				}
+error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
+error_log("Uploadeded thumbnail @ [ $i ] ---> ".PHP_EOL);	
+				}				
 			}
 		} // End for each thumbnail
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
