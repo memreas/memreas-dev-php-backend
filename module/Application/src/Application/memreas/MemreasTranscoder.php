@@ -473,11 +473,11 @@ error_log("file ----> $file".PHP_EOL);
 					//Push to S3
 					$s3thumbnail_file = $fmt [$key] . $filename;
 					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
-					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i] = $fmt [$key] . $filename;
-error_log("thumb in meta ---> ".$this->memreas_media_metadata ['S3_files'] ['thumbnails'] [$key] [$i].PHP_EOL);
-					$i = $i + 1;
-error_log("Uploadeded thumbnail ---> ".$fmt [$key] . basename ( $filename ).PHP_EOL);					
-error_log("Uploadeded thumbnail @ [ $i ] ---> ".PHP_EOL);	
+error_log("thumbnail index @ [ $i ] ---> ".PHP_EOL);	
+					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] ["$i"] = $s3thumbnail_file;
+error_log("thumb in meta ---> ".$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] ["$i"].PHP_EOL);
+					$i++;
+error_log("Uploadeded s3thumbnail_file ---> ".$s3thumbnail_file.PHP_EOL);					
 				}				
 			}
 		} // End for each thumbnail
