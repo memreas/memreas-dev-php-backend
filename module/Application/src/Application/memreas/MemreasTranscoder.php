@@ -78,8 +78,8 @@ class MemreasTranscoder {
 		$this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/'; // Home Directory ends with / (slash) :::: Your AMAZON home
 	}
 	public function exec($message_data, $memreas_transcoder_tables, $service_locator, $isUpload = false) {
-		error_log ( "_REQUEST----> " . print_r ( $_REQUEST, true ) . PHP_EOL );
-		error_log ( "message_data----> " . print_r ( $message_data, true ) . PHP_EOL );
+//error_log ( "_REQUEST----> " . print_r ( $_REQUEST, true ) . PHP_EOL );
+//error_log ( "message_data----> " . print_r ( $message_data, true ) . PHP_EOL );
 		
 		try {
 			// date_default_timezone_set('UTC');
@@ -132,7 +132,7 @@ error_log ( "input meta------>" . $this->memreas_media_metadata->metadata . PHP_
 					//$s3file_unsigned = $message_data ['s3path'] . $message_data ['s3file_name'];
 					//$s3file = $this->url_signer->fetchSignedURL($s3file_unsigned);
 											
-error_log("********* s3file_unsigned -------> ".$s3file_unsigned.PHP_EOL);
+//error_log("********* s3file_unsigned -------> ".$s3file_unsigned.PHP_EOL);
 					$s3file = $message_data ['s3path'] . $message_data ['s3file_name'];
  					error_log("********* s3file -------> ".$s3file.PHP_EOL);
 						
@@ -186,7 +186,7 @@ error_log("********* s3file_unsigned -------> ".$s3file_unsigned.PHP_EOL);
 					
 					$this->destRandMediaName = $this->homeDir . self::DESTDIR . $this->original_file_name;
 */
-error_log("Inside Memreas Transcode reach Upload section - error - this shouldn't occur".PHP_EOL);										 
+//error_log("Inside Memreas Transcode reach Upload section - error - this shouldn't occur".PHP_EOL);										 
 				} else if (! isset ( $_FILES ['VideoFile'] ) || ! is_uploaded_file ( $_FILES ['VideoFile'] ['tmp_name'] [0] )) {
 					throw new \Exception ( 'Something went wrong with Upload!' ); // output error when above checks fail.
 				}
@@ -235,7 +235,7 @@ error_log("Inside Memreas Transcode reach Upload section - error - this shouldn'
 				
 				// Save file in upload destination
 				if ($isUpload) {
-error_log("Inside Memreas Transcode reach Upload section - error - this shouldn't occur".PHP_EOL);										 
+//error_log("Inside Memreas Transcode reach Upload section - error - this shouldn't occur".PHP_EOL);										 
 /*
 					move_uploaded_file ( $TempSrc, $this->destRandMediaName );
 					// Put to S3 here...
@@ -260,7 +260,7 @@ error_log("Inside Memreas Transcode reach Upload section - error - this shouldn'
 					$this->media_id = $memreas_transcoder_tables->getMediaTable ()->saveMedia ( $memreas_media );
 */
 				} else {
-error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
+//error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
 				}
 				
 				if ($this->is_video  || $this->is_audio) {
@@ -316,14 +316,14 @@ error_log("Do nothing we have the media_id ----> $this->media_id" . PHP_EOL);
 				if ($this->is_video) {
 					// Create Thumbnails
 					$this->createThumbNails ();
-error_log("Finished thumbnails..." . PHP_EOL);
+//error_log("Finished thumbnails..." . PHP_EOL);
 					// Create web quality mpeg
 					$transcode_job_meta = array ();
 					$transcode_job_meta ['web'] = $this->transcode ( 'web' );
-error_log("Finished web..." . PHP_EOL);
+//error_log("Finished web..." . PHP_EOL);
 					// Create high quality mpeg
 					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
-error_log("Finished 1080p..." . PHP_EOL);
+//error_log("Finished 1080p..." . PHP_EOL);
 					// Create webm file
 //					$transcode_job_meta ['webm'] = $this->transcode ( 'webm' );
 //error_log("Finished webm..." . PHP_EOL);
@@ -335,14 +335,14 @@ error_log("Finished 1080p..." . PHP_EOL);
 // error_log("Finished ts..." . PHP_EOL);
 					// Create hls
 					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
-error_log("Finished hls..." . PHP_EOL);
+//error_log("Finished hls..." . PHP_EOL);
 				} // End if ($is_video)
 				else {  
 					//Audio section
 					// Create web quality mp3
 					$transcode_job_meta = array ();
 					$transcode_job_meta ['audio'] = $this->transcode ( 'audio' );
-error_log("Finished audio..." . PHP_EOL);
+//error_log("Finished audio..." . PHP_EOL);
 					// Update the metadata here for the transcoded files
 				}
 				// Update the metadata here for the transcoded files
@@ -436,51 +436,83 @@ error_log ( "Updated transcode_transaction...." . PHP_EOL );
 		$op = shell_exec ( $cmd );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_built_thumbnails';
 		
+		/*
+		 * This for loop fetches all the thumbnails just created
+		 */
+		$i=1; //images index start at 1
 		foreach ( glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . 'thumbnail_' . $this->original_file_name . '_media-*.png' ) as $filename ) {
-error_log("filename ----> $filename".PHP_EOL);
-				
+//error_log("filename ----> $filename".PHP_EOL);
+//error_log("basename(filename) ----> ".basename($filename).PHP_EOL);
+
+//$info = pathinfo($filename);
+//$base_file_name =  basename($filename,'.'.$info['extension']);
+//error_log("base_file_name ----> $base_file_name".PHP_EOL);
+
 			// error_log("WebHome DestinationDirectory thumbnails basename(filename) ----> " . self::WEBHOME.self::DESTDIR.self::THUMBNAILSDIR.basename($filename) . PHP_EOL);
 			// error_log("basename(filename) ----> " . basename($filename) . PHP_EOL);
 			// error_log("filename ----> " . $filename . PHP_EOL);
-			$tns [] = self::WEBHOME . self::DESTDIR . self::THUMBNAILSDIR . basename ( $filename );
+			
+			// This array?
+			$tns [] = self::WEBHOME . self::DESTDIR . self::THUMBNAILSDIR . $filename;
 			
 			// ////////////////////////////////////////////////
 			// Resize thumbnails as needed and save locally
 			$tns_sized = array (
-					"full" => $filename,
-					"79x80" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80, $filename, basename ( $filename ), 79, 80 ),
-					"448x306" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306, $filename, basename ( $filename ), 448, 306 ),
-					"384x216" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216, $filename, basename ( $filename ), 384, 216 ),
-					"98x78" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, $filename, basename ( $filename ), 98, 78 ) 
+					//"full" => $filename,
+					"79x80" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80, $filename, basename($filename), 79, 80 ),
+					"448x306" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306, $filename, basename($filename), 448, 306 ),
+					"384x216" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216, $filename, basename($filename), 384, 216 ),
+					"98x78" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, $filename, basename($filename), 98, 78 ) 
 			);
+			
 			$s3paths = array (
-					"thumbnails" => array (
-							// web
-							"full" => $this->user_id . '/media/thumbnails/',
-							"79x80" => $this->user_id . '/media/thumbnails/79x80/',
-							"448x306" => $this->user_id . '/media/thumbnails/448x306/',
-							"384x216" => $this->user_id . '/media/thumbnails/384x216/',
-							"98x78" => $this->user_id . '/media/thumbnails/98x78/' 
-					) 
+					//"full" => $this->user_id . '/media/thumbnails/',
+					"79x80" => $this->user_id . '/media/thumbnails/79x80/',
+					"448x306" => $this->user_id . '/media/thumbnails/448x306/',
+					"384x216" => $this->user_id . '/media/thumbnails/384x216/',
+					"98x78" => $this->user_id . '/media/thumbnails/98x78/' 
 			);
-			// Put original thumbnail to S3 here...
-			foreach ( $s3paths as $fmt ) {
-error_log("$ ----> $fmt".PHP_EOL);					
-				$i=0;
+			
+			
+			
+			
+			
+			
+			
+			
+			/*
+			 * For each path I want to store in S3 what i just sized (full, 
+			 */
+//			foreach ( $s3paths as $fmt ) {
+//error_log("$ ----> $fmt".PHP_EOL);					
+
+				
+				//$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] = array();
 				foreach ( $tns_sized as $key => $file ) {
-error_log("key ----> $key".PHP_EOL);					
-error_log("file ----> $file".PHP_EOL);					
+//error_log("key ----> $key".PHP_EOL);					
+//error_log("file ----> $file".PHP_EOL);					
 					//Push to S3
-					$s3thumbnail_file = $fmt [$key] . $filename;
-					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_file, "image/png");					
-error_log("thumbnail index @ [ $i ] ---> ".PHP_EOL);	
-					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] ["$i"] = $s3thumbnail_file;
-error_log("thumb in meta ---> ".$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] ["$i"].PHP_EOL);
-					$i++;
-error_log("Uploadeded s3thumbnail_file ---> ".$s3thumbnail_file.PHP_EOL);					
-				}				
-			}
+					$s3thumbnail_path = $s3paths["$key"] . basename($filename);
+//error_log("s3thumbnail_path ----> $s3thumbnail_path".PHP_EOL);					
+					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_path, "image/png");					
+//error_log("thumbnail index @ [ $i ] ---> ".PHP_EOL);	
+					$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] [] = $s3thumbnail_path;
+//error_log("thumb in meta ---> ".$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] [$i].PHP_EOL);
+//error_log("Uploadeded s3thumbnail_file ---> ".$s3thumbnail_file.PHP_EOL);					
+				} //End for each tns_sized as file				 
+				
+//			} //End for each fmt
+
+		
+			/*
+			 * Update the index here to match the filename #
+			 */
+			$i++;
+				
+		
 		} // End for each thumbnail
+
+		
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
 	} // end createThumNails()
 	
