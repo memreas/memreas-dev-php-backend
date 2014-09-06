@@ -16,7 +16,7 @@ class MemreasConstants {
 	
 	const MEMREASDB     = 'memreasintdb';
     const MEMREASBEDB     = 'memreasbackenddb';
-    const S3BUCKET     	= "memreasdev";
+    const S3BUCKET     	= "memreasdevsec";
     //const TOPICARN		= "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
 	//const QUEUEURL 		= 'https://sqs.us-east-1.amazonaws.com/004184890641/awseb-e-8zdmyxfwy5-stack-AWSEBWorkerQueue-1RTF4RETMQXT8';
     const ORIGINAL_URL	= "http://memreasdev-ws-elastic.elasticbeanstalk.com/";

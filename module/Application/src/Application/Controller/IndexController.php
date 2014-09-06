@@ -31,10 +31,6 @@ use Application\memreas\MemreasPayPalTables;
 
 class IndexController extends AbstractActionController
 {
-	//protected $url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/index_json.php";
-	//protected $media_url = "http://memreasdev.elasticbeanstalk.com/eventapp_zend2.1/webservices/addmediaevent.php";
-	//$this->url = MemreasConstants::ORIGINAL_URL;
-
 	protected $url = MemreasConstants::ORIGINAL_URL;
 	protected $media_url = MemreasConstants::MEDIA_URL;
 	protected $user_id;
@@ -116,7 +112,7 @@ error_log("Inside fetchXML response $response ....");
 //error_log("Inside transcoderAction:isset('User-Agent') " . PHP_EOL);
 				
 					$inputJSON = file_get_contents('php://input');
-//error_log("inputJSON...... $inputJSON");
+error_log("inputJSON...... $inputJSON");
 
 					//Fetch the json from message
 					$message_data= json_decode($inputJSON, true);
