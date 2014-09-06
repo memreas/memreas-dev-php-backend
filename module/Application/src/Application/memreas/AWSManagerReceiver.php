@@ -27,7 +27,7 @@ class AWSManagerReceiver {
     private $temp_job_uuid = null;
 
     public function __construct($service_locator) {
-        error_log("Inside AWSManagerReceiver contructor..." . PHP_EOL);
+        //error_log("Inside AWSManagerReceiver contructor..." . PHP_EOL);
 
 		try {
 			$this->service_locator = $service_locator;
@@ -57,7 +57,7 @@ class AWSManagerReceiver {
  		   error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
 		}
 
-        error_log("Exit AWSManagerReceiver constructor", 0);
+        //error_log("Exit AWSManagerReceiver constructor", 0);
         //print "Exit AWSManagerReceiver constructor <br>";
     }
 
@@ -65,11 +65,11 @@ class AWSManagerReceiver {
     
     	try {
     		
-error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
+//error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
 			if ($message_data['is_video'] || $message_data['is_audio']) {
 				//Transcode, fetch thumbnail and resize as needed
 				if ($message_data['memreastranscoder']) {
-error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data['memreastranscoder']. PHP_EOL);
+//error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data['memreastranscoder']. PHP_EOL);
 					$message_data['is_image'] = 0;
 					$memreasTranscoder = new MemreasTranscoder($this);
 					$memreas_transcoder_tables = new MemreasTranscoderTables($this->service_locator);
@@ -81,7 +81,7 @@ error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." 
 				//$result = $this->awsTranscodeExec($message_data);
 				}
 			} else { //It's an image just resize and store thumbnails
-error_log("Inside snsProcessMediaSubscribe else it's an image..." . PHP_EOL);            
+//error_log("Inside snsProcessMediaSubscribe else it's an image..." . PHP_EOL);            
 								/*
 				 * 5-SEP-2014 
 				 * moved thumnail creation to a single function
@@ -92,90 +92,6 @@ error_log("Inside snsProcessMediaSubscribe else it's an image..." . PHP_EOL);
 				$result = $memreasTranscoder->exec($message_data, $memreas_transcoder_tables, $this->service_locator, false);
 				
 				//exit;
-/*				
-				////////////////////////////////////////////////////////////
-				// In here the image is already on S3
-				//  so we just need to create the thumbnails and upload....
-
-				////////////////////////
-				//Fetch the message data
-				$s3file_name = $message_data['s3file_name'];
-				$user_id = $message_data['user_id'];
-				$media_id = $message_data['media_id'];
-				$content_type = $message_data['content_type'];
-				$s3path = $message_data['s3path'];
-				
-				
-				////////////////////////////
-				//Create the job dir here...
-				$this->temp_job_uuid = date("Y.m.d") . '_' . uniqid();
-error_log("Inside snsProcessMediaSubscribe temp_job_uuid ----> " . $this->temp_job_uuid . PHP_EOL);            
-				$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid . MemreasConstants::IMAGES_PATH;
-error_log("Inside snsProcessMediaSubscribe dir ----> " . $dir . PHP_EOL);            
-				if (!file_exists($dir)) {
-					$oldumask = umask(0);
-					mkdir($dir, 01777, true);
-					umask($oldumask);
-				}
-				$file = $dir.$s3file_name;
-				////////////////////////////////////////////////////////////////////
-				//Retrieve media entry here...
-				$media = $this->dbAdapter->find('Application\Entity\Media', $media_id);
-				$metadata = json_decode($media->metadata, true);
-error_log("metadata before ----> " . $media->metadata . PHP_EOL);
-				
-				////////////////////////
-				// Fetch from S3 here...
-				$result = $this->pullMediaFromS3($s3path.$s3file_name, $file);				
-				if ($result) {
-error_log("About to create thumbnails...".PHP_EOL);
-					//Setup an array for each of the sizes
-					$sizes = array();
-					$sizes['small'] = array ( "height" => 79, "width" => 80);
-					$sizes['medium'] = array ( "height" => 98, "width" => 78);
-					$sizes['large'] = array ( "height" => 448, "width" => 306);
-
-					//Resize and upload for each size thumbnail					
-					foreach ($sizes as &$size) {
-						//$value = $value * 2;
-						
-						$height = $size['height'];
-						$width = $size['width'];
-
-						////////////////////////
-						// Resize here...
-						$file = $this->resize($dir, $s3file_name, $height, $width);
-
-						////////////////////////
-						// Push to S3 here...
-						$s3thumbnail_file = $s3path.$height.'x'.$width.'/'.$s3file_name;
-						$s3thumbnail = $this->pushMediaToS3($file, $s3thumbnail_file, $content_type);
-
-						////////////////////////
-						// Updated the metadata...
-						$dim = $height.'x'.$width;
-						$metadata['S3_files']['thumbnails'][$dim] = $s3thumbnail['Key'];
-						
-					}
-				} 
-
-error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
-
-				////////////////////////////////////////////////////////////////////
-				// Store the metadata here...
-				$json = json_encode($metadata);
-// error_log("metadata after ----> " . $json . PHP_EOL);
-//error_log("Inside snsProcessMediaSubscribe json ----> $json" . PHP_EOL);            
-				$media->metadata = $json;
-//error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);            
-				$this->dbAdapter->persist($media);
-				$this->dbAdapter->flush();
-
-				//Remove the work directory
-				$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
-				$dirRemoved = new RmWorkDir($dir);
-*/
-
 			}
 			header("HTTP/1.1 200 OK", true, 200); 
 	        //return true;
@@ -190,19 +106,12 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
     }
 
     function pullMediaFromS3($s3file, $file) {
-//error_log("Inside pullMediaFromS3"  . PHP_EOL); 
-//error_log("Bucket ---> ".MemreasConstants::S3BUCKET. PHP_EOL); 
-//error_log("Key ---> ".$s3file. PHP_EOL); 
-//error_log("SaveAs ---> ".$file. PHP_EOL); 
-
 	try {
 			$result = $this->s3->getObject(array(
 				'Bucket' => MemreasConstants::S3BUCKET,
 				'Key' => $s3file,
 				'SaveAs' => $file
 			));
-// error_log("Inside pullMediaFromS3 - about to save file locally as: ---> ".$file.PHP_EOL); 
-//error_log("Inside try - result ---> ..." . print_r($result, true) . PHP_EOL); 
 		} catch(Aws\S3\Exception\S3Exception $e) {
 			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
 			throw $e;
@@ -210,44 +119,8 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
 		return true;
     }
 
-    function resize($dir, $file_name, $height, $width) {
-//error_log("Inside resize"  . PHP_EOL); 
-//error_log("Inside resize dir.file_name ----> " . $dir.$file_name . PHP_EOL); 
-        //////////////////////////
-        // Initialize Sybio ...
-        $layer = ImageWorkshop::initFromPath($dir.$file_name);
-        //$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');  //Maintains image
-        $layer->resizeInPixel($height, $width);
-
-        //////////////////////////
-        // create a thumbnail dir
-        $job_sub_dir = $dir . $height . "x" . $width . "/";
-        if (!file_exists($job_sub_dir)) {
-			$oldumask = umask(0);
-		    mkdir($job_sub_dir, 01777, true);
-			umask($oldumask);
-		}
-
-        //////////////////////////
-        // build the image and save the file...
-        $createFolders = true;
-        $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
-        $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
-        $layer->save($job_sub_dir, $file_name, $createFolders, $backgroundColor, $imageQuality);
-        //$file = $dirPath . $thumbnail_name;
-        $file = $job_sub_dir . $file_name;
-// error_log("Inside resize file ----> " . $file . PHP_EOL); 
-        
-        return $file;    	
-	}
-
     function pushMediaToS3($file, $s3file, $content_type, $isVideo = false) {
-// error_log("Inside pushMediaToS3"  . PHP_EOL); 
-// error_log("Inside pushMediaToS3 file ---> $file" . PHP_EOL); 
-// error_log("Inside pushMediaToS3 s3file ---> $s3file" . PHP_EOL); 
-// error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL); 
         $body = EntityBody::factory(fopen($file, 'r+'));
-//error_log("Inside fetchResizeUpload - thumbnail_file is  --> " . $thumbnail_file);                	
         /////////////////////////////////////////////////////////////////////
         //Upload images - section
         $uploader = UploadBuilder::newInstance()
@@ -258,8 +131,6 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
         		->setOption('CacheControl', 'max-age=3600')
                 ->setKey($s3file)
                 ->build();
-//error_log("Inside pushMediaToS3 content_type ---> $content_type" . PHP_EOL);
-//error_log("Inside pushMediaToS3 uploader ----> " . print_r($uploader,true)  . PHP_EOL); 
 
         //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
         try {
@@ -269,8 +140,6 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
             $uploader->abort();
             error_log( "Upload failed.\n", 0);
         }
-//error_log("Inside pushMediaToS3" . print_r($result,true)  . PHP_EOL); 
-//error_log("Inside pushMediaToS3 - past uploader->upload" . PHP_EOL);
         
         //Set the content type - why is this soooo difficult?
         $opt = array();     
