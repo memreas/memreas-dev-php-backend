@@ -58,6 +58,7 @@ class MemreasTranscoder {
 	protected $MediaFileName;
 	const WEBHOME 		= '/var/app/current/data/';
 	const DESTDIR 		= 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
+	const IMAGEDIR 		= 'image/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const CONVDIR 		= 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const _1080PDIR 	= '1080p/'; // Your 1080p Dir, end with slash (/)
 	const THUMBNAILSDIR = 'thumbnails/'; // Your thumbnails Dir, end with slash (/)
