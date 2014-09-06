@@ -18,7 +18,6 @@ class AWSManagerReceiver {
 
     private $aws = null;
     private $s3 = null;
-    private $bucket = null;
     private $sns = null;
     private $sqs = null;
     private $topicArn = null;
@@ -46,9 +45,6 @@ class AWSManagerReceiver {
 			//Fetch the AWS Elastic Transcoder class
 			$this->awsTranscode = $this->aws->get('ElasticTranscoder');
 
-			//Set the bucket
-			$this->bucket = "memreasdev";
-
 			//Fetch the SNS class
 			$this->sns = $this->aws->get('sns');
 
@@ -74,14 +70,29 @@ error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);
 				//Transcode, fetch thumbnail and resize as needed
 				if ($message_data['memreastranscoder']) {
 error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data['memreastranscoder']. PHP_EOL);
+					$message_data['is_image'] = 0;
 					$memreasTranscoder = new MemreasTranscoder($this);
 					$memreas_transcoder_tables = new MemreasTranscoderTables($this->service_locator);
 					$result = $memreasTranscoder->exec($message_data, $memreas_transcoder_tables, $this->service_locator, false);
-				} else {
-					$result = $this->awsTranscodeExec($message_data);
+				/*
+				 * Legacy aws elastic transcoder code
+				 */	
+				//} else {
+				//$result = $this->awsTranscodeExec($message_data);
 				}
-			} else {
+			} else { //It's an image just resize and store thumbnails
+error_log("Inside snsProcessMediaSubscribe else it's an image..." . PHP_EOL);            
+								/*
+				 * 5-SEP-2014 
+				 * moved thumnail creation to a single function
+				 */
+				$message_data['is_image'] = 1;
+				$memreasTranscoder = new MemreasTranscoder($this);
+				$memreas_transcoder_tables = new MemreasTranscoderTables($this->service_locator);
+				$result = $memreasTranscoder->exec($message_data, $memreas_transcoder_tables, $this->service_locator, false);
 				
+				//exit;
+/*				
 				////////////////////////////////////////////////////////////
 				// In here the image is already on S3
 				//  so we just need to create the thumbnails and upload....
@@ -163,8 +174,9 @@ error_log("Inside snsProcessMediaSubscribe metadata ----> $metadata" . PHP_EOL);
 				//Remove the work directory
 				$dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
 				$dirRemoved = new RmWorkDir($dir);
-			}
+*/
 
+			}
 			header("HTTP/1.1 200 OK", true, 200); 
 	        //return true;
         

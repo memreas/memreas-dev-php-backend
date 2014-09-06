@@ -63,33 +63,25 @@ error_log("Inside fetchXML response $response ....");
 	}
 
     public function indexAction() {
-    	//$this->memreasTranscoderAction();
     	$this->transcoderAction();
     	exit;
     }
 
-	public function memreasTranscoderAction() {
-		
-	}
-	
     public function transcoderAction() {
 
-error_log("Inside transcoderAction bew..." . PHP_EOL);
-	    //$path = $this->security("application/index/tcode.phtml");
-	    
 		//Fetch AWS Handle
 		$aws_manager = new AWSManagerReceiver($this->getServiceLocator());
 		
 		//Fetch the post data
 		foreach (getallheaders() as $name => $value) {
-error_log("$name : $value\n", 0);
+//error_log("$name : $value\n", 0);
 			/*
 			 * SNS Topic Section - deprecated
 			 */
 			if ( $name == "x-amz-sns-message-type" ) {
 				if ( $value == "SubscriptionConfirmation" ) {
 					$inputJSON = file_get_contents('php://input');
-					error_log($inputJSON, 0); // manually get the URL here and paste into browser to subscribe
+//error_log($inputJSON, 0); // manually get the URL here and paste into browser to subscribe
 					//Return the status code here so that we subscribe to the message - hopefully
 					ob_start();
 					http_response_code(200);
@@ -101,7 +93,7 @@ error_log("$name : $value\n", 0);
 						$message_data = json_decode($_REQUEST['json'], true);
 					} else {
 						$inputJSON = file_get_contents('php://input');
-						error_log("inputJSON...... $inputJSON");
+//error_log("inputJSON...... $inputJSON");
 						$input= json_decode($inputJSON, true); 
 						//Fetch the json from message
 						$message_data = json_decode($input['Message'], true);
@@ -121,14 +113,14 @@ error_log("$name : $value\n", 0);
 				/*
 				 * SQS Worker Tier Section
 				 */
-error_log("Inside transcoderAction:isset('User-Agent') " . PHP_EOL);
+//error_log("Inside transcoderAction:isset('User-Agent') " . PHP_EOL);
 				
 					$inputJSON = file_get_contents('php://input');
-error_log("inputJSON...... $inputJSON");
+//error_log("inputJSON...... $inputJSON");
 
 					//Fetch the json from message
 					$message_data= json_decode($inputJSON, true);
-error_log("**************************************");
+//error_log("**************************************");
 					//Return the status code here so that the SNS topic won't keep resending the message
 					ob_start();
 					http_response_code(200);
@@ -144,17 +136,4 @@ error_log("**************************************");
 			
     }
 
-    /*
-    public function security($path) {
-    	//if already login do nothing
-		$session = new Container("user");
-	    if(!$session->offsetExists('user_id')){
-			error_log("Not there so logout");
-	    	$this->logoutAction();
-    	  return "application/index/index.phtml";
-	    }
-		return $path;			
-        //return $this->redirect()->toRoute('index', array('action' => 'login'));
-    }
-	*/
 } // end class IndexController
