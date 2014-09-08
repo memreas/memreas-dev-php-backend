@@ -231,12 +231,15 @@ class MemreasTranscoder {
 error_log ( "this is video... duration is ".$this->duration.PHP_EOL );
 					// Create Thumbnails
 					$this->createThumbNails ();
-
+error_log ( "finished thumbnals".PHP_EOL );
+						
 					// Create web quality mpeg
 					$transcode_job_meta = array ();
 					$transcode_job_meta ['web'] = $this->transcode ( 'web' );
+error_log ( "finished web video".PHP_EOL );
 					// Create high quality mpeg
 					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
+error_log ( "finished 1080p video".PHP_EOL );
 					// Create webm file
 //					$transcode_job_meta ['webm'] = $this->transcode ( 'webm' );
 					// Create flash file
@@ -375,7 +378,7 @@ error_log ( "Just updated $this->media_id" . PHP_EOL );
 				$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_path, "image/png");					
 				$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] [] = $s3thumbnail_path;
 			} //End for each tns_sized as file				 
-error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metadata ['S3_files'] ['thumbnails']).PHP_EOL);				
+//error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metadata ['S3_files'] ['thumbnails']).PHP_EOL);				
 		} // End for each thumbnail
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
 	} // end createThumNails()
