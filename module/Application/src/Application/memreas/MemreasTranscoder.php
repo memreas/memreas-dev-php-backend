@@ -165,6 +165,12 @@ class MemreasTranscoder {
 							break;
 						case 'video/quicktime' :
 							break;
+						case 'video/avi' :
+							break;
+						case 'video/msvideo' :
+							break;
+						case 'video/avs-video' :
+							break;
 						case 'video/x-msvideo' :
 							break;
 						case 'video/x-ms-wmv' :
@@ -181,6 +187,8 @@ class MemreasTranscoder {
 							break;
 						case 'video/mp2p' :
 							break;
+							
+							
 						case 'audio/caf' :
 							break;
 						case 'audio/vnd.wav' :
