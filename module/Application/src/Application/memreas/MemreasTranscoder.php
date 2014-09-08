@@ -109,11 +109,11 @@ class MemreasTranscoder {
 			
 			if (isset ( $message_data )) {
 				if (getcwd () == '/var/app/current') {
-					error_log ( "found /var/app/current" . PHP_EOL );
+//error_log ( "found /var/app/current" . PHP_EOL );
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; // :::: AWS ffmpeg installation
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE; // :::: AWS ffprobe installation
 				} else {
-					error_log ( "!found /var/app/current" . PHP_EOL );
+//error_log ( "!found /var/app/current" . PHP_EOL );
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL; // :::: Your ffmpeg installation
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL; // :::: Your ffmpeg installation
 				}
@@ -228,7 +228,7 @@ class MemreasTranscoder {
 				$transcode_transaction = $this->persistTranscodeTransaction();
 				
 				if ($this->is_video) {
-//error_log ( "this is video..." . PHP_EOL );
+error_log ( "this is video... duration is ".$this->duration.PHP_EOL );
 					// Create Thumbnails
 					$this->createThumbNails ();
 
@@ -317,8 +317,8 @@ error_log ( "Just updated $this->media_id" . PHP_EOL );
 		$tnHeight = 306; 
 
 		if (!$this->is_image) {
-error_log("Inside !is_image".PHP_EOL);			
-			$tnfreqency = 1/20;  //every 20 seconds take a thumbshot
+//error_log("Inside !is_image".PHP_EOL);			
+			$tnfreqency = 1/60;  //every 60 seconds take a thumbshot
 			$imagename = 'thumbnail_' . $this->original_file_name . '_media-%d.png';
 			$command = array (
 					'-i',
