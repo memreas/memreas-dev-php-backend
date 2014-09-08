@@ -175,6 +175,8 @@ class MemreasTranscoder {
 							break;
 						case 'video/x-ms-wmv' :
 							break;
+						case 'video/wmv' :
+							break;
 						case 'video/x-flv' :
 							break;
 						case 'video/3gpp' :
