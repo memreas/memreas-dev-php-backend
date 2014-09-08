@@ -135,7 +135,7 @@ class AWSManagerReceiver {
         //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
         try {
             $result = $uploader->upload();
-            error_log( "Upload complete.\n", 0);
+//            error_log( "Upload complete.\n", 0);
         } catch (MultipartUploadException $e) {
             $uploader->abort();
             error_log( "Upload failed.\n", 0);

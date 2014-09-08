@@ -350,7 +350,9 @@ error_log ( "Just updated $this->media_id" . PHP_EOL );
 		/*
 		 * This for loop fetches all the thumbnails just created
 		 */
+error_log("media_thumb_arr ----> ".print_r($media_thumb_arr,true).PHP_EOL);
 		foreach ( $media_thumb_arr as $filename ) {
+error_log("filename ----> ".$filename.PHP_EOL);
 			// ////////////////////////////////////////////////
 			// Resize thumbnails as needed and save locally
 			$tns_sized = array (
