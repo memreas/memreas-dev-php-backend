@@ -19,7 +19,7 @@ class MemreasConstants {
     const S3BUCKET     	= "memreasdevsec";
     //const TOPICARN		= "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
 	//const QUEUEURL 		= 'https://sqs.us-east-1.amazonaws.com/004184890641/awseb-e-8zdmyxfwy5-stack-AWSEBWorkerQueue-1RTF4RETMQXT8';
-	const QUEUEURL 		= 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker2';
+	const QUEUEURL 		= 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-backend-worker';
     const ORIGINAL_URL	= "http://memreasdev-ws-elastic.elasticbeanstalk.com/";
     const MEDIA_URL		= "http://memreasdev-ws-elastic.elasticbeanstalk.com/?action=addmediaevent";
     const URL			= "/index";

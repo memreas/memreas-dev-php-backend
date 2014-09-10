@@ -198,8 +198,8 @@ class MemreasTranscoder {
 							break;
 						case 'video/mp2p' :
 							break;
-							
-							
+						case 'video/mkv' :
+							break;
 						case 'audio/caf' :
 							break;
 						case 'audio/vnd.wav' :
@@ -432,15 +432,21 @@ error_log("filename ----> ".$filename.PHP_EOL);
 		$tsext = '.ts';
 		$aacext = '.m4a';
 		if ($type == 'web') {
+			/*
+			 * See -> https://trac.ffmpeg.org/wiki/Encode/H.264
+			 * 
+			 */
 			//$qv=' -c:v mpeg4 ';
-			$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+			//$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+			$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
 			//$qv='';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 			$cmd = $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
 		} else if ($type == '1080p') {
 			//$qv=' -c:v mpeg4 -q:v 1 ';
-			$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
+			//$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
+			$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext; 
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 			$cmd = $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
@@ -492,7 +498,8 @@ error_log("filename ----> ".$filename.PHP_EOL);
 				" -acodec libfdk_aac ". 
 				" -r 25 ". 
 				//" -profile:v baseline ". 
-				" -profile:v main -level 4.0 ". 
+				//" -profile:v main -level 4.0 ". 
+				" -profile:v high -level 4.2 ". 
 				" -b:v 1500k ". 
 				" -maxrate 2000k ". 
 				" -force_key_frames 50 ". 
