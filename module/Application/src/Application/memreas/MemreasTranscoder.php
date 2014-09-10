@@ -238,17 +238,51 @@ class MemreasTranscoder {
 				
 				if ($this->is_video) {
 error_log ( "this is video... duration is ".$this->duration.PHP_EOL );
-					// Create Thumbnails
+
+					/*
+					 * Thumbnails
+					 */
 					$this->createThumbNails ();
+
 error_log ( "finished thumbnals".PHP_EOL );
-						
-					// Create web quality mpeg
+					$now = date ( 'Y-m-d H:i:s' );
+					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
+					$memreas_media_data_array = array (
+							'metadata' => $this->json_metadata,
+							'update_date' => $now
+					);
+					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
+error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
+
+					/*
+					 * Web quality mp4 conversion
+					 */
 					$transcode_job_meta = array ();
 					$transcode_job_meta ['web'] = $this->transcode ( 'web' );
 error_log ( "finished web video".PHP_EOL );
-					// Create high quality mpeg
+					$now = date ( 'Y-m-d H:i:s' );
+					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
+					$memreas_media_data_array = array (
+							'metadata' => $this->json_metadata,
+							'update_date' => $now
+					);
+					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
+error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
+
+					/*
+					 * High quality mp4 conversion
+					 */
 					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
 error_log ( "finished 1080p video".PHP_EOL );
+			$now = date ( 'Y-m-d H:i:s' );
+			$this->json_metadata = json_encode ( $this->memreas_media_metadata );
+			$memreas_media_data_array = array (
+					'metadata' => $this->json_metadata,
+					'update_date' => $now
+			);
+			$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
+error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
+
 					// Create webm file
 //					$transcode_job_meta ['webm'] = $this->transcode ( 'webm' );
 					// Create flash file

@@ -1,10 +1,10 @@
 <IfModule mod_php5.c>
 
 #Limits for file uploads
-php_value memory_limit 500M
+php_value memory_limit 250M
 php_value max_execution_time 259200
 php_value max_input_time 259200
-php_value session.gc_maxlifetime 2400
+php_value session.gc_maxlifetime 259200
 php_value upload_max_filesize 0
 php_value post_max_size 0
 
