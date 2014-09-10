@@ -141,7 +141,7 @@ class AWSManagerReceiver {
             error_log( "Upload failed.\n", 0);
         }
         
-        //Set the content type - why is this soooo difficult?
+        //Set the content type 
         $opt = array();     
         $opt['CacheControl'] = 'max-age=3600';
                    	

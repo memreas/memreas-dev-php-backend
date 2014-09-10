@@ -132,6 +132,7 @@ class MemreasTranscoder {
 					 */
 					$tmp_file = $this->homeDir . self::DESTDIR . $message_data ['s3file_name'];
 					$response = $this->aws_manager_receiver->pullMediaFromS3 ( $s3file, $tmp_file );
+					
 					$this->destRandMediaName = $tmp_file;
 					if ($response) {
 						$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_S3_file_saved';
@@ -141,6 +142,14 @@ class MemreasTranscoder {
 						$this->memreas_media_metadata ['S3_files'] ['error_message'] = 'transcode_error: S3 file fetch and save failed!';
 						throw new \Exception ( "Transcoder: S3 file fetch and save failed!" );
 					}
+
+					/*
+					 * 10-SEP-2014 - make a copy on S3 as application/octet-stream for download
+					*/
+					$download_file = $this->s3path . "download/" . $this->s3file_name;
+//error_log("download_file ---> ".$download_file.PHP_EOL);					
+					$this->aws_manager_receiver->pushMediaToS3($tmp_file, $download_file, "application/octet-stream");
+					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
 				}
 
 				// Set file related data
