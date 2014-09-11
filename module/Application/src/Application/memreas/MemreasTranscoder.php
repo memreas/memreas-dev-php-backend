@@ -131,6 +131,7 @@ class MemreasTranscoder {
 					 *  Fetch the file to transcode:
 					 */
 					$tmp_file = $this->homeDir . self::DESTDIR . $message_data ['s3file_name'];
+error_log("tmp_file ---> ".$tmp_file.PHP_EOL);					
 					$response = $this->aws_manager_receiver->pullMediaFromS3 ( $s3file, $tmp_file );
 					
 					$this->destRandMediaName = $tmp_file;
@@ -147,7 +148,7 @@ class MemreasTranscoder {
 					 * 10-SEP-2014 - make a copy on S3 as application/octet-stream for download
 					*/
 					$download_file = $this->s3path . "download/" . $this->s3file_name;
-//error_log("download_file ---> ".$download_file.PHP_EOL);					
+error_log("download_file ---> ".$download_file.PHP_EOL);					
 					$this->aws_manager_receiver->pushMediaToS3($tmp_file, $download_file, "application/octet-stream");
 					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
 				}
@@ -472,7 +473,7 @@ error_log("filename ----> ".$filename.PHP_EOL);
 			 */
 			//$qv=' -c:v mpeg4 ';
 			//$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
-			$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+			$qv=' -c:v libx264 -threads 0 -c:a libfdk_aac -preset veryfast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
 			//$qv='';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -480,7 +481,7 @@ error_log("filename ----> ".$filename.PHP_EOL);
 		} else if ($type == '1080p') {
 			//$qv=' -c:v mpeg4 -q:v 1 ';
 			//$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
-			$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
+			$qv=' -c:v libx264 -threads 0 -c:a libfdk_aac -preset medium -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext; 
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 			$cmd = $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
@@ -526,6 +527,7 @@ error_log("filename ----> ".$filename.PHP_EOL);
 			
 			$cmd = $this->ffmpegcmd .
 				" -re -y -i ".$transcoded_mp4_file.
+				" -threads 0 " . //testing threads 
 				" -map 0 ".
 				" -pix_fmt yuv420p ". 
 				" -vcodec libx264 ". 
