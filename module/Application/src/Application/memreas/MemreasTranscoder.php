@@ -21,6 +21,7 @@ use Application\Model\MediaTable;
 use Application\Model\TranscodeTransaction;
 use Application\Model\TranscodeTransactionTable;
 
+
 class MemreasTranscoder {
 	protected $user_id;
 	protected $media_id;
@@ -56,7 +57,12 @@ class MemreasTranscoder {
 	protected $destRandMediaName;
 	protected $original_file_name;
 	protected $MediaFileName;
-	const WEBHOME 		= '/var/app/current/data/';
+	
+	/*
+	 * 14-SEP-2014 Testing new mounted ephemeral storage
+	 */
+	//const WEBHOME 		= '/var/app/current/data/';
+	const WEBHOME 		= '/var/app/ephemeral0/';
 	const DESTDIR 		= 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const IMAGEDIR 		= 'image/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const CONVDIR 		= 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
@@ -68,6 +74,7 @@ class MemreasTranscoder {
 	const WEBDIR		= 'web/'; // Your web Dir, end with slash (/)
 	const WEBMDIR 		= 'webm/'; // Your webm Dir, end with slash (/)
 	const FLVDIR 		= 'flv/'; // Your flv Dir, end with slash (/)
+	const FULLSIZE	 	= 'fullsize/'; // Your 79x80 Dir, end with slash (/)
 	const _79X80 		= '79x80/'; // Your 79x80 Dir, end with slash (/)
 	const _448X306 		= '448x306/'; // Your 448x306 Dir, end with slash (/)
 	const _384X216 		= '384x216/'; // Your 384x216 Dir, end with slash (/)
@@ -81,9 +88,30 @@ class MemreasTranscoder {
 		$this->temp_job_uuid_dir = MUUID::fetchUUID ();
 		$this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/'; // Home Directory ends with / (slash) :::: Your AMAZON home
 	}
+	
+	
+	function shutDownFunction() {
+		$error = error_get_last();
+		error_log("FATAL_ERROR::".print_r($error, true).PHP_EOL);
+		//if ($error['type'] == 1) {
+		//	//do your stuff
+		//}
+	}
+	
+	
 	public function exec($message_data, $memreas_transcoder_tables, $service_locator, $isUpload = false) {
 		
 		try {
+
+			/*
+			 * 12-SEP-2014 trying to debug shutdown issue
+			 */
+			register_shutdown_function('shutDownFunction');
+error_log ( "registed shutdown function..." . PHP_EOL );
+					
+			
+			
+			
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->user_id = $message_data ['user_id'];
 			$this->media_id = $message_data ['media_id'];
@@ -131,7 +159,7 @@ class MemreasTranscoder {
 					 *  Fetch the file to transcode:
 					 */
 					$tmp_file = $this->homeDir . self::DESTDIR . $message_data ['s3file_name'];
-error_log("tmp_file ---> ".$tmp_file.PHP_EOL);					
+error_log("pulling from S3 ".$s3file." to tmp_file ---> ".$tmp_file.PHP_EOL);					
 					$response = $this->aws_manager_receiver->pullMediaFromS3 ( $s3file, $tmp_file );
 					
 					$this->destRandMediaName = $tmp_file;
@@ -148,7 +176,7 @@ error_log("tmp_file ---> ".$tmp_file.PHP_EOL);
 					 * 10-SEP-2014 - make a copy on S3 as application/octet-stream for download
 					*/
 					$download_file = $this->s3path . "download/" . $this->s3file_name;
-error_log("download_file ---> ".$download_file.PHP_EOL);					
+error_log("pushing to S3...".$download_file.PHP_EOL);					
 					$this->aws_manager_receiver->pushMediaToS3($tmp_file, $download_file, "application/octet-stream");
 					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
 				}
@@ -243,9 +271,10 @@ error_log ( "this is video... duration is ".$this->duration.PHP_EOL );
 					/*
 					 * Thumbnails
 					 */
+error_log ( "starting thumbnails...".PHP_EOL );
 					$this->createThumbNails ();
-
-error_log ( "finished thumbnals".PHP_EOL );
+	
+error_log ( "finished thumbnails".PHP_EOL );
 					$now = date ( 'Y-m-d H:i:s' );
 					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
 					$memreas_media_data_array = array (
@@ -253,13 +282,15 @@ error_log ( "finished thumbnals".PHP_EOL );
 							'update_date' => $now
 					);
 					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
-error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
+//error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
 
 					/*
 					 * Web quality mp4 conversion
 					 */
 					$transcode_job_meta = array ();
+error_log ( "starting web video".PHP_EOL );
 					$transcode_job_meta ['web'] = $this->transcode ( 'web' );
+					$this->memreas_media_metadata ['S3_files']['web'] = $transcode_job_meta ['web'];
 error_log ( "finished web video".PHP_EOL );
 					$now = date ( 'Y-m-d H:i:s' );
 					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
@@ -268,21 +299,23 @@ error_log ( "finished web video".PHP_EOL );
 							'update_date' => $now
 					);
 					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
-error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
+//error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
 
 					/*
 					 * High quality mp4 conversion
 					 */
-					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
-error_log ( "finished 1080p video".PHP_EOL );
-			$now = date ( 'Y-m-d H:i:s' );
-			$this->json_metadata = json_encode ( $this->memreas_media_metadata );
-			$memreas_media_data_array = array (
-					'metadata' => $this->json_metadata,
-					'update_date' => $now
-			);
-			$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
-error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
+//error_log ( "starting 1080p video".PHP_EOL );
+					//$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
+					//$this->memreas_media_metadata ['S3_files']['1080p'] = $transcode_job_meta ['1080p'];
+//error_log ( "finished 1080p video".PHP_EOL );
+					//$now = date ( 'Y-m-d H:i:s' );
+					//$this->json_metadata = json_encode ( $this->memreas_media_metadata );
+					//$memreas_media_data_array = array (
+					//		'metadata' => $this->json_metadata,
+					//		'update_date' => $now
+					//);
+					//$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
+//error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
 
 					// Create webm file
 //					$transcode_job_meta ['webm'] = $this->transcode ( 'webm' );
@@ -291,7 +324,7 @@ error_log ( "memreas media json metadata after ----> " . $this->json_metadata . 
  					// Create ts
 // 					$transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
 					// Create hls
-					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
+//					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
 				} // End if ($is_video)
 				else if ($this->is_audio) {  
 //error_log ( "this is audio..." . PHP_EOL );
@@ -299,6 +332,7 @@ error_log ( "memreas media json metadata after ----> " . $this->json_metadata . 
 					// Create web quality mp3
 					$transcode_job_meta = array ();
 					$transcode_job_meta ['audio'] = $this->transcode ( 'audio' );
+					$this->memreas_media_metadata ['S3_files']['1080p'] = $transcode_job_meta ['1080p'];
 					// Update the metadata here for the transcoded files
 				} 	else if ($this->is_image) {  
 //error_log ( "this is image..." . PHP_EOL );
@@ -316,7 +350,8 @@ error_log ( "memreas media json metadata after ----> " . $this->json_metadata . 
 				///////////////////////////////
 				// Update transcode_transaction
 				$trans_data = array();
-				$trans_data[pass] = 1;
+				$this->pass = 1;
+				$trans_data[pass] = $this->pass;
 				$trans_data[metadata] = json_encode ( $transcode_job_meta );
 				$trans_data[transcode_end_time] = date ( 'Y-m-d H:i:s' );
 				$trans_data[transcode_job_duration] = strtotime ( $this->transcode_end_time ) - strtotime ( $this->transcode_start_time );
@@ -326,20 +361,20 @@ error_log ( "memreas media json metadata after ----> " . $this->json_metadata . 
 				// Update the media table entry here
 				$now = date ( 'Y-m-d H:i:s' );
 				$this->json_metadata = json_encode ( $this->memreas_media_metadata );
-error_log ( "**************************************************************************" . PHP_EOL );
-error_log ( "memreas media media_id before ----> " . $this->memreas_media->media_id . PHP_EOL );
+//error_log ( "**************************************************************************" . PHP_EOL );
+//error_log ( "memreas media media_id before ----> " . $this->memreas_media->media_id . PHP_EOL );
 //error_log ( "memreas media json metadata before ----> " . $this->memreas_media->metadata . PHP_EOL );
-error_log ( "memreas json_metadata before ----> " . $this->json_metadata . PHP_EOL );
-error_log ( "**************************************************************************" . PHP_EOL );
+//error_log ( "memreas json_metadata before ----> " . $this->json_metadata . PHP_EOL );
+//error_log ( "**************************************************************************" . PHP_EOL );
 				$memreas_media_data_array = array (
 						'metadata' => $this->json_metadata,
 						'update_date' => $now 
 				);
 				$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
-error_log ( "**************************************************************************" . PHP_EOL );
-error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
-error_log ( "**************************************************************************" . PHP_EOL );
-error_log ( "Just updated $this->media_id" . PHP_EOL );
+//error_log ( "**************************************************************************" . PHP_EOL );
+//error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
+//error_log ( "**************************************************************************" . PHP_EOL );
+//error_log ( "Just updated $this->media_id" . PHP_EOL );
 			} // End if(isset($_POST))
 		} catch ( \Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
@@ -354,6 +389,7 @@ error_log ( "Just updated $this->media_id" . PHP_EOL );
 			$this->pass = 0;
 			error_log ( "error string ---> " . $e->getMessage () . PHP_EOL );
 		}
+		return $this->pass;
 	}
 	
 	public function createThumbnails($is_image = null) {
@@ -376,7 +412,7 @@ error_log ( "Just updated $this->media_id" . PHP_EOL );
 					'image2',
 					'-vf',
 					'fps=fps=' . $tnfreqency,
-					$this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . $imagename,
+					$this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE. $imagename,
 					'2>&1' 
 			);
 			
@@ -384,6 +420,7 @@ error_log ( "Just updated $this->media_id" . PHP_EOL );
 			$cmd = $this->ffmpegcmd . " " . $cmd;
 			// echo "$cmd<br>";
 			$op = shell_exec ( $cmd );
+error_log("create thumnbails op ---> ".$op.PHP_EOL);			
 			$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
 		} else {
 			$media_thumb_arr = array ($this->destRandMediaName);
@@ -394,9 +431,9 @@ error_log ( "Just updated $this->media_id" . PHP_EOL );
 		/*
 		 * This for loop fetches all the thumbnails just created
 		 */
-error_log("media_thumb_arr ----> ".print_r($media_thumb_arr,true).PHP_EOL);
+//error_log("media_thumb_arr ----> ".print_r($media_thumb_arr,true).PHP_EOL);
 		foreach ( $media_thumb_arr as $filename ) {
-error_log("filename ----> ".$filename.PHP_EOL);
+//error_log("filename ----> ".$filename.PHP_EOL);
 			// ////////////////////////////////////////////////
 			// Resize thumbnails as needed and save locally
 			$tns_sized = array (
@@ -408,7 +445,6 @@ error_log("filename ----> ".$filename.PHP_EOL);
 			);
 			
 			$s3paths = array (
-					//"full" => $this->user_id . '/media/thumbnails/',
 					"79x80" => $this->user_id . '/media/thumbnails/79x80/',
 					"448x306" => $this->user_id . '/media/thumbnails/448x306/',
 					"384x216" => $this->user_id . '/media/thumbnails/384x216/',
@@ -421,12 +457,41 @@ error_log("filename ----> ".$filename.PHP_EOL);
 			foreach ( $tns_sized as $key => $file ) {
 				//Push to S3
 				$s3thumbnail_path = $s3paths["$key"] . basename($filename);
-				$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_path, "image/png");					
+				/*
+				 * Testing directory upload below...
+				 */
+				//$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_path, "image/png");					
 				$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] [] = $s3thumbnail_path;
 			} //End for each tns_sized as file				 
-//error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metadata ['S3_files'] ['thumbnails']).PHP_EOL);				
+error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metadata ['S3_files'] ['thumbnails']).PHP_EOL);				
 		} // End for each thumbnail
+
+		//fullsize
+		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR,"/");
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
+
+		//79x80
+		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80,"/");
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_79X80';
+		
+		//
+		//448x306
+		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448x306,"/");
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_448x306';
+
+		//384x216
+		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216,"/");
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_384X216';
+		
+		//98x78
+		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78,"/");
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_98X78';
+		
 	} // end createThumNails()
 	
 	public function createFolders() {
@@ -435,6 +500,7 @@ error_log("filename ----> ".$filename.PHP_EOL);
 				$this->homeDir, // data/temp_uuid_dir/
 				$this->homeDir . self::DESTDIR, // data/temp_job_uuid_dir/media/
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR, // data/temp_job_uuid_dir/media/thumbnails/
+				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::FULLSIZE, // data/temp_job_uuid_dir/media/thumbnails/79x80/
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80, // data/temp_job_uuid_dir/media/thumbnails/79x80/
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306, // data/temp_job_uuid_dir/media/thumbnails/448x306/
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216, // data/temp_job_uuid_dir/media/thumbnails/384x216/
@@ -472,19 +538,31 @@ error_log("filename ----> ".$filename.PHP_EOL);
 			 * 
 			 */
 			//$qv=' -c:v mpeg4 ';
-			//$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
-			$qv=' -c:v libx264 -threads 0 -c:a libfdk_aac -preset veryfast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+			$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+			//$qv=' -c:v libx264 -threads 6 -c:a libfdk_aac -preset ultrafast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; // -b:a 128k ';
+			//$qv=' -c:v libx264 -c:a libfdk_aac -preset ultrafast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; // -b:a 128k ';
 			//$qv='';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-			$cmd = $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
+			//$ffmpeg_log_file = $this->homeDir . self::WEBHOME . "ffmpeg-".$this->media_id.date ( 'Y-m-d H:i:s').".log";
+			//$ffmpeg_logger = " -loglevel info ";
+			//$ffmpeg_logger = " -report ";
+			$ffmpeg_logger = "";
+				
+			//$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
+			$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".$ffmpeg_logger.'2>&1';
+			//$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2> $ffmpeg_logger';
+				
 		} else if ($type == '1080p') {
 			//$qv=' -c:v mpeg4 -q:v 1 ';
-			//$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
-			$qv=' -c:v libx264 -threads 0 -c:a libfdk_aac -preset medium -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
+			$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
+			//$qv=' -c:v libx264 -threads 6 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
+			//$qv=' -c:v libx264 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext; 
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-			$cmd = $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
+			//$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
+			$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".$ffmpeg_logger.'2>&1';
+			
 // 		} else if ($type == 'ts') {
 // 			//$qv=' -c:v mpeg2video -q:v 3 -strict experimental -c:a aac ';
 // 			//$qv=' -vcodec copy -acodec copy -f mpegts ';
@@ -525,17 +603,18 @@ error_log("filename ----> ".$filename.PHP_EOL);
 // 				$transcoded_hls_ts_file."%05d.ts".
 // 				' 2>&1';
 			
-			$cmd = $this->ffmpegcmd .
+			$cmd = 'nice ' . 
+				$this->ffmpegcmd .
 				" -re -y -i ".$transcoded_mp4_file.
-				" -threads 0 " . //testing threads 
+				//" -threads 6 " . //testing threads 
 				" -map 0 ".
 				" -pix_fmt yuv420p ". 
 				" -vcodec libx264 ". 
 				" -acodec libfdk_aac ". 
 				" -r 25 ". 
 				//" -profile:v baseline ". 
-				//" -profile:v main -level 4.0 ". 
-				" -profile:v high -level 4.2 ". 
+				" -profile:v main -level 4.0 ". 
+				//" -profile:v high -level 4.2 ". 
 				" -b:v 1500k ". 
 				" -maxrate 2000k ". 
 				" -force_key_frames 50 ". 
@@ -547,6 +626,7 @@ error_log("filename ----> ".$filename.PHP_EOL);
 				" -segment_time 10 ". 
 				" -segment_format mpeg_ts ". 
 				$transcoded_hls_ts_file."%05d.ts".
+				//$ffmpeg_logger.'2>&1';
 				' 2>&1';
 		} else if ($type == 'audio') {
 			/*
@@ -556,7 +636,7 @@ error_log("filename ----> ".$filename.PHP_EOL);
 			$qv=' -c:a libfdk_aac -movflags +faststart ';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::AUDIODIR . $this->MediaFileName . $aacext; 
 			$transcoded_file_name = $this->MediaFileName . $aacext;
-			$cmd = $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
+			$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
 			
 		} else
 			throw new \Exception("MemreasTranscoder $type not found.");

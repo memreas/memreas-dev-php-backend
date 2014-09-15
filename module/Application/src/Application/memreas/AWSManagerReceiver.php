@@ -82,7 +82,7 @@ class AWSManagerReceiver {
 				}
 			} else { //It's an image just resize and store thumbnails
 //error_log("Inside snsProcessMediaSubscribe else it's an image..." . PHP_EOL);            
-								/*
+				/*
 				 * 5-SEP-2014 
 				 * moved thumnail creation to a single function
 				 */
@@ -90,11 +90,9 @@ class AWSManagerReceiver {
 				$memreasTranscoder = new MemreasTranscoder($this);
 				$memreas_transcoder_tables = new MemreasTranscoderTables($this->service_locator);
 				$result = $memreasTranscoder->exec($message_data, $memreas_transcoder_tables, $this->service_locator, false);
-				
-				//exit;
+
+				return $result;
 			}
-			header("HTTP/1.1 200 OK", true, 200); 
-	        //return true;
         
 		} catch (Exception $e) {
 		    error_log("Caught exception: $e->getMessage()" . PHP_EOL);
@@ -119,6 +117,21 @@ class AWSManagerReceiver {
 		return true;
     }
 
+    function pushThumbnailsToS3($dir, $s3path) {
+    	$keyPrefix = $s3path;
+    	$options = array(
+    			//'params'      => array('ACL' => 'public-read'),
+    			'concurrency' => 20,
+    			//'debug'       => true
+    	);
+    	
+error_log("dir ----> ".$dir.PHP_EOL);    	
+error_log("keyPrefix ----> ".$keyPrefix.PHP_EOL);    	
+		$result = $this->s3->uploadDirectory($dir, MemreasConstants::S3BUCKET, $keyPrefix, $options);
+error_log("this->s3->uploadDirectory result ----> ".$result.PHP_EOL);    	
+    }
+    
+    
     function pushMediaToS3($file, $s3file, $content_type, $isVideo = false) {
         $body = EntityBody::factory(fopen($file, 'r+'));
         /////////////////////////////////////////////////////////////////////
@@ -142,8 +155,8 @@ class AWSManagerReceiver {
         }
         
         //Set the content type 
-        $opt = array();     
-        $opt['CacheControl'] = 'max-age=3600';
+        //$opt = array();     
+        //$opt['CacheControl'] = 'max-age=3600';
                    	
         return $result;
     }
