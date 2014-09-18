@@ -103,15 +103,6 @@ class MemreasTranscoder {
 		
 		try {
 
-			/*
-			 * 12-SEP-2014 trying to debug shutdown issue
-			 */
-			register_shutdown_function('shutDownFunction');
-error_log ( "registed shutdown function..." . PHP_EOL );
-					
-			
-			
-			
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->user_id = $message_data ['user_id'];
 			$this->media_id = $message_data ['media_id'];
@@ -290,7 +281,7 @@ error_log ( "finished thumbnails".PHP_EOL );
 					$transcode_job_meta = array ();
 error_log ( "starting web video".PHP_EOL );
 					$transcode_job_meta ['web'] = $this->transcode ( 'web' );
-					$this->memreas_media_metadata ['S3_files']['web'] = $transcode_job_meta ['web'];
+					//$this->memreas_media_metadata ['S3_files']['web'] = $transcode_job_meta ['web'];
 error_log ( "finished web video".PHP_EOL );
 					$now = date ( 'Y-m-d H:i:s' );
 					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
@@ -305,16 +296,16 @@ error_log ( "finished web video".PHP_EOL );
 					 * High quality mp4 conversion
 					 */
 //error_log ( "starting 1080p video".PHP_EOL );
-					//$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
+					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
 					//$this->memreas_media_metadata ['S3_files']['1080p'] = $transcode_job_meta ['1080p'];
 //error_log ( "finished 1080p video".PHP_EOL );
-					//$now = date ( 'Y-m-d H:i:s' );
-					//$this->json_metadata = json_encode ( $this->memreas_media_metadata );
-					//$memreas_media_data_array = array (
-					//		'metadata' => $this->json_metadata,
-					//		'update_date' => $now
-					//);
-					//$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
+					$now = date ( 'Y-m-d H:i:s' );
+					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
+					$memreas_media_data_array = array (
+							'metadata' => $this->json_metadata,
+							'update_date' => $now
+					);
+					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
 //error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
 
 					// Create webm file
@@ -421,19 +412,29 @@ error_log ( "finished web video".PHP_EOL );
 			// echo "$cmd<br>";
 			$op = shell_exec ( $cmd );
 error_log("create thumnbails op ---> ".$op.PHP_EOL);			
-			$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
+			$op = shell_exec ( "ls -al ".$this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE );
+error_log("dir ---> ".$this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE.PHP_EOL);			
+error_log("ls -al  op ---> ".$op.PHP_EOL);			
+			$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
 		} else {
 			$media_thumb_arr = array ($this->destRandMediaName);
 		}
-		
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_built_thumbnails';
+		
+		$s3paths = array (
+				"79x80" => $this->user_id . '/media/thumbnails/79x80/',
+				"448x306" => $this->user_id . '/media/thumbnails/448x306/',
+				"384x216" => $this->user_id . '/media/thumbnails/384x216/',
+				"98x78" => $this->user_id . '/media/thumbnails/98x78/'
+		);
 		
 		/*
 		 * This for loop fetches all the thumbnails just created
 		 */
-//error_log("media_thumb_arr ----> ".print_r($media_thumb_arr,true).PHP_EOL);
+error_log("media_thumb_arr ----> ".print_r($media_thumb_arr,true).PHP_EOL);
 		foreach ( $media_thumb_arr as $filename ) {
-//error_log("filename ----> ".$filename.PHP_EOL);
+error_log("filename ----> ".$filename.PHP_EOL);
+
 			// ////////////////////////////////////////////////
 			// Resize thumbnails as needed and save locally
 			$tns_sized = array (
@@ -441,14 +442,7 @@ error_log("create thumnbails op ---> ".$op.PHP_EOL);
 					"79x80" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80, $filename, basename($filename), 79, 80 ),
 					"448x306" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306, $filename, basename($filename), 448, 306 ),
 					"384x216" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216, $filename, basename($filename), 384, 216 ),
-					"98x78" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, $filename, basename($filename), 98, 78 ) 
-			);
-			
-			$s3paths = array (
-					"79x80" => $this->user_id . '/media/thumbnails/79x80/',
-					"448x306" => $this->user_id . '/media/thumbnails/448x306/',
-					"384x216" => $this->user_id . '/media/thumbnails/384x216/',
-					"98x78" => $this->user_id . '/media/thumbnails/98x78/' 
+					"98x78" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, $filename, basename($filename), 98, 78 )
 			);
 			
 			/*
@@ -456,12 +450,15 @@ error_log("create thumnbails op ---> ".$op.PHP_EOL);
 			 */
 			foreach ( $tns_sized as $key => $file ) {
 				//Push to S3
+error_log("Inside FOR LOOP key---> ".$key.PHP_EOL);				
+error_log("Inside FOR LOOP file---> ".$file.PHP_EOL);				
 				$s3thumbnail_path = $s3paths["$key"] . basename($filename);
 				/*
 				 * Testing directory upload below...
 				 */
 				//$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_path, "image/png");					
 				$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] [] = $s3thumbnail_path;
+error_log("Inside FOR LOOP s3thumbnail_path---> ".$s3thumbnail_path.PHP_EOL);				
 			} //End for each tns_sized as file				 
 error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metadata ['S3_files'] ['thumbnails']).PHP_EOL);				
 		} // End for each thumbnail
@@ -478,7 +475,7 @@ error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metada
 		
 		//
 		//448x306
-		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448x306,"/");
+		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306,"/");
 		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_448x306';
 
