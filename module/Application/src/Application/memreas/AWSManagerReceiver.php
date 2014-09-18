@@ -126,9 +126,7 @@ class AWSManagerReceiver {
     	);
     	
 error_log("dir ----> ".$dir.PHP_EOL);    	
-error_log("keyPrefix ----> ".$keyPrefix.PHP_EOL);    	
 		$result = $this->s3->uploadDirectory($dir, MemreasConstants::S3BUCKET, $keyPrefix, $options);
-error_log("this->s3->uploadDirectory result ----> ".$result.PHP_EOL);    	
     }
     
     

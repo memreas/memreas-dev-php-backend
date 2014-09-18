@@ -411,10 +411,6 @@ error_log ( "finished web video".PHP_EOL );
 			$cmd = $this->ffmpegcmd . " " . $cmd;
 			// echo "$cmd<br>";
 			$op = shell_exec ( $cmd );
-error_log("create thumnbails op ---> ".$op.PHP_EOL);			
-			$op = shell_exec ( "ls -al ".$this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE );
-error_log("dir ---> ".$this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE.PHP_EOL);			
-error_log("ls -al  op ---> ".$op.PHP_EOL);			
 			$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
 		} else {
 			$media_thumb_arr = array ($this->destRandMediaName);
@@ -431,7 +427,6 @@ error_log("ls -al  op ---> ".$op.PHP_EOL);
 		/*
 		 * This for loop fetches all the thumbnails just created
 		 */
-error_log("media_thumb_arr ----> ".print_r($media_thumb_arr,true).PHP_EOL);
 		foreach ( $media_thumb_arr as $filename ) {
 error_log("filename ----> ".$filename.PHP_EOL);
 
@@ -465,28 +460,28 @@ error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metada
 
 		//fullsize
 		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
 
 		//79x80
 		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_79X80';
 		
 		//
 		//448x306
 		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_448x306';
 
 		//384x216
 		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_384X216';
 		
 		//98x78
 		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path );
+		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_98X78';
 		
 	} // end createThumNails()
