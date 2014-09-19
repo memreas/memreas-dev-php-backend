@@ -257,7 +257,7 @@ error_log("pushing to S3...".$download_file.PHP_EOL);
 				$transcode_transaction = $this->persistTranscodeTransaction();
 				
 				if ($this->is_video) {
-error_log ( "this is video... duration is ".$this->duration.PHP_EOL );
+error_log ( "video duration is ".$this->duration.PHP_EOL );
 
 					/*
 					 * Thumbnails
@@ -290,15 +290,14 @@ error_log ( "finished web video".PHP_EOL );
 							'update_date' => $now
 					);
 					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
-//error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
 
 					/*
 					 * High quality mp4 conversion
 					 */
-//error_log ( "starting 1080p video".PHP_EOL );
+error_log ( "starting 1080p video".PHP_EOL );
 					$transcode_job_meta ['1080p'] = $this->transcode ( '1080p' );
+error_log ( "finished 1080p video".PHP_EOL );
 					//$this->memreas_media_metadata ['S3_files']['1080p'] = $transcode_job_meta ['1080p'];
-//error_log ( "finished 1080p video".PHP_EOL );
 					$now = date ( 'Y-m-d H:i:s' );
 					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
 					$memreas_media_data_array = array (
@@ -306,7 +305,6 @@ error_log ( "finished web video".PHP_EOL );
 							'update_date' => $now
 					);
 					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
-//error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
 
 					// Create webm file
 //					$transcode_job_meta ['webm'] = $this->transcode ( 'webm' );
@@ -318,7 +316,6 @@ error_log ( "finished web video".PHP_EOL );
 //					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
 				} // End if ($is_video)
 				else if ($this->is_audio) {  
-//error_log ( "this is audio..." . PHP_EOL );
 					//Audio section
 					// Create web quality mp3
 					$transcode_job_meta = array ();
@@ -326,7 +323,6 @@ error_log ( "finished web video".PHP_EOL );
 					$this->memreas_media_metadata ['S3_files']['1080p'] = $transcode_job_meta ['1080p'];
 					// Update the metadata here for the transcoded files
 				} 	else if ($this->is_image) {  
-//error_log ( "this is image..." . PHP_EOL );
 					//Image section
 					$transcode_job_meta = array ();
 					$transcode_job_meta = $this->createThumbNails ($this->is_image);
@@ -352,20 +348,11 @@ error_log ( "finished web video".PHP_EOL );
 				// Update the media table entry here
 				$now = date ( 'Y-m-d H:i:s' );
 				$this->json_metadata = json_encode ( $this->memreas_media_metadata );
-//error_log ( "**************************************************************************" . PHP_EOL );
-//error_log ( "memreas media media_id before ----> " . $this->memreas_media->media_id . PHP_EOL );
-//error_log ( "memreas media json metadata before ----> " . $this->memreas_media->metadata . PHP_EOL );
-//error_log ( "memreas json_metadata before ----> " . $this->json_metadata . PHP_EOL );
-//error_log ( "**************************************************************************" . PHP_EOL );
 				$memreas_media_data_array = array (
 						'metadata' => $this->json_metadata,
 						'update_date' => $now 
 				);
 				$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
-//error_log ( "**************************************************************************" . PHP_EOL );
-//error_log ( "memreas media json metadata after ----> " . $this->json_metadata . PHP_EOL );
-//error_log ( "**************************************************************************" . PHP_EOL );
-//error_log ( "Just updated $this->media_id" . PHP_EOL );
 			} // End if(isset($_POST))
 		} catch ( \Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
@@ -374,7 +361,6 @@ error_log ( "finished web video".PHP_EOL );
 		// Always delete the temp dir...
 		// Delete the temp dir if we got this far...
 		try {
-//error_log("Recursive delete $this->homeDir".PHP_EOL);			
 			$result = $this->rmWorkDir ( $this->homeDir );
 		} catch ( \Exception $e ) {
 			$this->pass = 0;
@@ -391,8 +377,7 @@ error_log ( "finished web video".PHP_EOL );
 		$tnHeight = 306; 
 
 		if (!$this->is_image) {
-//error_log("Inside !is_image".PHP_EOL);			
-			$tnfreqency = 1/60;  //every 60 seconds take a thumbshot
+			$tnfreqency = 1/20;  //every 20 seconds take a thumbnail
 			$imagename = 'thumbnail_' . $this->original_file_name . '_media-%d.png';
 			$command = array (
 					'-i',
@@ -428,7 +413,6 @@ error_log ( "finished web video".PHP_EOL );
 		 * This for loop fetches all the thumbnails just created
 		 */
 		foreach ( $media_thumb_arr as $filename ) {
-error_log("filename ----> ".$filename.PHP_EOL);
 
 			// ////////////////////////////////////////////////
 			// Resize thumbnails as needed and save locally
@@ -445,44 +429,43 @@ error_log("filename ----> ".$filename.PHP_EOL);
 			 */
 			foreach ( $tns_sized as $key => $file ) {
 				//Push to S3
-error_log("Inside FOR LOOP key---> ".$key.PHP_EOL);				
-error_log("Inside FOR LOOP file---> ".$file.PHP_EOL);				
 				$s3thumbnail_path = $s3paths["$key"] . basename($filename);
 				/*
-				 * Testing directory upload below...
+				 * If image push each thumbnail
 				 */
-				//$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_path, "image/png");					
+				if (is_image) {
+					$this->aws_manager_receiver->pushMediaToS3($file, $s3thumbnail_path, "image/png");
+				}					
 				$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] [] = $s3thumbnail_path;
-error_log("Inside FOR LOOP s3thumbnail_path---> ".$s3thumbnail_path.PHP_EOL);				
 			} //End for each tns_sized as file				 
-error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metadata ['S3_files'] ['thumbnails']).PHP_EOL);				
 		} // End for each thumbnail
 
-		//fullsize
-		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
-		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
-
-		//79x80
-		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
-		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_79X80';
-		
-		//
-		//448x306
-		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
-		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_448x306';
-
-		//384x216
-		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
-		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_384X216';
-		
-		//98x78
-		$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78,"/");
-		$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
-		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_98X78';
+		if (!is_image) {
+			//fullsize
+			$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR,"/");
+			$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails';
+	
+			//79x80
+			$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80,"/");
+			$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_79X80';
+			
+			//448x306
+			$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306,"/");
+			$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_448x306';
+	
+			//384x216
+			$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216,"/");
+			$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_384X216';
+			
+			//98x78
+			$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78,"/");
+			$this->aws_manager_receiver->pushThumbnailsToS3( $local_thumnails_dir, $this->s3path.self::THUMBNAILSDIR );
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_stored_thumbnails_98X78';
+		}
 		
 	} // end createThumNails()
 	
@@ -583,18 +566,18 @@ error_log("Just finished FOR LOOP ---> ".json_encode($this->memreas_media_metada
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . '.m3u8';
 			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName;
 			// Sample: http://sinclairmediatech.com/encoding-hls-with-ffmpeg/
-// 			$cmd = $this->ffmpegcmd .
-// 				" -re -y -i ".$transcoded_mp4_file.
-// 				" -map 0 ".
-// 				" -f segment ".
-// 				" -segment_list ".$transcoded_file.
-// 				//" -segment_list_flags +live ".
-// 				" -segment_time 5 ".
-// 				" -segment_format mpegts ".
-// 				" -segment_list_type m3u8 ".
-// 				$transcoded_hls_ts_file."%05d.ts".
-// 				' 2>&1';
-			
+/* 			$cmd = $this->ffmpegcmd .
+				" -re -y -i ".$transcoded_mp4_file.
+				" -map 0 ".
+				" -f segment ".
+				" -segment_list ".$transcoded_file.
+				//" -segment_list_flags +live ".
+				" -segment_time 5 ".
+				" -segment_format mpegts ".
+				" -segment_list_type m3u8 ".
+				$transcoded_hls_ts_file."%05d.ts".
+				' 2>&1';
+ */			
 			$cmd = 'nice ' . 
 				$this->ffmpegcmd .
 				" -re -y -i ".$transcoded_mp4_file.
