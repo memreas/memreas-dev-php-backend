@@ -377,7 +377,8 @@ error_log ( "finished 1080p video".PHP_EOL );
 		$tnHeight = 306; 
 
 		if (!$this->is_image) {
-			$tnfreqency = 1/20;  //every 20 seconds take a thumbnail
+			//$tnfreqency = 1/360;  //every 360 seconds take a thumbnail
+			$tnfreqency = $this->duration/20;  //create a total of 20 thumbnails
 			$imagename = 'thumbnail_' . $this->original_file_name . '_media-%d.png';
 			$command = array (
 					'-i',
@@ -397,6 +398,7 @@ error_log ( "finished 1080p video".PHP_EOL );
 			// echo "$cmd<br>";
 			$op = shell_exec ( $cmd );
 			$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
+error_log("media_thumb_arr ----> ".json_encode($media_thumb_arr).PHP_EOL);			
 		} else {
 			$media_thumb_arr = array ($this->destRandMediaName);
 		}
@@ -413,7 +415,7 @@ error_log ( "finished 1080p video".PHP_EOL );
 		 * This for loop fetches all the thumbnails just created
 		 */
 		foreach ( $media_thumb_arr as $filename ) {
-
+				
 			// ////////////////////////////////////////////////
 			// Resize thumbnails as needed and save locally
 			$tns_sized = array (
@@ -439,7 +441,8 @@ error_log ( "finished 1080p video".PHP_EOL );
 				$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ["$key"] [] = $s3thumbnail_path;
 			} //End for each tns_sized as file				 
 		} // End for each thumbnail
-
+error_log("meta after for loop ----> ".json_encode($this->memreas_media_metadata).PHP_EOL);
+		
 		if (!is_image) {
 			//fullsize
 			$local_thumnails_dir = rtrim($this->homeDir . self::DESTDIR . self::THUMBNAILSDIR,"/");
