@@ -38,12 +38,14 @@ class MemreasTranscoder {
 	protected $ffmpegcmd;
 	protected $ffprobecmd;
 	
+	
 	protected $MediaFileType;
 	protected $MediaExt;
 	protected $duration=0;
 	protected $filesize=0;
 	protected $pass=0;
 	protected $json_metadata;
+	protected $transcode_transaction_id;
 	protected $transcode_job_duration;
 	protected $transcode_start_time;
 	protected $transcode_end_time;
@@ -254,7 +256,8 @@ error_log("pushing to S3...".$download_file.PHP_EOL);
 				 */
 				$now = date ( 'Y-m-d H:i:s' );
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@'.$now;
-				$transcode_transaction = $this->persistTranscodeTransaction();
+				//$transcode_transaction_ = $this->persistTranscodeTransaction();
+				$this->transcode_transaction_id = $this->persistTranscodeTransaction();
 				
 				if ($this->is_video) {
 error_log ( "video duration is ".$this->duration.PHP_EOL );
@@ -291,6 +294,10 @@ error_log ( "finished web video".PHP_EOL );
 					);
 					$media_id = $this->persistMedia($this->memreas_media, $memreas_media_data_array);
 
+//error_log("finished transcode web for video this->memreas_media_metadata ---> " . json_encode ( $this->memreas_media_metadata ) .PHP_EOL);
+//error_log("finished transcode web for video transcode_job_meta ---> " . json_encode ( $transcode_job_meta ) .PHP_EOL);
+						
+					
 					/*
 					 * High quality mp4 conversion
 					 */
@@ -322,11 +329,14 @@ error_log ( "finished 1080p video".PHP_EOL );
 					$transcode_job_meta ['audio'] = $this->transcode ( 'audio' );
 					$this->memreas_media_metadata ['S3_files']['1080p'] = $transcode_job_meta ['1080p'];
 					// Update the metadata here for the transcoded files
+
 				} 	else if ($this->is_image) {  
 					//Image section
 					$transcode_job_meta = array ();
 					$transcode_job_meta = $this->createThumbNails ($this->is_image);
 					
+					//error_log("finished thumbnails for image transcode_job_meta ---> " . json_encode ( $transcode_job_meta ) .PHP_EOL);
+								
 				}
 				
 				//////////////////////////////////////////////////////////////
@@ -336,13 +346,16 @@ error_log ( "finished 1080p video".PHP_EOL );
 				
 				///////////////////////////////
 				// Update transcode_transaction
-				$trans_data = array();
-				$this->pass = 1;
-				$trans_data[pass] = $this->pass;
-				$trans_data[metadata] = json_encode ( $transcode_job_meta );
-				$trans_data[transcode_end_time] = date ( 'Y-m-d H:i:s' );
-				$trans_data[transcode_job_duration] = strtotime ( $this->transcode_end_time ) - strtotime ( $this->transcode_start_time );
-				$transaction_id = $this-> persistTranscodeTransaction($transcode_transaction, $transdata);	
+				$this->pass = "1";
+				$this->transcode_end_time = date("Y-m-d H:i:s");
+				$transcode_transaction_data = array();
+				$transcode_transaction_data['pass'] = $this->pass;
+				$transcode_transaction_data['metadata'] = json_encode ( $transcode_job_meta );
+				$transcode_transaction_data['transcode_end_time'] = date("Y-m-d H:i:s");
+				$transcode_transaction_data['transcode_job_duration'] = strtotime ( $this->transcode_end_time ) - strtotime ( $this->transcode_start_time );
+
+				$transcode_transaction = $this->memreas_transcoder_tables->getTranscodeTransactionTable()->getTranscodeTransaction($this->transcode_transaction_id);
+				$transaction_id = $this->persistTranscodeTransaction($transcode_transaction, $transcode_transaction_data);	
 				
 				///////////////////////////////
 				// Update the media table entry here
@@ -378,7 +391,21 @@ error_log ( "finished 1080p video".PHP_EOL );
 
 		if (!$this->is_image) {
 			//$tnfreqency = 1/360;  //every 360 seconds take a thumbnail
-			$tnfreqency = $this->duration/20;  //create a total of 20 thumbnails
+			/*
+			 * Here let's determine how many thumbnails to make
+			 *   ex: >1 hr = 3600 seconds <--- store 20 thumbnails 
+			 */
+			if ($this->duration > 3600) { //greater then 60 minutes
+				$interval = $this->duration/20;
+			} else if ($this->duration > 300) { //greater than 5 minutes
+				$interval = $this->duration/10;
+			} else if ($this->duration > 60) { //greater than 1 minutes
+				$interval = $this->duration/5; 
+			} else  { //less than a minute
+				$interval = $this->duration/3; 
+			}
+			//$interval = $this->duration/20;  //create a total of 20 thumbnails
+			$tnfreqency = 1 / $interval;
 			$imagename = 'thumbnail_' . $this->original_file_name . '_media-%d.png';
 			$command = array (
 					'-i',
@@ -516,6 +543,10 @@ error_log("meta after for loop ----> ".json_encode($this->memreas_media_metadata
 			 * 
 			 */
 			//$qv=' -c:v mpeg4 ';
+			/*
+			 * Test lossless with best compression
+			 */
+			//$qv=' -c:v libx264 -c:a libfdk_aac -preset slow -qp 0 -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
 			$qv=' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
 			//$qv=' -c:v libx264 -threads 6 -c:a libfdk_aac -preset ultrafast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; // -b:a 128k ';
 			//$qv=' -c:v libx264 -c:a libfdk_aac -preset ultrafast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; // -b:a 128k ';
@@ -726,10 +757,12 @@ error_log("meta after for loop ----> ".json_encode($this->memreas_media_metadata
 					'transcode_start_time' => $this->transcode_start_time
 			) );
 			$transcode_transaction_id = $this->memreas_transcoder_tables->getTranscodeTransactionTable()->saveTranscodeTransaction ( $transcode_transaction );
-			return $transcode_transaction;
-		} else { // Update 
+//error_log("inserted transcode_transaction_id ------> ".$transcode_transaction_id.PHP_EOL);			
+			return $transcode_transaction_id;
+		} else { // Update
 			$transcode_transaction->exchangeArray ( $transcode_data_array );
 			$transcode_transaction_id = $this->memreas_transcoder_tables->getTranscodeTransactionTable ()->saveTranscodeTransaction ( $transcode_transaction );
+//error_log("updated transcode_transaction_id ------> ".$transcode_transaction_id.PHP_EOL);			
 			return $transcode_transaction_id;
 		}
 	}

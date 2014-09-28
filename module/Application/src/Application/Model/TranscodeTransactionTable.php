@@ -16,11 +16,11 @@ class TranscodeTransactionTable {
 		return $resultSet;
 	}
 
-	public function getTranscodeTransaction($transaction_id) {
+	public function getTranscodeTransaction($transcode_transaction_id) {
 		$rowset = $this->tableGateway->select ( array ('transcode_transaction_id' => $transcode_transaction_id ) );
 		$row = $rowset->current ();
 		if (! $row) {
-			throw new \Exception ( "Could not find row $transactionId" );
+			throw new \Exception ( "Could not find row $transcode_transaction_id" );
 		}
 		return $row;
 	}
@@ -46,7 +46,7 @@ class TranscodeTransactionTable {
 		try {
 			if (isset($transcode_transaction->transcode_transaction_id)) {
 //error_log("Inside isset transcode_transaction_id");
-				if ($this->getTransaction($transcode_transaction->transcode_transaction_id )) {
+				if ($this->getTranscodeTransaction($transcode_transaction->transcode_transaction_id )) {
 					$this->tableGateway->update ( $data, array ('transcode_transaction_id' => $transcode_transaction->transcode_transaction_id ) );
 				} else {
 					throw new \Exception ( 'Form transaction_id does not exist' );
