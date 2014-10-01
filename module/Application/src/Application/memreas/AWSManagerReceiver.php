@@ -16,15 +16,15 @@ error_reporting(E_ALL & ~E_NOTICE);
 
 class AWSManagerReceiver {
 
-    private $aws = null;
-    private $s3 = null;
-    private $sns = null;
-    private $sqs = null;
-    private $topicArn = null;
-    private $awsTranscode = null;
-    private $service_locator = null;
-    private $dbAdapter = null;
-    private $temp_job_uuid = null;
+    protected $aws = null;
+    protected $s3 = null;
+    protected $sns = null;
+    protected $sqs = null;
+    protected $topicArn = null;
+    protected $awsTranscode = null;
+    protected $service_locator = null;
+    protected $dbAdapter = null;
+    protected $temp_job_uuid = null;
 
     public function __construct($service_locator) {
         //error_log("Inside AWSManagerReceiver contructor..." . PHP_EOL);
@@ -129,6 +129,16 @@ error_log("dir ----> ".$dir.PHP_EOL);
 		$result = $this->s3->uploadDirectory($dir, MemreasConstants::S3BUCKET, $keyPrefix, $options);
     }
     
+    function copyMediaInS3($bucket, $target, $source) {
+    	$result = $this->s3->copyObject(array(
+    			'Bucket'               => $bucket,
+    			'Key'                  => $target,
+    			//'CopySource'           => "{".$bucket."}/{".$source."}",
+    			'CopySource'           => $bucket.'/'.$source,
+    			'ServerSideEncryption' => 'AES256',
+    	));
+    	return $result;
+    }
     
     function pushMediaToS3($file, $s3file, $content_type, $isVideo = false) {
         $body = EntityBody::factory(fopen($file, 'r+'));

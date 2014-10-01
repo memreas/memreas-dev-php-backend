@@ -168,10 +168,21 @@ error_log("pulling from S3 ".$s3file." to tmp_file ---> ".$tmp_file.PHP_EOL);
 					/*
 					 * 10-SEP-2014 - make a copy on S3 as application/octet-stream for download
 					*/
+					// Copy an object and add server-side encryption.
+error_log("s3file---> ".$s3file.PHP_EOL);					
+error_log("MemreasConstants::S3BUCKET ---> " . MemreasConstants::S3BUCKET .PHP_EOL);					
+error_log("s3file---> ".$s3file.PHP_EOL);
+error_log("CopySource ---> "."{". MemreasConstants::S3BUCKET . "}/{" . $s3file . "}" .PHP_EOL);	
+					$download_file = $this->s3path . "download/" . $this->s3file_name;				
+					$result = $this->aws_manager_receiver->copyMediaInS3( MemreasConstants::S3BUCKET, $download_file, $s3file);
+					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
+						
+					/*
 					$download_file = $this->s3path . "download/" . $this->s3file_name;
 error_log("pushing to S3...".$download_file.PHP_EOL);					
 					$this->aws_manager_receiver->pushMediaToS3($tmp_file, $download_file, "application/octet-stream");
 					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
+					*/
 				}
 
 				// Set file related data
