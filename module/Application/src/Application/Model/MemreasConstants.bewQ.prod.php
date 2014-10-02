@@ -14,8 +14,8 @@ class MemreasConstants {
 	const SIGNURLS = false;
 	const EXPIRES = 36000; // 10 hour should be enough to transcode
 		
-	const MEMREASDB     = 'memreasprod-db';
-    const MEMREASBEDB     = 'memreasprod-backend-db';
+	const MEMREASDB     = 'memreasintdb';
+    const MEMREASBEDB     = 'memreasbackenddb';
     const S3BUCKET     	= "memreasprdsec";
     //const TOPICARN		= "arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int";
 	const QUEUEURL 		= 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasprod-backend-worker';
