@@ -535,7 +535,7 @@ error_log("meta after for loop ----> ".json_encode($this->memreas_media_metadata
 			if (mkdir ( $dir ))
 				chmod ( $dir, $permissions );
 			umask ( $save );
-//error_log("created dir ---> $dir".PHP_EOL);			
+error_log("created dir ---> $dir".PHP_EOL);			
 		}
 	}
 	
