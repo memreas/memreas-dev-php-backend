@@ -122,6 +122,7 @@ class AWSManagerReceiver {
     	$options = array(
     			//'params'      => array('ACL' => 'public-read'),
     			'concurrency' => 20,
+    			'ServerSideEncryption', 'AES256',
     			//'debug'       => true
     	);
     	
@@ -150,7 +151,11 @@ error_log("dir ----> ".$dir.PHP_EOL);
                 ->setBucket(MemreasConstants::S3BUCKET)
                 ->setHeaders(array('Content-Type' => $content_type))
         		->setOption('CacheControl', 'max-age=3600')
-                ->setKey($s3file)
+        		->setOption('ServerSideEncryption', 'AES256')
+        		//->addOptions(array('CacheControl' => 'max-age=3600',
+        		//				'ServerSideEncryption', 'AES256')
+        		//			)
+        		->setKey($s3file)
                 ->build();
 
         //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
@@ -237,6 +242,7 @@ error_log("dir ----> ".$dir.PHP_EOL);
                 ->setBucket(MemreasConstants::S3BUCKET)
                 ->setMinPartSize(10 * Size::MB)
                 ->setOption('ContentType', $content_type)
+                ->setOption('ServerSideEncryption', 'AES256')
                 ->setKey($thumbnail_file)
                 ->build();
 
