@@ -31,8 +31,8 @@ use Application\memreas\MemreasPayPalTables;
 
 class IndexController extends AbstractActionController
 {
-	protected $url = MemreasConstants::ORIGINAL_URL;
-	protected $media_url = MemreasConstants::MEDIA_URL;
+	protected $url;
+	protected $media_url;
 	protected $user_id;
     protected $storage;
     protected $authservice;
