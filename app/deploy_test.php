@@ -1,4 +1,4 @@
 <?php
 
-error_log ("Hit deploy_test.php v2".PHP_EOL);
+error_log ("20-OCT-2014-created AMI Image of latest git deploy.".PHP_EOL);
  
