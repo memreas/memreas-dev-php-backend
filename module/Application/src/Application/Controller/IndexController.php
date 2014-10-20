@@ -119,10 +119,19 @@ error_log("inputJSON...... $inputJSON");
 //error_log("**************************************");
 					//Return the status code here so that the SNS topic won't keep resending the message
 					ob_start();
-					http_response_code(200);
-					ob_end_flush(); 	// Strange behaviour, will not work
-					flush();            // Unless both are called !
 					
+					//http_response_code(200);
+					//ob_end_flush(); 	// Strange behaviour, will not work
+					//flush();            // Unless both are called !
+					
+					/* send header and flush */
+					header("HTTP/1.1 200 OK");
+					ob_end_flush();
+					if (headers_sent() ) { 
+						error_log("Success: response header 200 sucessfully sent"); 
+					} else { 
+						error_log("FAIL: response header 200 NOT sucessfully sent"); 
+					}
 					//Process Message here -
 					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
 					
