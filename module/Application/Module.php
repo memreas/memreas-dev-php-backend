@@ -69,16 +69,19 @@ class Module
 
     public function bootstrapSession($e)
     {
-        $session = $e->getApplication()
+    	$session = $e->getApplication()
                      ->getServiceManager()
                      ->get('Zend\Session\SessionManager');
         $session->start();
 
+        
         $container = new Container('user');
         if (!isset($container->init)) {
              $session->regenerateId(true);
              $container->init = 1;
         }
+        
+        
     }
 
 
@@ -94,7 +97,6 @@ class Module
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                    'PayPal' => __DIR__ . '/../../vendor/PayPal',
                 ),
             ) );
 	}
@@ -111,9 +113,17 @@ class Module
 	 		                       $sessionConfig = null;
     	    		                if (isset($session['config'])) {
         	        		            $class = isset($session['config']['class'])  ? $session['config']['class'] : 'Zend\Session\Config\SessionConfig';
-            	            		    $options = isset($session['config']['options']) ? $session['config']['options'] : array();
-		        	                    $sessionConfig = new $class();
+            	            		    //$options = isset($session['config']['options']) ? $session['config']['options'] : array();
+		        	                    
+        		    	                //setting this for AWS permissions error
+        		    	                //Note: must specify full path
+//error_log("__DIR__ ---> ".__DIR__.PHP_EOL);
+//error_log("save_path ---> ".getcwd()."/data/session/");
+        		    	                $options['save_path'] = getcwd()."/data/session/";
+        		    	                
+        		    	                $sessionConfig = new $class();
         		    	                $sessionConfig->setOptions($options);
+        		    	                 
                 			        }
 
 			                        $sessionStorage = null;

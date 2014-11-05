@@ -130,11 +130,11 @@ class MemreasTranscoder {
 			
 			if (isset ( $message_data )) {
 				if (getcwd () == '/var/app/current') {
-//error_log ( "found /var/app/current" . PHP_EOL );
+error_log ( "found /var/app/current" . PHP_EOL );
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; // :::: AWS ffmpeg installation
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE; // :::: AWS ffprobe installation
 				} else {
-//error_log ( "!found /var/app/current" . PHP_EOL );
+error_log ( "!found /var/app/current" . PHP_EOL );
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL; // :::: Your ffmpeg installation
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL; // :::: Your ffmpeg installation
 				}
