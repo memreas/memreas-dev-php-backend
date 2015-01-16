@@ -151,27 +151,19 @@ error_log("dir ----> ".$dir.PHP_EOL);
                 ->setSource($body)
                 ->setBucket(MemreasConstants::S3BUCKET)
                 ->setHeaders(array('Content-Type' => $content_type))
-        		->setOption('CacheControl', 'max-age=3600')
-        		->setOption('ServerSideEncryption', 'AES256')
-        		//->addOptions(array('CacheControl' => 'max-age=3600',
-        		//				'ServerSideEncryption', 'AES256')
-        		//			)
-        		->setKey($s3file)
+ 	       		->setOption('CacheControl', 'max-age=3600')
+	        		->setOption('ServerSideEncryption', 'AES256')
+	        		->setKey($s3file)
                 ->build();
 
         //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
         try {
             $result = $uploader->upload();
-//            error_log( "Upload complete.\n", 0);
         } catch (MultipartUploadException $e) {
             $uploader->abort();
             error_log( "Upload failed.\n", 0);
         }
         
-        //Set the content type 
-        //$opt = array();     
-        //$opt['CacheControl'] = 'max-age=3600';
-                   	
         return $result;
     }
 	
@@ -193,18 +185,12 @@ error_log("dir ----> ".$dir.PHP_EOL);
 		//    mkdir($dirPath, 0777, true);
 		//}
         $splitter = explode("thumbnail/", $s3file);
-//error_log("Inside fetchResizeUpload - splitter --> " . print_r($splitter, true));                	
         $thumbnail_name = $splitter[1];
         $splitter = explode($thumbnail_name, $s3file);
-//error_log("Inside fetchResizeUpload - splitter --> " . print_r($splitter, true));                	
         $path = $splitter[0];
         $thumbnail_file = $path . $height . "x" . $width . "/" . $thumbnail_name;
-//error_log("Inside fetchResizeUpload - thumbnail_file --> " . $thumbnail_file);                	
 
-        //$file = $dirPath . $thumbnail_name;
         $file = $job_dir . $thumbnail_name;
-//error_log("Inside fetchResizeUpload - about to get " . $s3file);                	
-//error_log("Inside fetchResizeUpload - about to save locally as " . $file);                	
         $result = $this->s3->getObject(array(
             'Bucket' => MemreasConstants::S3BUCKET,
             'Key' => $s3file,
@@ -217,7 +203,6 @@ error_log("dir ----> ".$dir.PHP_EOL);
         //$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');  //Maintains image
         $layer->resizeInPixel($height, $width);
         //Saving image
-        //$dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" . $width . "/";
         $dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" . $width . "/";
         $job_sub_dir = $job_dir . $height . "x" . $width . "/";
         if (!file_exists($job_sub_dir)) {
@@ -230,11 +215,9 @@ error_log("dir ----> ".$dir.PHP_EOL);
         $backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
         $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to 100%)
         $layer->save($job_sub_dir, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality);
-        //$file = $dirPath . $thumbnail_name;
         $file = $job_sub_dir . $thumbnail_name;
 
         $body = EntityBody::factory(fopen($file, 'r+'));
-//error_log("Inside fetchResizeUpload - thumbnail_file is  --> " . $thumbnail_file);                	
         /////////////////////////////////////////////////////////////////////
         //Upload images - section
         $uploader = UploadBuilder::newInstance()
@@ -250,10 +233,9 @@ error_log("dir ----> ".$dir.PHP_EOL);
         //  Modified - Perform the upload to S3. Abort the upload if something goes wrong
         try {
             $uploader->upload();
-            //error_log( "Upload complete.\n", 0);
         } catch (MultipartUploadException $e) {
             $uploader->abort();
-            //error_log( "Upload failed.\n", 0);
+            error_log( "Upload failed.\n", 0);
         }
 
         error_log("thumbnail_file ----> " . $thumbnail_file);

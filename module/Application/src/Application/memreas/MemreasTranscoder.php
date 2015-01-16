@@ -25,6 +25,7 @@ use Application\Model\TranscodeTransactionTable;
 class MemreasTranscoder {
 	protected $user_id;
 	protected $media_id;
+	protected $s3prefixpath;
 	protected $content_type;
 	protected $s3path;
 	protected $s3file_name;
@@ -76,11 +77,12 @@ class MemreasTranscoder {
 	const WEBDIR		= 'web/'; // Your web Dir, end with slash (/)
 	const WEBMDIR 		= 'webm/'; // Your webm Dir, end with slash (/)
 	const FLVDIR 		= 'flv/'; // Your flv Dir, end with slash (/)
-	const FULLSIZE	 	= 'fullsize/'; // Your 79x80 Dir, end with slash (/)
+	const FULLSIZE	 	= 'fullsize/'; // Your fullsize Dir, end with slash (/)
 	const _79X80 		= '79x80/'; // Your 79x80 Dir, end with slash (/)
 	const _448X306 		= '448x306/'; // Your 448x306 Dir, end with slash (/)
 	const _384X216 		= '384x216/'; // Your 384x216 Dir, end with slash (/)
 	const _98X78 		= '98x78/'; // Your 98x78 Dir, end with slash (/)
+	const _1280x720 = '1280x720/'; // Your 1280x720 Dir, end with slash (/)
 	
 	/*
 	 * Thumbnail settings $tnWidth = 448; $tnHeight = 306; $tnfreqency = 60; // in seconds - 60 means every 60 seconds (minute) $errstr = '';
@@ -95,11 +97,7 @@ class MemreasTranscoder {
 	function shutDownFunction() {
 		$error = error_get_last();
 		error_log("FATAL_ERROR::".print_r($error, true).PHP_EOL);
-		//if ($error['type'] == 1) {
-		//	//do your stuff
-		//}
 	}
-	
 	
 	public function exec($message_data, $memreas_transcoder_tables, $service_locator, $isUpload = false) {
 		
@@ -111,6 +109,7 @@ class MemreasTranscoder {
 			$this->content_type = $message_data ['content_type'];
 			$this->s3path = $message_data ['s3path'];
 			$this->s3file_name = $message_data ['s3file_name'];
+			$this->s3prefixpath= $this->user_id.'/'.$this->media_id.'/';
 			$this->is_video = $message_data ['is_video'];
 			$this->is_audio = $message_data ['is_audio'];
 			$this->is_image = $message_data ['is_image'];
@@ -130,11 +129,9 @@ class MemreasTranscoder {
 			
 			if (isset ( $message_data )) {
 				if (getcwd () == '/var/app/current') {
-error_log ( "found /var/app/current" . PHP_EOL );
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; // :::: AWS ffmpeg installation
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE; // :::: AWS ffprobe installation
 				} else {
-error_log ( "!found /var/app/current" . PHP_EOL );
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL; // :::: Your ffmpeg installation
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL; // :::: Your ffmpeg installation
 				}
@@ -172,17 +169,16 @@ error_log("pulling from S3 ".$s3file." to tmp_file ---> ".$tmp_file.PHP_EOL);
 error_log("s3file---> ".$s3file.PHP_EOL);					
 error_log("MemreasConstants::S3BUCKET ---> " . MemreasConstants::S3BUCKET .PHP_EOL);					
 error_log("s3file---> ".$s3file.PHP_EOL);
-error_log("CopySource ---> "."{". MemreasConstants::S3BUCKET . "}/{" . $s3file . "}" .PHP_EOL);	
-					$download_file = $this->s3path . "download/" . $this->s3file_name;				
-					$result = $this->aws_manager_receiver->copyMediaInS3( MemreasConstants::S3BUCKET, $download_file, $s3file);
-					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
+// error_log("CopySource ---> "."{". MemreasConstants::S3BUCKET . "}/{" . $s3file . "}" .PHP_EOL);	
+// 					$download_file = $this->s3prefixpath . "download/" . $this->s3file_name;				
+// error_log("download_file->".$download_file .PHP_EOL);	
+// 					$result = $this->aws_manager_receiver->copyMediaInS3( MemreasConstants::S3BUCKET, $download_file, $s3file);
+// 					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
 						
-					/*
-					$download_file = $this->s3path . "download/" . $this->s3file_name;
-error_log("pushing to S3...".$download_file.PHP_EOL);					
+					$download_file = $this->s3prefixpath . "download/" . $this->s3file_name;				
+					//$download_file = $this->s3path . "download/" . $this->s3file_name;
 					$this->aws_manager_receiver->pushMediaToS3($tmp_file, $download_file, "application/octet-stream");
 					$this->memreas_media_metadata ['S3_files'] ['download']  = $download_file;
-					*/
 				}
 
 				// Set file related data
@@ -397,8 +393,8 @@ error_log ( "finished 1080p video".PHP_EOL );
 		// //////////////////////
 		// Thumbnails section
 		// //////////////////////
-		$tnWidth = 448; 
-		$tnHeight = 306; 
+		$tnWidth = 1280; 
+		$tnHeight = 720; 
 
 		if (!$this->is_image) {
 			//$tnfreqency = 1/360;  //every 360 seconds take a thumbnail
@@ -443,10 +439,11 @@ error_log("media_thumb_arr ----> ".json_encode($media_thumb_arr).PHP_EOL);
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_built_thumbnails';
 		
 		$s3paths = array (
-				"79x80" => $this->user_id . '/media/thumbnails/79x80/',
-				"448x306" => $this->user_id . '/media/thumbnails/448x306/',
-				"384x216" => $this->user_id . '/media/thumbnails/384x216/',
-				"98x78" => $this->user_id . '/media/thumbnails/98x78/'
+				"79x80" => $this->s3prefixpath.'thumbnails/79x80/',
+				"448x306" => $this->s3prefixpath.'thumbnails/448x306/',
+				"384x216" => $this->s3prefixpath.'thumbnails/384x216/',
+				"98x78" => $this->s3prefixpath.'thumbnails/98x78/',
+				"1280x720" => $this->s3prefixpath.'thumbnails/1280x720/',
 		);
 		
 		/*
@@ -461,11 +458,12 @@ error_log("media_thumb_arr ----> ".json_encode($media_thumb_arr).PHP_EOL);
 					"79x80" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_79X80, $filename, basename($filename), 79, 80 ),
 					"448x306" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306, $filename, basename($filename), 448, 306 ),
 					"384x216" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216, $filename, basename($filename), 384, 216 ),
-					"98x78" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, $filename, basename($filename), 98, 78 )
+					"98x78" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, $filename, basename($filename), 98, 78 ),
+					"1280x720" => $this->resizeImage ( $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_1280x720, $filename, basename($filename), 1280, 720 )
 			);
 			
 			/*
-			 * For each path I want to store in S3 what i just sized (79x80, 98x78, 384x216, 448x306)
+			 * For each path I want to store in S3 what i just sized (79x80, 98x78, 384x216, 448x306, 1280x720)
 			 */
 			foreach ( $tns_sized as $key => $file ) {
 				//Push to S3
@@ -677,16 +675,16 @@ error_log("created dir ---> $dir".PHP_EOL);
 		}
 
 		//Push to S3
-		$s3file = $this->user_id.'/media/'.$type.'/'.$transcoded_file_name;
+		$s3file = $this->s3prefixpath.$type.'/'.$transcoded_file_name;
 		if ($type == "hls") {
-			$s3file = $this->user_id.'/media/'.$type.'/'.$this->MediaFileName.'.m3u8';
+			$s3file = $this->s3prefixpath.$type.'/'.$this->MediaFileName.'.m3u8';
 			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "application/x-mpegurl");
 			//Push all .ts files
 			$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 			$fsize = 0;
 			foreach (glob($pat) as $filename) {
 				$fsize += filesize($filename);
-				$s3tsfile = $this->user_id.'/media/'.$type.'/'.basename($filename);
+				$s3tsfile = $this->s3prefixpath.$type.'/'.basename($filename);
 				$this->aws_manager_receiver->pushMediaToS3($filename, $s3tsfile, "video/mp2t");
 			}
 		} else if ($this->is_audio) {
@@ -708,7 +706,7 @@ error_log("created dir ---> $dir".PHP_EOL);
 				"output_start_time" => $output_start_time,
 				"output_end_time" => date ( "Y-m-d H:i:s" ) 
 		);
-		$this->memreas_media_metadata ['S3_files'] [$type] = $s3file; //$this->user_id . '/media/'.$type.'/' . $this->original_file_name . '.mp4';
+		$this->memreas_media_metadata ['S3_files'] [$type] = $s3file; 
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_'.$type.'_completed';
 
 		return $arr;
