@@ -154,6 +154,7 @@ error_log("pulling from S3 ".$s3file." to tmp_file ---> ".$tmp_file.PHP_EOL);
 					
 					$this->destRandMediaName = $tmp_file;
 					if ($response) {
+						//update progress...
 						$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_S3_file_saved';
 					} else {
 						// Something went wrong throw exception
@@ -263,6 +264,7 @@ error_log("s3file---> ".$s3file.PHP_EOL);
 				 */
 				$now = date ( 'Y-m-d H:i:s' );
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@'.$now;
+				$this->memreas_media_metadata ['S3_files'] ['size'] = $this->filesize;
 				//$transcode_transaction_ = $this->persistTranscodeTransaction();
 				$this->transcode_transaction_id = $this->persistTranscodeTransaction();
 				
