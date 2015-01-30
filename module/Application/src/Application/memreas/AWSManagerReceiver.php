@@ -115,6 +115,8 @@ error_log("s3file ----> ".$s3file.PHP_EOL);
 			error_log("Caught S3 exception: $e->getMessage()" . PHP_EOL);
 			throw $e;
 		}
+error_log("finished pullMediaFromS3".PHP_EOL);    	
+error_log("file--->".$file.PHP_EOL);    	
 		return true;
     }
 

@@ -29,6 +29,7 @@ class MemreasTranscoder {
 	protected $content_type;
 	protected $s3path;
 	protected $s3file_name;
+	protected $s3file_basename_prefix;
 	protected $is_video;
 	protected $is_audio;
 	protected $is_image;
@@ -109,6 +110,7 @@ class MemreasTranscoder {
 			$this->content_type = $message_data ['content_type'];
 			$this->s3path = $message_data ['s3path'];
 			$this->s3file_name = $message_data ['s3file_name'];
+			$this->s3file_basename_prefix = $message_data ['s3file_basename_prefix'];;
 			$this->s3prefixpath= $this->user_id.'/'.$this->media_id.'/';
 			$this->is_video = $message_data ['is_video'];
 			$this->is_audio = $message_data ['is_audio'];
@@ -169,7 +171,6 @@ error_log("pulling from S3 ".$s3file." to tmp_file ---> ".$tmp_file.PHP_EOL);
 					// Copy an object and add server-side encryption.
 error_log("s3file---> ".$s3file.PHP_EOL);					
 error_log("MemreasConstants::S3BUCKET ---> " . MemreasConstants::S3BUCKET .PHP_EOL);					
-error_log("s3file---> ".$s3file.PHP_EOL);
 // error_log("CopySource ---> "."{". MemreasConstants::S3BUCKET . "}/{" . $s3file . "}" .PHP_EOL);	
 // 					$download_file = $this->s3prefixpath . "download/" . $this->s3file_name;				
 // error_log("download_file->".$download_file .PHP_EOL);	
@@ -184,7 +185,8 @@ error_log("s3file---> ".$s3file.PHP_EOL);
 
 				// Set file related data
 				$this->original_file_name = $this->s3file_name;
-				$this->MediaFileName = basename( $this->s3file_name );
+				//$this->MediaFileName = basename( $this->s3file_name );
+				$this->MediaFileName = $this->s3file_basename_prefix;
 				$this->MediaFileType = $message_data ['content_type'];
 				$this->MediaExt = pathinfo($this->s3file_name, PATHINFO_EXTENSION);
 				$this->filesize = filesize ( $this->destRandMediaName );
@@ -521,6 +523,7 @@ error_log("meta after for loop ----> ".json_encode($this->memreas_media_metadata
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_448X306, // data/temp_job_uuid_dir/media/thumbnails/448x306/
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_384X216, // data/temp_job_uuid_dir/media/thumbnails/384x216/
 				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, // data/temp_job_uuid_dir/media/thumbnails/98x78/
+				$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_1280x720, // data/temp_job_uuid_dir/media/thumbnails/1280x720/
 				$this->homeDir . self::DESTDIR . self::WEBDIR, // data/temp_job_uuid_dir/media/web/
 				$this->homeDir . self::DESTDIR . self::AUDIODIR, // data/temp_job_uuid_dir/media/webm/
 				$this->homeDir . self::DESTDIR . self::_1080PDIR,  // data/temp_job_uuid_dir/media/p1080/
