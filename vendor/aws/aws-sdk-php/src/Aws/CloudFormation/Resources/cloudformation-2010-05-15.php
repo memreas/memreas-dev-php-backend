@@ -146,6 +146,10 @@ return array (
                             'ParameterValue' => array(
                                 'type' => 'string',
                             ),
+                            'UsePreviousValue' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
                         ),
                     ),
                 ),
@@ -411,6 +415,10 @@ return array (
                             'ParameterValue' => array(
                                 'type' => 'string',
                             ),
+                            'UsePreviousValue' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
                         ),
                     ),
                 ),
@@ -461,6 +469,41 @@ return array (
                     'required' => true,
                     'type' => 'string',
                     'location' => 'aws.query',
+                ),
+            ),
+        ),
+        'GetTemplateSummary' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\QueryCommand',
+            'responseClass' => 'GetTemplateSummaryOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Action' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => 'GetTemplateSummary',
+                ),
+                'Version' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => '2010-05-15',
+                ),
+                'TemplateBody' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 1,
+                ),
+                'TemplateURL' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 1,
+                    'maxLength' => 1024,
+                ),
+                'StackName' => array(
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 1,
                 ),
             ),
         ),
@@ -564,6 +607,48 @@ return array (
                 ),
             ),
         ),
+        'SignalResource' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\QueryCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Action' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => 'SignalResource',
+                ),
+                'Version' => array(
+                    'static' => true,
+                    'location' => 'aws.query',
+                    'default' => '2010-05-15',
+                ),
+                'StackName' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 1,
+                ),
+                'LogicalResourceId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                ),
+                'UniqueId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                    'minLength' => 1,
+                    'maxLength' => 64,
+                ),
+                'Status' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'aws.query',
+                ),
+            ),
+        ),
         'UpdateStack' => array(
             'httpMethod' => 'POST',
             'uri' => '/',
@@ -597,6 +682,11 @@ return array (
                     'minLength' => 1,
                     'maxLength' => 1024,
                 ),
+                'UsePreviousTemplate' => array(
+                    'type' => 'boolean',
+                    'format' => 'boolean-string',
+                    'location' => 'aws.query',
+                ),
                 'StackPolicyDuringUpdateBody' => array(
                     'type' => 'string',
                     'location' => 'aws.query',
@@ -623,6 +713,10 @@ return array (
                             'ParameterValue' => array(
                                 'type' => 'string',
                             ),
+                            'UsePreviousValue' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
                         ),
                     ),
                 ),
@@ -646,6 +740,16 @@ return array (
                     'location' => 'aws.query',
                     'minLength' => 1,
                     'maxLength' => 1350,
+                ),
+                'NotificationARNs' => array(
+                    'type' => 'array',
+                    'location' => 'aws.query',
+                    'sentAs' => 'NotificationARNs.member',
+                    'maxItems' => 5,
+                    'items' => array(
+                        'name' => 'NotificationARN',
+                        'type' => 'string',
+                    ),
                 ),
             ),
             'errorResponses' => array(
@@ -872,6 +976,9 @@ return array (
                                         'ParameterValue' => array(
                                             'type' => 'string',
                                         ),
+                                        'UsePreviousValue' => array(
+                                            'type' => 'boolean',
+                                        ),
                                     ),
                                 ),
                             ),
@@ -978,6 +1085,59 @@ return array (
             'additionalProperties' => true,
             'properties' => array(
                 'TemplateBody' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+            ),
+        ),
+        'GetTemplateSummaryOutput' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'Parameters' => array(
+                    'type' => 'array',
+                    'location' => 'xml',
+                    'items' => array(
+                        'name' => 'ParameterDeclaration',
+                        'type' => 'object',
+                        'sentAs' => 'member',
+                        'properties' => array(
+                            'ParameterKey' => array(
+                                'type' => 'string',
+                            ),
+                            'DefaultValue' => array(
+                                'type' => 'string',
+                            ),
+                            'ParameterType' => array(
+                                'type' => 'string',
+                            ),
+                            'NoEcho' => array(
+                                'type' => 'boolean',
+                            ),
+                            'Description' => array(
+                                'type' => 'string',
+                            ),
+                        ),
+                    ),
+                ),
+                'Description' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'Capabilities' => array(
+                    'type' => 'array',
+                    'location' => 'xml',
+                    'items' => array(
+                        'name' => 'Capability',
+                        'type' => 'string',
+                        'sentAs' => 'member',
+                    ),
+                ),
+                'CapabilitiesReason' => array(
+                    'type' => 'string',
+                    'location' => 'xml',
+                ),
+                'Version' => array(
                     'type' => 'string',
                     'location' => 'xml',
                 ),

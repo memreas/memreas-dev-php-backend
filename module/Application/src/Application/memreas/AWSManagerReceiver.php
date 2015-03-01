@@ -65,7 +65,7 @@ error_log("Inside AWSManagerReceiver contructor..." . PHP_EOL);
     
     	try {
     		
-error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);            
+error_log("Inside snsProcessMediaSubscribe ..." . PHP_EOL);
 			if ($message_data['is_video'] || $message_data['is_audio']) {
 				//Transcode, fetch thumbnail and resize as needed
 				if ($message_data['memreastranscoder']) {
@@ -82,10 +82,6 @@ error_log("Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." 
 				}
 			} else { //It's an image just resize and store thumbnails
 error_log("Inside snsProcessMediaSubscribe else it's an image..." . PHP_EOL);            
-				/*
-				 * 5-SEP-2014 
-				 * moved thumnail creation to a single function
-				 */
 				$message_data['is_image'] = 1;
 				$memreasTranscoder = new MemreasTranscoder($this);
 				$memreas_transcoder_tables = new MemreasTranscoderTables($this->service_locator);
@@ -145,6 +141,7 @@ error_log("dir ----> ".$dir.PHP_EOL);
     }
     
     function pushMediaToS3($file, $s3file, $content_type, $isVideo = false) {
+error_log("pushing to S3...".PHP_EOL);
         $body = EntityBody::factory(fopen($file, 'r+'));
         /////////////////////////////////////////////////////////////////////
         //Upload images - section
@@ -164,7 +161,12 @@ error_log("dir ----> ".$dir.PHP_EOL);
         } catch (MultipartUploadException $e) {
             $uploader->abort();
             error_log( "Upload failed.\n", 0);
-        }
+ 		   throw $e;
+        } catch (\Exception $e) {
+            $uploader->abort();
+ 		   error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
+ 		   throw $e;
+       	}
         
         return $result;
     }

@@ -16,6 +16,7 @@
 
 namespace Aws\CloudSearch;
 
+use Aws\CloudSearchDomain\CloudSearchDomainClient;
 use Aws\Common\Client\AbstractClient;
 use Aws\Common\Client\ClientBuilder;
 use Aws\Common\Enum\ClientOptions as Options;
@@ -80,5 +81,25 @@ class CloudSearchClient extends AbstractClient
                 Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/cloudsearch-%s.php'
             ))
             ->build();
+    }
+
+    /**
+     * Create a CloudSearchDomainClient for a particular domain to do searching
+     * and document uploads.
+     *
+     * @param string $domainName Name of the domain for which to create a domain client.
+     * @param array  $config     Config options for the CloudSearchDomainClient
+     *
+     * @return CloudSearchDomainClient
+     * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/configuration.html#client-configuration-options
+     */
+    public function getDomainClient($domainName, array $config = array())
+    {
+        // Determine the Domain client's base_url
+        $config['base_url'] = $this->describeDomains(array(
+            'DomainNames' => array($domainName)
+        ))->getPath('DomainStatusList/0/SearchService/Endpoint');
+
+        return CloudSearchDomainClient::factory($config);
     }
 }

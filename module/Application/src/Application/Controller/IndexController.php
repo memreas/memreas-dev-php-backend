@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Zend Framework (http://framework.zend.com/)
  *
@@ -17,6 +18,7 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
+use Zend\Http\PhpEnvironment\Response;
 use Application\Model;
 use Application\Model\UserTable;
 use Application\Form;
@@ -49,9 +51,9 @@ error_log("Inside fetchXML this->url $this->url ....");
 			$this->url, 
 			null, 
 			array(
-			'action' => $action,
-    		'xml' => $xml
-	    	)
+				'action' => $action,
+    				'xml' => $xml
+	   	 	)
 		);
 		$response = $request->send();
 error_log("Inside fetchXML response $response ....");
@@ -113,36 +115,44 @@ error_log("inputJSON...... $inputJSON");
 				/*
 				 * SQS Worker Tier Section
 				 */
-error_log("Inside transcoderAction:isset('User-Agent') " . PHP_EOL);
+					//Fetch the msg id
+					$message_data['sqsMsgId'] = $value;
 				
 					$inputJSON = file_get_contents('php://input');
 error_log("inputJSON...... $inputJSON");
 
 					//Fetch the json from message
 					$message_data= json_decode($inputJSON, true);
-error_log("**************************************");
 					//Return the status code here so that the SNS topic won't keep resending the message
-					ob_start();
-					
-					http_response_code(200);
-					ob_end_flush(); 	// Strange behaviour, will not work
-					flush();            // Unless both are called !
-					
 					/* send header and flush */
-					//header("HTTP/1.1 200 OK");
-					//ob_end_flush();
-					if (headers_sent() ) { 
-						error_log("Success: response header 200 sucessfully sent"); 
-					} else { 
-						error_log("FAIL: response header 200 NOT sucessfully sent"); 
-					}
+					// 					ob_start();
+					// 					ob_get_clean();
+					// 					http_response_code(200);
+					// 					ob_end_flush();
+					// 					flush();
+					// 					session_write_close();
+					/* send header and flush */
+					// 					if (headers_sent() ) {
+					// 						error_log("Success: response header 200 sucessfully sent");
+					// 					} else {
+					// 						error_log("FAIL: response header 200 NOT sucessfully sent");
+					// 					}
+						
+					/*
+					 * ZF2 Response style ...
+					 */
+					//$response->getHeaders()->addHeaderLine('Content-Type', 'text/xml; charset=utf-8');
+					$response = new Response();
+					$response->setStatusCode(Response::STATUS_CODE_200);
+					//$response->sendHeaders();
+					$result = $response->send();
+error_log("controller dispatch response result--->".$result.PHP_EOL);					
+					
 					//Process Message here -
 					$result = $aws_manager->snsProcessMediaSubscribe ($message_data);
-					
-					return $result;
+					exit;
+					//return $result;
 			} //End else if (($name == 'User-Agent') && ($value == 'aws-sqsd'))
 		} //End foreach (getallheaders() as $name => $value)			
-			
     }
-
 } // end class IndexController

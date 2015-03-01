@@ -31,6 +31,53 @@ return array (
         ),
     ),
     'operations' => array(
+        'AssignInstance' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.AssignInstance',
+                ),
+                'InstanceId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'LayerIds' => array(
+                    'required' => true,
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'String',
+                        'type' => 'string',
+                    ),
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
         'AssignVolume' => array(
             'httpMethod' => 'POST',
             'uri' => '/',
@@ -247,6 +294,19 @@ return array (
                         ),
                     ),
                 ),
+                'ChefConfiguration' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'properties' => array(
+                        'ManageBerkshelf' => array(
+                            'type' => 'boolean',
+                            'format' => 'boolean-string',
+                        ),
+                        'BerkshelfVersion' => array(
+                            'type' => 'string',
+                        ),
+                    ),
+                ),
                 'UseCustomCookbooks' => array(
                     'type' => 'boolean',
                     'format' => 'boolean-string',
@@ -353,6 +413,25 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                 ),
+                'DataSources' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'DataSource',
+                        'type' => 'object',
+                        'properties' => array(
+                            'Type' => array(
+                                'type' => 'string',
+                            ),
+                            'Arn' => array(
+                                'type' => 'string',
+                            ),
+                            'DatabaseName' => array(
+                                'type' => 'string',
+                            ),
+                        ),
+                    ),
+                ),
                 'Type' => array(
                     'required' => true,
                     'type' => 'string',
@@ -419,6 +498,28 @@ return array (
                         'type' => 'string',
                         'data' => array(
                             'shape_name' => 'AppAttributesKeys',
+                        ),
+                    ),
+                ),
+                'Environment' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'EnvironmentVariable',
+                        'type' => 'object',
+                        'properties' => array(
+                            'Key' => array(
+                                'required' => true,
+                                'type' => 'string',
+                            ),
+                            'Value' => array(
+                                'required' => true,
+                                'type' => 'string',
+                            ),
+                            'Secure' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
                         ),
                     ),
                 ),
@@ -577,6 +678,10 @@ return array (
                     'location' => 'json',
                 ),
                 'AvailabilityZone' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'VirtualizationType' => array(
                     'type' => 'string',
                     'location' => 'json',
                 ),
@@ -782,6 +887,24 @@ return array (
                     'format' => 'boolean-string',
                     'location' => 'json',
                 ),
+                'LifecycleEventConfiguration' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'properties' => array(
+                        'Shutdown' => array(
+                            'type' => 'object',
+                            'properties' => array(
+                                'ExecutionTimeout' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'DelayUntilElbConnectionsDrained' => array(
+                                    'type' => 'boolean',
+                                    'format' => 'boolean-string',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
             ),
             'errorResponses' => array(
                 array(
@@ -877,6 +1000,19 @@ return array (
                             'type' => 'string',
                         ),
                         'Version' => array(
+                            'type' => 'string',
+                        ),
+                    ),
+                ),
+                'ChefConfiguration' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'properties' => array(
+                        'ManageBerkshelf' => array(
+                            'type' => 'boolean',
+                            'format' => 'boolean-string',
+                        ),
+                        'BerkshelfVersion' => array(
                             'type' => 'string',
                         ),
                     ),
@@ -1200,6 +1336,82 @@ return array (
                     'default' => 'OpsWorks_20130218.DeregisterElasticIp',
                 ),
                 'ElasticIp' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
+        'DeregisterInstance' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.DeregisterInstance',
+                ),
+                'InstanceId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
+        'DeregisterRdsDbInstance' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.DeregisterRdsDbInstance',
+                ),
+                'RdsDbInstanceArn' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
@@ -1716,7 +1928,57 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                 ),
+                'StackId' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
                 'RaidArrayIds' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'String',
+                        'type' => 'string',
+                    ),
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
+        'DescribeRdsDbInstances' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'DescribeRdsDbInstancesResult',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.DescribeRdsDbInstances',
+                ),
+                'StackId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'RdsDbInstanceArns' => array(
                     'type' => 'array',
                     'location' => 'json',
                     'items' => array(
@@ -1772,6 +2034,44 @@ return array (
                         'name' => 'String',
                         'type' => 'string',
                     ),
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
+        'DescribeStackProvisioningParameters' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'DescribeStackProvisioningParametersResult',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.DescribeStackProvisioningParameters',
+                ),
+                'StackId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
                 ),
             ),
             'errorResponses' => array(
@@ -2180,6 +2480,129 @@ return array (
                     'location' => 'json',
                 ),
                 'StackId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
+        'RegisterInstance' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'RegisterInstanceResult',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.RegisterInstance',
+                ),
+                'StackId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'Hostname' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'PublicIp' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'PrivateIp' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'RsaPublicKey' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'RsaPublicKeyFingerprint' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'InstanceIdentity' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'properties' => array(
+                        'Document' => array(
+                            'type' => 'string',
+                        ),
+                        'Signature' => array(
+                            'type' => 'string',
+                        ),
+                    ),
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
+        'RegisterRdsDbInstance' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.RegisterRdsDbInstance',
+                ),
+                'StackId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'RdsDbInstanceArn' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'DbUser' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'DbPassword' => array(
                     'required' => true,
                     'type' => 'string',
                     'location' => 'json',
@@ -2653,6 +3076,44 @@ return array (
                 ),
             ),
         ),
+        'UnassignInstance' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.UnassignInstance',
+                ),
+                'InstanceId' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
+                ),
+            ),
+        ),
         'UnassignVolume' => array(
             'httpMethod' => 'POST',
             'uri' => '/',
@@ -2725,6 +3186,25 @@ return array (
                     'type' => 'string',
                     'location' => 'json',
                 ),
+                'DataSources' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'DataSource',
+                        'type' => 'object',
+                        'properties' => array(
+                            'Type' => array(
+                                'type' => 'string',
+                            ),
+                            'Arn' => array(
+                                'type' => 'string',
+                            ),
+                            'DatabaseName' => array(
+                                'type' => 'string',
+                            ),
+                        ),
+                    ),
+                ),
                 'Type' => array(
                     'type' => 'string',
                     'location' => 'json',
@@ -2790,6 +3270,28 @@ return array (
                         'type' => 'string',
                         'data' => array(
                             'shape_name' => 'AppAttributesKeys',
+                        ),
+                    ),
+                ),
+                'Environment' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'EnvironmentVariable',
+                        'type' => 'object',
+                        'properties' => array(
+                            'Key' => array(
+                                'required' => true,
+                                'type' => 'string',
+                            ),
+                            'Value' => array(
+                                'required' => true,
+                                'type' => 'string',
+                            ),
+                            'Secure' => array(
+                                'type' => 'boolean',
+                                'format' => 'boolean-string',
+                            ),
                         ),
                     ),
                 ),
@@ -2910,6 +3412,11 @@ return array (
                     'location' => 'json',
                 ),
                 'InstallUpdatesOnBoot' => array(
+                    'type' => 'boolean',
+                    'format' => 'boolean-string',
+                    'location' => 'json',
+                ),
+                'EbsOptimized' => array(
                     'type' => 'boolean',
                     'format' => 'boolean-string',
                     'location' => 'json',
@@ -3087,6 +3594,24 @@ return array (
                     'format' => 'boolean-string',
                     'location' => 'json',
                 ),
+                'LifecycleEventConfiguration' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'properties' => array(
+                        'Shutdown' => array(
+                            'type' => 'object',
+                            'properties' => array(
+                                'ExecutionTimeout' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'DelayUntilElbConnectionsDrained' => array(
+                                    'type' => 'boolean',
+                                    'format' => 'boolean-string',
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
             ),
             'errorResponses' => array(
                 array(
@@ -3129,6 +3654,52 @@ return array (
                 array(
                     'reason' => 'Indicates that a request was invalid.',
                     'class' => 'ValidationException',
+                ),
+            ),
+        ),
+        'UpdateRdsDbInstance' => array(
+            'httpMethod' => 'POST',
+            'uri' => '/',
+            'class' => 'Aws\\Common\\Command\\JsonCommand',
+            'responseClass' => 'EmptyOutput',
+            'responseType' => 'model',
+            'parameters' => array(
+                'Content-Type' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'application/x-amz-json-1.1',
+                ),
+                'command.expects' => array(
+                    'static' => true,
+                    'default' => 'application/json',
+                ),
+                'X-Amz-Target' => array(
+                    'static' => true,
+                    'location' => 'header',
+                    'default' => 'OpsWorks_20130218.UpdateRdsDbInstance',
+                ),
+                'RdsDbInstanceArn' => array(
+                    'required' => true,
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'DbUser' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'DbPassword' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+            ),
+            'errorResponses' => array(
+                array(
+                    'reason' => 'Indicates that a request was invalid.',
+                    'class' => 'ValidationException',
+                ),
+                array(
+                    'reason' => 'Indicates that a resource was not found.',
+                    'class' => 'ResourceNotFoundException',
                 ),
             ),
         ),
@@ -3208,6 +3779,19 @@ return array (
                             'type' => 'string',
                         ),
                         'Version' => array(
+                            'type' => 'string',
+                        ),
+                    ),
+                ),
+                'ChefConfiguration' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'properties' => array(
+                        'ManageBerkshelf' => array(
+                            'type' => 'boolean',
+                            'format' => 'boolean-string',
+                        ),
+                        'BerkshelfVersion' => array(
                             'type' => 'string',
                         ),
                     ),
@@ -3465,6 +4049,24 @@ return array (
                             'Description' => array(
                                 'type' => 'string',
                             ),
+                            'DataSources' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'DataSource',
+                                    'type' => 'object',
+                                    'properties' => array(
+                                        'Type' => array(
+                                            'type' => 'string',
+                                        ),
+                                        'Arn' => array(
+                                            'type' => 'string',
+                                        ),
+                                        'DatabaseName' => array(
+                                            'type' => 'string',
+                                        ),
+                                    ),
+                                ),
+                            ),
                             'Type' => array(
                                 'type' => 'string',
                             ),
@@ -3523,6 +4125,24 @@ return array (
                             ),
                             'CreatedAt' => array(
                                 'type' => 'string',
+                            ),
+                            'Environment' => array(
+                                'type' => 'array',
+                                'items' => array(
+                                    'name' => 'EnvironmentVariable',
+                                    'type' => 'object',
+                                    'properties' => array(
+                                        'Key' => array(
+                                            'type' => 'string',
+                                        ),
+                                        'Value' => array(
+                                            'type' => 'string',
+                                        ),
+                                        'Secure' => array(
+                                            'type' => 'boolean',
+                                        ),
+                                    ),
+                                ),
                             ),
                         ),
                     ),
@@ -3749,6 +4369,9 @@ return array (
                             'Ec2InstanceId' => array(
                                 'type' => 'string',
                             ),
+                            'VirtualizationType' => array(
+                                'type' => 'string',
+                            ),
                             'Hostname' => array(
                                 'type' => 'string',
                             ),
@@ -3837,6 +4460,26 @@ return array (
                             ),
                             'EbsOptimized' => array(
                                 'type' => 'boolean',
+                            ),
+                            'ReportedOs' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'Family' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'Name' => array(
+                                        'type' => 'string',
+                                    ),
+                                    'Version' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                            ),
+                            'InfrastructureClass' => array(
+                                'type' => 'string',
+                            ),
+                            'RegisteredBy' => array(
+                                'type' => 'string',
                             ),
                         ),
                     ),
@@ -4024,6 +4667,22 @@ return array (
                             'UseEbsOptimizedInstances' => array(
                                 'type' => 'boolean',
                             ),
+                            'LifecycleEventConfiguration' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'Shutdown' => array(
+                                        'type' => 'object',
+                                        'properties' => array(
+                                            'ExecutionTimeout' => array(
+                                                'type' => 'numeric',
+                                            ),
+                                            'DelayUntilElbConnectionsDrained' => array(
+                                                'type' => 'boolean',
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
                         ),
                     ),
                 ),
@@ -4193,11 +4852,57 @@ return array (
                             'CreatedAt' => array(
                                 'type' => 'string',
                             ),
+                            'StackId' => array(
+                                'type' => 'string',
+                            ),
                             'VolumeType' => array(
                                 'type' => 'string',
                             ),
                             'Iops' => array(
                                 'type' => 'numeric',
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+        'DescribeRdsDbInstancesResult' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'RdsDbInstances' => array(
+                    'type' => 'array',
+                    'location' => 'json',
+                    'items' => array(
+                        'name' => 'RdsDbInstance',
+                        'type' => 'object',
+                        'properties' => array(
+                            'RdsDbInstanceArn' => array(
+                                'type' => 'string',
+                            ),
+                            'DbInstanceIdentifier' => array(
+                                'type' => 'string',
+                            ),
+                            'DbUser' => array(
+                                'type' => 'string',
+                            ),
+                            'DbPassword' => array(
+                                'type' => 'string',
+                            ),
+                            'Region' => array(
+                                'type' => 'string',
+                            ),
+                            'Address' => array(
+                                'type' => 'string',
+                            ),
+                            'Engine' => array(
+                                'type' => 'string',
+                            ),
+                            'StackId' => array(
+                                'type' => 'string',
+                            ),
+                            'MissingOnRds' => array(
+                                'type' => 'boolean',
                             ),
                         ),
                     ),
@@ -4238,6 +4943,23 @@ return array (
                 ),
             ),
         ),
+        'DescribeStackProvisioningParametersResult' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'AgentInstallerUrl' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+                'Parameters' => array(
+                    'type' => 'object',
+                    'location' => 'json',
+                    'additionalProperties' => array(
+                        'type' => 'string',
+                    ),
+                ),
+            ),
+        ),
         'DescribeStackSummaryResult' => array(
             'type' => 'object',
             'additionalProperties' => true,
@@ -4264,10 +4986,16 @@ return array (
                         'InstancesCount' => array(
                             'type' => 'object',
                             'properties' => array(
+                                'Assigning' => array(
+                                    'type' => 'numeric',
+                                ),
                                 'Booting' => array(
                                     'type' => 'numeric',
                                 ),
                                 'ConnectionLost' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'Deregistering' => array(
                                     'type' => 'numeric',
                                 ),
                                 'Online' => array(
@@ -4277,6 +5005,12 @@ return array (
                                     'type' => 'numeric',
                                 ),
                                 'Rebooting' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'Registered' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'Registering' => array(
                                     'type' => 'numeric',
                                 ),
                                 'Requested' => array(
@@ -4304,6 +5038,9 @@ return array (
                                     'type' => 'numeric',
                                 ),
                                 'Terminating' => array(
+                                    'type' => 'numeric',
+                                ),
+                                'Unassigning' => array(
                                     'type' => 'numeric',
                                 ),
                             ),
@@ -4372,6 +5109,17 @@ return array (
                                         'type' => 'string',
                                     ),
                                     'Version' => array(
+                                        'type' => 'string',
+                                    ),
+                                ),
+                            ),
+                            'ChefConfiguration' => array(
+                                'type' => 'object',
+                                'properties' => array(
+                                    'ManageBerkshelf' => array(
+                                        'type' => 'boolean',
+                                    ),
+                                    'BerkshelfVersion' => array(
                                         'type' => 'string',
                                     ),
                                 ),
@@ -4590,6 +5338,16 @@ return array (
             'additionalProperties' => true,
             'properties' => array(
                 'ElasticIp' => array(
+                    'type' => 'string',
+                    'location' => 'json',
+                ),
+            ),
+        ),
+        'RegisterInstanceResult' => array(
+            'type' => 'object',
+            'additionalProperties' => true,
+            'properties' => array(
+                'InstanceId' => array(
                     'type' => 'string',
                     'location' => 'json',
                 ),

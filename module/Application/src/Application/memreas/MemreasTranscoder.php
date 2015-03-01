@@ -120,13 +120,11 @@ class MemreasTranscoder {
 			$this->memreas_transcoder_tables = $memreas_transcoder_tables;
 			
 
-			/*
-			 * 5-SEP-2014 - Refactoring code - adding fetch function
-			 */
 			$this->memreas_media = $this->memreas_transcoder_tables->getMediaTable ()->getMedia ( $this->media_id );
 			$this->memreas_media_metadata = json_decode ( $this->memreas_media->metadata, true );
 
 			$starttime = date ( 'Y-m-d H:i:s' );
+			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_started';
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@'.$starttime;
 			
 			if (isset ( $message_data )) {
@@ -354,6 +352,7 @@ error_log ( "finished 1080p video".PHP_EOL );
 				// Update the metadata here for the transcoded files
 				$now = date ( 'Y-m-d H:i:s' );
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_end@'.$now;
+				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_end';
 				
 				///////////////////////////////
 				// Update transcode_transaction
@@ -380,16 +379,19 @@ error_log ( "finished 1080p video".PHP_EOL );
 			} // End if(isset($_POST))
 		} catch ( \Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
+		} finally {
+			// Always delete the temp dir...
+			// Delete the temp dir if we got this far...
+			try {
+				$result = $this->rmWorkDir ( $this->homeDir );
+					
+			} catch ( \Exception $e ) {
+				$this->pass = 0;
+				error_log ( "error string ---> " . $e->getMessage () . PHP_EOL );
+			}
+				
 		}
 
-		// Always delete the temp dir...
-		// Delete the temp dir if we got this far...
-		try {
-			$result = $this->rmWorkDir ( $this->homeDir );
-		} catch ( \Exception $e ) {
-			$this->pass = 0;
-			error_log ( "error string ---> " . $e->getMessage () . PHP_EOL );
-		}
 		return $this->pass;
 	}
 	
@@ -703,8 +705,8 @@ error_log("created dir ---> $dir".PHP_EOL);
 		//Log status
 		$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_'.$type.'_upload_S3';
 		$arr = array (
-				"ffmpeg_cmd" => $cmd,
-				"ffmpeg_cmd_output" => $op,
+				"ffmpeg_cmd" => json_encode($cmd),
+				"ffmpeg_cmd_output" => json_encode($op),
 				"output_size" => $fsize,
 				"pass_fail" => $this->pass,
 				"error_message" => "",

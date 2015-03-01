@@ -19,7 +19,6 @@ namespace Aws\Ec2;
 use Aws\Common\Client\AbstractClient;
 use Aws\Common\Client\ClientBuilder;
 use Aws\Common\Enum\ClientOptions as Options;
-use Aws\Common\Signature\SignatureV4;
 use Guzzle\Common\Collection;
 use Guzzle\Service\Resource\Model;
 use Guzzle\Service\Resource\ResourceIteratorInterface;
@@ -33,6 +32,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model associateAddress(array $args = array()) {@command Ec2 AssociateAddress}
  * @method Model associateDhcpOptions(array $args = array()) {@command Ec2 AssociateDhcpOptions}
  * @method Model associateRouteTable(array $args = array()) {@command Ec2 AssociateRouteTable}
+ * @method Model attachClassicLinkVpc(array $args = array()) {@command Ec2 AttachClassicLinkVpc}
  * @method Model attachInternetGateway(array $args = array()) {@command Ec2 AttachInternetGateway}
  * @method Model attachNetworkInterface(array $args = array()) {@command Ec2 AttachNetworkInterface}
  * @method Model attachVolume(array $args = array()) {@command Ec2 AttachVolume}
@@ -98,6 +98,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model describeAddresses(array $args = array()) {@command Ec2 DescribeAddresses}
  * @method Model describeAvailabilityZones(array $args = array()) {@command Ec2 DescribeAvailabilityZones}
  * @method Model describeBundleTasks(array $args = array()) {@command Ec2 DescribeBundleTasks}
+ * @method Model describeClassicLinkInstances(array $args = array()) {@command Ec2 DescribeClassicLinkInstances}
  * @method Model describeConversionTasks(array $args = array()) {@command Ec2 DescribeConversionTasks}
  * @method Model describeCustomerGateways(array $args = array()) {@command Ec2 DescribeCustomerGateways}
  * @method Model describeDhcpOptions(array $args = array()) {@command Ec2 DescribeDhcpOptions}
@@ -131,19 +132,23 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model describeVolumeStatus(array $args = array()) {@command Ec2 DescribeVolumeStatus}
  * @method Model describeVolumes(array $args = array()) {@command Ec2 DescribeVolumes}
  * @method Model describeVpcAttribute(array $args = array()) {@command Ec2 DescribeVpcAttribute}
+ * @method Model describeVpcClassicLink(array $args = array()) {@command Ec2 DescribeVpcClassicLink}
  * @method Model describeVpcPeeringConnections(array $args = array()) {@command Ec2 DescribeVpcPeeringConnections}
  * @method Model describeVpcs(array $args = array()) {@command Ec2 DescribeVpcs}
  * @method Model describeVpnConnections(array $args = array()) {@command Ec2 DescribeVpnConnections}
  * @method Model describeVpnGateways(array $args = array()) {@command Ec2 DescribeVpnGateways}
+ * @method Model detachClassicLinkVpc(array $args = array()) {@command Ec2 DetachClassicLinkVpc}
  * @method Model detachInternetGateway(array $args = array()) {@command Ec2 DetachInternetGateway}
  * @method Model detachNetworkInterface(array $args = array()) {@command Ec2 DetachNetworkInterface}
  * @method Model detachVolume(array $args = array()) {@command Ec2 DetachVolume}
  * @method Model detachVpnGateway(array $args = array()) {@command Ec2 DetachVpnGateway}
  * @method Model disableVgwRoutePropagation(array $args = array()) {@command Ec2 DisableVgwRoutePropagation}
+ * @method Model disableVpcClassicLink(array $args = array()) {@command Ec2 DisableVpcClassicLink}
  * @method Model disassociateAddress(array $args = array()) {@command Ec2 DisassociateAddress}
  * @method Model disassociateRouteTable(array $args = array()) {@command Ec2 DisassociateRouteTable}
  * @method Model enableVgwRoutePropagation(array $args = array()) {@command Ec2 EnableVgwRoutePropagation}
  * @method Model enableVolumeIO(array $args = array()) {@command Ec2 EnableVolumeIO}
+ * @method Model enableVpcClassicLink(array $args = array()) {@command Ec2 EnableVpcClassicLink}
  * @method Model getConsoleOutput(array $args = array()) {@command Ec2 GetConsoleOutput}
  * @method Model getPasswordData(array $args = array()) {@command Ec2 GetPasswordData}
  * @method Model importInstance(array $args = array()) {@command Ec2 ImportInstance}
@@ -154,6 +159,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model modifyNetworkInterfaceAttribute(array $args = array()) {@command Ec2 ModifyNetworkInterfaceAttribute}
  * @method Model modifyReservedInstances(array $args = array()) {@command Ec2 ModifyReservedInstances}
  * @method Model modifySnapshotAttribute(array $args = array()) {@command Ec2 ModifySnapshotAttribute}
+ * @method Model modifySubnetAttribute(array $args = array()) {@command Ec2 ModifySubnetAttribute}
  * @method Model modifyVolumeAttribute(array $args = array()) {@command Ec2 ModifyVolumeAttribute}
  * @method Model modifyVpcAttribute(array $args = array()) {@command Ec2 ModifyVpcAttribute}
  * @method Model monitorInstances(array $args = array()) {@command Ec2 MonitorInstances}
@@ -217,7 +223,6 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeRegionsIterator(array $args = array()) The input array uses the parameters of the DescribeRegions operation
  * @method ResourceIteratorInterface getDescribeReservedInstancesIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstances operation
  * @method ResourceIteratorInterface getDescribeReservedInstancesListingsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstancesListings operation
- * @method ResourceIteratorInterface getDescribeReservedInstancesModificationsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstancesModifications operation
  * @method ResourceIteratorInterface getDescribeReservedInstancesOfferingsIterator(array $args = array()) The input array uses the parameters of the DescribeReservedInstancesOfferings operation
  * @method ResourceIteratorInterface getDescribeRouteTablesIterator(array $args = array()) The input array uses the parameters of the DescribeRouteTables operation
  * @method ResourceIteratorInterface getDescribeSecurityGroupsIterator(array $args = array()) The input array uses the parameters of the DescribeSecurityGroups operation
@@ -228,7 +233,6 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getDescribeTagsIterator(array $args = array()) The input array uses the parameters of the DescribeTags operation
  * @method ResourceIteratorInterface getDescribeVolumeStatusIterator(array $args = array()) The input array uses the parameters of the DescribeVolumeStatus operation
  * @method ResourceIteratorInterface getDescribeVolumesIterator(array $args = array()) The input array uses the parameters of the DescribeVolumes operation
- * @method ResourceIteratorInterface getDescribeVpcPeeringConnectionsIterator(array $args = array()) The input array uses the parameters of the DescribeVpcPeeringConnections operation
  * @method ResourceIteratorInterface getDescribeVpcsIterator(array $args = array()) The input array uses the parameters of the DescribeVpcs operation
  * @method ResourceIteratorInterface getDescribeVpnConnectionsIterator(array $args = array()) The input array uses the parameters of the DescribeVpnConnections operation
  * @method ResourceIteratorInterface getDescribeVpnGatewaysIterator(array $args = array()) The input array uses the parameters of the DescribeVpnGateways operation
@@ -238,10 +242,10 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  */
 class Ec2Client extends AbstractClient
 {
-    const LATEST_API_VERSION = '2014-02-01';
+    const LATEST_API_VERSION = '2014-10-01';
 
     /**
-     * Factory method to create a new AWS Elastic Beanstalk client using an array of configuration options.
+     * Factory method to create a new AWS Elastic Compute Cloud client using an array of configuration options.
      *
      * @param array|Collection $config Client configuration data
      *
@@ -250,16 +254,16 @@ class Ec2Client extends AbstractClient
      */
     public static function factory($config = array())
     {
-        if (isset($config['region']) && substr($config['region'], 0, 3) == 'cn-') {
-            $config[Options::SIGNATURE] = new SignatureV4();
-        }
-
-        return ClientBuilder::factory(__NAMESPACE__)
+        $client = ClientBuilder::factory(__NAMESPACE__)
             ->setConfig($config)
             ->setConfigDefaults(array(
                 Options::VERSION             => self::LATEST_API_VERSION,
                 Options::SERVICE_DESCRIPTION => __DIR__ . '/Resources/ec2-%s.php'
             ))
             ->build();
+
+        $client->addSubscriber(new CopySnapshotListener());
+
+        return $client;
     }
 }
