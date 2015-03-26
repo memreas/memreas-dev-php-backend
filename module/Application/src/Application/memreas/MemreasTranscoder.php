@@ -279,6 +279,7 @@ error_log ( "starting thumbnails...".PHP_EOL );
 	
 error_log ( "finished thumbnails".PHP_EOL );
 					$now = date ( 'Y-m-d H:i:s' );
+					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'thumbnails_complete';						
 					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
 					$memreas_media_data_array = array (
 							'metadata' => $this->json_metadata,
@@ -296,6 +297,7 @@ error_log ( "starting web video".PHP_EOL );
 					//$this->memreas_media_metadata ['S3_files']['web'] = $transcode_job_meta ['web'];
 error_log ( "finished web video".PHP_EOL );
 					$now = date ( 'Y-m-d H:i:s' );
+					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'web_mp4_complete';						
 					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
 					$memreas_media_data_array = array (
 							'metadata' => $this->json_metadata,
@@ -316,6 +318,7 @@ error_log ( "finished 1080p video".PHP_EOL );
 					//$this->memreas_media_metadata ['S3_files']['1080p'] = $transcode_job_meta ['1080p'];
 					$now = date ( 'Y-m-d H:i:s' );
 					$this->json_metadata = json_encode ( $this->memreas_media_metadata );
+					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = '1080p_mp4_complete';						
 					$memreas_media_data_array = array (
 							'metadata' => $this->json_metadata,
 							'update_date' => $now
@@ -370,6 +373,8 @@ error_log ( "finished 1080p video".PHP_EOL );
 				///////////////////////////////
 				// Update the media table entry here
 				$now = date ( 'Y-m-d H:i:s' );
+				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_complete';						
+				$this->memreas_media_metadata ['S3_files'] ['transcode_status'] = $this->pass;						
 				$this->json_metadata = json_encode ( $this->memreas_media_metadata );
 				$memreas_media_data_array = array (
 						'metadata' => $this->json_metadata,
