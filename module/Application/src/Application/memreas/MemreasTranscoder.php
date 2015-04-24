@@ -94,12 +94,6 @@ class MemreasTranscoder {
 		$this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/'; // Home Directory ends with / (slash) :::: Your AMAZON home
 	}
 	
-	
-	function shutDownFunction() {
-		$error = error_get_last();
-		error_log("FATAL_ERROR::".print_r($error, true).PHP_EOL);
-	}
-	
 	public function exec($message_data, $memreas_transcoder_tables, $service_locator, $isUpload = false) {
 		
 		try {
