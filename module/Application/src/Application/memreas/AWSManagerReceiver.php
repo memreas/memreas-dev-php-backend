@@ -130,12 +130,12 @@ Mlog::addone(__FILE__.__METHOD__.'$message_data',$message_data );
 		) );
 		return $result;
 	}
-	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false) {
+	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false, $bucket=MemreasConstants::S3BUCKET ) {
 		error_log ( "pushing to S3..." . PHP_EOL );
 		$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
 		// ///////////////////////////////////////////////////////////////////
 		// Upload images - section
-		$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( MemreasConstants::S3BUCKET )->setHeaders ( array (
+		$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( $bucket )->setHeaders ( array (
 				'Content-Type' => $content_type 
 		) )->setOption ( 'CacheControl', 'max-age=3600' )->setOption ( 'ServerSideEncryption', 'AES256' )->setKey ( $s3file )->build ();
 		

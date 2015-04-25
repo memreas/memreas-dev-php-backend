@@ -326,7 +326,7 @@ error_log ( "finished 1080p video".PHP_EOL );
  					// Create ts
 // 					$transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
 					// Create hls
-//					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
+					$transcode_job_meta ['hls'] = $this->transcode ( 'hls' );
 				} // End if ($is_video)
 				else if ($this->is_audio) {  
 					//Audio section
@@ -580,12 +580,12 @@ error_log("created dir ---> $dir".PHP_EOL);
 		} else if ($type == '1080p') {
 			//$qv=' -c:v mpeg4 -q:v 1 ';
 			$qv=' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
-			//$qv=' -c:v libx264 -threads 6 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
-			//$qv=' -c:v libx264 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
-			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext; 
+				// $qv=' -c:v libx264 -threads 6 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
+				// $qv=' -c:v libx264 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
+			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-			//$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
-			$cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".$ffmpeg_logger.'2>&1';
+			// $cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
+			$cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . $ffmpeg_logger . '2>&1';
 			
 // 		} else if ($type == 'ts') {
 // 			//$qv=' -c:v mpeg2video -q:v 3 -strict experimental -c:a aac ';
@@ -684,14 +684,14 @@ error_log("created dir ---> $dir".PHP_EOL);
 		$s3file = $this->s3prefixpath.$type.'/'.$transcoded_file_name;
 		if ($type == "hls") {
 			$s3file = $this->s3prefixpath.$type.'/'.$this->MediaFileName.'.m3u8';
-			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "application/x-mpegurl");
+			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "application/x-mpegurl", MemreasConstants::S3HLSBUCKET);
 			//Push all .ts files
 			$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 			$fsize = 0;
 			foreach (glob($pat) as $filename) {
 				$fsize += filesize($filename);
 				$s3tsfile = $this->s3prefixpath.$type.'/'.basename($filename);
-				$this->aws_manager_receiver->pushMediaToS3($filename, $s3tsfile, "video/mp2t");
+				$this->aws_manager_receiver->pushMediaToS3($filename, $s3tsfile, "video/mp2t", MemreasConstants::S3HLSBUCKET);
 			}
 		} else if ($this->is_audio) {
 			$this->aws_manager_receiver->pushMediaToS3($transcoded_file, $s3file, "audio/m4a", true);
