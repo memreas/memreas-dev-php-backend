@@ -25,13 +25,9 @@ class AWSManagerReceiver {
 	protected $dbAdapter = null;
 	protected $temp_job_uuid = null;
 	public function __construct($service_locator) {
-Mlog::addone(basename(__FILE__).__METHOD__,'__construct($service_locator)' );		
 		try {
 			$this->service_locator = $service_locator;
-Mlog::addone(basename(__FILE__).__METHOD__,'$this->service_locator' );
 			$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-Mlog::addone(basename(__FILE__).__METHOD__,'$this->dbAdapter' );
-				
 			$this->aws = Aws::factory ( array (
 					'key' => 'AKIAJMXGGG4BNFS42LZA',
 					'secret' => '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',
@@ -41,11 +37,8 @@ Mlog::addone(basename(__FILE__).__METHOD__,'$this->dbAdapter' );
 			// Fetch the S3 class
 			$this->s3 = $this->aws->get ( 's3' );
 			
-			// Fetch the AWS Elastic Transcoder class
-			$this->awsTranscode = $this->aws->get ( 'ElasticTranscoder' );
-			
-			// Fetch the SNS class
-			$this->sns = $this->aws->get ( 'sns' );
+			//debugging client
+			$result = $this->s3->listBuckets();
 			
 			// Fetch the SQS class
 			$this->sqs = $this->aws->get ( 'sqs' );
@@ -56,13 +49,13 @@ Mlog::addone(basename(__FILE__).__METHOD__,'$this->dbAdapter' );
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
 		
-Mlog::addone(__FILE__.__METHOD__,'Exit AWSManagerReceiver constructor' );
+		//Mlog::addone ( __FILE__ . __METHOD__, 'Exit AWSManagerReceiver constructor' );
 	}
 	function snsProcessMediaSubscribe($message_data) {
 		try {
-Mlog::addone(__FILE__.__METHOD__,'...' );
-Mlog::addone(__FILE__.__METHOD__.'$message_data',$message_data );
-
+			//Mlog::addone ( __FILE__ . __METHOD__, '...' );
+			//Mlog::addone ( __FILE__ . __METHOD__ . '$message_data', $message_data );
+			
 			error_log ( "Inside snsProcessMediaSubscribe ..." . PHP_EOL );
 			if ($message_data ['is_video'] || $message_data ['is_audio']) {
 				// Transcode, fetch thumbnail and resize as needed
@@ -113,11 +106,9 @@ Mlog::addone(__FILE__.__METHOD__.'$message_data',$message_data );
 				'concurrency' => 20,
 				'ServerSideEncryption',
 				'AES256' 
-		)
+		);
 		// 'debug' => true
-		;
 		
-		error_log ( "dir ----> " . $dir . PHP_EOL );
 		$result = $this->s3->uploadDirectory ( $dir, MemreasConstants::S3BUCKET, $keyPrefix, $options );
 	}
 	function copyMediaInS3($bucket, $target, $source) {
@@ -130,8 +121,9 @@ Mlog::addone(__FILE__.__METHOD__.'$message_data',$message_data );
 		) );
 		return $result;
 	}
-	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false, $bucket=MemreasConstants::S3BUCKET ) {
-		error_log ( "pushing to S3..." . PHP_EOL );
+	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false, $bucket=MemreasConstants::S3BUCKET) {
+		// Use default bucket
+		
 		$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
 		// ///////////////////////////////////////////////////////////////////
 		// Upload images - section
@@ -155,7 +147,6 @@ Mlog::addone(__FILE__.__METHOD__.'$message_data',$message_data );
 		return $result;
 	}
 	function fetchResizeUpload($message_data, $job_dir, $s3file, $s3output_path, $height, $width) {
-		error_log ( "Inside fetchResizeUpload for $height" . "x" . "$width" );
 		// Fetch image and create thumbnails
 		// S3 media details
 		$user_id = $message_data ['user_id'];
