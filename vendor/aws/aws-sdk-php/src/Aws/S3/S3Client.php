@@ -61,6 +61,7 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model deleteBucketCors(array $args = array()) {@command S3 DeleteBucketCors}
  * @method Model deleteBucketLifecycle(array $args = array()) {@command S3 DeleteBucketLifecycle}
  * @method Model deleteBucketPolicy(array $args = array()) {@command S3 DeleteBucketPolicy}
+ * @method Model deleteBucketReplication(array $args = array()) {@command S3 DeleteBucketReplication}
  * @method Model deleteBucketTagging(array $args = array()) {@command S3 DeleteBucketTagging}
  * @method Model deleteBucketWebsite(array $args = array()) {@command S3 DeleteBucketWebsite}
  * @method Model deleteObject(array $args = array()) {@command S3 DeleteObject}
@@ -71,7 +72,9 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model getBucketLocation(array $args = array()) {@command S3 GetBucketLocation}
  * @method Model getBucketLogging(array $args = array()) {@command S3 GetBucketLogging}
  * @method Model getBucketNotification(array $args = array()) {@command S3 GetBucketNotification}
+ * @method Model getBucketNotificationConfiguration(array $args = array()) {@command S3 GetBucketNotificationConfiguration}
  * @method Model getBucketPolicy(array $args = array()) {@command S3 GetBucketPolicy}
+ * @method Model getBucketReplication(array $args = array()) {@command S3 GetBucketReplication}
  * @method Model getBucketRequestPayment(array $args = array()) {@command S3 GetBucketRequestPayment}
  * @method Model getBucketTagging(array $args = array()) {@command S3 GetBucketTagging}
  * @method Model getBucketVersioning(array $args = array()) {@command S3 GetBucketVersioning}
@@ -91,7 +94,9 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method Model putBucketLifecycle(array $args = array()) {@command S3 PutBucketLifecycle}
  * @method Model putBucketLogging(array $args = array()) {@command S3 PutBucketLogging}
  * @method Model putBucketNotification(array $args = array()) {@command S3 PutBucketNotification}
+ * @method Model putBucketNotificationConfiguration(array $args = array()) {@command S3 PutBucketNotificationConfiguration}
  * @method Model putBucketPolicy(array $args = array()) {@command S3 PutBucketPolicy}
+ * @method Model putBucketReplication(array $args = array()) {@command S3 PutBucketReplication}
  * @method Model putBucketRequestPayment(array $args = array()) {@command S3 PutBucketRequestPayment}
  * @method Model putBucketTagging(array $args = array()) {@command S3 PutBucketTagging}
  * @method Model putBucketVersioning(array $args = array()) {@command S3 PutBucketVersioning}
@@ -110,8 +115,8 @@ use Guzzle\Service\Resource\ResourceIteratorInterface;
  * @method ResourceIteratorInterface getListObjectsIterator(array $args = array()) The input array uses the parameters of the ListObjects operation
  * @method ResourceIteratorInterface getListPartsIterator(array $args = array()) The input array uses the parameters of the ListParts operation
  *
- * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/service-s3.html User guide
- * @link http://docs.aws.amazon.com/aws-sdk-php/latest/class-Aws.S3.S3Client.html API docs
+ * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/service-s3.html User guide
+ * @link http://docs.aws.amazon.com/aws-sdk-php/v2/api/class-Aws.S3.S3Client.html API docs
  */
 class S3Client extends AbstractClient
 {
@@ -156,7 +161,7 @@ class S3Client extends AbstractClient
      * @param array|Collection $config Client configuration data
      *
      * @return S3Client
-     * @link http://docs.aws.amazon.com/aws-sdk-php/guide/latest/configuration.html#client-configuration-options
+     * @link http://docs.aws.amazon.com/aws-sdk-php/v2/guide/configuration.html#client-configuration-options
      */
     public static function factory($config = array())
     {
