@@ -543,7 +543,8 @@ class MemreasTranscoder {
 			 * Test lossless with best compression
 			 */
 			// $qv=' -c:v libx264 -c:a libfdk_aac -preset slow -qp 0 -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
-			$qv = ' -c:v libx264 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+			$qv = ' -c:v libx265 -preset fast -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
+			// $qv = ' -c:v libx265 -c:a libfdk_aac -preset veryfast -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
 			// $qv=' -c:v libx264 -threads 6 -c:a libfdk_aac -preset ultrafast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; // -b:a 128k ';
 			// $qv=' -c:v libx264 -c:a libfdk_aac -preset ultrafast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; // -b:a 128k ';
 			// $qv='';
@@ -558,9 +559,8 @@ class MemreasTranscoder {
 			$cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . $ffmpeg_logger . '2>&1';
 			// $cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2> $ffmpeg_logger';
 		} else if ($type == '1080p') {
-			// $qv=' -c:v mpeg4 -q:v 1 ';
-			$qv = ' -c:v libx264 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
-			// $qv=' -c:v libx264 -threads 6 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
+			$qv = ' -c:v libx265 -preset medium -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
+			// $qv = ' -c:v libx265 -c:a libfdk_aac -preset medium -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 240k ';
 			// $qv=' -c:v libx264 -c:a libfdk_aac -preset fast -profile:v high -level 4.2 -movflags +faststart -pix_fmt yuv420p '; //-b:a 240k ';
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -613,7 +613,6 @@ class MemreasTranscoder {
 			 * ' 2>&1';
 			 */
 			$cmd = 'nice ' . $this->ffmpegcmd . " -re -y -i " . $transcoded_mp4_file . 
-			// " -threads 6 " . //testing threads
 			" -map 0 " . " -pix_fmt yuv420p " . " -vcodec libx264 " . " -acodec libfdk_aac " . " -r 25 " . 
 			// " -profile:v baseline ".
 			" -profile:v main -level 4.0 " . 
@@ -623,6 +622,14 @@ class MemreasTranscoder {
 			" -flags -global_header " . " -f segment " . " -segment_list_type m3u8 " . " -segment_list " . $transcoded_file . " -segment_time 10 " . " -segment_format mpeg_ts " . $transcoded_hls_ts_file . "%05d.ts" . 
 			// $ffmpeg_logger.'2>&1';
 			' 2>&1';
+			
+
+			//libx265 test
+			//$cmd = 'nice ' . $this->ffmpegcmd . " -re -y -i " . $transcoded_mp4_file .
+			// " -c:v libx265 -preset medium -x265-params crf=28 -c:a aac -strict experimental -b:a 128k -segment_list_type m3u8  -segment_list " . 
+			// $transcoded_file . " -segment_time 10 " . " -segment_format mpeg_ts " . $transcoded_hls_ts_file . "%05d.ts" .
+			//' 2>&1';			
+			
 			Mlog::addone ( __CLASS__ . __METHOD__ . '$cmd', $cmd );
 		} else if ($type == 'audio') {
 			/*
