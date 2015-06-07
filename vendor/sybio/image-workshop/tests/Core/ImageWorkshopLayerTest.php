@@ -17,6 +17,23 @@ require_once(__DIR__.'/../autoload.php');
  */
 class ImageWorkshopLayerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var string */
+    protected $workspace = null;
+
+    protected function setUp()
+    {
+        $this->umask = umask(0);
+        $this->workspace = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.time().rand(0, 1000);
+        mkdir($this->workspace, 0777, true);
+        $this->workspace = realpath($this->workspace);
+    }
+
+    protected function tearDown()
+    {
+        $this->clean($this->workspace);
+        umask($this->umask);
+    }
+
     // Tests
     // ===================================================================================
     
@@ -756,27 +773,717 @@ class ImageWorkshopLayerTest extends \PHPUnit_Framework_TestCase
     }*/
     
     /**
-     * @todo
-     * 
-     * Test resizeByPixel
-     * 
+     * Test resizeInPixel
      */
-    /*public function testResizeByPixel()
+    public function testResizeInPixel()
     {
-        $this->assertTrue(false);
-    }*/
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(20, 10, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 10, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(20, 10, true, 20, 20, 'MM');
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 10, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(20, 10, true, 20, 20, 'LB');
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 10, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(20, 10, true, -20, -20, 'MM');
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 10, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(20, 10, null);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 10, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(20, null, null);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(20, null, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(null, 20, null);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 20, 'Expect $layer to have a height of 20px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(null, 20, true);
+        $this->assertTrue($layer->getWidth() == 27, 'Expect $layer to have a width of 27px');
+        $this->assertTrue($layer->getHeight() == 20, 'Expect $layer to have a height of 20px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(null, null, null);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(0, 0, null);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPixel(-1, -1, null);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+    }
     
     /**
-     * @todo
-     * 
-     * Test resizeByPourcent
-     * 
+     * Test resizeInPercent
      */
-    /*public function testResizeByPourcent()
+    public function testResizeInPercent()
     {
-        $this->assertTrue(false);
-    }*/
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(20, 10, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 8, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(20, 10, true, 20, 20, 'MM');
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 8, 'Expect $layer to have a height of 8px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(20, 10, true, 20, 20, 'LB');
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 8, 'Expect $layer to have a height of 8px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(20, 10, true, -20, -20, 'MM');
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 8, 'Expect $layer to have a height of 8px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(20, 10, null);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 8, 'Expect $layer to have a height of 8px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(20, null, null);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(20, null, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(null, 20, null);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(null, 20, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(null, null, null);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(0, 0, null);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeInPercent(-1, -1, null);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+    }
     
+    /**
+     * Test resizeToFitInPixel
+     */
+    public function testResizeToFit()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeToFit(20, 10);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 10, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeToFit(120, 50);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 50, 'Expect $layer to have a height of 50px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeToFit(60, 100);
+        $this->assertTrue($layer->getWidth() == 60, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 50px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeToFit(120, 100);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeToFit(20, 10, true);
+        $this->assertTrue($layer->getWidth() == 13, 'Expect $layer to have a width of 13px');
+        $this->assertTrue($layer->getHeight() == 10, 'Expect $layer to have a height of 10px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeToFit(20, 18, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeToFit(120, 100, true);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+    }
+    
+    /**
+     * Test resizeByLargestSideInPixel
+     */
+    public function testResizeByLargestSideInPixel()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPixel(20, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPixel(20, false);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPixel(0, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPixel(0, false);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPixel(-1, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+    }
+    
+    /**
+     * Test resizeByLargestSideInPercent
+     */
+    public function testResizeByLargestSideInPercent()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPercent(20, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPercent(20, false);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPercent(0, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPercent(0, false);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByLargestSideInPercent(-1, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+    }
+    
+    /**
+     * Test resizeByNarrowSideInPixel
+     */
+    public function testResizeByNarrowSideInPixel()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPixel(20, true);
+        $this->assertTrue($layer->getWidth() == 27, 'Expect $layer to have a width of 27px');
+        $this->assertTrue($layer->getHeight() == 20, 'Expect $layer to have a height of 20px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPixel(20, false);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 20, 'Expect $layer to have a height of 20px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPixel(0, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPixel(0, false);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPixel(-1, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+    }
+    
+    /**
+     * Test resizeByNarrowSideInPercent
+     */
+    public function testResizeByNarrowSideInPercent()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPercent(20, true);
+        $this->assertTrue($layer->getWidth() == 20, 'Expect $layer to have a width of 20px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPercent(20, false);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 15, 'Expect $layer to have a height of 15px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPercent(0, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPercent(0, false);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->resizeByNarrowSideInPercent(-1, true);
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+    }
+    
+    /**
+     * Test cropInPixel
+     */
+    public function testCropInPixel()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPixel(50, 30, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 50, 'Expect $layer to have a width of 50px');
+        $this->assertTrue($layer->getHeight() == 30, 'Expect $layer to have a height of 30px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPixel(50, 30, 20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 50, 'Expect $layer to have a width of 50px');
+        $this->assertTrue($layer->getHeight() == 30, 'Expect $layer to have a height of 30px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPixel(50, 30, -20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 50, 'Expect $layer to have a width of 50px');
+        $this->assertTrue($layer->getHeight() == 30, 'Expect $layer to have a height of 30px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPixel(0, 0, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        // Test larger than initial width
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPixel(200, 30, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 200, 'Expect $layer to have a width of 200px');
+        $this->assertTrue($layer->getHeight() == 30, 'Expect $layer to have a height of 30px');
+        
+        // Test negative
+        
+        $layer = $this->initializeLayer(1);
+        
+        $this->setExpectedException('PHPImageWorkshop\Core\Exception\ImageWorkshopLayerException');
+        $layer->cropInPixel(-1, -1, 0, 0, 'LT');
+    }
+    
+    /**
+     * Test cropInPercent
+     */
+    public function testCropInPercent()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPercent(50, 30, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 50, 'Expect $layer to have a width of 50px');
+        $this->assertTrue($layer->getHeight() == 23, 'Expect $layer to have a height of 23px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPercent(50, 30, 20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 50, 'Expect $layer to have a width of 50px');
+        $this->assertTrue($layer->getHeight() == 23, 'Expect $layer to have a height of 23px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPercent(50, 30, -20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 50, 'Expect $layer to have a width of 50px');
+        $this->assertTrue($layer->getHeight() == 23, 'Expect $layer to have a height of 23px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPercent(0, 0, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 1, 'Expect $layer to have a width of 1px');
+        $this->assertTrue($layer->getHeight() == 1, 'Expect $layer to have a height of 1px');
+        
+        // Test larger than initial width
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropInPercent(200, 30, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 200, 'Expect $layer to have a width of 200px');
+        $this->assertTrue($layer->getHeight() == 23, 'Expect $layer to have a height of 23px');
+        
+        // Test negative
+        
+        $layer = $this->initializeLayer(1);
+        
+        $this->setExpectedException('PHPImageWorkshop\Core\Exception\ImageWorkshopLayerException');
+        $layer->cropInPercent(-1, -1, 0, 0, 'LT');
+    }
+    
+    /**
+     * Test cropToAspectRatioInPixel
+     */
+    public function testCropToAspectRatioInPixel()
+    {
+        // Test larger width
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPixel(50, 30, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 60, 'Expect $layer to have a height of 60px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPixel(50, 30, 20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 60, 'Expect $layer to have a height of 60px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPixel(50, 30, -20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 60, 'Expect $layer to have a height of 60px');
+        
+        // Test larger than initial width
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPixel(60, 50, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 90, 'Expect $layer to have a width of 90px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPixel(60, 50, 20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 90, 'Expect $layer to have a width of 90px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPixel(60, 50, -20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 90, 'Expect $layer to have a width of 90px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPixel(0, 0, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        // Test negative
+        
+        $layer = $this->initializeLayer(1);
+        
+        $this->setExpectedException('PHPImageWorkshop\Core\Exception\ImageWorkshopLayerException');
+        $layer->cropToAspectRatioInPixel(-1, -1, 0, 0, 'LT');
+    }
+    
+    /**
+     * Test cropToAspectRatioInPercent
+     */
+    public function testCropToAspectRatioInPercent()
+    {
+        // Test larger width
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPercent(50, 30, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 60, 'Expect $layer to have a height of 60px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPercent(50, 30, 20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 60, 'Expect $layer to have a height of 60px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPercent(50, 30, -20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 60, 'Expect $layer to have a height of 60px');
+        
+        // Test larger than initial width
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPercent(60, 50, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 90, 'Expect $layer to have a width of 90px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPercent(60, 50, 20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 90, 'Expect $layer to have a width of 90px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPercent(60, 50, -20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 90, 'Expect $layer to have a width of 90px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropToAspectRatioInPercent(0, 0, 0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        // Test negative
+        
+        $layer = $this->initializeLayer(1);
+        
+        $this->setExpectedException('PHPImageWorkshop\Core\Exception\ImageWorkshopLayerException');
+        $layer->cropToAspectRatioInPercent(-1, -1, 0, 0, 'LT');
+    }
+    
+    /**
+     * Test cropMaximumInPixel
+     */
+    public function testCropMaximumInPixel()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPixel(0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPixel(0, 0, 'MM');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPixel(20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPixel(-20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+    }
+    
+    /**
+     * Test cropMaximumInPercent
+     */
+    public function testCropMaximumInPercent()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPercent(0, 0, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPercent(0, 0, 'MM');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPercent(20, 20, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->cropMaximumInPercent(-20, -20, 'LT');
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+    }
+    
+    /**
+     * Test rotate
+     */
+    public function testRotate()
+    {
+        $layer = $this->initializeLayer(1);
+        
+        $layer->rotate(0);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->rotate(90);
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 100, 'Expect $layer to have a height of 100px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->rotate(-90);
+        $this->assertTrue($layer->getWidth() == 75, 'Expect $layer to have a width of 75px');
+        $this->assertTrue($layer->getHeight() == 100, 'Expect $layer to have a height of 100px');
+        
+        $layer = $this->initializeLayer(1);
+        
+        $layer->rotate(180);
+        $this->assertTrue($layer->getWidth() == 100, 'Expect $layer to have a width of 100px');
+        $this->assertTrue($layer->getHeight() == 75, 'Expect $layer to have a height of 75px');
+        
+        $layer = $this->initializeLayer(1);
+
+
+        if (version_compare(PHP_VERSION, '5.5', '>=')) {
+            // see https://bugs.php.net/bug.php?id=65148
+            $this->markTestIncomplete('Disabling some tests while bug #65148 is open');
+        }
+
+        $layer->rotate(40);
+        $this->assertTrue($layer->getWidth() <= 126 && $layer->getWidth() >= 124, 'Expect $layer to have a width around 125px');
+        $this->assertTrue($layer->getHeight() <= 124 && $layer->getHeight() >= 122, 'Expect $layer to have a height around 123px');
+    
+        $layer = $this->initializeLayer(1);
+        
+        $layer->rotate(20);
+        $this->assertTrue($layer->getWidth() <= 121 && $layer->getWidth() >= 119, 'Expect $layer to have a width around 120px');
+        $this->assertTrue($layer->getHeight() <= 107 && $layer->getHeight() >= 105, 'Expect $layer to have a height around 106px');
+    
+        $layer = $this->initializeLayer(1);
+        
+        $layer->rotate(-20);
+        $this->assertTrue($layer->getWidth() <= 121 && $layer->getWidth() >= 119, 'Expect $layer to have a width around 120px');
+        $this->assertTrue($layer->getHeight() <= 107 && $layer->getHeight() >= 105, 'Expect $layer to have a height around 106px');
+    }
+
+    public function testSaveWithDirectoryAsFile()
+    {
+        $destinationFolder = $this->workspace.DIRECTORY_SEPARATOR.'fileDestination';
+
+        $this->setExpectedException(
+            'PHPImageWorkshop\Core\Exception\ImageWorkshopLayerException',
+            'Destination folder "'.$destinationFolder.'" is a file.',
+            6
+        );
+
+        touch($destinationFolder);
+
+        $layer = $this->initializeLayer();
+        $layer->save($destinationFolder, 'test.png', false);
+    }
+
+    public function testSaveWithNonExistDirectory()
+    {
+        $destinationFolder = $this->workspace.DIRECTORY_SEPARATOR.'nonExistFolder';
+
+        $this->setExpectedException(
+            'PHPImageWorkshop\Core\Exception\ImageWorkshopLayerException',
+            'Destination folder "'.$destinationFolder.'" not exists.',
+            6
+        );
+
+        $layer = $this->initializeLayer();
+        $layer->save($destinationFolder, 'test.png', false);
+    }
+
+    public function testSaveWithNonSupportedFileExtension()
+    {
+        $this->setExpectedException(
+            'PHPImageWorkshop\Core\Exception\ImageWorkshopLayerException',
+            'Image format "tif" not supported.',
+            7
+        );
+
+        $layer = $this->initializeLayer();
+        $layer->save($this->workspace, 'test.tif', false);
+    }
+
     // Internals
     // ===================================================================================
     
@@ -816,5 +1523,21 @@ class ImageWorkshopLayerTest extends \PHPUnit_Framework_TestCase
         }
         
         return $layer;
+    }
+
+    /**
+     * @param string $file
+     */
+    protected function clean($file)
+    {
+        if (is_dir($file) && !is_link($file)) {
+            $dir = new \FilesystemIterator($file);
+            foreach ($dir as $childFile) {
+                $this->clean($childFile);
+            }
+            rmdir($file);
+        } else {
+            unlink($file);
+        }
     }
 }

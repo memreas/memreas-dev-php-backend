@@ -31,10 +31,24 @@ class ImageWorkshopTest extends \PHPUnit_Framework_TestCase
      */
     public function testInitFromPath()
     {
+        // test 1
+        
         $layer = ImageWorkshop::initFromPath(__DIR__.static::IMAGE_SAMPLE_PATH);
         
         $this->assertTrue(is_object($layer) === true, 'Expect $layer to be an object');
         $this->assertTrue(get_class($layer) === 'PHPImageWorkshop\Core\ImageWorkshopLayer', 'Expect $layer to be an ImageWorkshopLayer object');
+
+        // test 2
+
+        $layer = ImageWorkshop::initFromPath('file://'.__DIR__.static::IMAGE_SAMPLE_PATH);
+
+        $this->assertTrue(is_object($layer) === true, 'Expect $layer to be an object');
+        $this->assertTrue(get_class($layer) === 'PHPImageWorkshop\Core\ImageWorkshopLayer', 'Expect $layer to be an ImageWorkshopLayer object');
+
+        // test 3
+        
+        $this->setExpectedException('PHPImageWorkshop\Exception\ImageWorkshopException', '', ImageWorkshop::ERROR_IMAGE_NOT_FOUND);
+        $layer = ImageWorkshop::initFromPath('fakePath');
     }
     
     /**
