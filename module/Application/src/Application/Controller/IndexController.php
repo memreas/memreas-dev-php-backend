@@ -59,6 +59,7 @@ class IndexController extends AbstractActionController {
 			try {
 				error_log("hi");
 				echo `whoami`;
+				error_log(getcwd () . '/php_errors.log');
 				$result = unlink ( getcwd () . '/php_errors.log' );
 				$myfile = fopen(getcwd () . '/php_errors.log', "w") or die("Unable to open file!");
 				$txt = "John Doe\n";
