@@ -58,7 +58,8 @@ class IndexController extends AbstractActionController {
 		if ($actionname == "clearlog") {
 			try {
 				error_log("hi");
-				echo `whoami`;
+				echo `whoami` .  PHP_EOL;
+				echo `groups apache`  .  PHP_EOL;
 				error_log(getcwd () . '/php_errors.log');
 				$result = unlink ( getcwd () . '/php_errors.log' );
 				$myfile = fopen(getcwd () . '/php_errors.log', "w") or die("Unable to open file!");
