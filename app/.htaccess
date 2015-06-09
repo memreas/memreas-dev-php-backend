@@ -9,6 +9,14 @@ php_value upload_max_filesize 0
 php_value post_max_size 0
 </IfModule>
 
+<Directory "/var/www/memreas-dev-php-backend/app">
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+        Require all granted
+</Directory>
+
+
 RewriteEngine On
 # The following rule tells Apache that if the requested filename
 # exists, simply serve it.

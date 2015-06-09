@@ -22,8 +22,15 @@ php_value date.timezone "America/New_York"
 
 </IfModule>
 
-<Files php_errors.log>
- Order allow,deny
- Deny from all
- Satisfy All
-</Files>
+<Directory "/var/www/memreas-dev-php-backend">
+        AllowOverride All
+        Order allow,deny
+        Allow from all
+        Require all granted
+        <Files php_errors.log>
+                 Order allow,deny
+                 Deny from all
+                 Satisfy All
+        </Files>
+</Directory>
+
