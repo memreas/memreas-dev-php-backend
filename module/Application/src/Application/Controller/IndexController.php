@@ -60,6 +60,8 @@ class IndexController extends AbstractActionController {
 				error_log("hi");
 				echo `whoami` .  PHP_EOL;
 				echo `groups apache`  .  PHP_EOL;
+				echo is_writable( getcwd () ) .  PHP_EOL;
+				echo is_writable( getcwd () . '/php_errors.log') .  PHP_EOL;
 				error_log(getcwd () . '/php_errors.log');
 				$result = unlink ( getcwd () . '/php_errors.log' );
 				$myfile = fopen(getcwd () . '/php_errors.log', "w") or die("Unable to open file!");
