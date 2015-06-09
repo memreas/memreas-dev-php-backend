@@ -130,7 +130,7 @@ class MemreasTranscoder {
 			
 			
 			if (isset ( $message_data )) {
-				if (getcwd () == '/var/app/current') {
+				if (getcwd () == '/var/www/memreas-dev-php-backend') {
 					$this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; // :::: AWS ffmpeg installation
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE; // :::: AWS ffprobe installation
 				} else {
