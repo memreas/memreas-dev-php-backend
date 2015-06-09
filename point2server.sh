@@ -5,5 +5,5 @@
 #Version 1.0
 set -v verbose #echo on
 
-cp module/Application/src/Application/Model/MemreasConstants.bew.php module/Application/src/Application/Model/MemreasConstants.php
+cp module/Application/src/Application/Model/MemreasConstants.bewQ.php module/Application/src/Application/Model/MemreasConstants.php
 
