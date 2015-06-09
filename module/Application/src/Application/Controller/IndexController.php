@@ -61,6 +61,7 @@ class IndexController extends AbstractActionController {
 			 */
 			unlink ( getcwd () . '/php_errors.log' );
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::' . $actionname, "Log has been cleared!" );
+			echo 'success';
 			exit ();
 		} else {
 			$this->transcoderAction ();
