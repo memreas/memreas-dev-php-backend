@@ -30,7 +30,6 @@ use Application\memreas\MemreasPayPal;
 use Application\memreas\MemreasPayPalTables;
 use Application\memreas\Mlog;
 
-
 class IndexController extends AbstractActionController {
 	protected $url;
 	protected $media_url;
@@ -55,49 +54,61 @@ class IndexController extends AbstractActionController {
 	}
 	public function indexAction() {
 		error_log ( "indexAction()...." . PHP_EOL );
-		$this->transcoderAction ();
+		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
+		if ($actionname == "clearlog") {
+			/*
+			 * Cache Approach: N/a
+			 */
+			unlink ( getcwd () . '/php_errors.log' );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '::' . $actionname, "Log has been cleared!" );
+			exit ();
+		} else {
+			$this->transcoderAction ();
+		}
 		exit ();
 	}
 	public function transcoderAction() {
 		error_log ( "transcoderAction()..." . PHP_EOL );
 		
-		//Web Server Handle
+		// Web Server Handle
 		$action = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		$json = isset ( $_REQUEST ["json"] ) ? $_REQUEST ["json"] : '';
 		$proceed = 0;
 		$response = 'error - check action or json';
-		if (($action) && ($json))  {
-			$proceed=1;
-			$response='received';
+		if (($action) && ($json)) {
+			$proceed = 1;
+			$response = 'received';
 		}
 		if ($proceed) {
 			$message_data = json_decode ( $json, true );
 			
 			// Fetch AWS Handle
-			$aws_manager = new AWSManagerReceiver ( $this->getServiceLocator(), $message_data );
-		
+			$aws_manager = new AWSManagerReceiver ( $this->getServiceLocator (), $message_data );
+			
 			Mlog::addone ( __CLASS__ . __METHOD__ . '$message_data', $message_data );
-			$response = $aws_manager->memreasTranscoder->markMediaForTranscoding($message_data);
-			$this->returnResponse($response);
-			/******** background process starts here ********/
+			$response = $aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
+			$this->returnResponse ( $response );
+			/**
+			 * ****** background process starts here *******
+			 */
 			$result = $aws_manager->snsProcessMediaSubscribe ( $message_data );
-			die();			
+			die ();
 		}
 	}
 	public function returnResponse($response) {
 		// buffer all upcoming output
-		ignore_user_abort(true); //keeps php from stopping process
-		ob_start();
-		header('HTTP/1.0 200 OK');
-		header('Content-Type: application/json');
-		echo json_encode($response);
+		ignore_user_abort ( true ); // keeps php from stopping process
+		ob_start ();
+		header ( 'HTTP/1.0 200 OK' );
+		header ( 'Content-Type: application/json' );
+		echo json_encode ( $response );
 		// get the size of the output
-		$size = ob_get_length();
+		$size = ob_get_length ();
 		// send headers to tell the browser to close the connection
-		//http_response_code ( 200 );
-		header('HTTP/1.0 200 OK');
-		header("Content-Length: $size");
-		header('Connection: close');
+		// http_response_code ( 200 );
+		header ( 'HTTP/1.0 200 OK' );
+		header ( "Content-Length: $size" );
+		header ( 'Connection: close');
 		
 		// flush all output
 		ob_end_flush();
