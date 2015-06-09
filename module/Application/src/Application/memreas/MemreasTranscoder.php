@@ -256,6 +256,9 @@ class MemreasTranscoder {
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
 				}
 				
+Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
+				sleep(120);
+				
 				/*
 				 * update status 
 				 */
