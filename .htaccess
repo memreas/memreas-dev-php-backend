@@ -1,5 +1,8 @@
 <IfModule mod_php5.c>
 
+php_flag log_errors on
+php_value error_log php_errors.log
+
 #Prevent public display of PHP errors via htaccess
 # supress php errors
 # php_flag display_startup_errors off
@@ -25,9 +28,6 @@ php_flag track_errors on
 
 #Adding time zone setting to New York
 php_value date.timezone "America/New_York"
-
-php_flag log_errors on
-php_value error_log php_errors.log
 
 <Files php_errors.log>
  Order allow,deny
