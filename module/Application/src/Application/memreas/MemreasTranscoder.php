@@ -243,14 +243,23 @@ class MemreasTranscoder {
 					} // End Switch
 				}
 				
+				//ffprobe here...
 				if ($this->is_video || $this->is_audio) {
 					// Calc media vars
-					$this->duration = str_replace ( ",", "", shell_exec ( "$this->ffmpegcmd -i $this->destRandMediaName 2>&1 | grep 'Duration' | cut -d ' ' -f 4" ) );
-					$timed = explode ( ":", $this->duration );
-					$this->duration = (( float ) $timed [0]) * 3600 + (( float ) $timed [1]) * 60 + ( float ) $timed [2];
-					$this->filesize = filesize ( $this->destRandMediaName );
+					$cmd = $this->ffprobecmd . ' -v error -print_format json -show_format -show_streams ' .$this->destRandMediaName;
+					$ffprobe_json = shell_exec ( $cmd );
+					$ffprobe_json_array = json_decode($ffprobe_json, true);
+Mlog::addone ( __CLASS__ . __METHOD__.'::'.$cmd, $ffprobe_json );
+						
+					//$this->duration = str_replace ( ",", "", shell_exec ( "$this->ffmpegcmd -i $this->destRandMediaName 2>&1 | grep 'Duration' | cut -d ' ' -f 4" ) );
+					//$timed = explode ( ":", $this->duration );
+					//$this->duration = (( float ) $timed [0]) * 3600 + (( float ) $timed [1]) * 60 + ( float ) $timed [2];
+					//$this->filesize = filesize ( $this->destRandMediaName );
+					$this->duration = $ffprobe_json_array['format']['duration'];
+					$this->filesize = $ffprobe_json_array['format']['size'];
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
 				} else {
+					$ffprobe_json_array = [];
 					$this->duration = 0; // image
 					$this->filesize = filesize ( $this->destRandMediaName );
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
@@ -264,6 +273,7 @@ Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
 				 */
 				$now = date ( 'Y-m-d H:i:s' );
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@' . $now;
+				$this->memreas_media_metadata ['S3_files'] ['ffprobe_data'] = $ffprobe_json_array;
 				$this->memreas_media_metadata ['S3_files'] ['size'] = $this->filesize;
 
 				/*
