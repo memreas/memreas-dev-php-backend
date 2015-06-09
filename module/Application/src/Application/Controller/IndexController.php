@@ -56,12 +56,17 @@ class IndexController extends AbstractActionController {
 		error_log ( "indexAction()...." . PHP_EOL );
 		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		if ($actionname == "clearlog") {
-			/*
-			 * Cache Approach: N/a
-			 */
-			unlink ( getcwd () . '/php_errors.log' );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::' . $actionname, "Log has been cleared!" );
-			echo 'success';
+			try {
+				$result = unlink ( getcwd () . '/php_errors.log' );
+				$myfile = fopen(getcwd () . '/php_errors.log', "w") or die("Unable to open file!");
+				$txt = "John Doe\n";
+				fwrite($myfile, $txt);
+				fclose($myfile);				
+				Mlog::addone ( __CLASS__ . __METHOD__ . '::' . $actionname, "Log has been cleared!" );
+				echo 'success';
+			} catch (Exception $e) {
+				echo 'Caught exception: ',  $e->getMessage(), "\n";
+			}
 			exit ();
 		} else {
 			$this->transcoderAction ();
