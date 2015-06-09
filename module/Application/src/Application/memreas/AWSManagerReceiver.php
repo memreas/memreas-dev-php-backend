@@ -12,19 +12,17 @@ use Aws\ElasticTranscoder\ElasticTranscoderClient;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 use Application\memreas\RmWorkDir;
+use Application\memreas\Mlog;
 
-error_reporting ( E_ALL & ~ E_NOTICE );
 class AWSManagerReceiver {
 	protected $aws = null;
 	protected $s3 = null;
-	protected $sns = null;
-	protected $sqs = null;
-	protected $topicArn = null;
 	protected $awsTranscode = null;
 	protected $service_locator = null;
 	protected $dbAdapter = null;
 	protected $temp_job_uuid = null;
-	public function __construct($service_locator) {
+	public $memreasTranscoder = null;
+	public function __construct($service_locator, $message_data) {
 		try {
 			$this->service_locator = $service_locator;
 			$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
@@ -37,44 +35,25 @@ class AWSManagerReceiver {
 			// Fetch the S3 class
 			$this->s3 = $this->aws->get ( 's3' );
 			
-			//debugging client
-			$result = $this->s3->listBuckets();
-			
-			// Fetch the SQS class
-			$this->sqs = $this->aws->get ( 'sqs' );
-			
-			// Set the topicArn
-			$this->topicArn = 'arn:aws:sns:us-east-1:004184890641:us-east-upload-transcode-worker-int';
+			// Fetch transcoder
+			if ($message_data ['is_video'] || $message_data ['is_audio']) {
+				$message_data ['is_image'] = 0;
+			} else { // It's an image just resize and store thumbnails
+				$message_data ['is_image'] = 1;
+			}
+			$this->memreasTranscoder = new MemreasTranscoder ( $this, $this->service_locator );
 		} catch ( Exception $e ) {
 			error_log ( 'Caught exception: ' . $e->getMessage () . PHP_EOL );
 		}
-		
-		//Mlog::addone ( __FILE__ . __METHOD__, 'Exit AWSManagerReceiver constructor' );
+		Mlog::addone ( __FILE__ . __METHOD__, 'Exit AWSManagerReceiver constructor' );
 	}
+	
 	function snsProcessMediaSubscribe($message_data) {
 		try {
 			//Mlog::addone ( __FILE__ . __METHOD__, '...' );
-			//Mlog::addone ( __FILE__ . __METHOD__ . '$message_data', $message_data );
-			
-			error_log ( "Inside snsProcessMediaSubscribe ..." . PHP_EOL );
-			if ($message_data ['is_video'] || $message_data ['is_audio']) {
-				// Transcode, fetch thumbnail and resize as needed
-				if ($message_data ['memreastranscoder']) {
-					error_log ( "Inside snsProcessMediaSubscribe message_data[memreastranscoder] ..." . $message_data ['memreastranscoder'] . PHP_EOL );
-					$message_data ['is_image'] = 0;
-					$memreasTranscoder = new MemreasTranscoder ( $this );
-					$memreas_transcoder_tables = new MemreasTranscoderTables ( $this->service_locator );
-					$result = $memreasTranscoder->exec ( $message_data, $memreas_transcoder_tables, $this->service_locator, false );
-				}
-			} else { // It's an image just resize and store thumbnails
-				error_log ( "Inside snsProcessMediaSubscribe else it's an image..." . PHP_EOL );
-				$message_data ['is_image'] = 1;
-				$memreasTranscoder = new MemreasTranscoder ( $this );
-				$memreas_transcoder_tables = new MemreasTranscoderTables ( $this->service_locator );
-				$result = $memreasTranscoder->exec ( $message_data, $memreas_transcoder_tables, $this->service_locator, false );
-				
-				return $result;
-			}
+			Mlog::addone ( __FILE__ . __METHOD__ . '$message_data', $message_data );
+			$result = $this->memreasTranscoder->exec ( $message_data, false );
+			return $result;
 		} catch ( Exception $e ) {
 			error_log ( "Caught exception: $e->getMessage()" . PHP_EOL );
 			// Remove the work directory
@@ -84,7 +63,7 @@ class AWSManagerReceiver {
 		}
 	}
 	function pullMediaFromS3($s3file, $file) {
-		error_log ( "s3file ----> " . $s3file . PHP_EOL );
+		error_log ( "pulling s3file ----> " . $s3file . PHP_EOL );
 		try {
 			$result = $this->s3->getObject ( array (
 					'Bucket' => MemreasConstants::S3BUCKET,

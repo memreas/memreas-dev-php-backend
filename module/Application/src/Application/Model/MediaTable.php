@@ -54,6 +54,7 @@ class MediaTable
 				'user_id' => $media->user_id, 
 				'is_profile_pic' => $media->is_profile_pic, 
 				'sync_status' => $media->sync_status, 
+				'transcode_status' => $media->transcode_status, 
 				'metadata' => $media->metadata, 
 				'report_flag' => $media->report_flag, 
 				'create_date' => $media->create_date, 

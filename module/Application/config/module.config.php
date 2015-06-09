@@ -13,9 +13,9 @@ return array(
     'session' => array(
         //'remember_me_seconds' => 2419200, // 672 hours??
         //'remember_me_seconds' => 5,  // 30 seconds
-        'use_cookies' => true,
-        'cookie_httponly' => true,
-        'cookie_lifetime' => 0 //30 seconds
+        //'use_cookies' => true,
+        //'cookie_httponly' => true,
+        //'cookie_lifetime' => 0 //30 seconds
     ),
     'router' => array(
         'routes' => array(

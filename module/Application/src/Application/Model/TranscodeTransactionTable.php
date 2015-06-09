@@ -26,7 +26,6 @@ class TranscodeTransactionTable {
 	}
 	
 	public function saveTranscodeTransaction(TranscodeTransaction $transcode_transaction) {
-//error_log("Inside saveTranscodeTransaction");
 		$data = array (
 					'transcode_transaction_id' => $transcode_transaction->transcode_transaction_id, 
 					'user_id' => $transcode_transaction->user_id, 
@@ -35,7 +34,8 @@ class TranscodeTransactionTable {
 					'media_extension' => $transcode_transaction->media_extension, 
 					'file_name' => $transcode_transaction->file_name, 
 					'media_duration' => $transcode_transaction->media_duration, 
-					'media_size' => $transcode_transaction->media_size, 
+					'media_size' => $transcode_transaction->media_size,
+					'transcode_status' => $transcode_transaction->transcode_status, 
 					'pass_fail' => $transcode_transaction->pass_fail, 
 					'metadata' => $transcode_transaction->metadata, 
 					'error_message' => $transcode_transaction->error_message, 

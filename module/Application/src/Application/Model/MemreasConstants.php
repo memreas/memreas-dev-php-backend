@@ -8,8 +8,8 @@ namespace Application\Model;
 class MemreasConstants {
 	const MEMREAS_TRANSCODER_FFMPEG = '/var/app/memreas_ffmpeg_install/bin/ffmpeg';
 	const MEMREAS_TRANSCODER_FFPROBE = '/var/app/memreas_ffmpeg_install/bin/ffprobe';
-	const MEMREAS_TRANSCODER_FFMPEG_LOCAL = '/usr/local/Cellar/ffmpeg/ffmpeg';
-	const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/usr/local/Cellar/ffmpeg/ffprobe';
+	const MEMREAS_TRANSCODER_FFMPEG_LOCAL = '/usr/local/bin/ffmpeg';
+	const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/usr/local/bin/ffprobe';
 	const SIGNURLS = false;
 	const EXPIRES = 3600; // 1 hour should be enough to transcode
 	const MEMREASDB = 'memreasintdb';

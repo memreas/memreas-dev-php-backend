@@ -53,7 +53,6 @@ use Application\Model\User;
 use Application\Model\UserTable;
 use Application\Model;
 
-//PayPal Modules
 class Module
 {
     public function onBootstrap(MvcEvent $e)
@@ -63,7 +62,8 @@ class Module
         $serviceManager      = $e->getApplication()->getServiceManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        $this->bootstrapSession($e);
+        // no need for session
+        //$this->bootstrapSession($e);
 
     }
 
@@ -105,6 +105,7 @@ class Module
 		return array(
 				'factories' => array (
 							//ZF2 Session Setup...
+							/*
 			                'Zend\Session\SessionManager' => function ($sm) {
     	    		            $config = $sm->get('config');
         	        		    if (isset($config['session'])) {
@@ -117,8 +118,6 @@ class Module
 		        	                    
         		    	                //setting this for AWS permissions error
         		    	                //Note: must specify full path
-//error_log("__DIR__ ---> ".__DIR__.PHP_EOL);
-//error_log("save_path ---> ".getcwd()."/data/session/");
         		    	                //$options['save_path'] = getcwd()."/data/session/";
         		    	                $options['save_path'] = "/var/app/data/session/";
         		    	                
@@ -170,7 +169,8 @@ class Module
 			                    $authService->setAdapter($dbTableAuthAdapter);
 			                    $authService->setStorage($sm->get('Application\Model\MyAuthStorage'));
 	            		        return $authService;
-			                },							  
+			                },				
+			                */			  
 
 							//Database Tables...
 							//memreas base tables

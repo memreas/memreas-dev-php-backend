@@ -1,30 +1,22 @@
 <IfModule mod_php5.c>
 
-#Limits for file uploads
-php_value memory_limit 2048M
-php_value max_execution_time 259200
-php_value max_input_time 259200
-php_value session.gc_maxlifetime 259200
-php_value upload_max_filesize 0
-php_value post_max_size 0
-
 #Prevent public display of PHP errors via htaccess
 # supress php errors
-php_flag display_startup_errors off
-php_flag display_errors off
-php_flag html_errors off
-#php_value docref_root 0
-#php_value docref_ext 0
+# php_flag display_startup_errors off
+# php_flag display_errors off
+# php_flag html_errors off
+# php_value docref_root 0
+# php_value docref_ext 0
 
 
 # PHP error handling for development servers
-#php_flag display_startup_errors on
-#php_flag display_errors stderr
-#php_flag html_errors on
-#php_flag ignore_repeated_errors off
-#php_flag ignore_repeated_source off
-#php_flag report_memleaks on
-#php_flag track_errors on
+php_flag display_startup_errors on
+php_flag display_errors stderr
+php_flag html_errors on
+php_flag ignore_repeated_errors off
+php_flag ignore_repeated_source off
+php_flag report_memleaks on
+php_flag track_errors on
 #php_value docref_root 0
 #php_value docref_ext 0
 # [see footnote 3] # php_value error_reporting 999999999
