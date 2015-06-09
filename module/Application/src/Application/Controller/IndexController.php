@@ -58,11 +58,13 @@ class IndexController extends AbstractActionController {
 		if ($actionname == "clearlog") {
 			try {
 				error_log("hi");
-				echo `whoami` .  PHP_EOL;
-				echo `groups apache`  .  PHP_EOL;
-				echo is_writable( getcwd () ) .  PHP_EOL;
-				echo is_writable( getcwd () . '/php_errors.log') .  PHP_EOL;
+				echo `whoami` .  '<br>';
+				echo `groups apache`  .  '<br>';
+				error_log(is_writable( getcwd () ) .  PHP_EOL);
+				error_log(is_writable( getcwd () . '/php_errors.log') .  PHP_EOL);
 				error_log(getcwd () . '/php_errors.log');
+				echo getcwd () . '/php_errors.log' . '<br>';
+				echo substr(sprintf('%o', fileperms(getcwd () . '/php_errors.log')), -4) . '<br>';
 				$result = unlink ( getcwd () . '/php_errors.log' );
 				$myfile = fopen(getcwd () . '/php_errors.log', "w") or die("Unable to open file!");
 				$txt = "John Doe\n";
