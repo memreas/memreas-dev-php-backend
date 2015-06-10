@@ -62,7 +62,7 @@ class MemreasTranscoder {
 	 * 14-SEP-2014 Testing new mounted ephemeral storage
 	 */
 	// const WEBHOME = '/var/app/current/data/';
-	const WEBHOME = '/var/app/ephemeral0/';
+	const WEBHOME = '/var/www/ephemeral0/';
 	const DESTDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const IMAGEDIR = 'image/'; // Upload Directory ends with / (slash):::: media/ in JSON
 	const CONVDIR = 'media/'; // Upload Directory ends with / (slash):::: media/ in JSON
