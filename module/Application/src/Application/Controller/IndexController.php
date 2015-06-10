@@ -58,11 +58,8 @@ class IndexController extends AbstractActionController {
 		if ($actionname == "clearlog") {
 			try {
 				$filename = getcwd () . '/php_errors.log';
-				$result = unlink ( $filename );
-				//$myfile = fopen($filename, "w") or die("Unable to open file!");
-				//$txt = "John Doe\n";
-				//fwrite($myfile, $txt);
-				//fclose($myfile);				
+				//$result = unlink ( $filename );
+				file_put_contents($filename, '');
 				Mlog::addone ( __CLASS__ . __METHOD__ . '::' . $actionname, "Log has been cleared!" );
 				echo 'success';
 			} catch (Exception $e) {
