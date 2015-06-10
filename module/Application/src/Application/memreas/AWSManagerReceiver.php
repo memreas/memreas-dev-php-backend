@@ -44,6 +44,7 @@ Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws', 'passed' );
 			} else { // It's an image just resize and store thumbnails
 				$message_data ['is_image'] = 1;
 			}
+Mlog::addone ( __CLASS__ . __METHOD__ . '::$message_data [is_image]', $message_data ['is_image'] );
 Mlog::addone ( __CLASS__ . __METHOD__ . '::if message data', 'passed' );
 			$this->memreasTranscoder = new MemreasTranscoder ( $this, $this->service_locator );
 Mlog::addone ( __CLASS__ . __METHOD__ . '::new MemreasTranscoder ( $this, $this->service_locator );', 'passed' );
