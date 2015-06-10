@@ -59,19 +59,19 @@ class IndexController extends AbstractActionController {
 			try {
 				error_log("hi");
 				$filename = getcwd () . '/php_errors.log';
-				echo `whoami` .  '<br>';
-				echo `groups srv`  .  '<br>';
-				error_log(is_writable( getcwd () ) .  PHP_EOL);
-				error_log(is_writable($filename) .  PHP_EOL);
+				//echo `whoami` .  '<br>';
+				//echo `groups srv`  .  '<br>';
+				//error_log(is_writable( getcwd () ) .  PHP_EOL);
+				//error_log(is_writable($filename) .  PHP_EOL);
 				error_log($filename);
-				echo $filename . '<br>';
-				echo substr(sprintf('%o', fileperms($filename)), -4) . '<br>';
-				print_r(posix_getpwuid(fileowner($filename)));
-				$result = unlink ( $filename );
-				$myfile = fopen($filename, "w") or die("Unable to open file!");
-				$txt = "John Doe\n";
-				fwrite($myfile, $txt);
-				fclose($myfile);				
+				//echo $filename . '<br>';
+				//echo substr(sprintf('%o', fileperms($filename)), -4) . '<br>';
+				//print_r(posix_getpwuid(fileowner($filename)));
+				//$result = unlink ( $filename );
+				//$myfile = fopen($filename, "w") or die("Unable to open file!");
+				//$txt = "John Doe\n";
+				//fwrite($myfile, $txt);
+				//fclose($myfile);				
 				Mlog::addone ( __CLASS__ . __METHOD__ . '::' . $actionname, "Log has been cleared!" );
 				echo 'success';
 			} catch (Exception $e) {
