@@ -72,11 +72,13 @@ class IndexController extends AbstractActionController {
 		exit ();
 	}
 	public function transcoderAction() {
-		error_log ( "transcoderAction()..." . PHP_EOL );
-		
+		Mlog::addone ( __CLASS__ . __METHOD__, 'transcoderAction()');
+				
 		// Web Server Handle
 		$action = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		$json = isset ( $_REQUEST ["json"] ) ? $_REQUEST ["json"] : '';
+		Mlog::addone ( __CLASS__ . __METHOD__ . '$action', $action);
+		Mlog::addone ( __CLASS__ . __METHOD__ . '$json', $json);
 		$proceed = 0;
 		$response = 'error - check action or json';
 		if (($action) && ($json)) {
@@ -84,13 +86,15 @@ class IndexController extends AbstractActionController {
 			$response = 'received';
 		}
 		if ($proceed) {
+		Mlog::addone ( __CLASS__ . __METHOD__ . '$proceed', $proceed);
 			$message_data = json_decode ( $json, true );
-			
+				
 			// Fetch AWS Handle
 			$aws_manager = new AWSManagerReceiver ( $this->getServiceLocator (), $message_data );
 			
 			Mlog::addone ( __CLASS__ . __METHOD__ . '$message_data', $message_data );
 			$response = $aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data )', $response);
 			$this->returnResponse ( $response );
 			/**
 			 * ****** background process starts here *******
