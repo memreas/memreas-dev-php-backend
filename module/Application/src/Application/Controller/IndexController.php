@@ -57,6 +57,7 @@ class IndexController extends AbstractActionController {
 		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		if ($actionname == "clearlog") {
 			try {
+				$filename = getcwd () . '/php_errors.log';
 				$result = unlink ( $filename );
 				//$myfile = fopen($filename, "w") or die("Unable to open file!");
 				//$txt = "John Doe\n";
