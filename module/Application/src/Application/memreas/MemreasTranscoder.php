@@ -273,7 +273,6 @@ Mlog::addone ( __CLASS__ . __METHOD__.'::'.$cmd, $ffprobe_json );
 				}
 				
 Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
-				sleep(120);
 				
 				/*
 				 * update status 
