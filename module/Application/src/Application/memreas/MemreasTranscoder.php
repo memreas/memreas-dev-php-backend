@@ -725,10 +725,12 @@ Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
 		if (! empty ( $this->memreas_media_metadata ['S3_files'] ['thumbnails'] ['1280x720'] )) {
 			$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ['1280x720'] = array_unique ( $this->memreas_media_metadata ['S3_files'] ['thumbnails'] ['1280x720'] );
 		}
-		Mlog::add ( $this->memreas_media_metadata, 'p', 1 );
+		Mlog::addone ( __CLASS__ . __METHOD__ . '::complete::transcode_status', $this->transcode_status );
+		
 		
 		return $arr;
 	} // End transcode
+	
 	private function rmWorkDir($dir) {
 		$it = new \RecursiveDirectoryIterator ( $dir );
 		$files = new \RecursiveIteratorIterator ( $it, \RecursiveIteratorIterator::CHILD_FIRST );

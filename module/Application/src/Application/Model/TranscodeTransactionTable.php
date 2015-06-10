@@ -45,14 +45,12 @@ class TranscodeTransactionTable {
 				);
 		try {
 			if (isset($transcode_transaction->transcode_transaction_id)) {
-//error_log("Inside isset transcode_transaction_id");
 				if ($this->getTranscodeTransaction($transcode_transaction->transcode_transaction_id )) {
 					$this->tableGateway->update ( $data, array ('transcode_transaction_id' => $transcode_transaction->transcode_transaction_id ) );
 				} else {
 					throw new \Exception ( 'Form transaction_id does not exist' );
 				}
 			} else {
-//error_log("Inside else !isset transcode_transaction_id");
 				$transcode_transaction_id = MUUID::fetchUUID();
 				$data['transcode_transaction_id'] = $transcode_transaction_id;	
 				$this->tableGateway->insert($data);				
@@ -61,7 +59,6 @@ class TranscodeTransactionTable {
 			error_log("Error message ---> ".$e->getMessage().PHP_EOL);
 			throw $e;
 		}
-		error_log("Inside else !isset transcode_transaction_id ---> ".$data['transcode_transaction_id'].PHP_EOL);
 		return $data['transcode_transaction_id'];
 	}
 	
