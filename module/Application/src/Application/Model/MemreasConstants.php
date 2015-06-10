@@ -6,8 +6,8 @@
 namespace Application\Model;
 
 class MemreasConstants {
-	const MEMREAS_TRANSCODER_FFMPEG = '/var/app/memreas_ffmpeg_install/bin/ffmpeg';
-	const MEMREAS_TRANSCODER_FFPROBE = '/var/app/memreas_ffmpeg_install/bin/ffprobe';
+	const MEMREAS_TRANSCODER_FFMPEG = '/var/www/memreas_ffmpeg_install/bin/ffmpeg';
+	const MEMREAS_TRANSCODER_FFPROBE = '/var/www/memreas_ffmpeg_install/bin/ffprobe';
 	const MEMREAS_TRANSCODER_FFMPEG_LOCAL = '/usr/local/bin/ffmpeg';
 	const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/usr/local/bin/ffprobe';
 	const SIGNURLS = false;
