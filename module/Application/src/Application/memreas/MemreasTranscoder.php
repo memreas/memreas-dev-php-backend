@@ -85,13 +85,16 @@ class MemreasTranscoder {
 	 * Thumbnail settings $tnWidth = 448; $tnHeight = 306; $tnfreqency = 60; // in seconds - 60 means every 60 seconds (minute) $errstr = '';
 	 */
 	public function __construct($aws_manager_receiver, $service_locator) {
+Mlog::addone ( __CLASS__ . __METHOD__ . '::__construct($aws_manager_receiver, $service_locator)', 'passed' );
 		$this->aws_manager_receiver = $aws_manager_receiver;
 		$this->temp_job_uuid_dir = MUUID::fetchUUID ();
 		$this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/'; // Home Directory ends with / (slash) :::: Your AMAZON home
 		$this->service_locator  = $service_locator;
 		$this->memreas_transcoder_tables = new MemreasTranscoderTables ( $this->service_locator );
+Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->memreas_transcoder_tables', 'passed' );
 	}
 	public function markMediaForTranscoding($message_data) {
+Mlog::addone ( __CLASS__ . __METHOD__ . '::markMediaForTranscoding($message_data)', 'enter' );
 		/*
 		 * setup vars and store transaction
 		 */
@@ -112,17 +115,21 @@ class MemreasTranscoder {
 			$now = date ( 'Y-m-d H:i:s' );
 			$this->transcode_start_time = $now;
 			
+Mlog::addone ( __CLASS__ . __METHOD__ . '::markMediaForTranscoding($message_data)', 'passed vars' );
 			$this->memreas_media = $this->memreas_transcoder_tables->getMediaTable ()->getMedia ( $this->media_id );
 			$this->memreas_media_metadata = json_decode ( $this->memreas_media->metadata, true );
 			
+Mlog::addone ( __CLASS__ . __METHOD__ . '::markMediaForTranscoding($message_data)', 'passed gettables' );
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] = array();
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_started';
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@' . $starttime;
 
+Mlog::addone ( __CLASS__ . __METHOD__ . '::markMediaForTranscoding($message_data)', 'passed S3_files var set' );
 			//persist uses $this for insert
 			$this->transcode_transaction_id = $this->persistTranscodeTransaction ();
-		
+Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->persistTranscodeTransaction ()', '$this->transcode_transaction_id' );
+				
 		return $this->transcode_transaction_id; 
 	}
 	public function exec($message_data, $isUpload = false) {
