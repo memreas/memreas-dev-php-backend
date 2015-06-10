@@ -60,7 +60,7 @@ class IndexController extends AbstractActionController {
 				error_log("hi");
 				$filename = getcwd () . '/php_errors.log';
 				echo `whoami` .  '<br>';
-				echo `groups apache`  .  '<br>';
+				echo `groups srv`  .  '<br>';
 				error_log(is_writable( getcwd () ) .  PHP_EOL);
 				error_log(is_writable($filename) .  PHP_EOL);
 				error_log($filename);
