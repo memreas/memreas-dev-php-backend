@@ -20,6 +20,11 @@ php_flag track_errors on
 #Adding time zone setting to New York
 php_value date.timezone "America/New_York"
 
-</IfModule>
+<Files php_errors.log>
+ Order allow,deny
+ Deny from all
+ Satisfy All
+</Files>
 
+</IfModule>
 
