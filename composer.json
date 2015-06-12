@@ -17,7 +17,12 @@
 		"ramsey/uuid": "2.8.0",
         "aws/aws-sdk-php": "2.8.9",
 		"sybio/image-workshop": "2.*",
-		"doctrine/doctrine-orm-module": "0.*",
-		"heartsentwined/zf2-cron":"2.2.11"
-    }    
+		"doctrine/doctrine-orm-module": "0.*"
+    },
+    "config": {
+		"github-oauth": {
+		  "github.com": "674d012ccb6dad72d37948e137bd659d91477360"
+		}
+	}
+    
 }

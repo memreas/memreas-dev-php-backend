@@ -50,6 +50,7 @@ class MemreasTranscoder {
 	protected $transcode_end_time;
 	protected $service_locator;
 	protected $memreas_transcoder_tables;
+	protected $nice_priority = 0;
 	
 	// Directory related variables - create a unique directory by user_id
 	protected $temp_job_uuid_dir;
@@ -90,7 +91,7 @@ Mlog::addone ( __CLASS__ . __METHOD__ . '::__construct($aws_manager_receiver, $s
 		$this->temp_job_uuid_dir = MUUID::fetchUUID ();
 		$this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/'; // Home Directory ends with / (slash) :::: Your AMAZON home
 		$this->service_locator  = $service_locator;
-		$this->memreas_transcoder_tables = new MemreasTranscoderTables ( $this->service_locator );
+		$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->memreas_transcoder_tables', 'passed' );
 	}
 	public function markMediaForTranscoding($message_data) {
@@ -263,6 +264,7 @@ Mlog::addone ( __CLASS__ . __METHOD__.'::'.$cmd, $ffprobe_json );
 					//$this->duration = (( float ) $timed [0]) * 3600 + (( float ) $timed [1]) * 60 + ( float ) $timed [2];
 					//$this->filesize = filesize ( $this->destRandMediaName );
 					$this->duration = $ffprobe_json_array['format']['duration'];
+					$this->nice_priority = $this->determinNicePriority();
 					$this->filesize = $ffprobe_json_array['format']['size'];
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
 				} else {
@@ -600,10 +602,10 @@ Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
 			// $ffmpeg_log_file = $this->homeDir . self::WEBHOME . "ffmpeg-".$this->media_id.date ( 'Y-m-d H:i:s').".log";
 			// $ffmpeg_logger = " -loglevel info ";
 			// $ffmpeg_logger = " -report ";
-			$ffmpeg_logger = "";
+			//$ffmpeg_logger = "";
 			
-			// $cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
-			$cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . $ffmpeg_logger . '2>&1';
+			$cmd = 'nice ' . $this->nice_priority . ' ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
+			//$cmd = 'nice ' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . $ffmpeg_logger . '2>&1';
 			// $cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2> $ffmpeg_logger';
 		} else if ($type == '1080p') {
 			$qv = ' -c:v libx265 -preset medium -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
@@ -612,8 +614,9 @@ Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
 			$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
 			$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 			// $cmd = 'nice ' . $this->ffmpegcmd ." -i $this->destRandMediaName $qv $transcoded_file ".'2>&1';
-			$ffmpeg_logger = "";
-			$cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . $ffmpeg_logger . '2>&1';
+			//$ffmpeg_logger = "";			
+			//$cmd = 'nice ' . $this->nice_priority . ' ' .$this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . $ffmpeg_logger . '2>&1';
+			$cmd = 'nice ' . $this->nice_priority . ' ' .$this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
 		} else if ($type == 'hls') {
 			Mlog::addone ( __CLASS__ . __METHOD__, "else if ($type == 'hls')" );
 			
@@ -624,7 +627,7 @@ Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
 			$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName;
 			Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_file );
 			Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_hls_ts_file );
-			$cmd = 'nice ' . $this->ffmpegcmd . " -re -y -i " . $transcoded_mp4_file . 
+			$cmd = 'nice ' . $this->nice_priority . ' ' .$this->ffmpegcmd . " -re -y -i " . $transcoded_mp4_file . 
 			" -map 0 " . " -pix_fmt yuv420p " . " -vcodec libx264 " . " -acodec libfdk_aac " . " -r 25 " . 
 			" -profile:v main -level 4.0 " . 
 			" -b:v 1500k " . " -maxrate 2000k " . " -force_key_frames 50 " . 
@@ -761,18 +764,20 @@ Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
 		/*
 		 * Store media
 		 */
+		$this->memreas_transcoder_tables = new MemreasTranscoderTables ( $this->service_locator );
 		$media->exchangeArray ( $media_data_array );
 		$media_id = $this->memreas_transcoder_tables->getMediaTable ()->saveMedia ( $media );
 	}
 	public function persistTranscodeTransaction($transcode_transaction = null, $transcode_data_array = null) {
+		$this->memreas_transcoder_tables = new MemreasTranscoderTables ( $this->service_locator );
 		if (is_null ( $transcode_transaction )) {
 			$transcode_transaction = new TranscodeTransaction ();
 			$transcode_transaction->exchangeArray ( array (
 					'user_id' => $this->user_id,
 					'media_id' => $this->media_id,
 					'file_name' => $this->original_file_name,
-					'media_type' => $this->MediaFileType,
-					'media_extension' => $this->MediaExt,
+					'media_type' => $this->content_type,
+					'media_extension' => $this->content_type,
 					'media_duration' => $this->duration,
 					'media_size' => $this->filesize,
 					'transcode_status' => $this->transcode_status,
@@ -788,6 +793,18 @@ Mlog::addone ( __CLASS__ . __METHOD__, 'fetched file check folder...' );
 			$transcode_transaction_id = $this->memreas_transcoder_tables->getTranscodeTransactionTable ()->saveTranscodeTransaction ( $transcode_transaction );
 			// error_log("updated transcode_transaction_id ------> ".$transcode_transaction_id.PHP_EOL);
 			return $transcode_transaction_id;
+		}
+	}
+	public function determinNicePriority() {
+		$duration_in_minutes = $this->duration / 60; // duration stored in db in seconds
+		if ($duration_in_minutes <= 2) {
+			$this->nice_priority = 5;
+		} else if ($duration_in_minutes > 2 && $duration_in_minutes <=6)   {
+			$this->nice_priority = 10;
+		} else if ($duration_in_minutes > 6 && $duration_in_minutes <=15)   {
+			$this->nice_priority = 15;
+		} else if ($duration_in_minutes > 15)   {
+			$this->nice_priority = 20;
 		}
 	}
 } //End class

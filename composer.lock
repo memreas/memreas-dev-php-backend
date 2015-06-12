@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d81f3d27595a8bcd0acb5cbf6e9d13cc",
+    "hash": "1533dac947131241a6c59568cf5b87ca",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -925,280 +925,6 @@
             "time": "2015-03-18 18:23:50"
         },
         {
-            "name": "heartsentwined/arg-validator",
-            "version": "1.1.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heartsentwined/php-arg-validator.git",
-                "reference": "198be54e92e5c2e3c4d6cf119ebc83ef377a2557"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heartsentwined/php-arg-validator/zipball/198be54e92e5c2e3c4d6cf119ebc83ef377a2557",
-                "reference": "198be54e92e5c2e3c4d6cf119ebc83ef377a2557",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Heartsentwined\\ArgValidator": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "heartsentwined",
-                    "email": "heartsentwined@cogito-lab.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Validate function arguments, extending typehinting capabilities of PHP.",
-            "homepage": "https://github.com/heartsentwined/arg-validator",
-            "keywords": [
-                "argument",
-                "typehint",
-                "typehinting",
-                "validate",
-                "validator"
-            ],
-            "time": "2012-10-03 19:54:08"
-        },
-        {
-            "name": "heartsentwined/background-exec",
-            "version": "1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heartsentwined/php-background-exec.git",
-                "reference": "78e4b179879b2b6a3cb2be78b5764d732cbdc027"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heartsentwined/php-background-exec/zipball/78e4b179879b2b6a3cb2be78b5764d732cbdc027",
-                "reference": "78e4b179879b2b6a3cb2be78b5764d732cbdc027",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Heartsentwined\\BackgroundExec": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "heartsentwined",
-                    "email": "heartsentwined@cogito-lab.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Close a client HTTP connection and continue script execution in background.",
-            "homepage": "https://github.com/heartsentwined/background-exec",
-            "keywords": [
-                "dir",
-                "directory",
-                "file",
-                "manager",
-                "system"
-            ],
-            "time": "2012-09-07 19:48:09"
-        },
-        {
-            "name": "heartsentwined/cron-expr-parser",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heartsentwined/php-cron-expr-parser.git",
-                "reference": "12949b0978ec499da3276b9dc7974f303a453d29"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heartsentwined/php-cron-expr-parser/zipball/12949b0978ec499da3276b9dc7974f303a453d29",
-                "reference": "12949b0978ec499da3276b9dc7974f303a453d29",
-                "shasum": ""
-            },
-            "require": {
-                "heartsentwined/arg-validator": "1.*",
-                "php": ">=5.3.3"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Heartsentwined\\CronExprParser": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "heartsentwined",
-                    "email": "heartsentwined@cogito-lab.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Parse cron expressions and match them against time.",
-            "homepage": "https://github.com/heartsentwined/cron-expr-parser",
-            "keywords": [
-                "cron"
-            ],
-            "time": "2012-10-03 19:54:08"
-        },
-        {
-            "name": "heartsentwined/yaml",
-            "version": "1.0.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heartsentwined/php-yaml.git",
-                "reference": "039a24fb91542554be2f72943f677799b4e745f9"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heartsentwined/php-yaml/zipball/039a24fb91542554be2f72943f677799b4e745f9",
-                "reference": "039a24fb91542554be2f72943f677799b4e745f9",
-                "shasum": ""
-            },
-            "require": {
-                "heartsentwined/arg-validator": "1.*",
-                "php": ">=5.3.3",
-                "symfony/yaml": "2.0.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Heartsentwined\\Yaml": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "heartsentwined",
-                    "email": "heartsentwined@cogito-lab.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Wrapper around Symfony's Yaml parser - added __DIR__ support.",
-            "homepage": "https://github.com/heartsentwined/yaml",
-            "keywords": [
-                "yaml",
-                "yml"
-            ],
-            "time": "2012-10-03 19:54:08"
-        },
-        {
-            "name": "heartsentwined/zf2-cron",
-            "version": "2.2.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heartsentwined/zf2-cron.git",
-                "reference": "179da533e565bbf3ddef730320dce212a0de0892"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heartsentwined/zf2-cron/zipball/179da533e565bbf3ddef730320dce212a0de0892",
-                "reference": "179da533e565bbf3ddef730320dce212a0de0892",
-                "shasum": ""
-            },
-            "require": {
-                "heartsentwined/arg-validator": "1.*",
-                "heartsentwined/background-exec": "1.*",
-                "heartsentwined/cron-expr-parser": "1.*",
-                "heartsentwined/yaml": "1.*",
-                "heartsentwined/zf2-doctrine": "1.*",
-                "php": ">=5.3.3",
-                "zendframework/zendframework": "2.*"
-            },
-            "require-dev": {
-                "heartsentwined/zf2-phing-task": "1.*",
-                "heartsentwined/zf2-phpunit-testcase": "1.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Heartsentwined\\Cron": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "heartsentwined",
-                    "email": "heartsentwined@cogito-lab.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "ZF2 cron module",
-            "homepage": "https://github.com/heartsentwined/zf2-cron",
-            "keywords": [
-                "ZendFramework",
-                "cron",
-                "zf2"
-            ],
-            "time": "2013-03-12 15:40:58"
-        },
-        {
-            "name": "heartsentwined/zf2-doctrine",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/heartsentwined/zf2-doctrine.git",
-                "reference": "53a7c69aaa95382b77bf56cfe2a9d49bba319c6f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/heartsentwined/zf2-doctrine/zipball/53a7c69aaa95382b77bf56cfe2a9d49bba319c6f",
-                "reference": "53a7c69aaa95382b77bf56cfe2a9d49bba319c6f",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3",
-                "symfony/yaml": "2.0.*"
-            },
-            "require-dev": {
-                "doctrine/doctrine-orm-module": "dev-master"
-            },
-            "bin": [
-                "bin/doctrine-cli"
-            ],
-            "type": "library",
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0"
-            ],
-            "authors": [
-                {
-                    "name": "heartsentwined",
-                    "email": "heartsentwined@cogito-lab.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "wrapper for DoctrineORMModule + DoctrineModule's CLI, tailored for yaml config files",
-            "homepage": "https://github.com/heartsentwined/zf2-doctrine",
-            "keywords": [
-                "cli",
-                "doctrine",
-                "zf2"
-            ],
-            "time": "2012-09-11 20:55:06"
-        },
-        {
             "name": "phpdocumentor/reflection-docblock",
             "version": "2.0.4",
             "source": {
@@ -1309,16 +1035,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "2.1.4",
+            "version": "2.1.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "3703c4bb67c8700957dd41c843254658539d091d"
+                "reference": "be2286cb8c7e1773eded49d9719219e6f74f9e3e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/3703c4bb67c8700957dd41c843254658539d091d",
-                "reference": "3703c4bb67c8700957dd41c843254658539d091d",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/be2286cb8c7e1773eded49d9719219e6f74f9e3e",
+                "reference": "be2286cb8c7e1773eded49d9719219e6f74f9e3e",
                 "shasum": ""
             },
             "require": {
@@ -1367,35 +1093,37 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-06 08:33:23"
+            "time": "2015-06-09 13:05:42"
         },
         {
             "name": "phpunit/php-file-iterator",
-            "version": "1.3.4",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-file-iterator.git",
-                "reference": "acd690379117b042d1c8af1fafd61bde001bf6bb"
+                "reference": "a923bb15680d0089e2316f7a4af8f437046e96bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/acd690379117b042d1c8af1fafd61bde001bf6bb",
-                "reference": "acd690379117b042d1c8af1fafd61bde001bf6bb",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-file-iterator/zipball/a923bb15680d0089e2316f7a4af8f437046e96bb",
+                "reference": "a923bb15680d0089e2316f7a4af8f437046e96bb",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4.x-dev"
+                }
+            },
             "autoload": {
                 "classmap": [
-                    "File/"
+                    "src/"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
-            "include-path": [
-                ""
-            ],
             "license": [
                 "BSD-3-Clause"
             ],
@@ -1412,7 +1140,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2013-10-10 15:34:57"
+            "time": "2015-04-02 05:19:05"
         },
         {
             "name": "phpunit/php-text-template",
@@ -1553,16 +1281,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.5.1",
+            "version": "4.7.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "d6429b0995b24a2d9dfe5587ee3a7071c1161af4"
+                "reference": "41fea1e84ed84d373f5ac099a1276c4358c90708"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/d6429b0995b24a2d9dfe5587ee3a7071c1161af4",
-                "reference": "d6429b0995b24a2d9dfe5587ee3a7071c1161af4",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/41fea1e84ed84d373f5ac099a1276c4358c90708",
+                "reference": "41fea1e84ed84d373f5ac099a1276c4358c90708",
                 "shasum": ""
             },
             "require": {
@@ -1573,18 +1301,18 @@
                 "ext-spl": "*",
                 "php": ">=5.3.3",
                 "phpspec/prophecy": "~1.3,>=1.3.1",
-                "phpunit/php-code-coverage": "~2.0,>=2.0.11",
-                "phpunit/php-file-iterator": "~1.3.2",
+                "phpunit/php-code-coverage": "~2.1",
+                "phpunit/php-file-iterator": "~1.4",
                 "phpunit/php-text-template": "~1.2",
-                "phpunit/php-timer": "~1.0.2",
+                "phpunit/php-timer": "~1.0",
                 "phpunit/phpunit-mock-objects": "~2.3",
                 "sebastian/comparator": "~1.1",
-                "sebastian/diff": "~1.1",
+                "sebastian/diff": "~1.2",
                 "sebastian/environment": "~1.2",
                 "sebastian/exporter": "~1.2",
                 "sebastian/global-state": "~1.0",
                 "sebastian/version": "~1.0",
-                "symfony/yaml": "~2.0"
+                "symfony/yaml": "~2.1|~3.0"
             },
             "suggest": {
                 "phpunit/php-invoker": "~1.1"
@@ -1595,7 +1323,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "4.5.x-dev"
+                    "dev-master": "4.7.x-dev"
                 }
             },
             "autoload": {
@@ -1621,20 +1349,20 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-03-29 09:24:05"
+            "time": "2015-06-11 16:20:25"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
-            "version": "2.3.3",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "253c005852591fd547fc18cd5b7b43a1ec82d8f7"
+                "reference": "92408bb1968a81b3217a6fdf6c1a198da83caa35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/253c005852591fd547fc18cd5b7b43a1ec82d8f7",
-                "reference": "253c005852591fd547fc18cd5b7b43a1ec82d8f7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/92408bb1968a81b3217a6fdf6c1a198da83caa35",
+                "reference": "92408bb1968a81b3217a6fdf6c1a198da83caa35",
                 "shasum": ""
             },
             "require": {
@@ -1676,7 +1404,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2015-05-29 05:19:18"
+            "time": "2015-06-11 15:55:48"
         },
         {
             "name": "ramsey/uuid",
@@ -2175,16 +1903,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Console.git",
-                "reference": "7f0bec04961c61c961df0cb8c2ae88dbfd83f399"
+                "reference": "564398bc1f33faf92fc2ec86859983d30eb81806"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Console/zipball/7f0bec04961c61c961df0cb8c2ae88dbfd83f399",
-                "reference": "7f0bec04961c61c961df0cb8c2ae88dbfd83f399",
+                "url": "https://api.github.com/repos/symfony/Console/zipball/564398bc1f33faf92fc2ec86859983d30eb81806",
+                "reference": "564398bc1f33faf92fc2ec86859983d30eb81806",
                 "shasum": ""
             },
             "require": {
@@ -2228,20 +1956,20 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2015-05-29 16:22:24"
+            "time": "2015-06-10 15:30:22"
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.7.0",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher.git",
-                "reference": "687039686d0e923429ba6e958d0baa920cd5d458"
+                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/687039686d0e923429ba6e958d0baa920cd5d458",
-                "reference": "687039686d0e923429ba6e958d0baa920cd5d458",
+                "url": "https://api.github.com/repos/symfony/EventDispatcher/zipball/be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
+                "reference": "be3c5ff8d503c46768aeb78ce6333051aa6f26d9",
                 "shasum": ""
             },
             "require": {
@@ -2286,30 +2014,37 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2015-05-02 15:21:08"
+            "time": "2015-06-08 09:37:21"
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.0.25",
-            "target-dir": "Symfony/Component/Yaml",
+            "version": "v2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/Yaml.git",
-                "reference": "c508a879829976e30f05e16b96a7ed024ee82ce1"
+                "reference": "9808e75c609a14f6db02f70fccf4ca4aab53c160"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/Yaml/zipball/c508a879829976e30f05e16b96a7ed024ee82ce1",
-                "reference": "c508a879829976e30f05e16b96a7ed024ee82ce1",
+                "url": "https://api.github.com/repos/symfony/Yaml/zipball/9808e75c609a14f6db02f70fccf4ca4aab53c160",
+                "reference": "9808e75c609a14f6db02f70fccf4ca4aab53c160",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.2"
+                "php": ">=5.3.9"
+            },
+            "require-dev": {
+                "symfony/phpunit-bridge": "~2.7"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
             "autoload": {
-                "psr-0": {
-                    "Symfony\\Component\\Yaml": ""
+                "psr-4": {
+                    "Symfony\\Component\\Yaml\\": ""
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2319,18 +2054,16 @@
             "authors": [
                 {
                     "name": "Fabien Potencier",
-                    "email": "fabien@symfony.com",
-                    "homepage": "http://fabien.potencier.org",
-                    "role": "Lead Developer"
+                    "email": "fabien@symfony.com"
                 },
                 {
                     "name": "Symfony Community",
-                    "homepage": "http://symfony.com/contributors"
+                    "homepage": "https://symfony.com/contributors"
                 }
             ],
             "description": "Symfony Yaml Component",
-            "homepage": "http://symfony.com",
-            "time": "2013-01-18 09:52:07"
+            "homepage": "https://symfony.com",
+            "time": "2015-06-10 15:30:22"
         },
         {
             "name": "zendframework/zend-authentication",
@@ -5221,7 +4954,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=5.5",
+        "php": ">=5.4",
         "ext-curl": "*",
         "ext-json": "*"
     },
