@@ -88,15 +88,15 @@ class IndexController extends AbstractActionController
                 /*
                  * Check Instance against AutoScaler
                  */
-                $this->awsManagerAutoScaler = new AWSManagerAutoScaler($this->getServiceLocator());
+                $this->awsManagerAutoScaler = new AWSManagerAutoScaler(
+                        $this->getServiceLocator());
                 $this->awsManagerAutoScaler->checkInstance();
-
                 
                 /*
                  * If need server launch, guzzle to start,
                  * and set transaction as pending
                  */
-                // $this->transcoderAction ();
+                $this->transcoderAction();
             } catch (Exception $e) {
                 Mlog::addone(__CLASS__ . __METHOD__ . '::Caught exception', 
                         $e->getMessage());
@@ -144,14 +144,10 @@ class IndexController extends AbstractActionController
             $aws_manager = new AWSManagerReceiver($this->getServiceLocator(), 
                     $message_data);
             
-            Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', 
-                    $message_data);
+            //Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', 
+            //        $message_data);
             $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
                     $message_data);
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ .
-                             '$aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data )', 
-                            $response);
             $this->returnResponse($response);
             /**
              * ****** background process starts here *******
