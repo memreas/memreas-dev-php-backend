@@ -85,7 +85,14 @@ class AWSManagerReceiver
                             'Key' => $s3file,
                             'SaveAs' => $file
                     ]);
-            $result = `ls -al $file`;
+            
+                    if (file_exists  ( $file )) {
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' exists');
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file size', filesize ( $file ));
+            } else {
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' does not exist');
+            }
+            
             Mlog::addone(__CLASS__ . __METHOD__ . '$result of pull', $result);
         } catch (\Exception $e) {
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
