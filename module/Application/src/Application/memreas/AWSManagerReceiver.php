@@ -123,7 +123,7 @@ class AWSManagerReceiver
         // Use default bucket
         // $body = EntityBody::factory(fopen($file, 'r+'));
         $result = `ls -al $file`;
-        Mlog::addone(__CLASS__ . __METHOD__ . '$file', $result);
+        Mlog::addone(__CLASS__ . __METHOD__ . '$result of pull', $result);
         /*
          * Upload images - section
          */
