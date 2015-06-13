@@ -10,12 +10,12 @@
     ],
     "homepage": "http://framework.zend.com/",
     "require": {
-        "php": ">=5.5",
+        "php": ">=5.4",
         "zendframework/zendframework": "2.*",
         "ext-curl": "*",
         "ext-json": "*",
 		"ramsey/uuid": "2.8.0",
-        "aws/aws-sdk-php": "3.*",
+        "aws/aws-sdk-php": "2.8.9",
 		"sybio/image-workshop": "2.*",
 		"doctrine/doctrine-orm-module": "0.*"
     },

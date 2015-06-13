@@ -1,14 +1,20 @@
 <?php
 namespace Application\memreas;
-use Aws\S3\S3Client;
+use Guzzle\Http\Client;
+use Guzzle\Http\EntityBody;
+use Aws\Common\Aws;
+use Aws\Common\Enum\Size;
+use Aws\Common\Exception\MultipartUploadException;
+use Aws\S3\Model\MultipartUpload\UploadBuilder;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 use Application\memreas\RmWorkDir;
 use Application\memreas\Mlog;
-use GuzzleHttp\Event\ProgressEvent;
 
 class AWSManagerReceiver
 {
+
+    protected $aws = null;
 
     protected $s3 = null;
 
@@ -29,16 +35,15 @@ class AWSManagerReceiver
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
+            $this->aws = Aws::factory(
+                    array(
+                            'key' => MemreasConstants::AWS_APPKEY,
+                            'secret' => MemreasConstants::AWS_APPSEC,
+                            'region' => MemreasConstants::AWS_APPREG
+                    ));
+            
             // Fetch the S3 class
-            $this->s3 = new S3Client(
-                    [
-                            'version' => 'latest',
-                            'region' => 'us-east-1',
-                            'credentials' => [
-                                    'key' => MemreasConstants::AWS_APPKEY,
-                                    'secret' => MemreasConstants::AWS_APPSEC
-                            ]
-                    ]);
+            $this->s3 = $this->aws->get('s3');
             // Fetch transcoder
             if ($message_data['is_video'] || $message_data['is_audio']) {
                 $message_data['is_image'] = 0;
@@ -72,74 +77,12 @@ class AWSManagerReceiver
     function pullMediaFromS3 ($s3file, $file)
     {
         Mlog::addone(__FILE__ . __METHOD__ . '::pulling s3file', $s3file);
-        Mlog::addone(__FILE__ . __METHOD__ . '::saving file', $file);
-        try {
-            if (is_writable(dirname($file))) {
-                Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
-                        dirname($file) . ' is writeable');
-                
-                $myfile = fopen(dirname($file) . "test.txt", "w") or
-                         die("Unable to open file!");
-                $txt = "John Doe\n";
-                fwrite($myfile, $txt);
-                $txt = "Jane Doe\n";
-                fwrite($myfile, $txt);
-                fclose($myfile);
-                
-                $afile = file_get_contents(dirname($file) . "test.txt");
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ .
-                                 'dirname($file).test.txt :: contents', $afile);
-            } else {
-                Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
-                        dirname($file) . ' is not writeable');
-            }
-            /*
-            $result = $this->s3->getObject(
-                    array(
-                            'Bucket' => MemreasConstants::S3BUCKET,
-                            'Key' => $s3file,
-                            'SaveAs' => $file
-                    ));
-            */
-            $result = $this->s3->getObject(
-                    [
-                            'Bucket' => MemreasConstants::S3BUCKET,
-                            'Key' => $s3file,
-                            'SaveAs' => $file,
-                            '@http' => [
-                                    'progress' => function  ($expectedDl, $dl, 
-                                            $expectedUl, $ul)
-                                    {
-                                        Mlog::addone(
-                                                __CLASS__ . __METHOD__ .
-                                                         'progress', 
-                                                        printf(
-                                                                "%s of %s downloaded, %s of %s uploaded.\n", 
-                                                                $expectedDl, $dl, 
-                                                                $expectedUl, $ul));
-                                    }
-                            ]
-                    ]);
-            Mlog::addone(__CLASS__ . __METHOD__ . '$result[Body]->getUri()', 
-                    $result['Body']->getUri());
-            
-            if (file_exists($file)) {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
-                        $file . ' exists');
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file size', 
-                        filesize($file));
-            } else {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
-                        $file . ' does not exist');
-            }
-            
-            Mlog::addone(__CLASS__ . __METHOD__ . '$result of pull', $result);
-        } catch (\Exception $e) {
-            Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
-                    $e->getMessage());
-            throw $e;
-        }
+        $result = $this->s3->getObject(
+                array(
+                        'Bucket' => MemreasConstants::S3BUCKET,
+                        'Key' => $s3file,
+                        'SaveAs' => $file
+                ));
         Mlog::addone(__FILE__ . __METHOD__ . '::finished pullMediaFromS3', 
                 $file);
         return true;

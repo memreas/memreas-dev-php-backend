@@ -5,10 +5,12 @@ use Application\memreas\RmWorkDir;
 use Application\memreas\MUUID;
 use Application\memreas\Mlog;
 use Application\Entity\ServerMonitor;
-use Aws\AutoScaling\AutoScalingClient;
+use Aws\Common\Aws;
 
 class AWSManagerAutoScaler
 {
+
+    protected $aws = null;
 
     protected $service_locator = null;
 
@@ -22,17 +24,14 @@ class AWSManagerAutoScaler
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
-            
+            $this->aws = Aws::factory(
+                    array(
+                            'key' => MemreasConstants::AWS_APPKEY,
+                            'secret' => MemreasConstants::AWS_APPSEC,
+                            'region' => MemreasConstants::AWS_APPREG
+                    ));
             // Fetch the AutoScaling class
-            $this->autoscaler = new AutoScalingClient(
-                    [
-                            'version' => 'latest',
-                            'region' => 'us-east-1',
-                            'credentials' => [
-                                    'key' => MemreasConstants::AWS_APPKEY,
-                                    'secret' => MemreasConstants::AWS_APPSEC
-                            ]
-                    ]);
+            $this->autoscaler = $this->aws->get('AutoScaling');
         } catch (Exception $e) {
             error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
         }
