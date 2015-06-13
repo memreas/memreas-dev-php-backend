@@ -121,7 +121,7 @@ class AWSManagerReceiver
             $bucket = MemreasConstants::S3BUCKET)
     {
         // Use default bucket
-        $body = EntityBody::factory(fopen($file, 'r+'));
+        //$body = EntityBody::factory(fopen($file, 'r+'));
         
         /*
          * Upload images - section
