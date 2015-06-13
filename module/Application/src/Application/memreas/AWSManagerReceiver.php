@@ -70,14 +70,22 @@ class AWSManagerReceiver
 
     function pullMediaFromS3 ($s3file, $file)
     {
-        
         Mlog::addone(__FILE__ . __METHOD__ . '::pulling s3file', $s3file);
         Mlog::addone(__FILE__ . __METHOD__ . '::saving file', $file);
         try {
-            if (is_writable ( $file )) {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' is writeable');
+            if (is_writable(dirname($file))) {
+                Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
+                        dirname($file) . ' is writeable');
             } else {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' is not writeable');
+                Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
+                        dirname($file) . ' is not writeable');
+            }
+            if (is_writable($file)) {
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
+                        $file . ' is writeable');
+            } else {
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
+                        $file . ' is not writeable');
             }
             $result = $this->s3->getObject(
                     [
@@ -86,11 +94,14 @@ class AWSManagerReceiver
                             'SaveAs' => $file
                     ]);
             
-                    if (file_exists  ( $file )) {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' exists');
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file size', filesize ( $file ));
+            if (file_exists($file)) {
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
+                        $file . ' exists');
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file size', 
+                        filesize($file));
             } else {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' does not exist');
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
+                        $file . ' does not exist');
             }
             
             Mlog::addone(__CLASS__ . __METHOD__ . '$result of pull', $result);
