@@ -102,7 +102,7 @@ class AWSManagerReceiver
                             'SaveAs' => $file
                     ));
             */
-            $result = $client->getObject(
+            $result = $this->s3->getObject(
                     [
                             'Bucket' => MemreasConstants::S3BUCKET,
                             'Key' => $s3file,
