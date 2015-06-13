@@ -20,7 +20,7 @@ use Zend\Http\PhpEnvironment\Response;
 use Application\Model;
 use Application\Model\UserTable;
 use Application\Form;
-use Guzzle\Http\Client;
+use GuzzleHttp\Client;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerReceiver;
 use Application\memreas\MemreasTranscoder;
@@ -57,14 +57,13 @@ class IndexController extends AbstractActionController
     {
         error_log("Inside fetchXML this->url $this->url ....");
         $guzzle = new Client();
-        $request = $guzzle->post($this->url, null, 
+        $response = $guzzle->post($this->url, 
                 array(
                         'action' => $action,
                         'xml' => $xml
                 ));
-        $response = $request->send();
         error_log("Inside fetchXML response $response ....");
-        return $data = $response->getBody(true);
+        return $data = $response->getBody();
     }
 
     public function indexAction ()

@@ -1,12 +1,6 @@
 <?php
 namespace Application\memreas;
-use Guzzle\Http\Client;
-use Guzzle\Http\EntityBody;
-use Aws\Common\Aws;
-use Aws\Common\Enum\Size;
-use Aws\Common\Exception\MultipartUploadException;
-use Aws\S3\Model\MultipartUpload\UploadBuilder;
-use Aws\ElasticTranscoder\ElasticTranscoderClient;
+use Aws\S3\S3Client;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 use Application\memreas\RmWorkDir;
@@ -15,11 +9,7 @@ use Application\memreas\Mlog;
 class AWSManagerReceiver
 {
 
-    protected $aws = null;
-
     protected $s3 = null;
-
-    protected $awsTranscode = null;
 
     protected $service_locator = null;
 
@@ -38,16 +28,16 @@ class AWSManagerReceiver
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
-            $this->aws = Aws::factory(
-                    array(
-                            'key' => MemreasConstants::AWS_APPKEY,
-                            'secret' => MemreasConstants::AWS_APPSEC,
-                            'region' => MemreasConstants::AWS_APPREG
-                    ));
-            
             // Fetch the S3 class
-            $this->s3 = $this->aws->get('s3');
-            
+            $this->s3 = new S3Client(
+                    [
+                            'version' => 'latest',
+                            'region' => 'us-east-1',
+                            'credentials' => [
+                                    'key' => MemreasConstants::AWS_APPKEY,
+                                    'secret' => MemreasConstants::AWS_APPSEC
+                            ]
+                    ]);
             // Fetch transcoder
             if ($message_data['is_video'] || $message_data['is_audio']) {
                 $message_data['is_image'] = 0;
@@ -81,14 +71,16 @@ class AWSManagerReceiver
     function pullMediaFromS3 ($s3file, $file)
     {
         Mlog::addone(__FILE__ . __METHOD__ . '::pulling s3file', $s3file);
+        Mlog::addone(__FILE__ . __METHOD__ . '::saving file', $file);
         try {
             $result = $this->s3->getObject(
-                    array(
+                    [
                             'Bucket' => MemreasConstants::S3BUCKET,
                             'Key' => $s3file,
                             'SaveAs' => $file
-                    ));
-        } catch (Aws\S3\Exception\S3Exception $e) {
+                    ]);
+        Mlog::addone(__FILE__ . __METHOD__ . '::hellow', '...');
+        } catch (\Exception $e) {
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
             throw $e;
@@ -134,31 +126,17 @@ class AWSManagerReceiver
         /*
          * Upload images - section
          */
-        $uploader = UploadBuilder::newInstance()->setClient($this->s3)
-            ->setSource($body)
-            ->setBucket($bucket)
-            ->setHeaders(
-                array(
-                        'Content-Type' => $content_type
-                ))
-            ->setOption('CacheControl', 'max-age=3600')
-            ->setOption('ServerSideEncryption', 'AES256')
-            ->setKey($s3file)
-            ->build();
-        
-        /*
-         * Modified - Perform the upload to S3. Abort the upload if something
-         * goes wrong
-         */
         try {
-            $result = $uploader->upload();
-        } catch (MultipartUploadException $e) {
-            $uploader->abort();
-            Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
-                    $e->getMessage());
-            throw $e;
+            $this->s3->putObject(
+                    [
+                            'Bucket' => $bucket,
+                            'Key' => $s3file,
+                            'Body' => fopen($file, 'r'),
+                            'ServerSideEncryption' => 'AES256',
+                            'CacheControl' => 'max-age=3600',
+                            'ContentType' => $content_type
+                    ]);
         } catch (\Exception $e) {
-            $uploader->abort();
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
             throw $e;

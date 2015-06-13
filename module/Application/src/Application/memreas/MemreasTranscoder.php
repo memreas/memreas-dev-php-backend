@@ -2,11 +2,9 @@
 namespace Application\memreas;
 use Zend\Session\Container;
 use PHPImageWorkshop\ImageWorkshop;
-use Guzzle\Http\Client;
-use Guzzle\Http\EntityBody;
-use Aws\Common\Aws;
-use Aws\Common\Enum\Size;
-use Aws\Common\Exception\MultipartUploadException;
+use Aws;
+use Aws\Enum\Size;
+use Aws\Exception\MultipartUploadException;
 use Aws\S3\Model\MultipartUpload\UploadBuilder;
 // memreas custom
 use Application\memreas\MemreasTranscoderTables;

@@ -1,8 +1,6 @@
 <?php
 namespace Application\memreas;
 
-use Guzzle\Http\Client;
-
 //https://github.com/ramsey/uuid
 use Rhumsaa\Uuid\Uuid;
 use Rhumsaa\Uuid\Exception\UnsatisfiedDependencyException;

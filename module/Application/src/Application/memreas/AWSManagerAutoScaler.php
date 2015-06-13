@@ -1,18 +1,14 @@
 <?php
 namespace Application\memreas;
-use Guzzle\Http\Client;
-use Guzzle\Http\EntityBody;
-use Aws\Common\Aws;
-use Aws\Common\Enum\Size;
 use Application\Model\MemreasConstants;
 use Application\memreas\RmWorkDir;
+use Application\memreas\MUUID;
 use Application\memreas\Mlog;
 use Application\Entity\ServerMonitor;
+use Aws\AutoScaling\AutoScalingClient;
 
 class AWSManagerAutoScaler
 {
-
-    protected $aws = null;
 
     protected $service_locator = null;
 
@@ -26,15 +22,17 @@ class AWSManagerAutoScaler
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
-            $this->aws = Aws::factory(
-                    array(
-                            'key' => MemreasConstants::AWS_APPKEY,
-                            'secret' => MemreasConstants::AWS_APPSEC,
-                            'region' => MemreasConstants::AWS_APPREG
-                    ));
             
             // Fetch the AutoScaling class
-            $this->autoscaler = $this->aws->get('AutoScaling');
+            $this->autoscaler = new AutoScalingClient(
+                    [
+                            'version' => 'latest',
+                            'region' => 'us-east-1',
+                            'credentials' => [
+                                    'key' => MemreasConstants::AWS_APPKEY,
+                                    'secret' => MemreasConstants::AWS_APPSEC
+                            ]
+                    ]);
         } catch (Exception $e) {
             error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
         }
@@ -70,8 +68,6 @@ class AWSManagerAutoScaler
              * If server is backlogged and above 75% for 15m
              * then start new server
              */
-            
-            
         }
         $server = $this->checkServer();
         Mlog::addone(__CLASS__ . __METHOD__ . '::$server', $server);
@@ -88,11 +84,10 @@ class AWSManagerAutoScaler
         // $memory = $this->get_server_memory_usage();
         Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
         if ($server_data['cpu_util'][0] > 80) {
-            Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>80',
-            $server_data['cpu_util']);
+            Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>80', 
+                    $server_data['cpu_util']);
         }
         return $server_data;
-        
     }
 
     function checkServer ($server_name = null)
@@ -111,6 +106,7 @@ class AWSManagerAutoScaler
     {
         $tblServerMonitor = new \Application\Entity\ServerMonitor();
         $now = new \DateTime("now");
+        $tblServerMonitor->server_id = MUUID::fetchUUID();
         $tblServerMonitor->server_name = $server_data['server_name'];
         $tblServerMonitor->server_addr = $server_data['server_addr'];
         $tblServerMonitor->hostname = $server_data['hostname'];

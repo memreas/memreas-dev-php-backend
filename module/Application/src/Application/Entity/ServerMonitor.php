@@ -19,9 +19,8 @@ class ServerMonitor
     /**
      * @var integer
      *
-     * @ORM\Column(name="server_id", type="integer", nullable=false)
+     * @ORM\Column(name="server_id", type="string", length=255, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $server_id;
 
