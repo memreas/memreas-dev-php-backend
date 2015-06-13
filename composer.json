@@ -15,7 +15,7 @@
         "ext-curl": "*",
         "ext-json": "*",
 		"ramsey/uuid": "2.8.0",
-        "aws/aws-sdk-php": "3.0.4",
+        "aws/aws-sdk-php": "3.*",
 		"sybio/image-workshop": "2.*",
 		"doctrine/doctrine-orm-module": "0.*"
     },
