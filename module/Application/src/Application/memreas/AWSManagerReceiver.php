@@ -85,10 +85,10 @@ class AWSManagerReceiver
                 fwrite($myfile, $txt);
                 fclose($myfile);
                 
-                $file = file_get_contents(dirname($file) . "test.txt");
+                $afile = file_get_contents(dirname($file) . "test.txt");
                 Mlog::addone(
                         __CLASS__ . __METHOD__ .
-                                 'dirname($file).test.txt :: contents', $file);
+                                 'dirname($file).test.txt :: contents', $afile);
             } else {
                 Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
                         dirname($file) . ' is not writeable');
