@@ -76,6 +76,19 @@ class AWSManagerReceiver
             if (is_writable(dirname($file))) {
                 Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
                         dirname($file) . ' is writeable');
+                
+                $myfile = fopen(dirname($file) . "test.txt", "w") or
+                         die("Unable to open file!");
+                $txt = "John Doe\n";
+                fwrite($myfile, $txt);
+                $txt = "Jane Doe\n";
+                fwrite($myfile, $txt);
+                fclose($myfile);
+                
+                $file = file_get_contents(dirname($file) . "test.txt");
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ .
+                                 'dirname($file).test.txt :: contents', $file);
             } else {
                 Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
                         dirname($file) . ' is not writeable');
