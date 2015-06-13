@@ -118,22 +118,37 @@ class AWSManagerReceiver
     function pushMediaToS3 ($file, $s3file, $content_type, $isVideo = false, 
             $bucket = MemreasConstants::S3BUCKET)
     {
-        // Use default bucket
-        // $body = EntityBody::factory(fopen($file, 'r+'));
+       // Use default bucket
+        $body = EntityBody::factory(fopen($file, 'r+'));
+        
         /*
          * Upload images - section
          */
+        $uploader = UploadBuilder::newInstance()->setClient($this->s3)
+            ->setSource($body)
+            ->setBucket($bucket)
+            ->setHeaders(
+                array(
+                        'Content-Type' => $content_type
+                ))
+            ->setOption('CacheControl', 'max-age=3600')
+            ->setOption('ServerSideEncryption', 'AES256')
+            ->setKey($s3file)
+            ->build();
+        
+        /*
+         * Modified - Perform the upload to S3. Abort the upload if something
+         * goes wrong
+         */
         try {
-            $this->s3->putObject(
-                    [
-                            'Bucket' => $bucket,
-                            'Key' => $s3file,
-                            'Body' => fopen($file, 'r'),
-                            'ServerSideEncryption' => 'AES256',
-                            'CacheControl' => 'max-age=3600',
-                            'ContentType' => $content_type
-                    ]);
+            $result = $uploader->upload();
+        } catch (MultipartUploadException $e) {
+            $uploader->abort();
+            Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
+                    $e->getMessage());
+            throw $e;
         } catch (\Exception $e) {
+            $uploader->abort();
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
             throw $e;
