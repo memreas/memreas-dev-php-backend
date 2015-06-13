@@ -5,6 +5,7 @@ use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 use Application\memreas\RmWorkDir;
 use Application\memreas\Mlog;
+use GuzzleHttp\Event\ProgressEvent;
 
 class AWSManagerReceiver
 {
@@ -93,19 +94,35 @@ class AWSManagerReceiver
                 Mlog::addone(__CLASS__ . __METHOD__ . 'dirname($file)', 
                         dirname($file) . ' is not writeable');
             }
-            if (is_writable($file)) {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
-                        $file . ' is writeable');
-            } else {
-                Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
-                        $file . ' is not writeable');
-            }
+            /*
             $result = $this->s3->getObject(
-                    [
+                    array(
                             'Bucket' => MemreasConstants::S3BUCKET,
                             'Key' => $s3file,
                             'SaveAs' => $file
+                    ));
+            */
+            $result = $client->getObject(
+                    [
+                            'Bucket' => MemreasConstants::S3BUCKET,
+                            'Key' => $s3file,
+                            'SaveAs' => $file,
+                            '@http' => [
+                                    'progress' => function  ($expectedDl, $dl, 
+                                            $expectedUl, $ul)
+                                    {
+                                        Mlog::addone(
+                                                __CLASS__ . __METHOD__ .
+                                                         'progress', 
+                                                        printf(
+                                                                "%s of %s downloaded, %s of %s uploaded.\n", 
+                                                                $expectedDl, $dl, 
+                                                                $expectedUl, $ul));
+                                    }
+                            ]
                     ]);
+            Mlog::addone(__CLASS__ . __METHOD__ . '$result[Body]->getUri()', 
+                    $result['Body']->getUri());
             
             if (file_exists($file)) {
                 Mlog::addone(__CLASS__ . __METHOD__ . '$file', 
