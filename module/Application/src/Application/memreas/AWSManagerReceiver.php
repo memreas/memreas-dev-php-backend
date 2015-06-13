@@ -79,7 +79,7 @@ class AWSManagerReceiver
                             'Key' => $s3file,
                             'SaveAs' => $file
                     ]);
-        Mlog::addone(__FILE__ . __METHOD__ . '::hellow', '...');
+            Mlog::addone(__FILE__ . __METHOD__ . '::hellow', '...');
         } catch (\Exception $e) {
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
@@ -121,8 +121,9 @@ class AWSManagerReceiver
             $bucket = MemreasConstants::S3BUCKET)
     {
         // Use default bucket
-        //$body = EntityBody::factory(fopen($file, 'r+'));
-        
+        // $body = EntityBody::factory(fopen($file, 'r+'));
+        $result = `ls -al $file`;
+        Mlog::addone(__CLASS__ . __METHOD__ . '$file', $result);
         /*
          * Upload images - section
          */
