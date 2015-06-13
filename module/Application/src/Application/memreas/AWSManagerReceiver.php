@@ -70,16 +70,23 @@ class AWSManagerReceiver
 
     function pullMediaFromS3 ($s3file, $file)
     {
+        
         Mlog::addone(__FILE__ . __METHOD__ . '::pulling s3file', $s3file);
         Mlog::addone(__FILE__ . __METHOD__ . '::saving file', $file);
         try {
+            if (is_writable ( $file )) {
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' is writeable');
+            } else {
+                Mlog::addone(__CLASS__ . __METHOD__ . '$file', $file . ' is not writeable');
+            }
             $result = $this->s3->getObject(
                     [
                             'Bucket' => MemreasConstants::S3BUCKET,
                             'Key' => $s3file,
                             'SaveAs' => $file
                     ]);
-            Mlog::addone(__FILE__ . __METHOD__ . '::hellow', '...');
+            $result = `ls -al $file`;
+            Mlog::addone(__CLASS__ . __METHOD__ . '$result of pull', $result);
         } catch (\Exception $e) {
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
@@ -122,8 +129,6 @@ class AWSManagerReceiver
     {
         // Use default bucket
         // $body = EntityBody::factory(fopen($file, 'r+'));
-        $result = `ls -al $file`;
-        Mlog::addone(__CLASS__ . __METHOD__ . '$result of pull', $result);
         /*
          * Upload images - section
          */
