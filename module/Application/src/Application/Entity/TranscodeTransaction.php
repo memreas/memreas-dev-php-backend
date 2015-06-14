@@ -3,9 +3,9 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * ServerMonitor
+ * TranscodeTransaction
  *
- * @ORM\Table(name="server_monitor")
+ * @ORM\Table(name="transcodetransaction")
  * @ORM\Entity
  */
 class ServerMonitor
