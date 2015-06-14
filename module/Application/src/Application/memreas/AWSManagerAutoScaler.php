@@ -39,7 +39,7 @@ class AWSManagerAutoScaler
                 'Exit AWSManagerReceiver constructor');
     }
 
-    public function checkInstance ()
+    public function serverReadyToProcessTask ()
     {
         /*
          * Check CPU level
@@ -49,24 +49,20 @@ class AWSManagerAutoScaler
         /*
          * Check if server is in server_monitor
          */
-        $server = $this->checkServer($server_data['server_name']);
+        //$server = $this->checkServer($server_data['server_name']);
         $process_task = false;
-        if (empty($server)) {
+        if ($server_data['cpu_util'][0] < 75) {
             /*
              * no servers so we're starting up - add me
              */
-            $this->addServer($server_data);
+            //$this->addServer($server_data);
             $process_task = true;
         } else {
             /*
              * Server exists so update stats
              */
-            $this->updateServer($server_data);
-            
-            /*
-             * If server is backlogged and above 75% for 15m
-             * then start new server
-             */
+            //$this->updateServer($server_data);
+            $process_task = false;
         }
         $server = $this->checkServer();
         Mlog::addone(__CLASS__ . __METHOD__ . '::$server', $server);

@@ -31,6 +31,8 @@ use Application\memreas\AWSManagerAutoScaler;
 class IndexController extends AbstractActionController
 {
 
+    protected $dbAdapter = null;
+
     protected $url;
 
     protected $media_url;
@@ -90,7 +92,6 @@ class IndexController extends AbstractActionController
                  */
                 $this->awsManagerAutoScaler = new AWSManagerAutoScaler(
                         $this->getServiceLocator());
-                $this->awsManagerAutoScaler->checkInstance();
                 
                 /*
                  * If need server launch, guzzle to start,
@@ -104,9 +105,6 @@ class IndexController extends AbstractActionController
         }
         exit();
     }
-
-    protected function checkAutoScaler ()
-    {}
 
     protected function get_server_memory_usage ()
     {
@@ -139,22 +137,54 @@ class IndexController extends AbstractActionController
         if ($proceed) {
             Mlog::addone(__CLASS__ . __METHOD__ . '$proceed', $proceed);
             $message_data = json_decode($json, true);
+            $message_data['process_task'] = $this->awsManagerAutoScaler->serverReadyToProcessTask();
             
             // Fetch AWS Handle
             $aws_manager = new AWSManagerReceiver($this->getServiceLocator(), 
                     $message_data);
             
-            //Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', 
-            //        $message_data);
+            // Mlog::addone(__CLASS__ . __METHOD__ . '$message_data',
+            // $message_data);
             $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
                     $message_data);
             $this->returnResponse($response);
             /**
              * ****** background process starts here *******
+             * ** process task if cpu < 75% usage
+             * ** after completing task fetch another
              */
-            $result = $aws_manager->snsProcessMediaSubscribe($message_data);
+            while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
+                $result = $aws_manager->snsProcessMediaSubscribe($message_data);
+                /*
+                 * Build new task from database
+                 */
+                $message_data = $this->fetchBackLogEntry();
+            }
             exit();
         }
+    }
+
+    protected function fetchBackLogEntry ()
+    {
+        $query_string = "SELECT tt.message_data FROM " .
+                 " Application\Entity\TranscodeTransaction tt " .
+                 " where tt.transcode_status='backlog' " .
+                 " order by tt.transcode_start_time asc" . " limit 0, 1";
+        
+        $this->dbAdapter = $this->getServiceLocator()->get(
+                'doctrine.entitymanager.orm_default');
+        $query = $this->dbAdapter->createQuery($query_string);
+        $result = $query->getSingleResult();
+        if ($result) {
+            $message_data = $result->message_data;
+            $message_data['transcode_transaction_id'] = $result->transcode_transaction_id;
+            $message_data['backlog'] = true;
+        }
+        Mlog::addone(
+                __CLASS__ . __METHOD__ . '::backlog::$message_data' .
+                         $message_data);
+        
+        return $message_data;
     }
 
     protected function returnResponse ($response)

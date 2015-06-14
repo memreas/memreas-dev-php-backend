@@ -46,6 +46,14 @@ class ServerMonitor
     
     /**
      *
+     * @var string @ORM\Column(name="message_data", type="string", length=45,
+     *      nullable=false)
+     */
+    private $message_data;
+    //     `message_data` varchar(45) NOT NULL,
+    
+    /**
+     *
      * @var string @ORM\Column(name="media_type", type="string", length=20,
      *      nullable=true)
      */

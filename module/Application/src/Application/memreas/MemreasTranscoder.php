@@ -122,8 +122,10 @@ class MemreasTranscoder
 
     protected $pass = 0;
 
+    protected $input_message_data_json;
+    
     protected $json_metadata;
-
+    
     protected $transcode_transaction_id;
 
     protected $transcode_job_duration;
@@ -191,7 +193,12 @@ class MemreasTranscoder
         $this->s3path = $message_data['s3path'];
         $this->s3file_name = $message_data['s3file_name'];
         $this->original_file_name = $message_data['s3file_name'];
-        $this->transcode_status = 'pending';
+        $this->input_message_data_json = json_encode($message_data);
+        if ($message_data['process_task']) {
+            $this->transcode_status = 'pending';
+        } else {
+            $this->transcode_status = 'backlog';
+        }
         $this->s3file_basename_prefix = $message_data['s3file_basename_prefix'];
         $this->s3prefixpath = $this->user_id . '/' . $this->media_id . '/';
         $this->is_video = empty($message_data['is_video']) ? '' : $message_data['is_video'];
@@ -238,6 +245,13 @@ class MemreasTranscoder
     public function exec ($message_data, $isUpload = false)
     {
         try {
+
+            /*
+             * Processing for backlog entry if set
+             */
+            if (!empty($message_data['backlog'])) {
+                $this->transcode_transaction_id = $message_data['transcode_transaction_id'];
+            }
             
             if (isset($message_data)) {
                 if (getcwd() == '/var/www/memreas-dev-php-backend') {
@@ -307,6 +321,7 @@ class MemreasTranscoder
                 
                 // Set file related data
                 $this->original_file_name = $this->s3file_name;
+                $this->message_data = json_encode($message_data);
                 $this->MediaFileName = $this->s3file_basename_prefix;
                 $this->MediaFileType = $message_data['content_type'];
                 $this->MediaExt = pathinfo($this->s3file_name, 
@@ -1082,6 +1097,7 @@ class MemreasTranscoder
                             'user_id' => $this->user_id,
                             'media_id' => $this->media_id,
                             'file_name' => $this->original_file_name,
+                            'message_data' => $this->input_message_data_json,
                             'media_type' => $this->content_type,
                             'media_extension' => $this->content_type,
                             'media_duration' => $this->duration,

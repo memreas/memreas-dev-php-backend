@@ -6,9 +6,10 @@ class TranscodeTransaction{
 	public $transcode_transaction_id = NULL;
 	public $user_id = NULL;
 	public $media_id = NULL;
+	public $file_name = NULL;
+	public $message_data = NULL;
 	public $media_type = NULL;
 	public $media_extension = NULL;
-	public $file_name = NULL;
 	public $media_duration = NULL;
 	public $media_size = NULL;
 	public $transcode_status = NULL;
@@ -26,6 +27,7 @@ class TranscodeTransaction{
 		$this->user_id = (isset($data['user_id'])) ?  $data['user_id'] : $this->user_id;
 		$this->media_id = (isset($data['media_id'])) ?  $data['media_id'] : $this->media_id;
 		$this->file_name = (isset($data['file_name'])) ?  $data['file_name'] : $this->file_name;
+		$this->message_data = (isset($data['message_data'])) ?  $data['message_data'] : $this->message_data;
 		$this->media_type = (isset($data['media_type'])) ?  $data['media_type'] : $this->media_type;
 		$this->media_extension = (isset($data['media_extension'])) ?  $data['media_extension'] : $this->media_extension;
 		$this->media_duration = (isset($data['media_duration'])) ?  $data['media_duration'] : $this->media_duration;
