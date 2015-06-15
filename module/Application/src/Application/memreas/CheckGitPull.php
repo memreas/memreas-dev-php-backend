@@ -40,7 +40,7 @@ class CheckGitPull
             $this->execOps ( 'ssh -T git@github.com' );
             
             // cd to $github_basedir
-            $this->execOps ( "cd $github_basedir" );
+            $this->execOps ( "cd $this->github_basedir" );
             
             // git pull
             $this->execOps ( "git pull" );
