@@ -24,7 +24,7 @@ class CheckGitPull
 
     public function exec ($pull=false)
     {
-        if (!file_exists($github_flag) || $pull) {
+        if (!file_exists($gitlock) || $pull) {
             ob_start();
             // Setup SSH agent
             execOps ( 'eval "$(ssh-agent -s)"' );
