@@ -20,6 +20,7 @@ class CheckGitPull
         Mlog::add('$op', $op);
         Mlog::add('$outarr', $outarr);
         Mlog::add('$ret', $ret);
+        Mlog::out();
     }
 
     public function exec ($pull=false)
