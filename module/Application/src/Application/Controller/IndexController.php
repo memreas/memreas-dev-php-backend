@@ -139,14 +139,31 @@ class IndexController extends AbstractActionController
             $message_data = json_decode($json, true);
             $message_data['process_task'] = $this->awsManagerAutoScaler->serverReadyToProcessTask();
             
-            // Fetch AWS Handle
-            $aws_manager = new AWSManagerReceiver($this->getServiceLocator(), 
-                    $message_data);
+            /*
+             * Here if no media_id is set then work on any backlog items...
+             */
+            if (! empty($message_data['media_id'])) {
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . '!empty($message_data[media_id]', 
+                        $message_data['media_id']);
+                // Fetch AWS Handle
+                $aws_manager = new AWSManagerReceiver($this->getServiceLocator(), 
+                        $message_data);
+                
+                $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                        $message_data);
+            } else {
+                $message_data = $this->fetchBackLogEntry();
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
+                        $message_data);
+                // Fetch AWS Handle
+                $aws_manager = new AWSManagerReceiver($this->getServiceLocator(), 
+                        $message_data);
+                
+                $response = $message_data;
+            }
             
-            // Mlog::addone(__CLASS__ . __METHOD__ . '$message_data',
-            // $message_data);
-            $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
-                    $message_data);
             $this->returnResponse($response);
             /**
              * ****** background process starts here *******
@@ -169,15 +186,21 @@ class IndexController extends AbstractActionController
         $query_string = "SELECT tt.message_data FROM " .
                  " Application\Entity\TranscodeTransaction tt " .
                  " where tt.transcode_status='backlog' " .
-                 " order by tt.transcode_start_time asc" . " limit 0, 1";
+                 " order by tt.transcode_start_time asc";
         
+        Mlog::addone(__CLASS__ . __METHOD__ . '$query_string', $query_string);
         $this->dbAdapter = $this->getServiceLocator()->get(
                 'doctrine.entitymanager.orm_default');
         $query = $this->dbAdapter->createQuery($query_string);
-        $result = $query->getSingleResult();
+        $result = $query->getArrayResult();
+        //Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
+        foreach($result as $entry) {
+            Mlog::addone(__CLASS__ . __METHOD__ . '$entry', json_encode($entry));
+        }
+        exit();
         if ($result) {
-            $message_data = $result->message_data;
-            $message_data['transcode_transaction_id'] = $result->transcode_transaction_id;
+            $message_data = $result[0]->message_data;
+            $message_data['transcode_transaction_id'] = $result[0]->transcode_transaction_id;
             $message_data['backlog'] = true;
         }
         Mlog::addone(

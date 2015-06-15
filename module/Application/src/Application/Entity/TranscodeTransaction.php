@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="transcodetransaction")
  * @ORM\Entity
  */
-class ServerMonitor
+class TranscodeTransaction
 {
     
     /**
