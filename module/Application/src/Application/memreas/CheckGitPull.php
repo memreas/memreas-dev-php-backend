@@ -15,11 +15,12 @@ class CheckGitPull
         /**
          * Exec op and error log results...
          */
-        exec($op, $outarr, $ret);
-        Mlog::addone(__CLASS__ . __METHOD__, '...');
-        Mlog::addone('$op', $op);
-        Mlog::addone('$outarr', $outarr);
-        Mlog::addone('$ret', $ret);
+        //exec($op, $outarr, $ret);
+        echo `$op`;
+        //Mlog::addone(__CLASS__ . __METHOD__, '...');
+        //Mlog::addone('$op', $op);
+        //Mlog::addone('$outarr', $outarr);
+        //Mlog::addone('$ret', $ret);
     }
 
     public function exec ($pull=false)
@@ -46,6 +47,7 @@ class CheckGitPull
             $this->execOps ( "git pull" );
             
             $output = ob_get_contents();
+            Mlog::addone('output::',$output);
             
             //write lock file
             $file = fopen($this->gitlock,"w");
