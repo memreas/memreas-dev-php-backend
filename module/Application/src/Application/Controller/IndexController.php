@@ -27,6 +27,7 @@ use Application\memreas\MemreasTranscoder;
 use Application\memreas\MemreasTranscoderTables;
 use Application\memreas\Mlog;
 use Application\memreas\AWSManagerAutoScaler;
+use Application\memreas\CheckGitPull;
 
 class IndexController extends AbstractActionController
 {
@@ -54,6 +55,8 @@ class IndexController extends AbstractActionController
     protected $friendmediaTable;
 
     protected $awsManagerAutoScaler;
+    
+    protected $checkGitPull;
 
     public function fetchXML ($action, $xml)
     {
@@ -73,7 +76,12 @@ class IndexController extends AbstractActionController
     {
         error_log("indexAction()...." . PHP_EOL);
         $actionname = isset($_REQUEST["action"]) ? $_REQUEST["action"] : '';
-        if ($actionname == "clearlog") {
+        
+        if ($actionname == "gitpull") {
+            $gitpull = true;
+            $this->checkGitPull = new CheckGitPull();
+            $this->checkGitPull->exec($gitpull);
+        } else if ($actionname == "clearlog") {
             try {
                 $filename = getcwd() . '/php_errors.log';
                 // $result = unlink ( $filename );
@@ -130,6 +138,7 @@ class IndexController extends AbstractActionController
         Mlog::addone(__CLASS__ . __METHOD__ . '$json', $json);
         $proceed = 0;
         $response = 'error - check action or json';
+        
         if (($action) && ($json)) {
             $proceed = 1;
             $response = 'received';
