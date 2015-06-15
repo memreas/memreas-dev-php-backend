@@ -16,7 +16,7 @@ class CheckGitPull
          * Exec op and error log results...
          */
         //exec($op, $outarr, $ret);
-        echo `$op`;
+        echo shell_exec($op);
         //Mlog::addone(__CLASS__ . __METHOD__, '...');
         //Mlog::addone('$op', $op);
         //Mlog::addone('$outarr', $outarr);
@@ -30,7 +30,6 @@ class CheckGitPull
             // Setup SSH agent
             $this->execOps ( 'eval "$(ssh-agent -s)"' );
             
-            error_log ( 'about to run ssh-add /home/srv/.ssh/id_rsa' );
             // Add key
             $this->execOps ( "ssh-add ~/.ssh/id_rsa" );
             
@@ -46,7 +45,8 @@ class CheckGitPull
             // git pull
             $this->execOps ( "git pull" );
             
-            $output = ob_get_contents();
+            $output = ob_get_flush();
+            
             Mlog::addone('output::',$output);
             
             //write lock file
