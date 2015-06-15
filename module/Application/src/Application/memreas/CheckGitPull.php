@@ -27,7 +27,7 @@ class CheckGitPull
         if (!file_exists($this->gitlock) || $pull) {
             ob_start();
             // Setup SSH agent
-            execOps ( 'eval "$(ssh-agent -s)"' );
+            $this->execOps ( 'eval "$(ssh-agent -s)"' );
             
             error_log ( 'about to run ssh-add /home/srv/.ssh/id_rsa' );
             // Add key
