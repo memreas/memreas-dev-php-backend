@@ -2,7 +2,7 @@
 namespace Application\memreas;
 use Application\memreas\Mlog;
 
-class MemreasTranscoder
+class CheckGitPull
 {
 
     protected $gitlock = "/var/www/ephemeral0/gitpull.lock";
