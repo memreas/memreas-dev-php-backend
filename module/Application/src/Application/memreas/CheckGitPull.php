@@ -16,11 +16,12 @@ class CheckGitPull
          * Exec op and error log results...
          */
         //exec($op, $outarr, $ret);
-        echo shell_exec($op);
+        $output = shell_exec($op . ' 2>&1');
         //Mlog::addone(__CLASS__ . __METHOD__, '...');
         //Mlog::addone('$op', $op);
         //Mlog::addone('$outarr', $outarr);
         //Mlog::addone('$ret', $ret);
+        return $output;
     }
 
     public function exec ($pull=false)
