@@ -24,7 +24,7 @@ class CheckGitPull
 
     public function exec ($pull=false)
     {
-        if (!file_exists($gitlock) || $pull) {
+        if (!file_exists($this->gitlock) || $pull) {
             ob_start();
             // Setup SSH agent
             execOps ( 'eval "$(ssh-agent -s)"' );
@@ -48,7 +48,7 @@ class CheckGitPull
             $output = ob_get_contents();
             
             //write lock file
-            $file = fopen($gitlock,"w");
+            $file = fopen($this->gitlock,"w");
             echo fwrite($file,$output);
             fclose($file);
         }
