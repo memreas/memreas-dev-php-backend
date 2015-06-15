@@ -17,10 +17,6 @@ class CheckGitPull
          */
         //exec($op, $outarr, $ret);
         $output = shell_exec($op . ' 2>&1') . PHP_EOL;
-        //Mlog::addone(__CLASS__ . __METHOD__, '...');
-        //Mlog::addone('$op', $op);
-        //Mlog::addone('$outarr', $outarr);
-        //Mlog::addone('$ret', $ret);
         return $output;
     }
 
