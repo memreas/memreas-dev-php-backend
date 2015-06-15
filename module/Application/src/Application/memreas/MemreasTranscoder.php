@@ -580,6 +580,7 @@ class MemreasTranscoder
                         $this->memreas_media_metadata);
                 $memreas_media_data_array = array(
                         'metadata' => $this->json_metadata,
+                        'transcode_status' => $this->transcode_status,
                         'update_date' => $now
                 );
                 $media_id = $this->persistMedia($this->memreas_media, 
