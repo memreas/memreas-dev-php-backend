@@ -31,19 +31,19 @@ class CheckGitPull
             
             error_log ( 'about to run ssh-add /home/srv/.ssh/id_rsa' );
             // Add key
-            execOps ( "ssh-add ~/.ssh/id_rsa" );
+            $this->execOps ( "ssh-add ~/.ssh/id_rsa" );
             
             // check ssh auth sock
-            execOps ( 'echo "$SSH_AUTH_SOCK"' );
+            $this->execOps ( 'echo "$SSH_AUTH_SOCK"' );
             
             // check github access
-            execOps ( 'ssh -T git@github.com' );
+            $this->execOps ( 'ssh -T git@github.com' );
             
             // cd to $github_basedir
-            execOps ( "cd $github_basedir" );
+            $this->execOps ( "cd $github_basedir" );
             
             // git pull
-            execOps ( "git pull" );
+            $this->execOps ( "git pull" );
             
             $output = ob_get_contents();
             
