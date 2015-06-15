@@ -16,7 +16,7 @@ class CheckGitPull
          * Exec op and error log results...
          */
         //exec($op, $outarr, $ret);
-        $output = shell_exec($op . ' 2>&1');
+        $output = shell_exec($op . ' 2>&1') . PHP_EOL;
         //Mlog::addone(__CLASS__ . __METHOD__, '...');
         //Mlog::addone('$op', $op);
         //Mlog::addone('$outarr', $outarr);
@@ -27,26 +27,23 @@ class CheckGitPull
     public function exec ($pull=false)
     {
         if (!file_exists($this->gitlock) || $pull) {
-            ob_start();
             // Setup SSH agent
-            $this->execOps ( 'eval "$(ssh-agent -s)"' );
+            $output = $this->execOps ( 'eval "$(ssh-agent -s)"' );
             
             // Add key
-            $this->execOps ( "ssh-add ~/.ssh/id_rsa" );
+            $output .= $this->execOps ( "ssh-add ~/.ssh/id_rsa" );
             
             // check ssh auth sock
-            $this->execOps ( 'echo "$SSH_AUTH_SOCK"' );
+            $output .= $this->execOps ( 'echo "$SSH_AUTH_SOCK"' );
             
             // check github access
-            $this->execOps ( 'ssh -T git@github.com' );
+            $output .= $this->execOps ( 'ssh -T git@github.com' );
             
             // cd to $github_basedir
-            $this->execOps ( "cd $this->github_basedir" );
+            $output .= $this->execOps ( "cd $this->github_basedir" );
             
             // git pull
-            $this->execOps ( "git pull" );
-            
-            $output = ob_get_flush();
+            $output .= $this->execOps ( "git pull" );
             
             Mlog::addone('output::',$output);
             
