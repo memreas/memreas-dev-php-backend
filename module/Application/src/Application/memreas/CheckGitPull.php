@@ -15,14 +15,16 @@ class CheckGitPull
         /**
          * Exec op and error log results...
          */
-        //exec($op, $outarr, $ret);
         $output = shell_exec($op . ' 2>&1') . PHP_EOL;
         return $output;
     }
 
     public function exec ($pull=false)
     {
-        if (!file_exists($this->gitlock) || $pull) {
+        $pulled_latest = false;
+        if (file_exists($this->gitlock)) {
+            $pulled_latest = true;
+        } else if (!file_exists($this->gitlock) || $pull) {
             // Setup SSH agent
             $output = $this->execOps ( 'eval "$(ssh-agent -s)"' );
             
@@ -47,6 +49,8 @@ class CheckGitPull
             $file = fopen($this->gitlock,"w");
             echo fwrite($file,$output);
             fclose($file);
+            $pulled_latest = true;
         }
+        return $pulled_latest;
     }
 } // end class MemreasTranscoder
