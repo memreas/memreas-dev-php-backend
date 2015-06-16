@@ -55,7 +55,7 @@ class IndexController extends AbstractActionController
     protected $friendmediaTable;
 
     protected $awsManagerAutoScaler;
-    
+
     protected $checkGitPull;
 
     public function fetchXML ($action, $xml)
@@ -74,43 +74,45 @@ class IndexController extends AbstractActionController
 
     public function indexAction ()
     {
-        error_log("indexAction()...." . PHP_EOL);
+        Mlog::addone(__CLASS__ . __METHOD__, "enter");
         $actionname = isset($_REQUEST["action"]) ? $_REQUEST["action"] : '';
         
+        $this->checkGitPull = new CheckGitPull();
+        $this->checkGitPull->exec();
         if ($actionname == "gitpull") {
             $gitpull = true;
-            $this->checkGitPull = new CheckGitPull();
             $this->checkGitPull->exec($gitpull);
-        } else if ($actionname == "clearlog") {
-            try {
-                $filename = getcwd() . '/php_errors.log';
-                // $result = unlink ( $filename );
-                file_put_contents($filename, '');
-                Mlog::addone(__CLASS__ . __METHOD__ . '::' . $actionname, 
-                        "Log has been cleared!");
-                echo 'success';
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
+        } else 
+            if ($actionname == "clearlog") {
+                try {
+                    $filename = getcwd() . '/php_errors.log';
+                    // $result = unlink ( $filename );
+                    file_put_contents($filename, '');
+                    Mlog::addone(__CLASS__ . __METHOD__ . '::' . $actionname, 
+                            "Log has been cleared!");
+                    echo 'success';
+                } catch (Exception $e) {
+                    echo 'Caught exception: ', $e->getMessage(), "\n";
+                }
+                exit();
+            } else {
+                try {
+                    /*
+                     * Check Instance against AutoScaler
+                     */
+                    $this->awsManagerAutoScaler = new AWSManagerAutoScaler(
+                            $this->getServiceLocator());
+                    
+                    /*
+                     * If need server launch, guzzle to start,
+                     * and set transaction as pending
+                     */
+                    $this->transcoderAction();
+                } catch (Exception $e) {
+                    Mlog::addone(__CLASS__ . __METHOD__ . '::Caught exception', 
+                            $e->getMessage());
+                }
             }
-            exit();
-        } else {
-            try {
-                /*
-                 * Check Instance against AutoScaler
-                 */
-                $this->awsManagerAutoScaler = new AWSManagerAutoScaler(
-                        $this->getServiceLocator());
-                
-                /*
-                 * If need server launch, guzzle to start,
-                 * and set transaction as pending
-                 */
-                $this->transcoderAction();
-            } catch (Exception $e) {
-                Mlog::addone(__CLASS__ . __METHOD__ . '::Caught exception', 
-                        $e->getMessage());
-            }
-        }
         exit();
     }
 
@@ -202,8 +204,8 @@ class IndexController extends AbstractActionController
                 'doctrine.entitymanager.orm_default');
         $query = $this->dbAdapter->createQuery($query_string);
         $result = $query->getArrayResult();
-        //Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
-        foreach($result as $entry) {
+        // Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
+        foreach ($result as $entry) {
             Mlog::addone(__CLASS__ . __METHOD__ . '$entry', json_encode($entry));
         }
         exit();
