@@ -23,19 +23,26 @@ class AWSManagerAutoScaler
         Mlog::addone(__FILE__ . __METHOD__, 
                 'Inside AWSManagerAutoScaler constructor');
         try {
+            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             $this->service_locator = $service_locator;
+            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
+            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             $this->aws = Aws::factory(
                     array(
                             'key' => MemreasConstants::AWS_APPKEY,
                             'secret' => MemreasConstants::AWS_APPSEC,
                             'region' => MemreasConstants::AWS_APPREG
                     ));
+            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             // Fetch the AutoScaling class
             $this->autoscaler = $this->aws->get('AutoScaling');
+            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
         } catch (Exception $e) {
-            error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
+            Mlog::addone(
+                    __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
+                    $e->getMessage());
         }
         Mlog::addone(__FILE__ . __METHOD__, 
                 'Exit AWSManagerAutoScaler constructor');
@@ -51,19 +58,19 @@ class AWSManagerAutoScaler
         /*
          * Check if server is in server_monitor
          */
-        //$server = $this->checkServer($server_data['server_name']);
+        // $server = $this->checkServer($server_data['server_name']);
         $process_task = false;
         if ($server_data['cpu_util'][0] < 75) {
             /*
              * no servers so we're starting up - add me
              */
-            //$this->addServer($server_data);
+            // $this->addServer($server_data);
             $process_task = true;
         } else {
             /*
              * Server exists so update stats
              */
-            //$this->updateServer($server_data);
+            // $this->updateServer($server_data);
             $process_task = false;
         }
         $server = $this->checkServer();
