@@ -20,6 +20,8 @@ class AWSManagerAutoScaler
 
     public function __construct ($service_locator)
     {
+        Mlog::addone(__FILE__ . __METHOD__, 
+                'Inside AWSManagerAutoScaler constructor');
         try {
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
@@ -36,7 +38,7 @@ class AWSManagerAutoScaler
             error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
         }
         Mlog::addone(__FILE__ . __METHOD__, 
-                'Exit AWSManagerReceiver constructor');
+                'Exit AWSManagerAutoScaler constructor');
     }
 
     public function serverReadyToProcessTask ()
