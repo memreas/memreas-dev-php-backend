@@ -123,9 +123,9 @@ class MemreasTranscoder
     protected $pass = 0;
 
     protected $input_message_data_json;
-    
+
     protected $json_metadata;
-    
+
     protected $transcode_transaction_id;
 
     protected $transcode_job_duration;
@@ -208,30 +208,18 @@ class MemreasTranscoder
         $now = date('Y-m-d H:i:s');
         $this->transcode_start_time = $now;
         
-        Mlog::addone(
-                __CLASS__ . __METHOD__ .
-                         '::markMediaForTranscoding($message_data)', 
-                        'passed vars');
         $this->memreas_media = $this->getMemreasTranscoderTables()
             ->getMediaTable()
             ->getMedia($this->media_id);
         $this->memreas_media_metadata = json_decode(
                 $this->memreas_media->metadata, true);
         
-        Mlog::addone(
-                __CLASS__ . __METHOD__ .
-                         '::markMediaForTranscoding($message_data)', 
-                        'passed gettables');
         $starttime = date('Y-m-d H:i:s');
         $this->memreas_media_metadata['S3_files']['transcode_progress'] = array();
         $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_started';
         $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_start@' .
                  $starttime;
         
-        Mlog::addone(
-                __CLASS__ . __METHOD__ .
-                         '::markMediaForTranscoding($message_data)', 
-                        'passed S3_files var set');
         // persist uses $this for insert
         $this->transcode_transaction_id = $this->persistTranscodeTransaction();
         Mlog::addone(
@@ -245,11 +233,11 @@ class MemreasTranscoder
     public function exec ($message_data, $isUpload = false)
     {
         try {
-
+            
             /*
              * Processing for backlog entry if set
              */
-            if (!empty($message_data['backlog'])) {
+            if (! empty($message_data['backlog'])) {
                 $this->transcode_transaction_id = $message_data['transcode_transaction_id'];
             }
             
@@ -537,20 +525,19 @@ class MemreasTranscoder
                             $transcode_job_meta = array();
                             $transcode_job_meta = $this->createThumbNails(
                                     $this->is_image);
-                            // error_log("finished thumbnails for image
-                            // transcode_job_meta ---> " . json_encode (
-                            // $transcode_job_meta ) .PHP_EOL);
                         }
                 
-                // ////////////////////////////////////////////////////////////
-                // Update the metadata here for the transcoded files
+                /*
+                 * Update the metadata here for the transcoded files
+                 */
                 $now = date('Y-m-d H:i:s');
                 $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_end@' .
                          $now;
                 $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_end';
                 
-                // /////////////////////////////
-                // Update transcode_transaction
+                /*
+                 * Update transcode_transaction to mark completion
+                 */
                 $this->transcode_status = "success";
                 $this->pass = "1";
                 $this->transcode_end_time = date("Y-m-d H:i:s");
@@ -564,15 +551,22 @@ class MemreasTranscoder
                 $transcode_transaction_data['transcode_job_duration'] = strtotime(
                         $this->transcode_end_time) -
                          strtotime($this->transcode_start_time);
-                
                 $transcode_transaction = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->getTranscodeTransaction($this->transcode_transaction_id);
                 $transaction_id = $this->persistTranscodeTransaction(
                         $transcode_transaction, $transcode_transaction_data);
                 
-                // /////////////////////////////
-                // Update the media table entry here
+                // Debugging - log table entry
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ .
+                                 '::$this->persistTranscodeTransaction(
+                        $transcode_transaction, $transcode_transaction_data)', 
+                                $this->transcode_status);
+                
+                /*
+                 * Update media to mark completion
+                 */
                 $now = date('Y-m-d H:i:s');
                 $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_complete';
                 $this->memreas_media_metadata['S3_files']['transcode_status'] = $this->pass;
@@ -585,6 +579,12 @@ class MemreasTranscoder
                 );
                 $media_id = $this->persistMedia($this->memreas_media, 
                         $memreas_media_data_array);
+                
+                // Debugging - log table entry
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
@@ -647,7 +647,6 @@ class MemreasTranscoder
             
             $cmd = join(" ", $command);
             $cmd = $this->ffmpegcmd . " " . $cmd;
-            // echo "$cmd<br>";
             $op = shell_exec($cmd);
             $media_thumb_arr = glob(
                     $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR .
@@ -657,6 +656,8 @@ class MemreasTranscoder
                     "media_thumb_arr ----> " . json_encode($media_thumb_arr) .
                              PHP_EOL);
         } else {
+            Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr', 
+                    "else media_thumb_arr ---->" . json_encode($media_thumb_arr));
             $media_thumb_arr = array(
                     $this->destRandMediaName
             );
@@ -723,44 +724,14 @@ class MemreasTranscoder
           // $this->memreas_media_metadata ) . PHP_EOL );
         
         if (! $this->is_image) {
-            // fullsize
+            
+            // fullsize, 79x80, 448x306, 384x216, 98x78
             $local_thumnails_dir = rtrim(
                     $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR, "/");
             $this->aws_manager_receiver->pushThumbnailsToS3(
-                    $local_thumnails_dir, $this->s3path . self::THUMBNAILSDIR);
+                    $local_thumnails_dir, 
+                    $this->s3prefixpath . self::THUMBNAILSDIR);
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_stored_thumbnails';
-            
-            // 79x80
-            $local_thumnails_dir = rtrim(
-                    $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR .
-                             self::_79X80, "/");
-            $this->aws_manager_receiver->pushThumbnailsToS3(
-                    $local_thumnails_dir, $this->s3path . self::THUMBNAILSDIR);
-            $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_stored_thumbnails_79X80';
-            
-            // 448x306
-            $local_thumnails_dir = rtrim(
-                    $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR .
-                             self::_448X306, "/");
-            $this->aws_manager_receiver->pushThumbnailsToS3(
-                    $local_thumnails_dir, $this->s3path . self::THUMBNAILSDIR);
-            $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_stored_thumbnails_448x306';
-            
-            // 384x216
-            $local_thumnails_dir = rtrim(
-                    $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR .
-                             self::_384X216, "/");
-            $this->aws_manager_receiver->pushThumbnailsToS3(
-                    $local_thumnails_dir, $this->s3path . self::THUMBNAILSDIR);
-            $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_stored_thumbnails_384X216';
-            
-            // 98x78
-            $local_thumnails_dir = rtrim(
-                    $this->homeDir . self::DESTDIR . self::THUMBNAILSDIR .
-                             self::_98X78, "/");
-            $this->aws_manager_receiver->pushThumbnailsToS3(
-                    $local_thumnails_dir, $this->s3path . self::THUMBNAILSDIR);
-            $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_stored_thumbnails_98X78';
         }
     }
     // end createThumNails()
