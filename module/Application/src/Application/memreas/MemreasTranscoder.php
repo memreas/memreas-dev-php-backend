@@ -617,7 +617,7 @@ class MemreasTranscoder
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
-                    __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                    __CLASS__ . __METHOD__ . "::line::" . $e->getLine() .
                              '::Caught exception: ', $e->getMessage());
             $this->aws_manager_receiver->sesEmailErrorToAdmin($message_data);
             /*
