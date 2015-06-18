@@ -46,6 +46,9 @@ class CheckGitPull
             Mlog::addone('output::',$output);
             
             //write lock file
+            if (file_exists($this->gitlock)) {
+                unlink($this->gitlock);
+            }
             $file = fopen($this->gitlock,"w");
             echo fwrite($file,$output);
             fclose($file);
