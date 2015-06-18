@@ -199,9 +199,6 @@ class IndexController extends AbstractActionController
                      " Application\Entity\TranscodeTransaction tt " .
                      " where tt.transcode_status='backlog' " .
                      " order by tt.transcode_start_time asc";
-            
-            Mlog::addone(__CLASS__ . __METHOD__ . '$query_string', 
-                    $query_string);
             $this->dbAdapter = $this->getServiceLocator()->get(
                     'doctrine.entitymanager.orm_default');
             $query = $this->dbAdapter->createQuery($query_string);
@@ -209,7 +206,9 @@ class IndexController extends AbstractActionController
             // Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
             if ($result) {
                 foreach ($result as $entry) {
+                    Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', $entry['message_data']);
                     $message_data = json_decode($entry['message_data'], true);
+                    Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', $message_data, 'p');
                     $message_data['transcode_transaction_id'] = $entry['transcode_transaction_id'];
                     $message_data['backlog'] = 1;
                     break;
