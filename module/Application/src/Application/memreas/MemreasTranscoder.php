@@ -613,7 +613,9 @@ class MemreasTranscoder
                         $memreas_media_data_array)', $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
-            error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
+            Mlog::addone(
+            __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage());
+            $this->sesEmailErrorToAdmin($message_data);
             /*
              * Log error
              */

@@ -64,7 +64,6 @@ class AWSManagerReceiver
         } catch (Exception $e) {
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
-            $this->sesEmailErrorToAdmin($message_data);
             // Remove the work directory
             $dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
             $dirRemoved = new RmWorkDir($dir);

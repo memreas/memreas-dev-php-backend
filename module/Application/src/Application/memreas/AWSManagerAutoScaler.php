@@ -21,24 +21,19 @@ class AWSManagerAutoScaler
     public function __construct ($service_locator)
     {
         Mlog::addone(__FILE__ . __METHOD__, 
-                'Inside AWSManagerAutoScaler constructor');
+                'Enter AWSManagerAutoScaler constructor');
         try {
-            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             $this->service_locator = $service_locator;
-            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
-            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             $this->aws = Aws::factory(
                     array(
                             'key' => MemreasConstants::AWS_APPKEY,
                             'secret' => MemreasConstants::AWS_APPSEC,
                             'region' => MemreasConstants::AWS_APPREG
                     ));
-            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
             // Fetch the AutoScaling class
             $this->autoscaler = $this->aws->get('AutoScaling');
-            Mlog::addone(__FILE__ . __METHOD__ . __LINE__, '...');
         } catch (Exception $e) {
             Mlog::addone(
                     __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
