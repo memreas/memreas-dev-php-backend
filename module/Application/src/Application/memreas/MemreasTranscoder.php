@@ -170,7 +170,7 @@ class MemreasTranscoder
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -183,7 +183,7 @@ class MemreasTranscoder
                 ->disconnect();
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -250,7 +250,7 @@ class MemreasTranscoder
                             '$this->transcode_transaction_id');
             
             return $this->transcode_transaction_id;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -807,7 +807,7 @@ class MemreasTranscoder
                         $this->s3prefixpath . self::THUMBNAILSDIR);
                 $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_stored_thumbnails';
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -848,7 +848,7 @@ class MemreasTranscoder
                 umask($save);
                 // error_log ( "created dir ---> $dir" . PHP_EOL );
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1104,7 +1104,7 @@ class MemreasTranscoder
                     $this->transcode_status);
             
             return $arr;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1126,7 +1126,7 @@ class MemreasTranscoder
                 }
             }
             rmdir($dir);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1152,7 +1152,7 @@ class MemreasTranscoder
             $file = $dirPath . $thumbnail_name;
             
             return $file;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
@@ -1172,7 +1172,7 @@ class MemreasTranscoder
             $media_id = $this->getMemreasTranscoderTables()
                 ->getMediaTable()
                 ->saveMedia($media);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
                              '::Caught exception: ', $e->getMessage());
@@ -1212,7 +1212,7 @@ class MemreasTranscoder
                     ->saveTranscodeTransaction($transcode_transaction);
                 return $transcode_transaction_id;
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
                              '::Caught exception: ', $e->getMessage());
@@ -1223,9 +1223,8 @@ class MemreasTranscoder
     function setNicePriorityAndCompression ()
     {
         try {
-            $duration_in_minutes = $this->duration / 60; // duration stored in
-                                                         // db in
-                                                         // seconds
+            // duration stored in db in seconds
+            $duration_in_minutes = $this->duration / 60; 
             if ($duration_in_minutes <= 2) {
                 $this->nice_priority = 5;
                 $this->compression_preset_web = self::MEDIUM;
@@ -1246,7 +1245,7 @@ class MemreasTranscoder
                             $this->compression_preset_web = self::ULTRAFAST;
                             $this->compression_preset_1080p = self::VERYFAST;
                         }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
