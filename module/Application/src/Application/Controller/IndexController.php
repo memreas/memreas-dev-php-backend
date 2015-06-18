@@ -208,6 +208,7 @@ class IndexController extends AbstractActionController
             // Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
             if ($result) {
                 foreach ($result as $entry) {
+                    Mlog::addone(__CLASS__ . __METHOD__ . '::$entry', $entry);
                     Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', $entry['message_data']);
                     $message_data = json_decode($entry['message_data'], true);
                     Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', $message_data, 'p');

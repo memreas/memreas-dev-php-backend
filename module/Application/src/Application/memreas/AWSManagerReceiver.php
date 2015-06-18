@@ -78,7 +78,7 @@ class AWSManagerReceiver
             $result = $this->ses->sendEmail(
                     array(
                             // Source is required
-                            'Source' => 'string',
+                            'Source' => 'admin@memreas.com',
                             // Destination is required
                             'Destination' => array(
                                     'ToAddresses' => array(
