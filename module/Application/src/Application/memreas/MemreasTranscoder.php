@@ -153,6 +153,8 @@ class MemreasTranscoder
     protected $compression_preset_web;
 
     protected $compression_preset_1080p;
+    
+    protected $transcode_job_meta;
 
     /*
      * Thumbnail settings $tnWidth = 448; $tnHeight = 306; $tnfreqency = 60; //
@@ -466,11 +468,11 @@ class MemreasTranscoder
                     /*
                      * Web quality mp4 conversion
                      */
-                    $transcode_job_meta = array();
+                    $this->transcode_job_meta = array();
                     error_log("starting web video" . PHP_EOL);
-                    $transcode_job_meta['web'] = $this->transcode('web');
+                    $this->transcode_job_meta['web'] = $this->transcode('web');
                     // $this->memreas_media_metadata ['S3_files']['web'] =
-                    // $transcode_job_meta ['web'];
+                    // $this->transcode_job_meta ['web'];
                     error_log("finished web video" . PHP_EOL);
                     $now = date('Y-m-d H:i:s');
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'web_mp4_complete';
@@ -488,16 +490,16 @@ class MemreasTranscoder
                     // $this->memreas_media_metadata ) .PHP_EOL);
                     // error_log("finished transcode web for video
                     // transcode_job_meta ---> " . json_encode (
-                    // $transcode_job_meta ) .PHP_EOL);
+                    // $this->transcode_job_meta ) .PHP_EOL);
                     
                     /*
                      * High quality mp4 conversion
                      */
                     error_log("starting 1080p video" . PHP_EOL);
-                    $transcode_job_meta['1080p'] = $this->transcode('1080p');
+                    $this->transcode_job_meta['1080p'] = $this->transcode('1080p');
                     error_log("finished 1080p video" . PHP_EOL);
                     // $this->memreas_media_metadata ['S3_files']['1080p'] =
-                    // $transcode_job_meta ['1080p'];
+                    // $this->transcode_job_meta ['1080p'];
                     $now = date('Y-m-d H:i:s');
                     $this->json_metadata = json_encode(
                             $this->memreas_media_metadata);
@@ -510,32 +512,32 @@ class MemreasTranscoder
                             $memreas_media_data_array);
                     
                     // Create webm file
-                    // $transcode_job_meta ['webm'] = $this->transcode ( 'webm'
+                    // $this->transcode_job_meta ['webm'] = $this->transcode ( 'webm'
                     // );
                     // Create flash file
-                    // $transcode_job_meta ['flv'] = $this->transcode ( 'flv' );
+                    // $this->transcode_job_meta ['flv'] = $this->transcode ( 'flv' );
                     // Create ts
-                    // $transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
+                    // $this->transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
                     /*
                      * HLS conversion
                      */
                     // Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode
                     // ( hls )' );
-                    $transcode_job_meta['hls'] = $this->transcode('hls');
+                    $this->transcode_job_meta['hls'] = $this->transcode('hls');
                     // End if ($is_video)
                 } else 
                     if ($this->is_audio) {
                         // Audio section
                         // Create web quality mp3
-                        $transcode_job_meta = array();
-                        $transcode_job_meta['audio'] = $this->transcode('audio');
-                        $this->memreas_media_metadata['S3_files']['1080p'] = $transcode_job_meta['1080p'];
+                        $this->transcode_job_meta = array();
+                        $this->transcode_job_meta['audio'] = $this->transcode('audio');
+                        $this->memreas_media_metadata['S3_files']['1080p'] = $this->transcode_job_meta['1080p'];
                         // Update the metadata here for the transcoded files
                     } else 
                         if ($this->is_image) {
                             // Image section
-                            $transcode_job_meta = array();
-                            $transcode_job_meta = $this->createThumbNails(
+                            $this->transcode_job_meta = array();
+                            $this->transcode_job_meta = $this->createThumbNails(
                                     $this->is_image);
                         }
                 
@@ -557,7 +559,7 @@ class MemreasTranscoder
                 $transcode_transaction_data['transcode_status'] = $this->transcode_status;
                 $transcode_transaction_data['pass_fail'] = $this->pass;
                 $transcode_transaction_data['metadata'] = json_encode(
-                        $transcode_job_meta);
+                        $this->transcode_job_meta);
                 $transcode_transaction_data['transcode_end_time'] = date(
                         "Y-m-d H:i:s");
                 $transcode_transaction_data['transcode_job_duration'] = strtotime(
@@ -612,7 +614,7 @@ class MemreasTranscoder
             $transcode_transaction_data['transcode_status'] = $this->transcode_status;
             $transcode_transaction_data['pass_fail'] = $this->pass;
             $transcode_transaction_data['metadata'] = json_encode(
-                    $transcode_job_meta);
+                    $this->transcode_job_meta);
             $transcode_transaction_data['transcode_end_time'] = $now;
             $transcode_transaction_data['transcode_job_duration'] = strtotime(
                     $this->transcode_end_time) -
