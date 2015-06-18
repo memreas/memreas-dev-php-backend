@@ -161,6 +161,9 @@ class IndexController extends AbstractActionController
                 $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
                         $message_data);
             } else {
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . 'empty($message_data[media_id]', 
+                        'backlog');
                 $response = jsone_encode('backlog');
             }
             
@@ -180,7 +183,7 @@ class IndexController extends AbstractActionController
                             __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
                             $message_data);
                 }
-                if (!empty($message_data)) {
+                if (! empty($message_data)) {
                     $result = $aws_manager->snsProcessMediaSubscribe(
                             $message_data);
                 }
