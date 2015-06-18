@@ -18,6 +18,8 @@ class AWSManagerReceiver
 
     protected $s3 = null;
 
+    protected $ses = null;
+
     protected $service_locator = null;
 
     protected $dbAdapter = null;
@@ -44,6 +46,10 @@ class AWSManagerReceiver
             
             // Fetch the S3 class
             $this->s3 = $this->aws->get('s3');
+            
+            // Fetch the SES class
+            $this->ses = $this->aws->get('Ses');
+            
             // Fetch transcoder
             if ($message_data['is_video'] || $message_data['is_audio']) {
                 $message_data['is_image'] = 0;
@@ -74,169 +80,231 @@ class AWSManagerReceiver
         }
     }
 
+    function sesEmailErrorToAdmin ($msg)
+    {
+        $result = $client->sendEmail(
+                array(
+                        // Source is required
+                        'Source' => 'string',
+                        // Destination is required
+                        'Destination' => array(
+                                'ToAddresses' => array(
+                                        'admin@memreas.com'
+                                )
+                        ),
+                        // Message is required
+                        'Message' => array(
+                                // Subject is required
+                                'Subject' => array(
+                                        // Data is required
+                                        'Data' => 'memreasdev-bew error',
+                                        'Charset' => 'UTF-8'
+                                ),
+                                // Body is required
+                                'Body' => array(
+                                        'Text' => array(
+                                                // Data is required
+                                                'Data' => $msg,
+                                                'Charset' => 'UTF-8'
+                                        )
+                                )
+                        ),
+                        'ReplyToAddresses' => array(
+                                'admin@memreas.com'
+                        ),
+                        'ReturnPath' => 'admin@memreas.com'
+                ));
+    }
+
     function pullMediaFromS3 ($s3file, $file)
     {
-        Mlog::addone(__FILE__ . __METHOD__ . '::pulling s3file', $s3file);
-        $result = $this->s3->getObject(
-                array(
-                        'Bucket' => MemreasConstants::S3BUCKET,
-                        'Key' => $s3file,
-                        'SaveAs' => $file
-                ));
-        Mlog::addone(__FILE__ . __METHOD__ . '::finished pullMediaFromS3', 
-                $file);
-        return true;
+        try {
+            Mlog::addone(__FILE__ . __METHOD__ . '::pulling s3file', $s3file);
+            $result = $this->s3->getObject(
+                    array(
+                            'Bucket' => MemreasConstants::S3BUCKET,
+                            'Key' => $s3file,
+                            'SaveAs' => $file
+                    ));
+            Mlog::addone(__FILE__ . __METHOD__ . '::finished pullMediaFromS3', 
+                    $file);
+            return true;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     function pushThumbnailsToS3 ($dir, $s3path)
     {
-        $keyPrefix = $s3path;
-        $options = array(
-                // 'params' => array('ACL' => 'public-read'),
-                'concurrency' => 20,
-                'ServerSideEncryption',
-                'AES256'
-        );
-        
-        $result = $this->s3->uploadDirectory($dir, MemreasConstants::S3BUCKET, 
-                $keyPrefix, $options);
+        try {
+            $keyPrefix = $s3path;
+            $options = array(
+                    // 'params' => array('ACL' => 'public-read'),
+                    'concurrency' => 20,
+                    'ServerSideEncryption',
+                    'AES256'
+            );
+            
+            $result = $this->s3->uploadDirectory($dir, 
+                    MemreasConstants::S3BUCKET, $keyPrefix, $options);
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     function copyMediaInS3 ($bucket, $target, $source)
     {
-        $result = $this->s3->copyObject(
-                array(
-                        'Bucket' => $bucket,
-                        'Key' => $target,
-                        // 'CopySource' => "{".$bucket."}/{".$source."}",
-                        'CopySource' => $bucket . '/' . $source,
-                        'ServerSideEncryption' => 'AES256'
-                ));
-        return $result;
+        try {
+            $result = $this->s3->copyObject(
+                    array(
+                            'Bucket' => $bucket,
+                            'Key' => $target,
+                            // 'CopySource' => "{".$bucket."}/{".$source."}",
+                            'CopySource' => $bucket . '/' . $source,
+                            'ServerSideEncryption' => 'AES256'
+                    ));
+            return $result;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     function pushMediaToS3 ($file, $s3file, $content_type, $isVideo = false, 
             $bucket = MemreasConstants::S3BUCKET)
     {
-       // Use default bucket
-        $body = EntityBody::factory(fopen($file, 'r+'));
-        
-        /*
-         * Upload images - section
-         */
-        $uploader = UploadBuilder::newInstance()->setClient($this->s3)
-            ->setSource($body)
-            ->setBucket($bucket)
-            ->setHeaders(
-                array(
-                        'Content-Type' => $content_type
-                ))
-            ->setOption('CacheControl', 'max-age=3600')
-            ->setOption('ServerSideEncryption', 'AES256')
-            ->setKey($s3file)
-            ->build();
-        
-        /*
-         * Modified - Perform the upload to S3. Abort the upload if something
-         * goes wrong
-         */
         try {
-            $result = $uploader->upload();
-        } catch (MultipartUploadException $e) {
-            $uploader->abort();
-            Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
-                    $e->getMessage());
-            throw $e;
-        } catch (\Exception $e) {
-            $uploader->abort();
-            Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
-                    $e->getMessage());
+            // Use default bucket
+            $body = EntityBody::factory(fopen($file, 'r+'));
+            
+            /*
+             * Upload images - section
+             */
+            $uploader = UploadBuilder::newInstance()->setClient($this->s3)
+                ->setSource($body)
+                ->setBucket($bucket)
+                ->setHeaders(
+                    array(
+                            'Content-Type' => $content_type
+                    ))
+                ->setOption('CacheControl', 'max-age=3600')
+                ->setOption('ServerSideEncryption', 'AES256')
+                ->setKey($s3file)
+                ->build();
+            
+            /*
+             * Modified - Perform the upload to S3. Abort the upload if
+             * something
+             * goes wrong
+             */
+            try {
+                $result = $uploader->upload();
+            } catch (MultipartUploadException $e) {
+                $uploader->abort();
+                Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
+                        $e->getMessage());
+                throw $e;
+            } catch (\Exception $e) {
+                $uploader->abort();
+                Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
+                        $e->getMessage());
+                throw $e;
+            }
+            return $result;
+        } catch (Exception $e) {
             throw $e;
         }
-        return $result;
     }
 
     function fetchResizeUpload ($message_data, $job_dir, $s3file, $s3output_path, 
             $height, $width)
     {
-        /*
-         * Fetch image and create thumbnails
-         */
-        $user_id = $message_data['user_id'];
-        $media_id = $message_data['media_id'];
-        $content_type = $message_data['content_type'];
-        $s3path = $message_data['s3path'];
-        $s3file_name = $message_data['s3file_name'];
-        
-        /*
-         * Local server data
-         */
-        $dirPath = getcwd() . "/data/" . $user_id . "/media/";
-        $splitter = explode("thumbnail/", $s3file);
-        $thumbnail_name = $splitter[1];
-        $splitter = explode($thumbnail_name, $s3file);
-        $path = $splitter[0];
-        $thumbnail_file = $path . $height . "x" . $width . "/" . $thumbnail_name;
-        
-        $file = $job_dir . $thumbnail_name;
-        $result = $this->s3->getObject(
-                array(
-                        'Bucket' => MemreasConstants::S3BUCKET,
-                        'Key' => $s3file,
-                        'SaveAs' => $file
-                ));
-        
-        /*
-         * Resize images - section
-         */
-        $layer = ImageWorkshop::initFromPath($file);
-        // $layer->resizeInPixel($height, $width, true, 0, 0, 'MM'); //Maintains
-        // image
-        $layer->resizeInPixel($height, $width);
-        $dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" .
-                 $width . "/";
-        $job_sub_dir = $job_dir . $height . "x" . $width . "/";
-        if (! file_exists($job_sub_dir)) {
-            $oldumask = umask(0);
-            mkdir($job_sub_dir, 01777, true);
-            umask($oldumask);
-        }
-        
-        $createFolders = true;
-        $backgroundColor = null; // transparent, only for PNG (otherwise it will
-                                 // be white if set null)
-        $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0 to
-                            // 100%)
-        $layer->save($job_sub_dir, $thumbnail_name, $createFolders, 
-                $backgroundColor, $imageQuality);
-        $file = $job_sub_dir . $thumbnail_name;
-        
-        $body = EntityBody::factory(fopen($file, 'r+'));
-        /*
-         * Upload images - section
-         */
-        $uploader = UploadBuilder::newInstance()->setClient($this->s3)
-            ->setSource($body)
-            ->setBucket(MemreasConstants::S3BUCKET)
-            ->setMinPartSize(10 * Size::MB)
-            ->setOption('ContentType', $content_type)
-            ->setOption('ServerSideEncryption', 'AES256')
-            ->setKey($thumbnail_file)
-            ->build();
-        
-        /*
-         * Modified - Perform the upload to S3. Abort the upload if something
-         * goes wrong
-         */
         try {
-            $uploader->upload();
-        } catch (MultipartUploadException $e) {
-            $uploader->abort();
-            Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
-                    $e->getMessage());
+            /*
+             * Fetch image and create thumbnails
+             */
+            $user_id = $message_data['user_id'];
+            $media_id = $message_data['media_id'];
+            $content_type = $message_data['content_type'];
+            $s3path = $message_data['s3path'];
+            $s3file_name = $message_data['s3file_name'];
+            
+            /*
+             * Local server data
+             */
+            $dirPath = getcwd() . "/data/" . $user_id . "/media/";
+            $splitter = explode("thumbnail/", $s3file);
+            $thumbnail_name = $splitter[1];
+            $splitter = explode($thumbnail_name, $s3file);
+            $path = $splitter[0];
+            $thumbnail_file = $path . $height . "x" . $width . "/" .
+                     $thumbnail_name;
+            
+            $file = $job_dir . $thumbnail_name;
+            $result = $this->s3->getObject(
+                    array(
+                            'Bucket' => MemreasConstants::S3BUCKET,
+                            'Key' => $s3file,
+                            'SaveAs' => $file
+                    ));
+            
+            /*
+             * Resize images - section
+             */
+            $layer = ImageWorkshop::initFromPath($file);
+            // $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
+            // //Maintains
+            // image
+            $layer->resizeInPixel($height, $width);
+            $dirPath = getcwd() . "/data/" . $user_id . "/media/" . $height . "x" .
+                     $width . "/";
+            $job_sub_dir = $job_dir . $height . "x" . $width . "/";
+            if (! file_exists($job_sub_dir)) {
+                $oldumask = umask(0);
+                mkdir($job_sub_dir, 01777, true);
+                umask($oldumask);
+            }
+            
+            $createFolders = true;
+            $backgroundColor = null; // transparent, only for PNG (otherwise it
+                                     // will
+                                     // be white if set null)
+            $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+                                // to
+                                // 100%)
+            $layer->save($job_sub_dir, $thumbnail_name, $createFolders, 
+                    $backgroundColor, $imageQuality);
+            $file = $job_sub_dir . $thumbnail_name;
+            
+            $body = EntityBody::factory(fopen($file, 'r+'));
+            /*
+             * Upload images - section
+             */
+            $uploader = UploadBuilder::newInstance()->setClient($this->s3)
+                ->setSource($body)
+                ->setBucket(MemreasConstants::S3BUCKET)
+                ->setMinPartSize(10 * Size::MB)
+                ->setOption('ContentType', $content_type)
+                ->setOption('ServerSideEncryption', 'AES256')
+                ->setKey($thumbnail_file)
+                ->build();
+            
+            /*
+             * Modified - Perform the upload to S3. Abort the upload if
+             * something
+             * goes wrong
+             */
+            try {
+                $uploader->upload();
+            } catch (MultipartUploadException $e) {
+                $uploader->abort();
+                Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
+                        $e->getMessage());
+            }
+            
+            return $thumbnail_file;
+        } catch (Exception $e) {
+            throw $e;
         }
-        
-        return $thumbnail_file;
     }
 }//END
 
