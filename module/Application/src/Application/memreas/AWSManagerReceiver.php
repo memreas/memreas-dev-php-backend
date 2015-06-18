@@ -131,7 +131,7 @@ class AWSManagerReceiver
                             'Key' => $s3file,
                             'SaveAs' => $file
                     ));
-            $lsal = shell_exec("ls -al $s3file");
+            $lsal = shell_exec('ls -al ' . $file);
             Mlog::addone(__FILE__ . __METHOD__ . '::finished pullMediaFromS3', 
                     $file);
             Mlog::addone(__FILE__ . __METHOD__ . '::ls -al $file', $lsal);

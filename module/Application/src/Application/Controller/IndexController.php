@@ -205,7 +205,8 @@ class IndexController extends AbstractActionController
                     'doctrine.entitymanager.orm_default');
             $query = $this->dbAdapter->createQuery($query_string);
             $result = $query->getArrayResult();
-            // Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
+            Mlog::addone(__CLASS__ . __METHOD__ . '$query_string', $query_string);
+            Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
             if ($result) {
                 foreach ($result as $entry) {
                     Mlog::addone(__CLASS__ . __METHOD__ . '::$entry', $entry);
