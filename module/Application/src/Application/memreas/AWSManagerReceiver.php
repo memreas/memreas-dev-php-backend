@@ -73,42 +73,51 @@ class AWSManagerReceiver
 
     function sesEmailErrorToAdmin ($msg)
     {
-        $result = $this->ses->sendEmail(
-                array(
-                        // Source is required
-                        'Source' => 'string',
-                        // Destination is required
-                        'Destination' => array(
-                                'ToAddresses' => array(
-                                        'admin@memreas.com'
-                                )
-                        ),
-                        // Message is required
-                        'Message' => array(
-                                // Subject is required
-                                'Subject' => array(
-                                        // Data is required
-                                        'Data' => 'memreasdev-bew error',
-                                        'Charset' => 'UTF-8'
-                                ),
-                                // Body is required
-                                'Body' => array(
-                                        'Text' => array(
-                                                // Data is required
-                                                'Data' => $msg,
-                                                'Charset' => 'UTF-8'
-                                        )
-                                )
-                        ),
-                        'ReplyToAddresses' => array(
-                                'admin@memreas.com'
-                        ),
-                        'ReturnPath' => 'admin@memreas.com'
-                ));
-        if ($result) {
-            Mlog::addone(__FILE__ . __METHOD__ . '::email sent::$msg', $msg);
-        } else {
-            Mlog::addone(__FILE__ . __METHOD__ . '::email not sent::$msg', $msg);
+        Mlog::addone(__CLASS__ . __METHOD__ . '::About to send email::', $msg);
+        try {
+            $result = $this->ses->sendEmail(
+                    array(
+                            // Source is required
+                            'Source' => 'string',
+                            // Destination is required
+                            'Destination' => array(
+                                    'ToAddresses' => array(
+                                            'admin@memreas.com'
+                                    )
+                            ),
+                            // Message is required
+                            'Message' => array(
+                                    // Subject is required
+                                    'Subject' => array(
+                                            // Data is required
+                                            'Data' => 'memreasdev-bew error',
+                                            'Charset' => 'UTF-8'
+                                    ),
+                                    // Body is required
+                                    'Body' => array(
+                                            'Text' => array(
+                                                    // Data is required
+                                                    'Data' => $msg,
+                                                    'Charset' => 'UTF-8'
+                                            )
+                                    )
+                            ),
+                            'ReplyToAddresses' => array(
+                                    'admin@memreas.com'
+                            ),
+                            'ReturnPath' => 'admin@memreas.com'
+                    ));
+            if ($result) {
+                Mlog::addone(__FILE__ . __METHOD__ . '::email sent::$msg', $msg);
+            } else {
+                Mlog::addone(__FILE__ . __METHOD__ . '::email not sent::$msg', 
+                        $msg);
+            }
+        } catch (\Exception $e) {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . "::line::" . $e->getLine() .
+                             '::Caught exception: ', $e->getMessage());
+            throw $e;
         }
     }
 
