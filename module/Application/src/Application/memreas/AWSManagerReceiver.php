@@ -105,6 +105,11 @@ class AWSManagerReceiver
                         ),
                         'ReturnPath' => 'admin@memreas.com'
                 ));
+        if ($result) {
+            Mlog::addone(__FILE__ . __METHOD__ . '::email sent::$msg', $msg);
+        } else {
+            Mlog::addone(__FILE__ . __METHOD__ . '::email not sent::$msg', $msg);
+                    }
     }
 
     function pullMediaFromS3 ($s3file, $file)
