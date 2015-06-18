@@ -395,10 +395,8 @@ class MemreasTranscoder
                                 $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_error';
                                 $this->memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:' .
                                          $this->MediaFileType;
-                                throw new \Exception('Unsupported File!'); // output
-                                                                               // error
-                                                                               // and
-                                                                               // exit
+                                // output error and exit
+                                throw new \Exception('Unsupported File!'); 
                             }
                     } // End Switch
                 }
@@ -614,7 +612,7 @@ class MemreasTranscoder
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
-            __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage());
+            __CLASS__ . __METHOD__ . "::line::" . __LINE__ . '::Caught exception: ', $e->getMessage());
             $this->aws_manager_receiver->sesEmailErrorToAdmin($message_data);
             /*
              * Log error
@@ -1175,6 +1173,9 @@ class MemreasTranscoder
                 ->getMediaTable()
                 ->saveMedia($media);
         } catch (Exception $e) {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                             '::Caught exception: ', $e->getMessage());
             throw $e;
         }
     }
@@ -1212,6 +1213,9 @@ class MemreasTranscoder
                 return $transcode_transaction_id;
             }
         } catch (Exception $e) {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                             '::Caught exception: ', $e->getMessage());
             throw $e;
         }
     }
