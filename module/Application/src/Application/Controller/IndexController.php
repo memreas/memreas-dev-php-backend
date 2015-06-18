@@ -173,8 +173,6 @@ class IndexController extends AbstractActionController
              * ** process task if cpu < 75% usage
              * ** after completing task fetch another
              */
-            // Fetch AWS Handle
-            $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
                 if (empty($message_data)) {
                     $message_data = $this->fetchBackLogEntry();
@@ -183,7 +181,7 @@ class IndexController extends AbstractActionController
                             __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
                             $message_data);
                 }
-                if (! empty($message_data)) {
+                if (!empty($message_data)) {
                     $result = $aws_manager->snsProcessMediaSubscribe(
                             $message_data);
                 }
