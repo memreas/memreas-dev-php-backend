@@ -613,13 +613,15 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . $e->getLine() .
                              '::Caught exception: ', $e->getMessage());
-            $this->aws_manager_receiver->sesEmailErrorToAdmin($message_data);
+            $this->aws_manager_receiver->sesEmailErrorToAdmin(
+                    json_encode($message_data));
             /*
              * Log error
              */
@@ -630,9 +632,11 @@ class MemreasTranscoder
             $this->transcode_end_time = $now;
             $this->transcode_status = 'failure';
             $transcode_transaction_data = array();
-            $transcode_transaction_data['transcode_status'] = $this->transcode_status;
-            $transcode_transaction_data['pass_fail'] = $this->pass;
-            $transcode_transaction_data['metadata'] = json_encode(
+            $transcode_transaction_data['transcode_status'] = empty(
+                    $this->transcode_status) ? 'failure' : $this->transcode_status;
+            $transcode_transaction_data['pass_fail'] = 0;
+            $transcode_transaction_data['metadata'] = empty(
+                    json_encode($this->transcode_job_meta)) ? '' : json_encode(
                     $this->transcode_job_meta);
             $transcode_transaction_data['transcode_end_time'] = $now;
             $transcode_transaction_data['transcode_job_duration'] = strtotime(
@@ -647,11 +651,12 @@ class MemreasTranscoder
             
             // Media
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_failed';
-            $this->memreas_media_metadata['S3_files']['transcode_status'] = $this->pass;
-            $this->json_metadata = json_encode($this->memreas_media_metadata);
+            $this->memreas_media_metadata['S3_files']['transcode_status'] = 0;
+            $this->json_metadata = empty($this->memreas_media_metadata) ? '' : json_encode(
+                    $this->memreas_media_metadata);
             $memreas_media_data_array = array(
                     'metadata' => $this->json_metadata,
-                    'transcode_status' => $this->transcode_status,
+                    'transcode_status' => 'failure',
                     'update_date' => $now
             );
             // persist
@@ -661,7 +666,8 @@ class MemreasTranscoder
             // Debugging - log table entry
             Mlog::addone(
                     __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                    $this->transcode_status);
             throw $e;
         } finally {
             // Always delete the temp dir...

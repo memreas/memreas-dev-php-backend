@@ -185,7 +185,9 @@ class IndexController extends AbstractActionController
                     $result = $aws_manager->snsProcessMediaSubscribe(
                             $message_data);
                 }
-                $message_data = null;
+                unset($message_data);
+                unset($this->dbAdapter);
+                unset($aws_manager);
                 $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             }
             exit();
