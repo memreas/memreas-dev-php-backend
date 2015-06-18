@@ -17,7 +17,7 @@ class TranscodeTransaction
      *      length=45, nullable=false)
      *      @ORM\Id
      */
-    private $transcode_transaction_id;
+    public $transcode_transaction_id;
     //     `transcode_transaction_id` varchar(45) NOT NULL,
     
     /**
@@ -25,7 +25,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="user_id", type="string", length=45,
      *      nullable=false)
      */
-    private $user_id;
+    public $user_id;
     //     `user_id` varchar(45) NOT NULL,
     
     /**
@@ -33,7 +33,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="media_id", type="string", length=45,
      *      nullable=false)
      */
-    private $media_id;
+    public $media_id;
     //     `media_id` varchar(45) NOT NULL,
     
     /**
@@ -41,7 +41,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="file_name", type="string", length=255,
      *      nullable=false)
      */
-    private $file_name;
+    public $file_name;
     //     `file_name` varchar(255) NOT NULL,
     
     /**
@@ -49,7 +49,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="message_data", type="string", length=45,
      *      nullable=false)
      */
-    private $message_data;
+    public $message_data;
     //     `message_data` varchar(45) NOT NULL,
     
     /**
@@ -65,7 +65,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="media_extension", type="string", length=45,
      *      nullable=true)
      */
-    private $media_extension;
+    public $media_extension;
     //     `media_extension` varchar(45) DEFAULT NULL,
     
     /**
@@ -81,7 +81,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="media_size", type="string", length=45,
      *      nullable=true)
      */
-    private $media_size;
+    public $media_size;
     //     `media_size` varchar(45) DEFAULT NULL,
     
     /**
@@ -89,14 +89,14 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="transcode_status", type="string",
      *      length=45, nullable=false)
      */
-    private $transcode_status;
+    public $transcode_status;
     //     `transcode_status` varchar(45) NOT NULL DEFAULT 'pending',
     
     /**
      *
      * @var string @ORM\Column(name="pass_fail", type="integer", nullable=false)
      */
-    private $pass_fail;
+    public $pass_fail;
     //     `pass_fail` bit(1) NOT NULL,
     
     /**
@@ -104,7 +104,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="metadata", type="json_array",
      *      nullable=true)
      */
-    private $metadata;
+    public $metadata;
     //     `metadata` longtext,
     
     /**
@@ -112,7 +112,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="error_message", type="json_array",
      *      nullable=true)
      */
-    private $error_message;
+    public $error_message;
     //     `error_message` text,
     
     /**
@@ -120,7 +120,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="transcode_job_duration", type="integer",
      *      nullable=true)
      */
-    private $transcode_job_duration;
+    public $transcode_job_duration;
     //     `transcode_job_duration` int(11) DEFAULT NULL,
     
     /**
@@ -128,7 +128,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="transcode_start_time", type="datetime",
      *      nullable=false)
      */
-    private $transcode_start_time;
+    public $transcode_start_time;
     //     `transcode_start_time` datetime NOT NULL,
     
     /**
@@ -136,7 +136,7 @@ class TranscodeTransaction
      * @var string @ORM\Column(name="transcode_end_time", type="datetime",
      *      nullable=true)
      */
-    private $transcode_end_time;
+    public $transcode_end_time;
     //     `transcode_end_time` datetime DEFAULT NULL,
     
     public function __set ($name, $value)

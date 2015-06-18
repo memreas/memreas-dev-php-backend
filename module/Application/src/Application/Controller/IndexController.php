@@ -181,11 +181,11 @@ class IndexController extends AbstractActionController
                             __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
                             $message_data);
                 }
-                if (!empty($message_data)) {
+                if (! empty($message_data)) {
                     $result = $aws_manager->snsProcessMediaSubscribe(
                             $message_data);
                 }
-                $message_data = $this->fetchBackLogEntry();
+                $message_data = null;
             }
             exit();
         }
@@ -193,31 +193,36 @@ class IndexController extends AbstractActionController
 
     protected function fetchBackLogEntry ()
     {
-        $query_string = "SELECT tt.message_data FROM " .
-                 " Application\Entity\TranscodeTransaction tt " .
-                 " where tt.transcode_status='backlog' " .
-                 " order by tt.transcode_start_time asc";
-        
-        Mlog::addone(__CLASS__ . __METHOD__ . '$query_string', $query_string);
-        $this->dbAdapter = $this->getServiceLocator()->get(
-                'doctrine.entitymanager.orm_default');
-        $query = $this->dbAdapter->createQuery($query_string);
-        $result = $query->getArrayResult();
-        // Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
-        foreach ($result as $entry) {
-            Mlog::addone(__CLASS__ . __METHOD__ . '$entry', json_encode($entry));
+        try {
+            $query_string = "SELECT tt FROM " .
+                     " Application\Entity\TranscodeTransaction tt " .
+                     " where tt.transcode_status='backlog' " .
+                     " order by tt.transcode_start_time asc";
+            
+            Mlog::addone(__CLASS__ . __METHOD__ . '$query_string', 
+                    $query_string);
+            $this->dbAdapter = $this->getServiceLocator()->get(
+                    'doctrine.entitymanager.orm_default');
+            $query = $this->dbAdapter->createQuery($query_string);
+            $result = $query->getArrayResult();
+            // Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
+            if ($result) {
+                foreach ($result as $entry) {
+                    $message_data = json_decode($entry['message_data'], true);
+                    $message_data['transcode_transaction_id'] = $entry['transcode_transaction_id'];
+                    $message_data['backlog'] = 1;
+                    break;
+                }
+            }
+            Mlog::addone(__CLASS__ . __METHOD__ . '::backlog::$message_data', 
+                    json_encode($message_data));
+            
+            return $message_data;
+        } catch (Exception $e) {
+            Mlog::addone(__CLASS__ . __METHOD__ . '::Caught exception', 
+                    $e->getMessage());
+            throw $e;
         }
-        exit();
-        if ($result) {
-            $message_data = $result[0]->message_data;
-            $message_data['transcode_transaction_id'] = $result[0]->transcode_transaction_id;
-            $message_data['backlog'] = true;
-        }
-        Mlog::addone(
-                __CLASS__ . __METHOD__ . '::backlog::$message_data' .
-                         $message_data);
-        
-        return json_decode($message_data);
     }
 
     protected function returnResponse ($response)

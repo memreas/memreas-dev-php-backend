@@ -69,7 +69,7 @@ class AWSManagerAutoScaler
             $process_task = false;
         }
         $server = $this->checkServer();
-        Mlog::addone(__CLASS__ . __METHOD__ . '::$server', $server);
+        //Mlog::addone(__CLASS__ . __METHOD__ . '::$server', $server);
         return $process_task;
     }
 

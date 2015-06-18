@@ -198,16 +198,21 @@ class MemreasTranscoder
              * setup vars and store transaction
              */
             if ($message_data['is_video']) {
+                Mlog::addone(__CLASS__ . __METHOD__ . '::is_video', 
+                        $message_data['is_video']);
                 $message_data['is_image'] = 0;
                 $message_data['is_audio'] = 0;
-            } else if ($message_data['is_audio']) {
-                $message_data['is_image'] = 0;
-                $message_data['is_video'] = 0;
-            } else { // It's an image just resize and store thumbnails
-                $message_data['is_image'] = 1;
-                $message_data['is_video'] = 0;
-                $message_data['is_audio'] = 0;
-            }
+            } else 
+                if ($message_data['is_audio']) {
+                    Mlog::addone(__CLASS__ . __METHOD__ . '::is_audio', 
+                            $message_data['is_audio']);
+                    $message_data['is_image'] = 0;
+                    $message_data['is_video'] = 0;
+                } else { // It's an image just resize and store thumbnails
+                    $message_data['is_image'] = 1;
+                    $message_data['is_video'] = 0;
+                    $message_data['is_audio'] = 0;
+                }
             $starttime = date('Y-m-d H:i:s');
             $this->user_id = $message_data['user_id'];
             $this->media_id = $message_data['media_id'];
@@ -223,9 +228,9 @@ class MemreasTranscoder
             }
             $this->s3file_basename_prefix = $message_data['s3file_basename_prefix'];
             $this->s3prefixpath = $this->user_id . '/' . $this->media_id . '/';
-            $this->is_video = empty($message_data['is_video']) ? '' : $message_data['is_video'];
-            $this->is_audio = empty($message_data['is_audio']) ? '' : $message_data['is_audio'];
-            $this->is_image = empty($message_data['is_image']) ? '' : $message_data['is_image'];
+            $this->is_video = $message_data['is_video'];
+            $this->is_audio = $message_data['is_audio'];
+            $this->is_image = $message_data['is_image'];
             $this->json_metadata = json_encode($message_data);
             $now = date('Y-m-d H:i:s');
             $this->transcode_start_time = $now;
@@ -247,7 +252,7 @@ class MemreasTranscoder
             Mlog::addone(
                     __CLASS__ . __METHOD__ .
                              '::$this->persistTranscodeTransaction ()', 
-                            '$this->transcode_transaction_id');
+                            $this->transcode_transaction_id);
             
             return $this->transcode_transaction_id;
         } catch (\Exception $e) {
@@ -269,8 +274,8 @@ class MemreasTranscoder
             if (isset($message_data)) {
                 if (getcwd() == '/var/www/memreas-dev-php-backend') {
                     // AWS ffmpeg && ffprobe
-                    $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; 
-                    $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE; 
+                    $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG;
+                    $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE;
                 } else {
                     // Local ffmpeg && ffprobe
                     $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL;
@@ -396,7 +401,7 @@ class MemreasTranscoder
                                 $this->memreas_media_metadata['S3_files']['error_message'] = 'transcode_error:.invalid_file_type:' .
                                          $this->MediaFileType;
                                 // output error and exit
-                                throw new \Exception('Unsupported File!'); 
+                                throw new \Exception('Unsupported File!');
                             }
                     } // End Switch
                 }
@@ -612,7 +617,8 @@ class MemreasTranscoder
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
-            __CLASS__ . __METHOD__ . "::line::" . __LINE__ . '::Caught exception: ', $e->getMessage());
+                    __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                             '::Caught exception: ', $e->getMessage());
             $this->aws_manager_receiver->sesEmailErrorToAdmin($message_data);
             /*
              * Log error
@@ -724,16 +730,19 @@ class MemreasTranscoder
                         $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR .
                                  self::FULLSIZE . 'thumbnail_' .
                                  $this->original_file_name . '_media-*.png');
-                error_log(
-                        "media_thumb_arr ----> " . json_encode($media_thumb_arr) .
-                                 PHP_EOL);
-            } else {
+                $result = shell_exec("ls -al " . $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR .
+                                 self::FULLSIZE);
+                Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', 
+                        $result);
                 Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr', 
-                        "else media_thumb_arr ---->" .
-                                 json_encode($media_thumb_arr));
+                        json_encode($media_thumb_arr));
+            } else {
                 $media_thumb_arr = array(
                         $this->destRandMediaName
                 );
+                Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr', 
+                        "else media_thumb_arr ---->" .
+                                 json_encode($media_thumb_arr));
             }
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_built_thumbnails';
             
@@ -1204,6 +1213,10 @@ class MemreasTranscoder
                 $transcode_transaction_id = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->saveTranscodeTransaction($transcode_transaction);
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                                 '::$transcode_transaction_id', 
+                                $transcode_transaction_id);
                 return $transcode_transaction_id;
             } else { // Update
                 $transcode_transaction->exchangeArray($transcode_data_array);
@@ -1224,7 +1237,7 @@ class MemreasTranscoder
     {
         try {
             // duration stored in db in seconds
-            $duration_in_minutes = $this->duration / 60; 
+            $duration_in_minutes = $this->duration / 60;
             if ($duration_in_minutes <= 2) {
                 $this->nice_priority = 5;
                 $this->compression_preset_web = self::MEDIUM;
