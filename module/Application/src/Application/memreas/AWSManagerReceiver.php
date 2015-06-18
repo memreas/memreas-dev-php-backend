@@ -49,13 +49,6 @@ class AWSManagerReceiver
             
             // Fetch the SES class
             $this->ses = $this->aws->get('Ses');
-            
-            // Fetch transcoder
-            if ($message_data['is_video'] || $message_data['is_audio']) {
-                $message_data['is_image'] = 0;
-            } else { // It's an image just resize and store thumbnails
-                $message_data['is_image'] = 1;
-            }
             $this->memreasTranscoder = new MemreasTranscoder($this, 
                     $this->service_locator);
         } catch (Exception $e) {

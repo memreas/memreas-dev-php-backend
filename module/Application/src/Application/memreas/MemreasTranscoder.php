@@ -153,7 +153,7 @@ class MemreasTranscoder
     protected $compression_preset_web;
 
     protected $compression_preset_1080p;
-    
+
     protected $transcode_job_meta;
 
     /*
@@ -197,6 +197,17 @@ class MemreasTranscoder
             /*
              * setup vars and store transaction
              */
+            if ($message_data['is_video']) {
+                $message_data['is_image'] = 0;
+                $message_data['is_audio'] = 0;
+            } else if ($message_data['is_audio']) {
+                $message_data['is_image'] = 0;
+                $message_data['is_video'] = 0;
+            } else { // It's an image just resize and store thumbnails
+                $message_data['is_image'] = 1;
+                $message_data['is_video'] = 0;
+                $message_data['is_audio'] = 0;
+            }
             $starttime = date('Y-m-d H:i:s');
             $this->user_id = $message_data['user_id'];
             $this->media_id = $message_data['media_id'];
@@ -496,7 +507,8 @@ class MemreasTranscoder
                      * High quality mp4 conversion
                      */
                     error_log("starting 1080p video" . PHP_EOL);
-                    $this->transcode_job_meta['1080p'] = $this->transcode('1080p');
+                    $this->transcode_job_meta['1080p'] = $this->transcode(
+                            '1080p');
                     error_log("finished 1080p video" . PHP_EOL);
                     // $this->memreas_media_metadata ['S3_files']['1080p'] =
                     // $this->transcode_job_meta ['1080p'];
@@ -512,12 +524,15 @@ class MemreasTranscoder
                             $memreas_media_data_array);
                     
                     // Create webm file
-                    // $this->transcode_job_meta ['webm'] = $this->transcode ( 'webm'
+                    // $this->transcode_job_meta ['webm'] = $this->transcode (
+                    // 'webm'
                     // );
                     // Create flash file
-                    // $this->transcode_job_meta ['flv'] = $this->transcode ( 'flv' );
+                    // $this->transcode_job_meta ['flv'] = $this->transcode (
+                    // 'flv' );
                     // Create ts
-                    // $this->transcode_job_meta ['ts'] = $this->transcode ( 'ts' );
+                    // $this->transcode_job_meta ['ts'] = $this->transcode (
+                    // 'ts' );
                     /*
                      * HLS conversion
                      */
@@ -530,7 +545,8 @@ class MemreasTranscoder
                         // Audio section
                         // Create web quality mp3
                         $this->transcode_job_meta = array();
-                        $this->transcode_job_meta['audio'] = $this->transcode('audio');
+                        $this->transcode_job_meta['audio'] = $this->transcode(
+                                'audio');
                         $this->memreas_media_metadata['S3_files']['1080p'] = $this->transcode_job_meta['1080p'];
                         // Update the metadata here for the transcoded files
                     } else 
@@ -596,8 +612,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
@@ -642,8 +657,7 @@ class MemreasTranscoder
             // Debugging - log table entry
             Mlog::addone(
                     __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                    $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
             throw $e;
         } finally {
             // Always delete the temp dir...
@@ -879,12 +893,12 @@ class MemreasTranscoder
                          " -i $this->destRandMediaName $qv $transcoded_file " .
                          '2>&1';
                 // $cmd = 'nice ' . $this->nice_priority . ' ' .
-            // $this->ffmpegcmd .
+                // $this->ffmpegcmd .
                 // " -i $this->destRandMediaName $qv $transcoded_file " .
                 // $ffmpeg_logger
                 // . '2>&1';
                 // $cmd = 'nice ' . $this->ffmpegcmd ." -i
-            // $this->destRandMediaName
+                // $this->destRandMediaName
                 // $qv $transcoded_file ".'2> $ffmpeg_logger';
             } else 
                 if ($type == '1080p') {
