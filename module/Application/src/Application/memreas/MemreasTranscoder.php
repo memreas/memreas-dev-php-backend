@@ -615,7 +615,7 @@ class MemreasTranscoder
         } catch (\Exception $e) {
             Mlog::addone(
             __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage());
-            $this->sesEmailErrorToAdmin($message_data);
+            $this->aws_manager_receiver->sesEmailErrorToAdmin($message_data);
             /*
              * Log error
              */
