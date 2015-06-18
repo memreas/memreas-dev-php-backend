@@ -109,7 +109,7 @@ class AWSManagerReceiver
             Mlog::addone(__FILE__ . __METHOD__ . '::email sent::$msg', $msg);
         } else {
             Mlog::addone(__FILE__ . __METHOD__ . '::email not sent::$msg', $msg);
-                    }
+        }
     }
 
     function pullMediaFromS3 ($s3file, $file)
@@ -122,8 +122,10 @@ class AWSManagerReceiver
                             'Key' => $s3file,
                             'SaveAs' => $file
                     ));
+            $lsal = shell_exec("ls -al $s3file");
             Mlog::addone(__FILE__ . __METHOD__ . '::finished pullMediaFromS3', 
                     $file);
+            Mlog::addone(__FILE__ . __METHOD__ . '::ls -al $file', $lsal);
             return true;
         } catch (Exception $e) {
             throw $e;

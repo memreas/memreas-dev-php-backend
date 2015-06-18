@@ -730,9 +730,11 @@ class MemreasTranscoder
                         $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR .
                                  self::FULLSIZE . 'thumbnail_' .
                                  $this->original_file_name . '_media-*.png');
-                $result = shell_exec("ls -al " . $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR .
-                                 self::FULLSIZE);
-                Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', 
+                $result = shell_exec(
+                        "ls -al " . $this->homeDir . self::CONVDIR .
+                                 self::THUMBNAILSDIR . self::FULLSIZE);
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', 
                         $result);
                 Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr', 
                         json_encode($media_thumb_arr));
@@ -740,9 +742,9 @@ class MemreasTranscoder
                 $media_thumb_arr = array(
                         $this->destRandMediaName
                 );
-                Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr', 
-                        "else media_thumb_arr ---->" .
-                                 json_encode($media_thumb_arr));
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . ':: else $media_thumb_arr', 
+                        $media_thumb_arr);
             }
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_built_thumbnails';
             
