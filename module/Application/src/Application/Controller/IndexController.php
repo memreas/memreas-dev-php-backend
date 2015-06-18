@@ -218,7 +218,7 @@ class IndexController extends AbstractActionController
                 __CLASS__ . __METHOD__ . '::backlog::$message_data' .
                          $message_data);
         
-        return $message_data;
+        return json_decode($message_data);
     }
 
     protected function returnResponse ($response)
