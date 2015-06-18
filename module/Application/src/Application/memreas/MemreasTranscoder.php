@@ -588,6 +588,53 @@ class MemreasTranscoder
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             error_log('Caught exception: ' . $e->getMessage() . PHP_EOL);
+
+            /*
+             * Log error
+             */
+            
+            //Transcode_transaction
+            $now = date("Y-m-d H:i:s");
+            $this->transcode_status = "failure";
+            $this->pass = "0";
+            $this->transcode_end_time = $now;
+            $this->transcode_status = 'failure';
+            $transcode_transaction_data = array();
+            $transcode_transaction_data['transcode_status'] = $this->transcode_status;
+            $transcode_transaction_data['pass_fail'] = $this->pass;
+            $transcode_transaction_data['metadata'] = json_encode(
+                    $transcode_job_meta);
+            $transcode_transaction_data['transcode_end_time'] = $now;
+            $transcode_transaction_data['transcode_job_duration'] = strtotime(
+                    $this->transcode_end_time) -
+                    strtotime($this->transcode_start_time);
+            $transcode_transaction = $this->getMemreasTranscoderTables()
+            ->getTranscodeTransactionTable()
+            ->getTranscodeTransaction($this->transcode_transaction_id);
+            //persist
+            $transaction_id = $this->persistTranscodeTransaction(
+                    $transcode_transaction, $transcode_transaction_data);
+            
+            //Media
+            $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_failed';
+            $this->memreas_media_metadata['S3_files']['transcode_status'] = $this->pass;
+            $this->json_metadata = json_encode(
+                    $this->memreas_media_metadata);
+            $memreas_media_data_array = array(
+                    'metadata' => $this->json_metadata,
+                    'transcode_status' => $this->transcode_status,
+                    'update_date' => $now
+            );
+            //persist
+            $media_id = $this->persistMedia($this->memreas_media,
+                    $memreas_media_data_array);
+            
+            // Debugging - log table entry
+            Mlog::addone(
+            __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
+                        $memreas_media_data_array)',
+                                    $this->transcode_status);
+            
         } finally {
             // Always delete the temp dir...
             // Delete the temp dir if we got this far...
