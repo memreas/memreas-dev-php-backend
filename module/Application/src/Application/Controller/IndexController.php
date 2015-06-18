@@ -186,6 +186,7 @@ class IndexController extends AbstractActionController
                             $message_data);
                 }
                 $message_data = null;
+                $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             }
             exit();
         }
