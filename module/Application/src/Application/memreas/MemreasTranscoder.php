@@ -268,15 +268,13 @@ class MemreasTranscoder
             
             if (isset($message_data)) {
                 if (getcwd() == '/var/www/memreas-dev-php-backend') {
-                    $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; // AWS
-                                                                                    // ffmpeg
-                    $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE; // AWS
-                                                                                          // ffprobe
+                    // AWS ffmpeg && ffprobe
+                    $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG; 
+                    $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE; 
                 } else {
-                    $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL; // local
-                                                                                          // ffmpeg
-                    $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL; // local
-                                                                                                // ffprobe
+                    // Local ffmpeg && ffprobe
+                    $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL;
+                    $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL;
                 }
                 
                 // //////////////////////

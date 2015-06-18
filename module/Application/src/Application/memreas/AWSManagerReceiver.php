@@ -28,12 +28,9 @@ class AWSManagerReceiver
 
     public $memreasTranscoder = null;
 
-    public function __construct ($service_locator, $message_data)
+    public function __construct ($service_locator)
     {
         try {
-            Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', 
-                    $message_data);
-            
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
@@ -54,6 +51,7 @@ class AWSManagerReceiver
         } catch (Exception $e) {
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
+            throw $e;
         }
     }
 
@@ -66,6 +64,7 @@ class AWSManagerReceiver
         } catch (Exception $e) {
             Mlog::addone(__FILE__ . __METHOD__ . 'Caught exception: ', 
                     $e->getMessage());
+            $this->sesEmailErrorToAdmin($message_data);
             // Remove the work directory
             $dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
             $dirRemoved = new RmWorkDir($dir);

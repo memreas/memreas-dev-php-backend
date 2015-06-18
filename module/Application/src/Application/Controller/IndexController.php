@@ -153,26 +153,15 @@ class IndexController extends AbstractActionController
             /*
              * Here if no media_id is set then work on any backlog items...
              */
+            $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             if (! empty($message_data['media_id'])) {
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '!empty($message_data[media_id]', 
                         $message_data['media_id']);
-                // Fetch AWS Handle
-                $aws_manager = new AWSManagerReceiver($this->getServiceLocator(), 
-                        $message_data);
-                
                 $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
                         $message_data);
             } else {
-                $message_data = $this->fetchBackLogEntry();
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
-                        $message_data);
-                // Fetch AWS Handle
-                $aws_manager = new AWSManagerReceiver($this->getServiceLocator(), 
-                        $message_data);
-                
-                $response = $message_data;
+                $response = jsone_encode('backlog');
             }
             
             $this->returnResponse($response);
@@ -181,11 +170,19 @@ class IndexController extends AbstractActionController
              * ** process task if cpu < 75% usage
              * ** after completing task fetch another
              */
+            // Fetch AWS Handle
+            $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
-                $result = $aws_manager->snsProcessMediaSubscribe($message_data);
-                /*
-                 * Build new task from database
-                 */
+                if (empty($message_data)) {
+                    $message_data = $this->fetchBackLogEntry();
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
+                            $message_data);
+                }
+                if (!empty($message_data)) {
+                    $result = $aws_manager->snsProcessMediaSubscribe(
+                            $message_data);
+                }
                 $message_data = $this->fetchBackLogEntry();
             }
             exit();
