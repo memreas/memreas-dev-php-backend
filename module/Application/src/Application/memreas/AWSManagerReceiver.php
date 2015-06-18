@@ -73,7 +73,7 @@ class AWSManagerReceiver
 
     function sesEmailErrorToAdmin ($msg)
     {
-        $result = $client->sendEmail(
+        $result = $this->ses->sendEmail(
                 array(
                         // Source is required
                         'Source' => 'string',

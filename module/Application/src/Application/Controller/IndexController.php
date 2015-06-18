@@ -175,6 +175,7 @@ class IndexController extends AbstractActionController
             while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
                 if (empty($message_data)) {
                     $message_data = $this->fetchBackLogEntry();
+                    $message_data['backlog'] = 1;
                     Mlog::addone(
                             __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
                             $message_data);
