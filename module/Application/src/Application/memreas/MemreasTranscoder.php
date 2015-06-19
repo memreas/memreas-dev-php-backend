@@ -181,6 +181,9 @@ class MemreasTranscoder
             $this->dbAdapter->getDriver()
                 ->getConnection()
                 ->disconnect();
+        } catch (\Exception $e) {}
+        
+        try {
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
         } catch (\Exception $e) {
@@ -253,11 +256,10 @@ class MemreasTranscoder
                 $transcode_transaction_data = [];
                 $transcode_transaction_data['transcode_status'] = $this->transcode_status;
                 $transcode_transaction = $this->getMemreasTranscoderTables()
-                ->getTranscodeTransactionTable()
-                ->getTranscodeTransaction($this->transcode_transaction_id);
+                    ->getTranscodeTransactionTable()
+                    ->getTranscodeTransaction($this->transcode_transaction_id);
                 $transaction_id = $this->persistTranscodeTransaction(
                         $transcode_transaction, $transcode_transaction_data);
-                
             } else {
                 $this->transcode_transaction_id = $this->persistTranscodeTransaction();
             }
@@ -536,21 +538,11 @@ class MemreasTranscoder
                     $media_id = $this->persistMedia($this->memreas_media, 
                             $memreas_media_data_array);
                     
-                    // Create webm file
-                    // $this->transcode_job_meta ['webm'] = $this->transcode (
-                    // 'webm'
-                    // );
-                    // Create flash file
-                    // $this->transcode_job_meta ['flv'] = $this->transcode (
-                    // 'flv' );
-                    // Create ts
-                    // $this->transcode_job_meta ['ts'] = $this->transcode (
-                    // 'ts' );
                     /*
                      * HLS conversion
                      */
-                    // Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode
-                    // ( hls )' );
+                    Mlog::addone(__CLASS__ . __METHOD__, 
+                            '$this->transcode ( hls )');
                     $this->transcode_job_meta['hls'] = $this->transcode('hls');
                     // End if ($is_video)
                 } else 
@@ -625,8 +617,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
@@ -678,8 +669,7 @@ class MemreasTranscoder
             // Debugging - log table entry
             Mlog::addone(
                     __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                    $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
             throw $e;
         } finally {
             // Always delete the temp dir...
@@ -886,22 +876,11 @@ class MemreasTranscoder
     {
         try {
             
-            // FFMPEG transcode to mpeg (samples)
-            // $command =array_merge(array(
-            // '-i',$this->destRandMediaName,'-vcodec',
-            // 'libx264', '-vsync', '1', '-bt', '50k','-movflags',
-            // 'frag_keyframe+empty_moov'),$ae,$customParams,array($this->homeDir.self::CONVDIR.self::WEBDIR.$this->original_file_name.'x264.mp4','2>&1'));
-            // $cmd = $this->ffmpegcmd ." -i $this->destRandMediaName $qv
-            // $transcoded_mp4_file ".'2>&1';
+            // var setup
             $mpeg4ext = '.mp4';
             $tsext = '.ts';
             $aacext = '.m4a';
             if ($type == 'web') {
-                /*
-                 * See -> https://trac.ffmpeg.org/wiki/Encode/H.264
-                 *
-                 */
-                // $qv=' -c:v mpeg4 ';
                 /*
                  * Test lossless with best compression
                  */
@@ -910,46 +889,18 @@ class MemreasTranscoder
                 $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR .
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-                // $ffmpeg_log_file = $this->homeDir . self::WEBHOME .
-                // "ffmpeg-".$this->media_id.date ( 'Y-m-d H:i:s').".log";
-                // $ffmpeg_logger = " -loglevel info ";
-                // $ffmpeg_logger = " -report ";
-                // $ffmpeg_logger = "";
-                
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
                          " -i $this->destRandMediaName $qv $transcoded_file " .
                          '2>&1';
-                // $cmd = 'nice ' . $this->nice_priority . ' ' .
-                // $this->ffmpegcmd .
-                // " -i $this->destRandMediaName $qv $transcoded_file " .
-                // $ffmpeg_logger
-                // . '2>&1';
-                // $cmd = 'nice ' . $this->ffmpegcmd ." -i
-                // $this->destRandMediaName
-                // $qv $transcoded_file ".'2> $ffmpeg_logger';
             } else 
                 if ($type == '1080p') {
                     
                     $qv = ' -c:v libx265 -preset ' .
                              $this->compression_preset_1080p .
                              ' -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
-                    // $qv = ' -c:v libx265 -c:a libfdk_aac -preset medium
-                    // -profile:v main -level 4.0 -movflags +faststart -pix_fmt
-                    // yuv420p -b:a 240k ';
-                    // $qv=' -c:v libx264 -c:a libfdk_aac -preset fast
-                    // -profile:v
-                    // high -level 4.2 -movflags +faststart -pix_fmt yuv420p ';
-                    // //-b:a 240k ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-                    // $cmd = 'nice ' . $this->ffmpegcmd ." -i
-                    // $this->destRandMediaName $qv $transcoded_file ".'2>&1';
-                    // $ffmpeg_logger = "";
-                    // $cmd = 'nice ' . $this->nice_priority . ' '
-                    // .$this->ffmpegcmd
-                    // . " -i $this->destRandMediaName $qv $transcoded_file " .
-                    // $ffmpeg_logger . '2>&1';
                     $cmd = 'nice -' . $this->nice_priority . ' ' .
                              $this->ffmpegcmd .
                              " -i $this->destRandMediaName $qv $transcoded_file " .
@@ -987,18 +938,6 @@ class MemreasTranscoder
                                  $transcoded_file . " -segment_time 10 " .
                                  " -segment_format mpeg_ts " .
                                  $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-                        
-                        // libx265 test
-                        // $cmd = 'nice ' . $this->ffmpegcmd . " -re -y -i " .
-                        // $transcoded_mp4_file .
-                        // " -c:v libx265 -preset medium -x265-params crf=28
-                        // -c:a
-                        // aac -strict experimental -b:a 128k -segment_list_type
-                        // m3u8 -segment_list " .
-                        // $transcoded_file . " -segment_time 10 " . "
-                        // -segment_format mpeg_ts " . $transcoded_hls_ts_file .
-                        // "%05d.ts" .
-                        // ' 2>&1';
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
