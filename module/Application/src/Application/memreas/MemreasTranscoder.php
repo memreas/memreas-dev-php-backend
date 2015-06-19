@@ -622,8 +622,11 @@ class MemreasTranscoder
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . $e->getLine() .
                              '::Caught exception: ', $e->getMessage());
+            $message_data['error_line'] = $e->getLine();
+            $message_data['error_message'] = $e->getMessage();
+            $message_data['error_trace'] = $e->getTrace();
             $this->aws_manager_receiver->sesEmailErrorToAdmin(
-                    json_encode($message_data));
+                    json_encode($message_data, JSON_PRETTY_PRINT));
             /*
              * Log error
              */
