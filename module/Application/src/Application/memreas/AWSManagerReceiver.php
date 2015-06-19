@@ -133,8 +133,7 @@ class AWSManagerReceiver
                     ));
             $lsal = shell_exec('ls -al ' . $file);
             Mlog::addone(__FILE__ . __METHOD__ . '::finished pullMediaFromS3', 
-                    $file);
-            Mlog::addone(__FILE__ . __METHOD__ . '::ls -al $file', $lsal);
+                    $lsal);
             return true;
         } catch (Exception $e) {
             throw $e;

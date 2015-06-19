@@ -174,20 +174,29 @@ class IndexController extends AbstractActionController
              * ** after completing task fetch another
              */
             while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
-                if (empty($message_data)) {
-                    $message_data = $this->fetchBackLogEntry();
-                    $message_data['backlog'] = 1;
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
-                            $message_data);
-                }
+                /*
+                 * Process initial message
+                 */
+                Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
+                        $message_data);
                 if (! empty($message_data)) {
                     $result = $aws_manager->snsProcessMediaSubscribe(
                             $message_data);
                 }
+                
+                /*
+                 * Reset and work on backlog
+                 */
                 unset($message_data);
                 unset($this->dbAdapter);
                 unset($aws_manager);
+                $message_data = $this->fetchBackLogEntry();
+                if (empty($message_data)) {
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
+                            ' returned null - processing complete');
+                    exit();
+                }
                 $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             }
             exit();
@@ -205,18 +214,15 @@ class IndexController extends AbstractActionController
                     'doctrine.entitymanager.orm_default');
             $query = $this->dbAdapter->createQuery($query_string);
             $result = $query->getArrayResult();
-            Mlog::addone(__CLASS__ . __METHOD__ . '$query_string', $query_string);
-            Mlog::addone(__CLASS__ . __METHOD__ . '$result', $result);
             if ($result) {
                 foreach ($result as $entry) {
-                    Mlog::addone(__CLASS__ . __METHOD__ . '::$entry', $entry);
-                    Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', $entry['message_data']);
                     $message_data = json_decode($entry['message_data'], true);
-                    Mlog::addone(__CLASS__ . __METHOD__ . '$message_data', $message_data, 'p');
                     $message_data['transcode_transaction_id'] = $entry['transcode_transaction_id'];
                     $message_data['backlog'] = 1;
                     break;
                 }
+            } else {
+                return null;
             }
             Mlog::addone(__CLASS__ . __METHOD__ . '::backlog::$message_data', 
                     json_encode($message_data));
