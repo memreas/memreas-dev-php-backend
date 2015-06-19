@@ -164,7 +164,7 @@ class IndexController extends AbstractActionController
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . 'empty($message_data[media_id]', 
                         'backlog');
-                $response = jsone_encode('backlog');
+                $response = json_encode('backlog');
             }
             
             $this->returnResponse($response);
@@ -179,15 +179,13 @@ class IndexController extends AbstractActionController
                  */
                 Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
                         $message_data);
-                if (! empty($message_data)) {
-                    $result = $aws_manager->snsProcessMediaSubscribe(
-                            $message_data);
-                }
+                $result = $aws_manager->snsProcessMediaSubscribe($message_data);
                 
                 /*
                  * Reset and work on backlog
                  */
                 unset($message_data);
+                unset($response);
                 unset($this->dbAdapter);
                 unset($aws_manager);
                 $message_data = $this->fetchBackLogEntry();
@@ -196,8 +194,12 @@ class IndexController extends AbstractActionController
                             __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
                             ' returned null - processing complete');
                     exit();
+                } else {
+                    //update message for processing
+                    $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
+                    $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                            $message_data);
                 }
-                $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             }
             exit();
         }

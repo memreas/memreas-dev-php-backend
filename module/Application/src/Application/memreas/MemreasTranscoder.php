@@ -248,7 +248,20 @@ class MemreasTranscoder
                      $starttime;
             
             // persist uses $this for insert
-            $this->transcode_transaction_id = $this->persistTranscodeTransaction();
+            if ($message_data['backlog']) {
+                $this->transcode_transaction_id = $message_data['transcode_transaction_id'];
+                $transcode_transaction_data = [];
+                $transcode_transaction_data['transcode_status'] = $this->transcode_status;
+                $transcode_transaction = $this->getMemreasTranscoderTables()
+                ->getTranscodeTransactionTable()
+                ->getTranscodeTransaction($this->transcode_transaction_id);
+                $transaction_id = $this->persistTranscodeTransaction(
+                        $transcode_transaction, $transcode_transaction_data);
+                
+            } else {
+                $this->transcode_transaction_id = $this->persistTranscodeTransaction();
+            }
+            
             Mlog::addone(
                     __CLASS__ . __METHOD__ .
                              '::$this->persistTranscodeTransaction ()', 
@@ -460,7 +473,6 @@ class MemreasTranscoder
                     /*
                      * Thumbnails
                      */
-                    // error_log ( "starting thumbnails..." . PHP_EOL );
                     $this->createThumbNails();
                     
                     error_log("finished thumbnails" . PHP_EOL);
