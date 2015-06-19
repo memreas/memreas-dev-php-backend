@@ -477,7 +477,6 @@ class MemreasTranscoder
                      */
                     $this->createThumbNails();
                     
-                    error_log("finished thumbnails" . PHP_EOL);
                     $now = date('Y-m-d H:i:s');
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'thumbnails_complete';
                     $this->json_metadata = json_encode(
@@ -798,7 +797,9 @@ class MemreasTranscoder
                 /*
                  * For each path I want to store in S3 what i just sized (79x80,
                  * 98x78, 384x216, 448x306, 1280x720)
+                 * - reset thumbnails section section also
                  */
+                $this->memreas_media_metadata['S3_files']['thumbnails'] = '';
                 foreach ($tns_sized as $key => $file) {
                     // Push to S3
                     $s3thumbnail_path = $s3paths["$key"] . basename($filename);
