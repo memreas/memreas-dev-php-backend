@@ -578,8 +578,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
@@ -617,8 +616,7 @@ class MemreasTranscoder
             // Debugging - log table entry
             Mlog::addone(
                     __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                    $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
             throw $e;
         } finally {
             // Always delete the temp dir...
@@ -1141,8 +1139,8 @@ class MemreasTranscoder
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
                                  '::$transcode_transaction_id', 
-                                'is not empty->' .
-                                 $this->transcode_transaction_id);
+                                'is not empty->*' .
+                                 $this->transcode_transaction_id . '*');
                 $transcode_transaction = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->getTranscodeTransaction($this->transcode_transaction_id);
