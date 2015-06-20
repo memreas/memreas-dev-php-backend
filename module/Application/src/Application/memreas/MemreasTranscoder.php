@@ -468,14 +468,7 @@ class MemreasTranscoder
                     $this->createThumbNails();
                     
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'thumbnails_complete';
-                    $this->json_metadata = json_encode(
-                            $this->memreas_media_metadata);
-                    $memreas_media_data_array = array(
-                            'metadata' => $this->json_metadata,
-                            'update_date' => $this->now()
-                    );
-                    $media_id = $this->persistMedia($this->memreas_media, 
-                            $memreas_media_data_array);
+                    $this->persistMedia();
                     
                     /*
                      * Web quality mp4 conversion (h.265)
@@ -485,14 +478,8 @@ class MemreasTranscoder
                     $this->transcode_job_meta['web'] = $this->transcode('web');
                     Mlog::addone(__CLASS__ . __METHOD__, "finished web video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'web_mp4_complete';
-                    $this->json_metadata = json_encode(
-                            $this->memreas_media_metadata);
-                    $memreas_media_data_array = array(
-                            'metadata' => $this->json_metadata,
-                            'update_date' => $this->now()
-                    );
-                    $media_id = $this->persistMedia($this->memreas_media, 
-                            $memreas_media_data_array);
+                    // update media metadata and transcode transaction metadata
+                    $this->persistMedia();
                     $this->persistTranscodeTransaction();
                     
                     /*
@@ -502,15 +489,10 @@ class MemreasTranscoder
                     $this->transcode_job_meta['1080p'] = $this->transcode(
                             '1080p');
                     Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p video");
-                    $this->json_metadata = json_encode(
-                            $this->memreas_media_metadata);
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
-                    $memreas_media_data_array = array(
-                            'metadata' => $this->json_metadata,
-                            'update_date' => $this->now()
-                    );
-                    $media_id = $this->persistMedia($this->memreas_media, 
-                            $memreas_media_data_array);
+                    // update media metadata and transcode transaction metadata
+                    $this->persistMedia();
+                    $this->persistTranscodeTransaction();
                     
                     /*
                      * HLS conversion
@@ -518,6 +500,10 @@ class MemreasTranscoder
                     Mlog::addone(__CLASS__ . __METHOD__, 
                             '$this->transcode ( hls )');
                     $this->transcode_job_meta['hls'] = $this->transcode('hls');
+                    $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'hls_complete';
+                    // update media metadata and transcode transaction metadata
+                    $this->persistMedia();
+                    $this->persistTranscodeTransaction();
                     // End if ($is_video)
                 } else 
                     if ($this->is_audio) {
@@ -526,14 +512,22 @@ class MemreasTranscoder
                         $this->transcode_job_meta = array();
                         $this->transcode_job_meta['audio'] = $this->transcode(
                                 'audio');
-                        $this->memreas_media_metadata['S3_files']['1080p'] = $this->transcode_job_meta['1080p'];
-                        // Update the metadata here for the transcoded files
+                        $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'audio_complete';
+                        // update media metadata and transcode transaction
+                        // metadata
+                        $this->persistMedia();
+                        $this->persistTranscodeTransaction();
                     } else 
                         if ($this->is_image) {
                             // Image section
                             $this->transcode_job_meta = array();
                             $this->transcode_job_meta = $this->createThumbNails(
                                     $this->is_image);
+                            $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'thumbnails_complete';
+                            // update media metadata and transcode transaction
+                            // metadata
+                            $this->persistMedia();
+                            $this->persistTranscodeTransaction();
                         }
                 
                 /*
@@ -554,26 +548,12 @@ class MemreasTranscoder
                          strtotime($this->transcode_start_time);
                 $this->persistTranscodeTransaction();
                 
-                // Debugging - log table entry
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . '::$this->persistTranscodeTransaction(
-                        $transcode_transaction, $transcode_transaction_data)', 
-                        $this->transcode_status);
-                
                 /*
                  * Update media to mark completion
                  */
                 $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_complete';
                 $this->memreas_media_metadata['S3_files']['transcode_status'] = $this->pass;
-                $this->json_metadata = json_encode(
-                        $this->memreas_media_metadata);
-                $memreas_media_data_array = array(
-                        'metadata' => $this->json_metadata,
-                        'transcode_status' => $this->transcode_status,
-                        'update_date' => $this->now()
-                );
-                $media_id = $this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array);
+                $this->persistMedia();
                 
                 // Debugging - log table entry
                 Mlog::addone(
@@ -976,7 +956,8 @@ class MemreasTranscoder
                      $type . '_upload_S3';
             $arr = array(
                     "ffmpeg_cmd" => json_encode($cmd, JSON_UNESCAPED_SLASHES),
-                    "ffmpeg_cmd_output" => json_encode($op, JSON_UNESCAPED_SLASHES),
+                    "ffmpeg_cmd_output" => json_encode($op, 
+                            JSON_UNESCAPED_SLASHES),
                     "output_size" => $fsize,
                     "pass_fail" => $this->pass,
                     "error_message" => "",
@@ -990,7 +971,6 @@ class MemreasTranscoder
             /**
              * Dedup the array in case of retranscode
              */
-            // array_multisort ($this->memreas_media_metadata);
             if (! empty(
                     $this->memreas_media_metadata['S3_files']['thumbnails']['79x80'])) {
                 $this->memreas_media_metadata['S3_files']['thumbnails']['79x80'] = array_unique(
@@ -1079,16 +1059,22 @@ class MemreasTranscoder
         return new MemreasTranscoderTables($this->service_locator);
     }
 
-    public function persistMedia ($media, $media_data_array)
+    public function persistMedia ()
     {
         try {
             /*
              * Store media
              */
-            $media->exchangeArray($media_data_array);
+            $this->json_metadata = json_encode(
+                    $this->memreas_media_metadata);
+            $data_array = [];
+            $data_array['metadata'] = ! empty($this->json_metadata) ? $this->json_metadata : '';
+            $data_array['transcode_status'] = ! empty($this->transcode_status) ? $this->transcode_status : '';
+            $data_array['update_date'] = $this->now();
+            $this->memreas_media->exchangeArray($data_array);
             $media_id = $this->getMemreasTranscoderTables()
                 ->getMediaTable()
-                ->saveMedia($media);
+                ->saveMedia($this->memreas_media);
         } catch (\Exception $e) {
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
@@ -1112,7 +1098,8 @@ class MemreasTranscoder
             $data_array['media_size'] = ! empty($this->filesize) ? $this->filesize : '';
             $data_array['transcode_status'] = ! empty($this->transcode_status) ? $this->transcode_status : 'pending';
             $data_array['pass_fail'] = ! empty($this->pass) ? $this->pass : 0;
-            $data_array['metadata'] = ! empty($this->transcode_job_meta) ? json_encode($this->transcode_job_meta) : null;
+            $data_array['metadata'] = ! empty($this->transcode_job_meta) ? json_encode(
+                    $this->transcode_job_meta) : null;
             $data_array['transcode_job_duration'] = ! empty(
                     $this->transcode_job_duration) ? $this->transcode_job_duration : 0;
             $data_array['transcode_start_time'] = ! empty(
@@ -1122,33 +1109,19 @@ class MemreasTranscoder
                     $this->transcode_end_time) ? $this->transcode_end_time : null;
             
             if (empty($this->transcode_transaction_id)) {
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
-                                 '::$transcode_transaction_id', 'is empty');
                 $transcode_transaction = new TranscodeTransaction();
                 $transcode_transaction->exchangeArray($data_array);
                 $transcode_transaction_id = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->saveTranscodeTransaction($transcode_transaction);
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
-                                 '::$transcode_transaction_id', 
-                                $transcode_transaction_id);
                 return $transcode_transaction_id;
             } else { // Update
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
-                                 '::$transcode_transaction_id', 
-                                'is not empty->*' .
-                                 $this->transcode_transaction_id . '*');
                 $transcode_transaction = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->getTranscodeTransaction($this->transcode_transaction_id);
-                Mlog::addone(
-                __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
-                '::$transcode_transaction_id',
-                'found->*' .
-                $transcode_transaction->transcode_transaction_id . '*');
+                $transcode_transaction->transcode_transaction_id . '*')
+                
+                ;
                 
                 $transcode_transaction->exchangeArray($data_array);
                 $transcode_transaction_id = $this->getMemreasTranscoderTables()
@@ -1160,7 +1133,7 @@ class MemreasTranscoder
             $error_data = [];
             $error_data['error_line'] = $e->getLine();
             $error_data['error_message'] = $e->getMessage();
-            //$error_data['error_trace'] = $e->getTrace();
+            // $error_data['error_trace'] = $e->getTrace();
             
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
