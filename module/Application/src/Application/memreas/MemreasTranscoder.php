@@ -258,7 +258,7 @@ class MemreasTranscoder
                 $this->persistTranscodeTransaction();
             } else {
                 Mlog::addone('$message_data[backlog] is empty', 
-                        $message_data['backlog']);
+                        '...');
                 $this->transcode_transaction_id = $this->persistTranscodeTransaction();
             }
             Mlog::addone(
@@ -855,6 +855,14 @@ class MemreasTranscoder
                         Mlog::addone(
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
+                        
+                        $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                $this->ffmpegcmd . " -i " .
+                                $transcoded_mp4_file .
+                                ' -hls_flags single_file' .
+                                $transcoded_file;
+                                
+                        /*
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . " -re -y -i " .
                                  $transcoded_mp4_file . " -map 0 " .
@@ -867,6 +875,7 @@ class MemreasTranscoder
                                  $transcoded_file . " -segment_time 10 " .
                                  " -segment_format mpeg_ts " .
                                  $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+                        */
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
@@ -880,7 +889,8 @@ class MemreasTranscoder
                             $transcoded_file = $this->homeDir . self::CONVDIR .
                                      self::AUDIODIR . $this->MediaFileName .
                                      $aacext;
-                            $transcoded_file_name = $this->MediaFileName .
+                            $transcoded_file_name
+                             = $this->MediaFileName .
                                      $aacext;
                             $cmd = 'nice ' . $this->ffmpegcmd .
                                      " -i $this->destRandMediaName $qv $transcoded_file " .
