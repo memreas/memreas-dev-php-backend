@@ -478,10 +478,7 @@ class MemreasTranscoder
                     $this->transcode_job_meta = array();
                     Mlog::addone(__CLASS__ . __METHOD__,"starting web video");
                     $this->transcode_job_meta['web'] = $this->transcode('web');
-                    // $this->memreas_media_metadata ['S3_files']['web'] =
-                    // $this->transcode_job_meta ['web'];
                     Mlog::addone(__CLASS__ . __METHOD__,"finished web video");
-                    error_log("finished web video" . PHP_EOL);
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'web_mp4_complete';
                     $this->json_metadata = json_encode(
                             $this->memreas_media_metadata);
@@ -496,12 +493,10 @@ class MemreasTranscoder
                     /*
                      * High quality mp4 conversion (h.265)
                      */
-                    error_log("starting 1080p video" . PHP_EOL);
+                    Mlog::addone(__CLASS__ . __METHOD__,"starting 1080p video");
                     $this->transcode_job_meta['1080p'] = $this->transcode(
                             '1080p');
-                    error_log("finished 1080p video" . PHP_EOL);
-                    // $this->memreas_media_metadata ['S3_files']['1080p'] =
-                    // $this->transcode_job_meta ['1080p'];
+                    Mlog::addone(__CLASS__ . __METHOD__,"finished 1080p video");
                     $this->json_metadata = json_encode(
                             $this->memreas_media_metadata);
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
@@ -1109,9 +1104,10 @@ class MemreasTranscoder
             $data_array['media_extension'] = !empty($this->content_type) ? $this->content_type : '';
             $data_array['media_duration'] = !empty($this->duration) ? $this->duration : '';
             $data_array['media_size'] = !empty($this->filesize) ? $this->filesize : '';
-            $data_array['transcode_status'] = !empty($this->transcode_status) ? $this->transcode_status : 'pending';
+            $data_array['transcode_status'] = !empty($this->transcode_status) ? $this->transcode_status : 'pending  ';
             $data_array['pass_fail'] = !empty($this->pass) ? $this->pass : 0;
-            $data_array['metadata'] = !empty($this->json_metadata) ? $this->json_metadata : '';
+            $data_array['metadata'] = !empty($this->transcode_job_meta) ? $this->transcode_job_meta : null;
+            $data_array['transcode_job_duration'] = !empty($this->transcode_job_duration) ? $this->transcode_job_duration : 0;
             $data_array['transcode_start_time'] = !empty($this->transcode_start_time) ? $this->transcode_start_time : date('Y-m-d H:i:s');
             $data_array['transcode_end_time'] = !empty($this->transcode_end_time) ? $this->transcode_end_time : null;
             
