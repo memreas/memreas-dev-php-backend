@@ -975,8 +975,8 @@ class MemreasTranscoder
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_' .
                      $type . '_upload_S3';
             $arr = array(
-                    "ffmpeg_cmd" => json_encode($cmd),
-                    "ffmpeg_cmd_output" => json_encode($op),
+                    "ffmpeg_cmd" => json_encode($cmd, JSON_UNESCAPED_SLASHES),
+                    "ffmpeg_cmd_output" => json_encode($op, JSON_UNESCAPED_SLASHES),
                     "output_size" => $fsize,
                     "pass_fail" => $this->pass,
                     "error_message" => "",
