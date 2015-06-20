@@ -1119,10 +1119,6 @@ class MemreasTranscoder
                 $transcode_transaction = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->getTranscodeTransaction($this->transcode_transaction_id);
-                $transcode_transaction->transcode_transaction_id . '*')
-                
-                ;
-                
                 $transcode_transaction->exchangeArray($data_array);
                 $transcode_transaction_id = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
