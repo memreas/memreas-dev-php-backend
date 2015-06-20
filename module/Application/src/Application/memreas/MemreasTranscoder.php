@@ -863,11 +863,13 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
+                        //new h265 command
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . " -i " . $transcoded_mp4_file .
-                                 ' -hls_flags single_file' . $transcoded_file;
+                                 ' -vcodec libx265 -acodec libfdk_aac -hls_flags single_file' . $transcoded_file;
                         
                         /*
+                         * //Old h264 impl
                          * $cmd = 'nice -' . $this->nice_priority . ' ' .
                          * $this->ffmpegcmd . " -re -y -i " .
                          * $transcoded_mp4_file . " -map 0 " .
