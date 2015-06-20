@@ -250,7 +250,7 @@ class MemreasTranscoder
                      $starttime;
             
             // persist uses $this for insert
-            if ($message_data['backlog']) {
+            if (!empty($message_data['backlog'])) {
                 $this->transcode_transaction_id = $message_data['transcode_transaction_id'];
                 $this->persistTranscodeTransaction();
             } else {
