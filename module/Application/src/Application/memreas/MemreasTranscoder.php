@@ -1110,9 +1110,9 @@ class MemreasTranscoder
             $data_array['media_extension'] = ! empty($this->content_type) ? $this->content_type : '';
             $data_array['media_duration'] = ! empty($this->duration) ? $this->duration : '';
             $data_array['media_size'] = ! empty($this->filesize) ? $this->filesize : '';
-            $data_array['transcode_status'] = ! empty($this->transcode_status) ? $this->transcode_status : 'pending  ';
+            $data_array['transcode_status'] = ! empty($this->transcode_status) ? $this->transcode_status : 'pending';
             $data_array['pass_fail'] = ! empty($this->pass) ? $this->pass : 0;
-            $data_array['metadata'] = ! empty($this->transcode_job_meta) ? $this->transcode_job_meta : null;
+            $data_array['metadata'] = ! empty($this->transcode_job_meta) ? json_encode($this->transcode_job_meta) : null;
             $data_array['transcode_job_duration'] = ! empty(
                     $this->transcode_job_duration) ? $this->transcode_job_duration : 0;
             $data_array['transcode_start_time'] = ! empty(
@@ -1144,6 +1144,11 @@ class MemreasTranscoder
                 $transcode_transaction = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->getTranscodeTransaction($this->transcode_transaction_id);
+                Mlog::addone(
+                __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                '::$transcode_transaction_id',
+                'found->*' .
+                $transcode_transaction->transcode_transaction_id . '*');
                 
                 $transcode_transaction->exchangeArray($data_array);
                 $transcode_transaction_id = $this->getMemreasTranscoderTables()
