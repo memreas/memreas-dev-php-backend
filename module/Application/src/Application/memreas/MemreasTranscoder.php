@@ -1121,7 +1121,7 @@ class MemreasTranscoder
             $data_array['transcode_end_time'] = ! empty(
                     $this->transcode_end_time) ? $this->transcode_end_time : null;
             
-            if (! empty($this->transcode_transaction_id)) {
+            if (empty($this->transcode_transaction_id)) {
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
                                  '::$transcode_transaction_id', 'is empty');
@@ -1155,7 +1155,7 @@ class MemreasTranscoder
             $error_data = [];
             $error_data['error_line'] = $e->getLine();
             $error_data['error_message'] = $e->getMessage();
-            $error_data['error_trace'] = $e->getTrace();
+            //$error_data['error_trace'] = $e->getTrace();
             
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
