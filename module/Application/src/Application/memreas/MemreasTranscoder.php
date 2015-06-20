@@ -1109,10 +1109,11 @@ class MemreasTranscoder
             $data_array['media_extension'] = !empty($this->content_type) ? $this->content_type : '';
             $data_array['media_duration'] = !empty($this->duration) ? $this->duration : '';
             $data_array['media_size'] = !empty($this->filesize) ? $this->filesize : '';
-            $data_array['transcode_status'] = !empty($this->transcode_status) ? $this->transcode_status : '';
-            $data_array['pass_fail'] = !empty($this->pass) ? $this->pass : '';
+            $data_array['transcode_status'] = !empty($this->transcode_status) ? $this->transcode_status : 'pending';
+            $data_array['pass_fail'] = !empty($this->pass) ? $this->pass : 0;
             $data_array['metadata'] = !empty($this->json_metadata) ? $this->json_metadata : '';
-            $data_array['transcode_start_time'] = !empty($this->transcode_start_time) ? $this->AAA : date('Y-m-d H:i:s');
+            $data_array['transcode_start_time'] = !empty($this->transcode_start_time) ? $this->transcode_start_time : date('Y-m-d H:i:s');
+            $data_array['transcode_end_time'] = !empty($this->transcode_end_time) ? $this->transcode_end_time : null;
             
             if (!empty($this->transcode_transaction_id)) {
                 $transcode_transaction = new TranscodeTransaction();
