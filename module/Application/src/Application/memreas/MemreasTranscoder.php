@@ -1076,9 +1076,15 @@ class MemreasTranscoder
                 ->getMediaTable()
                 ->saveMedia($this->memreas_media);
         } catch (\Exception $e) {
+            $error_data = [];
+            $error_data['error_line'] = $e->getLine();
+            $error_data['error_message'] = $e->getMessage();
+            $error_data['error_trace'] = $e->getTrace();
+            
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
-                             '::Caught exception: ', $e->getMessage());
+                             '::Caught exception: ', 
+                            json_encode($error_data, JSON_PRETTY_PRINT));
             throw $e;
         }
     }
@@ -1129,7 +1135,7 @@ class MemreasTranscoder
             $error_data = [];
             $error_data['error_line'] = $e->getLine();
             $error_data['error_message'] = $e->getMessage();
-            // $error_data['error_trace'] = $e->getTrace();
+            $error_data['error_trace'] = $e->getTrace();
             
             Mlog::addone(
                     __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
