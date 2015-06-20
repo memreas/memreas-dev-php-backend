@@ -257,8 +257,7 @@ class MemreasTranscoder
                 $this->transcode_transaction_id = $message_data['transcode_transaction_id'];
                 $this->persistTranscodeTransaction();
             } else {
-                Mlog::addone('$message_data[backlog] is empty', 
-                        '...');
+                Mlog::addone('$message_data[backlog] is empty', '...');
                 $this->transcode_transaction_id = $this->persistTranscodeTransaction();
             }
             Mlog::addone(
@@ -558,7 +557,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
@@ -592,11 +592,6 @@ class MemreasTranscoder
             // persist
             $media_id = $this->persistMedia($this->memreas_media, 
                     $memreas_media_data_array);
-            
-            // Debugging - log table entry
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
             throw $e;
         } finally {
             // Always delete the temp dir...
@@ -604,7 +599,19 @@ class MemreasTranscoder
             try {
                 $result = $this->rmWorkDir($this->homeDir);
             } catch (\Exception $e) {
-                $this->pass = 0;
+                $error_data = [];
+                $error_data['custom_message'] = __CLASS__ . __METHOD__ . '::failed to remove work directory::' . $this->homeDir;
+                $error_data['error_line'] = $e->getLine();
+                $error_data['error_message'] = $e->getMessage();
+                $error_data['error_trace'] = $e->getTrace();
+                $this->aws_manager_receiver->sesEmailErrorToAdmin(
+                        json_encode($error_data, JSON_PRETTY_PRINT));
+                
+            // Debugging - log table entry
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
+                        $memreas_media_data_array)', 
+                    $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -857,25 +864,23 @@ class MemreasTranscoder
                                 $transcoded_hls_ts_file);
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                $this->ffmpegcmd . " -i " .
-                                $transcoded_mp4_file .
-                                ' -hls_flags single_file' .
-                                $transcoded_file;
-                                
+                                 $this->ffmpegcmd . " -i " . $transcoded_mp4_file .
+                                 ' -hls_flags single_file' . $transcoded_file;
+                        
                         /*
-                        $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -re -y -i " .
-                                 $transcoded_mp4_file . " -map 0 " .
-                                 " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                                 " -acodec libfdk_aac " . " -r 25 " .
-                                 " -profile:v main -level 4.0 " . " -b:v 1500k " .
-                                 " -maxrate 2000k " . " -force_key_frames 50 " .
-                                 " -flags -global_header " . " -f segment " .
-                                 " -segment_list_type m3u8 " . " -segment_list " .
-                                 $transcoded_file . " -segment_time 10 " .
-                                 " -segment_format mpeg_ts " .
-                                 $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-                        */
+                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
+                         * $this->ffmpegcmd . " -re -y -i " .
+                         * $transcoded_mp4_file . " -map 0 " .
+                         * " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                         * " -acodec libfdk_aac " . " -r 25 " .
+                         * " -profile:v main -level 4.0 " . " -b:v 1500k " .
+                         * " -maxrate 2000k " . " -force_key_frames 50 " .
+                         * " -flags -global_header " . " -f segment " .
+                         * " -segment_list_type m3u8 " . " -segment_list " .
+                         * $transcoded_file . " -segment_time 10 " .
+                         * " -segment_format mpeg_ts " .
+                         * $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+                         */
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
@@ -889,8 +894,7 @@ class MemreasTranscoder
                             $transcoded_file = $this->homeDir . self::CONVDIR .
                                      self::AUDIODIR . $this->MediaFileName .
                                      $aacext;
-                            $transcoded_file_name
-                             = $this->MediaFileName .
+                            $transcoded_file_name = $this->MediaFileName .
                                      $aacext;
                             $cmd = 'nice ' . $this->ffmpegcmd .
                                      " -i $this->destRandMediaName $qv $transcoded_file " .
@@ -1075,8 +1079,7 @@ class MemreasTranscoder
             /*
              * Store media
              */
-            $this->json_metadata = json_encode(
-                    $this->memreas_media_metadata);
+            $this->json_metadata = json_encode($this->memreas_media_metadata);
             $data_array = [];
             $data_array['metadata'] = ! empty($this->json_metadata) ? $this->json_metadata : '';
             $data_array['transcode_status'] = ! empty($this->transcode_status) ? $this->transcode_status : '';
@@ -1130,6 +1133,11 @@ class MemreasTranscoder
                 $transcode_transaction_id = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->saveTranscodeTransaction($transcode_transaction);
+                $this->transcode_transaction_id = $transcode_transaction_id;
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                                 '::Insert TranscodeTransaction: ', 
+                                $transcode_transaction_id);
                 return $transcode_transaction_id;
             } else { // Update
                 $transcode_transaction = $this->getMemreasTranscoderTables()
@@ -1139,6 +1147,11 @@ class MemreasTranscoder
                 $transcode_transaction_id = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->saveTranscodeTransaction($transcode_transaction);
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
+                                 '::Update TranscodeTransaction: ', 
+                                $transcode_transaction_id);
+                
                 return $transcode_transaction_id;
             }
         } catch (\Exception $e) {
