@@ -867,7 +867,7 @@ class MemreasTranscoder
                         //new h265 command
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . " -i " . $this->destRandMediaName .
-                                 ' -vcodec libx265 -acodec libfdk_aac -hls_flags single_file' . $transcoded_file;
+                                 ' -vcodec libx265 -acodec libfdk_aac -hls_flags single_file ' . $transcoded_file;
                         
                         /*
                          * //Old h264 impl
