@@ -43,16 +43,19 @@ class CheckGitPull
             // git pull
             $output .= $this->execOps ( "git pull" );
             
-            Mlog::addone('output::',$output);
-            
             //write lock file
             if (file_exists($this->gitlock)) {
-                unlink($this->gitlock);
+                //unlink($this->gitlock);
+                $output .= $this->execOps ( "rm " . $this->gitlock );
             }
             $file = fopen($this->gitlock,"w");
             echo fwrite($file,$output);
             fclose($file);
+            
+            // set permissions 
+            // $output .= $this->execOps ( "git pull" );
             $pulled_latest = true;
+            Mlog::addone('output::',$output);
         }
         return $pulled_latest;
     }
