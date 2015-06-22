@@ -365,6 +365,10 @@ class MemreasTranscoder
                     // PHP SWITCH is similar to IF/ELSE statements
                     // suitable if we want to compare the a variable with many
                     // different values
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . __LINE__ .
+                                     '$this->MediaFileType', 
+                                    $this->MediaFileType);
                     switch (strtolower($this->MediaFileType)) {
                         case 'video/mp4':
                             break;
@@ -399,6 +403,25 @@ class MemreasTranscoder
                             break;
                         case 'video/mkv':
                             break;
+                        case 'video/mpeg':
+                            break;
+                        case 'video/mpg':
+                            break;
+                        case 'video/avi':
+                            break;
+                        case 'video/flv':
+                            break;
+                        case 'video/wmv':
+                            break;
+                        case 'video/divx':
+                            break;
+                        case 'video/ogv':
+                            break;
+                        case 'video/ogm':
+                            break;
+                        case 'video/nut':
+                            break;
+                        //audio    
                         case 'audio/caf':
                             break;
                         case 'audio/vnd.wav':
@@ -600,18 +623,19 @@ class MemreasTranscoder
                 $result = $this->rmWorkDir($this->homeDir);
             } catch (\Exception $e) {
                 $error_data = [];
-                $error_data['custom_message'] = __CLASS__ . __METHOD__ . '::failed to remove work directory::' . $this->homeDir;
+                $error_data['custom_message'] = __CLASS__ . __METHOD__ .
+                         '::failed to remove work directory::' . $this->homeDir;
                 $error_data['error_line'] = $e->getLine();
                 $error_data['error_message'] = $e->getMessage();
                 $error_data['error_trace'] = $e->getTrace();
                 $this->aws_manager_receiver->sesEmailErrorToAdmin(
                         json_encode($error_data, JSON_PRETTY_PRINT));
                 
-            // Debugging - log table entry
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
+                // Debugging - log table entry
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
                         $memreas_media_data_array)', 
-                    $this->transcode_status);
+                        $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -864,10 +888,12 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
-                        //new h265 command
+                        // new h265 command
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -i " . $this->destRandMediaName .
-                                 ' -vcodec libx265 -acodec libfdk_aac -hls_flags single_file ' . $transcoded_file;
+                                 $this->ffmpegcmd . " -i " .
+                                 $this->destRandMediaName .
+                                 ' -vcodec libx265 -acodec libfdk_aac -hls_flags single_file ' .
+                                 $transcoded_file;
                         
                         /*
                          * //Old h264 impl
