@@ -57,6 +57,6 @@ class CheckGitPull
             $pulled_latest = true;
             Mlog::addone('output::',$output);
         }
-        return $pulled_latest;
+        return $output;
     }
 } // end class MemreasTranscoder
