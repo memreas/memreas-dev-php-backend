@@ -22,5 +22,6 @@ git push
 cp module/Application/src/Application/Model/MemreasConstants.localhost.php module/Application/src/Application/Model/MemreasConstants.php
 
 #
-# curl url to pull latest
+# curl url to pull latest on backend
 #
+curl https://memreasdev-backend.memreas.com/?action=gitpull

@@ -851,6 +851,7 @@ class MemreasTranscoder
                         $transcoded_mp4_file = $this->homeDir . self::CONVDIR .
                                  self::_1080PDIR . $this->MediaFileName .
                                  $mpeg4ext;
+                        
                         $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                         $transcoded_file = $this->homeDir . self::CONVDIR .
                                  self::HLSDIR . $this->MediaFileName . '.m3u8';
@@ -865,7 +866,7 @@ class MemreasTranscoder
                         
                         //new h265 command
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -i " . $transcoded_mp4_file .
+                                 $this->ffmpegcmd . " -i " . $this->destRandMediaName .
                                  ' -vcodec libx265 -acodec libfdk_aac -hls_flags single_file' . $transcoded_file;
                         
                         /*
