@@ -81,7 +81,8 @@ class IndexController extends AbstractActionController
         $this->checkGitPull->exec();
         if ($actionname == "gitpull") {
             $gitpull = true;
-            $this->checkGitPull->exec($gitpull);
+            echo $this->checkGitPull->exec($gitpull);
+            exit();
         } else 
             if ($actionname == "clearlog") {
                 try {
