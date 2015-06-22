@@ -22,7 +22,7 @@ class CheckGitPull
     public function exec ($pull=false)
     {
         $pulled_latest = false;
-        if (file_exists($this->gitlock)) {
+        if (file_exists($this->gitlock) && !$pull) {
             $pulled_latest = true;
         } else if (!file_exists($this->gitlock) || $pull) {
             // Setup SSH agent
