@@ -54,6 +54,39 @@ class AWSManagerReceiver
             throw $e;
         }
     }
+    
+    function fetchBackLogEntry ()
+    {
+        try {
+            $query_string = "SELECT tt FROM " .
+                    " Application\Entity\TranscodeTransaction tt " .
+                    " where tt.transcode_status='backlog' " .
+                    " order by tt.transcode_start_time asc";
+            $this->dbAdapter = $this->getServiceLocator()->get(
+                    'doctrine.entitymanager.orm_default');
+            $query = $this->dbAdapter->createQuery($query_string);
+            $result = $query->getArrayResult();
+            if ($result) {
+                foreach ($result as $entry) {
+                    $message_data = json_decode($entry['message_data'], true);
+                    $message_data['transcode_transaction_id'] = $entry['transcode_transaction_id'];
+                    $message_data['backlog'] = 1;
+                    break;
+                }
+            } else {
+                return null;
+            }
+            Mlog::addone(__CLASS__ . __METHOD__ . '::backlog::$message_data',
+            json_encode($message_data));
+    
+            return $message_data;
+        } catch (Exception $e) {
+            Mlog::addone(__CLASS__ . __METHOD__ . '::Caught exception',
+            $e->getMessage());
+            throw $e;
+        }
+    }
+    
 
     function snsProcessMediaSubscribe ($message_data)
     {
