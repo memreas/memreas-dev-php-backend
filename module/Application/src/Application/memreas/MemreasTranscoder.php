@@ -224,10 +224,10 @@ class MemreasTranscoder
             $this->s3file_name = $message_data['s3file_name'];
             $this->original_file_name = $message_data['s3file_name'];
             $this->input_message_data_json = json_encode($message_data);
-            if ($message_data['process_task']) {
-                $this->transcode_status = 'pending';
-            } else {
+            if ($message_data['backlog']) {
                 $this->transcode_status = 'backlog';
+            } else {
+                $this->transcode_status = 'pending';
             }
             $this->s3file_basename_prefix = $message_data['s3file_basename_prefix'];
             $this->s3prefixpath = $this->user_id . '/' . $this->media_id . '/';
@@ -421,7 +421,7 @@ class MemreasTranscoder
                             break;
                         case 'video/nut':
                             break;
-                        //audio    
+                        // audio
                         case 'audio/caf':
                             break;
                         case 'audio/vnd.wav':
@@ -647,15 +647,13 @@ class MemreasTranscoder
     public function createThumbnails ($is_image = null)
     {
         try {
-            // //////////////////////
-            // Thumbnails section
-            // //////////////////////
+            // base thumb size
             $tnWidth = 1280;
             $tnHeight = 720;
             
             if (! $this->is_image) {
-                // $tnfreqency = 1/360; //every 360 seconds take a thumbnail
                 /*
+                 * Thumbnails for videos
                  * Here let's determine how many thumbnails to make
                  * ex: >1 hr = 3600 seconds <--- store 20 thumbnails
                  */
@@ -705,6 +703,9 @@ class MemreasTranscoder
                 Mlog::addone(__CLASS__ . __METHOD__ . '::$media_thumb_arr', 
                         json_encode($media_thumb_arr));
             } else {
+                /*
+                 * Thumbnails for images
+                 */
                 $media_thumb_arr = array(
                         $this->destRandMediaName
                 );
@@ -725,12 +726,12 @@ class MemreasTranscoder
             /*
              * This for loop fetches all the thumbnails just created
              */
+            $this->memreas_media_metadata['S3_files']['thumbnails'] = '';
             foreach ($media_thumb_arr as $filename) {
                 
                 // ////////////////////////////////////////////////
                 // Resize thumbnails as needed and save locally
                 $tns_sized = array(
-                        // "full" => $filename,
                         "79x80" => $this->resizeImage(
                                 $this->homeDir . self::DESTDIR .
                                          self::THUMBNAILSDIR . self::_79X80, 
@@ -758,7 +759,6 @@ class MemreasTranscoder
                  * 98x78, 384x216, 448x306, 1280x720)
                  * - reset thumbnails section section also
                  */
-                $this->memreas_media_metadata['S3_files']['thumbnails'] = '';
                 foreach ($tns_sized as $key => $file) {
                     // Push to S3
                     $s3thumbnail_path = $s3paths["$key"] . basename($filename);
@@ -772,9 +772,10 @@ class MemreasTranscoder
                     $this->memreas_media_metadata['S3_files']['thumbnails']["$key"][] = $s3thumbnail_path;
                 } // End for each tns_sized as file
             } // End for each thumbnail
-              // error_log ( "meta after for loop ----> " . json_encode (
-              // $this->memreas_media_metadata ) . PHP_EOL );
-            
+
+            /*
+             * For videos upload the directory
+             */
             if (! $this->is_image) {
                 
                 // fullsize, 79x80, 448x306, 384x216, 98x78

@@ -89,7 +89,6 @@ class AWSManagerReceiver
     function snsProcessMediaSubscribe ($message_data)
     {
         try {
-            // Mlog::addone ( __FILE__ . __METHOD__, '...' );
             $result = $this->memreasTranscoder->exec($message_data, false);
             return $result;
         } catch (Exception $e) {
@@ -178,8 +177,8 @@ class AWSManagerReceiver
             $options = array(
                     // 'params' => array('ACL' => 'public-read'),
                     'concurrency' => 20,
-                    'ServerSideEncryption',
-                    'AES256'
+                    'ServerSideEncryption' => 'AES256',
+                    'x-amz-storage-class' => 'REDUCED_REDUNDANCY'
             );
             
             $result = $this->s3->uploadDirectory($dir, 
@@ -198,7 +197,9 @@ class AWSManagerReceiver
                             'Key' => $target,
                             // 'CopySource' => "{".$bucket."}/{".$source."}",
                             'CopySource' => $bucket . '/' . $source,
-                            'ServerSideEncryption' => 'AES256'
+                            'ServerSideEncryption' => 'AES256',
+                            'x-amz-storage-class' => 'REDUCED_REDUNDANCY'
+                            
                     ));
             return $result;
         } catch (Exception $e) {
@@ -225,6 +226,7 @@ class AWSManagerReceiver
                     ))
                 ->setOption('CacheControl', 'max-age=3600')
                 ->setOption('ServerSideEncryption', 'AES256')
+                ->setOption('x-amz-storage-class', 'REDUCED_REDUNDANCY')
                 ->setKey($s3file)
                 ->build();
             
@@ -322,6 +324,7 @@ class AWSManagerReceiver
                 ->setMinPartSize(10 * Size::MB)
                 ->setOption('ContentType', $content_type)
                 ->setOption('ServerSideEncryption', 'AES256')
+                ->setOption('x-amz-storage-class', 'REDUCED_REDUNDANCY')
                 ->setKey($thumbnail_file)
                 ->build();
             

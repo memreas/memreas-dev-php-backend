@@ -150,6 +150,8 @@ class IndexController extends AbstractActionController
             Mlog::addone(__CLASS__ . __METHOD__ . '$proceed', $proceed);
             $message_data = json_decode($json, true);
             $message_data['process_task'] = $this->awsManagerAutoScaler->serverReadyToProcessTask();
+            $message_data['backlog'] = 0;
+            Mlog::addone(__CLASS__ . __METHOD__ . 'process_task', $message_data['process_task']);
             
             /*
              * Here if no media_id is set then work on any backlog items...
