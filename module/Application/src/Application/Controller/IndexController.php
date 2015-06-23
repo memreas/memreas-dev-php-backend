@@ -189,6 +189,7 @@ class IndexController extends AbstractActionController
                 unset($response);
                 unset($this->dbAdapter);
                 unset($aws_manager);
+                $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
                 $message_data = $aws_manager->fetchBackLogEntry();
                 if (empty($message_data)) {
                     Mlog::addone(
