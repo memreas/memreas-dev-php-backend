@@ -1159,29 +1159,28 @@ class MemreasTranscoder
             if (empty($this->transcode_transaction_id)) {
                 $transcode_transaction = new TranscodeTransaction();
                 $transcode_transaction->exchangeArray($data_array);
-                $transcode_transaction_id = $this->getMemreasTranscoderTables()
+                $this->transcode_transaction_id = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->saveTranscodeTransaction($transcode_transaction);
-                $this->transcode_transaction_id = $transcode_transaction_id;
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
                                  '::Insert TranscodeTransaction: ', 
-                                $transcode_transaction_id);
-                return $transcode_transaction_id;
+                                $this->transcode_transaction_id);
+                return true;
             } else { // Update
                 $transcode_transaction = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->getTranscodeTransaction($this->transcode_transaction_id);
                 $transcode_transaction->exchangeArray($data_array);
-                $transcode_transaction_id = $this->getMemreasTranscoderTables()
+                $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
                     ->saveTranscodeTransaction($transcode_transaction);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
                                  '::Update TranscodeTransaction: ', 
-                                $transcode_transaction_id);
+                                $this->transcode_transaction_id);
                 
-                return $transcode_transaction_id;
+                return true;
             }
         } catch (\Exception $e) {
             $error_data = [];
