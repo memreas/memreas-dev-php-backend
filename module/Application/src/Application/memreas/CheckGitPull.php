@@ -22,6 +22,7 @@ class CheckGitPull
     public function exec ($pull=false)
     {
         $pulled_latest = false;
+        $output = '';
         if (file_exists($this->gitlock) && !$pull) {
             $pulled_latest = true;
         } else if (!file_exists($this->gitlock) || $pull) {
