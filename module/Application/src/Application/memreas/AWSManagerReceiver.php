@@ -62,8 +62,6 @@ class AWSManagerReceiver
                     " Application\Entity\TranscodeTransaction tt " .
                     " where tt.transcode_status='backlog' " .
                     " order by tt.transcode_start_time asc";
-            $this->dbAdapter = $this->getServiceLocator()->get(
-                    'doctrine.entitymanager.orm_default');
             $query = $this->dbAdapter->createQuery($query_string);
             $result = $query->getArrayResult();
             if ($result) {
