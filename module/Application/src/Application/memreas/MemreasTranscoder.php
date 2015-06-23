@@ -580,8 +580,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
@@ -634,8 +633,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -772,7 +770,7 @@ class MemreasTranscoder
                     $this->memreas_media_metadata['S3_files']['thumbnails']["$key"][] = $s3thumbnail_path;
                 } // End for each tns_sized as file
             } // End for each thumbnail
-
+            
             /*
              * For videos upload the directory
              */
@@ -889,12 +887,27 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
-                        // new h265 command
+                        // new h265 command - doesn't work
+                        // $cmd = 'nice -' . $this->nice_priority . ' ' .
+                        // $this->ffmpegcmd . " -i " .
+                        // $this->destRandMediaName .
+                        // ' -vcodec libx265 -acodec libfdk_aac -hls_flags
+                        // single_file ' .
+                        // $transcoded_file;
+                        
+                        // Old h264 impl
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -i " .
-                                 $this->destRandMediaName .
-                                 ' -vcodec libx265 -acodec libfdk_aac -hls_flags single_file ' .
-                                 $transcoded_file;
+                                 $this->ffmpegcmd . " -re -y -i " .
+                                 $this->destRandMediaName . " -map 0 " .
+                                 " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                                 " -acodec libfdk_aac " . " -r 25 " .
+                                 " -profile:v main -level 4.0 " . " -b:v 1500k " .
+                                 " -maxrate 2000k " . " -force_key_frames 50 " .
+                                 " -flags -global_header " . " -f segment " .
+                                 " -segment_list_type m3u8 " . " -segment_list " .
+                                 $transcoded_file . " -segment_time 10 " .
+                                 " -segment_format mpeg_ts " .
+                                 $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
                         
                         /*
                          * //Old h264 impl
