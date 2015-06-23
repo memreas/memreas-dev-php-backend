@@ -1166,7 +1166,7 @@ class MemreasTranscoder
                         __CLASS__ . __METHOD__ . "::line::" . __LINE__ .
                                  '::Insert TranscodeTransaction: ', 
                                 $this->transcode_transaction_id);
-                return true;
+                return $this->transcode_transaction_id;
             } else { // Update
                 $transcode_transaction = $this->getMemreasTranscoderTables()
                     ->getTranscodeTransactionTable()
@@ -1180,7 +1180,7 @@ class MemreasTranscoder
                                  '::Update TranscodeTransaction: ', 
                                 $this->transcode_transaction_id);
                 
-                return true;
+                return $this->transcode_transaction_id;
             }
         } catch (\Exception $e) {
             $error_data = [];
