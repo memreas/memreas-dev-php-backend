@@ -500,6 +500,9 @@ class MemreasTranscoder
                     $this->transcode_job_meta['web'] = $this->transcode('web');
                     Mlog::addone(__CLASS__ . __METHOD__, "finished web video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'web_mp4_complete';
+                    //set status to show web available
+                    $this->transcode_status = "success_web";
+                    $this->pass = "1";
                     // update media metadata and transcode transaction metadata
                     $this->persistMedia();
                     $this->persistTranscodeTransaction();
@@ -512,6 +515,9 @@ class MemreasTranscoder
                             '1080p');
                     Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
+                    //set status to show 1080p available
+                    $this->transcode_status = "success_1080p";
+                    $this->pass = "1";
                     // update media metadata and transcode transaction metadata
                     $this->persistMedia();
                     $this->persistTranscodeTransaction();
@@ -523,6 +529,9 @@ class MemreasTranscoder
                             '$this->transcode ( hls )');
                     $this->transcode_job_meta['hls'] = $this->transcode('hls');
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'hls_complete';
+                    //set status to show all (web,1080p,hls) available
+                    $this->transcode_status = "success";
+                    $this->pass = "1";
                     // update media metadata and transcode transaction metadata
                     $this->persistMedia();
                     $this->persistTranscodeTransaction();
