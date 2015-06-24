@@ -881,7 +881,7 @@ class MemreasTranscoder
                         // Note: this section uses the transcoded 1080p file
                         // above
                         $transcoded_mp4_file = $this->homeDir . self::CONVDIR .
-                                 self::_1080PDIR . $this->MediaFileName .
+                                 self::WEBDIR . $this->MediaFileName .
                                  $mpeg4ext;
                         
                         $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
