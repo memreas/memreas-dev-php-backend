@@ -24,5 +24,7 @@ cp module/Application/src/Application/Model/MemreasConstants.localhost.php modul
 #
 # curl url to pull latest on backend
 #
-curl -d https://memreasdev-backend.memreas.com/?action=clearlog
-curl -d https://memreasdev-backend.memreas.com/?action=gitpull
+clear_log=$(curl https://memreasdev-backend.memreas.com/?action=clearlog)
+echo clear_log
+gitpull=$(curl https://memreasdev-backend.memreas.com/?action=gitpull)
+echo gitpull
