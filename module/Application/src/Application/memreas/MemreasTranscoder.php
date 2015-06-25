@@ -156,6 +156,8 @@ class MemreasTranscoder
 
     protected $transcode_job_meta;
 
+    protected $exception;
+
     /*
      * Thumbnail settings $tnWidth = 448; $tnHeight = 306; $tnfreqency = 60; //
      * in seconds - 60 means every 60 seconds (minute) $errstr = '';
@@ -500,7 +502,7 @@ class MemreasTranscoder
                     $this->transcode_job_meta['web'] = $this->transcode('web');
                     Mlog::addone(__CLASS__ . __METHOD__, "finished web video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'web_mp4_complete';
-                    //set status to show web available
+                    // set status to show web available
                     $this->transcode_status = "success_web";
                     $this->pass = "1";
                     // update media metadata and transcode transaction metadata
@@ -515,7 +517,7 @@ class MemreasTranscoder
                             '1080p');
                     Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
-                    //set status to show 1080p available
+                    // set status to show 1080p available
                     $this->transcode_status = "success_1080p";
                     $this->pass = "1";
                     // update media metadata and transcode transaction metadata
@@ -529,7 +531,7 @@ class MemreasTranscoder
                             '$this->transcode ( hls )');
                     $this->transcode_job_meta['hls'] = $this->transcode('hls');
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'hls_complete';
-                    //set status to show all (web,1080p,hls) available
+                    // set status to show all (web,1080p,hls) available
                     $this->transcode_status = "success";
                     $this->pass = "1";
                     // update media metadata and transcode transaction metadata
@@ -589,7 +591,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
@@ -607,8 +610,8 @@ class MemreasTranscoder
             $this->transcode_status = "failure";
             $this->pass = "0";
             $this->transcode_end_time = $this->now();
-            $this->transcode_status = 'failure';
-            $this->persistTranscodeTransaction();
+            // $this->transcode_status = 'failure';
+            // $this->persistTranscodeTransaction();
             
             // Media
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_failed';
@@ -617,7 +620,7 @@ class MemreasTranscoder
                     $this->memreas_media_metadata);
             $memreas_media_data_array = array(
                     'metadata' => $this->json_metadata,
-                    'transcode_status' => 'failure',
+                    // 'transcode_status' => 'failure',
                     'update_date' => $this->now()
             );
             // persist
@@ -642,7 +645,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -881,8 +885,7 @@ class MemreasTranscoder
                         // Note: this section uses the transcoded 1080p file
                         // above
                         $transcoded_mp4_file = $this->homeDir . self::CONVDIR .
-                                 self::WEBDIR . $this->MediaFileName .
-                                 $mpeg4ext;
+                                 self::WEBDIR . $this->MediaFileName . $mpeg4ext;
                         
                         $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                         $transcoded_file = $this->homeDir . self::CONVDIR .
@@ -904,19 +907,12 @@ class MemreasTranscoder
                         // single_file ' .
                         // $transcoded_file;
                         
-                        // Old h264 impl
+                        // h264 with single ts file
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -re -y -i " .
-                                 $this->destRandMediaName . " -map 0 " .
-                                 " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                                 " -acodec libfdk_aac " . " -r 25 " .
-                                 " -profile:v main -level 4.0 " . " -b:v 1500k " .
-                                 " -maxrate 2000k " . " -force_key_frames 50 " .
-                                 " -flags -global_header " . " -f segment " .
-                                 " -segment_list_type m3u8 " . " -segment_list " .
-                                 $transcoded_file . " -segment_time 10 " .
-                                 " -segment_format mpeg_ts " .
-                                 $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+                                 $this->ffmpegcmd . " -i " .
+                                 $this->destRandMediaName .
+                                 ' -hls_flags single_file ' . $transcoded_file .
+                                 ' 2>&1';
                         
                         /*
                          * //Old h264 impl
@@ -1070,8 +1066,8 @@ class MemreasTranscoder
         } catch (\Exception $e) {
             throw $e;
         }
-    } // End transcode
-    
+    }
+ // End transcode
     private function rmWorkDir ($dir)
     {
         try {
