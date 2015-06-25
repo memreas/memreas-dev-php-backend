@@ -204,6 +204,10 @@ class IndexController extends AbstractActionController
                                         ' returned null - processing complete');
                         exit();
                     } else {
+                        Mlog::addone(
+                                __CLASS__ . __METHOD__ .
+                                         '$this->fetchBackLogEntry() - message_data', 
+                                        $message_data);
                         // update message for processing
                         $aws_manager = new AWSManagerReceiver(
                                 $this->getServiceLocator());

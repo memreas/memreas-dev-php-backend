@@ -1070,8 +1070,8 @@ class MemreasTranscoder
         } catch (\Exception $e) {
             throw $e;
         }
-    }
-    // End transcode
+    } // End transcode
+    
     private function rmWorkDir ($dir)
     {
         try {
