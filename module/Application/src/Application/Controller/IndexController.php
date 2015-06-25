@@ -151,7 +151,8 @@ class IndexController extends AbstractActionController
             $message_data = json_decode($json, true);
             $message_data['process_task'] = $this->awsManagerAutoScaler->serverReadyToProcessTask();
             $message_data['backlog'] = 0;
-            Mlog::addone(__CLASS__ . __METHOD__ . 'process_task', $message_data['process_task']);
+            Mlog::addone(__CLASS__ . __METHOD__ . 'process_task', 
+                    $message_data['process_task']);
             
             /*
              * Here if no media_id is set then work on any backlog items...
@@ -177,34 +178,42 @@ class IndexController extends AbstractActionController
              * ** after completing task fetch another
              */
             while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
-                /*
-                 * Process initial message
-                 */
-                Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
-                        $message_data);
-                $result = $aws_manager->snsProcessMediaSubscribe($message_data);
-                
-                /*
-                 * Reset and work on backlog
-                 */
-                unset($message_data);
-                unset($response);
-                unset($this->dbAdapter);
-                unset($aws_manager);
-                $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
-                $message_data = $aws_manager->fetchBackLogEntry();
-                if (empty($message_data)) {
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', 
-                            ' returned null - processing complete');
-                    exit();
-                } else {
-                    //update message for processing
-                    $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
-                    $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                try {
+                    /*
+                     * Process initial message
+                     */
+                    Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
                             $message_data);
+                    $result = $aws_manager->snsProcessMediaSubscribe(
+                            $message_data);
+                    
+                    /*
+                     * Reset and work on backlog
+                     */
+                    unset($message_data);
+                    unset($response);
+                    unset($this->dbAdapter);
+                    unset($aws_manager);
+                    $aws_manager = new AWSManagerReceiver(
+                            $this->getServiceLocator());
+                    $message_data = $aws_manager->fetchBackLogEntry();
+                    if (empty($message_data)) {
+                        Mlog::addone(
+                                __CLASS__ . __METHOD__ .
+                                         '$this->fetchBackLogEntry()', 
+                                        ' returned null - processing complete');
+                        exit();
+                    } else {
+                        // update message for processing
+                        $aws_manager = new AWSManagerReceiver(
+                                $this->getServiceLocator());
+                        $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                                $message_data);
+                    }
+                } catch (\Exception $e) {
+                    // continue processing - email likely sent
                 }
-            }
+            } // end while
             exit();
         }
     }
