@@ -238,7 +238,6 @@ class MemreasTranscoder
             $this->is_image = $message_data['is_image'];
             $this->json_metadata = json_encode($message_data);
             $this->transcode_start_time = $this->now();
-            ;
             
             $this->memreas_media = $this->getMemreasTranscoderTables()
                 ->getMediaTable()
