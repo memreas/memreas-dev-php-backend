@@ -303,6 +303,8 @@ class MemreasTranscoder
                     $this->user_id = $message_data['user_id'];
                     $s3file = $message_data['s3path'] .
                              $message_data['s3file_name'];
+                    Mlog::addone('s3path',$s3path);
+                    die();
                     
                     /*
                      * Fetch the file to transcode:
