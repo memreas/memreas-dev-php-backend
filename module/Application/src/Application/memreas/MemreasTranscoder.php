@@ -340,12 +340,15 @@ class MemreasTranscoder
                     // MemreasConstants::S3BUCKET, $download_file, $s3file);
                     // $this->memreas_media_metadata ['S3_files'] ['download'] =
                     // $download_file;
-                    
+                    try {
                     $download_file = $this->s3prefixpath . "download/" .
                              $this->s3file_name;
                     $this->aws_manager_receiver->pushMediaToS3($tmp_file, 
                             $download_file, "application/octet-stream");
                     $this->memreas_media_metadata['S3_files']['download'] = $download_file;
+                    } catch (\Exception $e) {
+                        throw $e;
+                    }
                 }
                 
                 // Set file related data
@@ -610,8 +613,7 @@ class MemreasTranscoder
             $this->transcode_status = "failure";
             $this->pass = "0";
             $this->transcode_end_time = $this->now();
-            // $this->transcode_status = 'failure';
-            // $this->persistTranscodeTransaction();
+            $this->persistTranscodeTransaction();
             
             // Media
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_failed';
