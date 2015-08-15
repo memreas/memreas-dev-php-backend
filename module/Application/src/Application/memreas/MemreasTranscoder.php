@@ -909,28 +909,27 @@ class MemreasTranscoder
                         // single_file ' .
                         // $transcoded_file;
                         
-                        // h264 with single ts file
-                        $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -i " .
-                                 $this->destRandMediaName .
-                                 ' -hls_flags single_file ' . $transcoded_file .
-                                 ' 2>&1';
+                        // h264 with single ts file - too long to download and play
+                        // $cmd = 'nice -' . $this->nice_priority . ' ' .
+                        //         $this->ffmpegcmd . " -i " .
+                        //         $this->destRandMediaName .
+                        //         ' -hls_flags single_file ' . $transcoded_file .
+                        //         ' 2>&1';
                         
-                        /*
-                         * //Old h264 impl
-                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
-                         * $this->ffmpegcmd . " -re -y -i " .
-                         * $transcoded_mp4_file . " -map 0 " .
-                         * " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                         * " -acodec libfdk_aac " . " -r 25 " .
-                         * " -profile:v main -level 4.0 " . " -b:v 1500k " .
-                         * " -maxrate 2000k " . " -force_key_frames 50 " .
-                         * " -flags -global_header " . " -f segment " .
-                         * " -segment_list_type m3u8 " . " -segment_list " .
-                         * $transcoded_file . " -segment_time 10 " .
-                         * " -segment_format mpeg_ts " .
-                         * $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-                         */
+                        
+                         //Old h264 impl
+                         $cmd = 'nice -' . $this->nice_priority . ' ' .
+                         $this->ffmpegcmd . " -re -y -i " .
+                         $transcoded_mp4_file . " -map 0 " .
+                         " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                         " -acodec libfdk_aac " . " -r 25 " .
+                         " -profile:v main -level 4.0 " . " -b:v 1500k " .
+                         " -maxrate 2000k " . " -force_key_frames 50 " .
+                         " -flags -global_header " . " -f segment " .
+                         " -segment_list_type m3u8 " . " -segment_list " .
+                         $transcoded_file . " -segment_time 10 " .
+                         " -segment_format mpeg_ts " .
+                         $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
