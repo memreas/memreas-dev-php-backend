@@ -21,50 +21,10 @@
  * );
  */
 return array(
-        'db' => array(
-                'adapters' => array(
-                        'memreasintdb' => array(
-                                'driver' => 'Pdo',
-                                'driver_options' => array(
-                                        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-                                )
-                        ),
-                        'memreaspaymentsdb' => array(
-                                'driver' => 'Pdo',
-                                'driver_options' => array(
-                                        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-                                )
-                        ),
-                        'memreasbackenddb' => array(
-                                'driver' => 'Pdo',
-                                'driver_options' => array(
-                                        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
-                                )
-                        )
-                )
-        ),
-        
         'service_manager' => array(
                 'abstract_factories' => array(
                         'Zend\Db\Adapter\AdapterAbstractServiceFactory'
                 )
         )
         ,
-/*        
-    'session' => array(
-        'config' => array(
-            'class' => 'Zend\Session\Config\SessionConfig',
-            'options' => array(
-                'name' => 'myapp',
-            ),
-        ),
-        'storage' => 'Zend\Session\Storage\SessionArrayStorage',
-        'validators' => array(
-            array(
-                'Zend\Session\Validator\RemoteAddr',
-                'Zend\Session\Validator\HttpUserAgent',
-            ),
-        ),
-    ),
-*/
 );
