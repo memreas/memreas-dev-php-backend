@@ -67,7 +67,6 @@ class AWSManagerReceiver {
 	}
 	function snsProcessMediaSubscribe($message_data) {
 		try {
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			$result = $this->memreasTranscoder->exec ( $message_data, false );
 			return $result;
 		} catch ( Exception $e ) {
@@ -161,8 +160,7 @@ class AWSManagerReceiver {
 					'CopySource' => $bucket . '/' . $source,
 					'ServerSideEncryption' => 'AES256',
 					'x-amz-storage-class' => 'REDUCED_REDUNDANCY' 
-			)
-			 );
+			) );
 			return $result;
 		} catch ( Exception $e ) {
 			throw $e;

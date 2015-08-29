@@ -22,9 +22,7 @@ class MemreasTranscoderTables {
 	// Media table
 	public function getMediaTable() {
 		if (! $this->mediaTable) {
-			Mlog::addone ( __CLASS__ . __METHOD__, 'Application\Model\MediaTable' );
 			$this->mediaTable = $this->service_locator->get ( 'Application\Model\MediaTable' );
-			Mlog::addone ( __CLASS__ . __METHOD__, 'Application\Model\MediaTable - initialized' );
 		}
 		return $this->mediaTable;
 	}

@@ -125,8 +125,6 @@ class MemreasTranscoder {
 	}
 	public function markMediaForTranscoding($message_data) {
 		try {
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::markMediaForTranscoding($message_data)', 'enter' );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::markMediaForTranscoding($message_data)::message_data', $message_data );
 			/*
 			 * setup vars and store transaction
 			 */
@@ -154,7 +152,6 @@ class MemreasTranscoder {
 			} else {
 				$this->transcode_status = 'pending';
 			}
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			$this->s3file_basename_prefix = $message_data ['s3file_basename_prefix'];
 			$this->s3prefixpath = $this->user_id . '/' . $this->media_id . '/';
 			$this->is_video = $message_data ['is_video'];
@@ -162,13 +159,8 @@ class MemreasTranscoder {
 			$this->is_image = $message_data ['is_image'];
 			$this->json_metadata = json_encode ( $message_data );
 			$this->transcode_start_time = $this->now ();
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
-			Mlog::addone ( __CLASS__ . __METHOD__, $this->media_id );
-			
 			$this->memreas_media = $this->getMemreasTranscoderTables ()->getMediaTable ()->getMedia ( $this->media_id );
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			$this->memreas_media_metadata = json_decode ( $this->memreas_media->metadata, true );
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] = array ();
@@ -184,10 +176,7 @@ class MemreasTranscoder {
 				Mlog::addone ( '$message_data[backlog] is empty', '...' );
 				$this->transcode_transaction_id = $this->persistTranscodeTransaction ();
 			}
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
-			Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->persistTranscodeTransaction ()', $this->transcode_transaction_id );
 			
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			return $this->transcode_transaction_id;
 		} catch ( \Exception $e ) {
 			throw $e;
