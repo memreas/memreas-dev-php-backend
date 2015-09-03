@@ -128,11 +128,11 @@ class MemreasTranscoder {
 			/*
 			 * setup vars and store transaction
 			 */
-			if (filter_var ( $message_data ['is_video'], FILTER_VALIDATE_BOOLEAN )) {
+			if ( !empty( $message_data ['is_video'] ) && ( $message_data ['is_video'] == 1) ) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_video', $is_video );
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
-			} else if (filter_var ( $message_data ['is_audio'], FILTER_VALIDATE_BOOLEAN )) {
+			} if ( !empty( $message_data ['is_audio'] ) && ( $message_data ['is_audio'] == 1) ) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_audio', $is_audio );
 				$message_data ['is_image'] = 0;
 				$message_data ['is_video'] = 0;
@@ -140,7 +140,7 @@ class MemreasTranscoder {
 				$message_data ['is_image'] = 1;
 				$message_data ['is_video'] = 0;
 				$message_data ['is_audio'] = 0;
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_image', $is_image );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_image', $message_data ['is_image'] );
 			}
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->user_id = $message_data ['user_id'];
