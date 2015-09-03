@@ -125,6 +125,7 @@ class IndexController extends AbstractActionController {
 			$message_data = json_decode ( $json, true );
 			$message_data ['process_task'] = $this->awsManagerAutoScaler->serverReadyToProcessTask ();
 			$message_data ['backlog'] = 0;
+			
 			Mlog::addone ( __CLASS__ . __METHOD__ . 'process_task', $message_data ['process_task'] );
 			
 			/*
@@ -139,14 +140,12 @@ class IndexController extends AbstractActionController {
 				$response = json_encode ( 'backlog' );
 			}
 			
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			$this->returnResponse ( $response );
 			/**
 			 * ****** background process starts here *******
 			 * ** process task if cpu < 75% usage
 			 * ** after completing task fetch another
 			 */
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			/*
 			 * Process initial message
 			 */
