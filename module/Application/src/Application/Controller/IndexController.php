@@ -146,36 +146,49 @@ class IndexController extends AbstractActionController {
 			 * ** process task if cpu < 75% usage
 			 * ** after completing task fetch another
 			 */
+			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
+			/*
+			 * Process initial message
+			 */
+			Mlog::addone ( __CLASS__ . __METHOD__ . '::$message_data', $message_data );
+			$result = $aws_manager->snsProcessMediaSubscribe ( $message_data );
+			/*
+			 * Reset and work on backlog
+			 */
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
+			unset ( $message_data );
+			unset ( $response );
+			unset ( $this->dbAdapter );
+			unset ( $aws_manager );
+			
 			while ( $this->awsManagerAutoScaler->serverReadyToProcessTask () ) {
 				try {
-					Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
-					/*
-					 * Process initial message
-					 */
-					Mlog::addone ( __CLASS__ . __METHOD__ . '::$message_data', $message_data );
-					$result = $aws_manager->snsProcessMediaSubscribe ( $message_data );
-					
-					/*
-					 * Reset and work on backlog
-					 */
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
-					unset ( $message_data );
-					unset ( $response );
-					unset ( $this->dbAdapter );
-					unset ( $aws_manager );
 					$aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
 					$message_data = $aws_manager->fetchBackLogEntry ();
 					if (empty ( $message_data )) {
 						Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete' );
 						exit ();
 					} else {
+						/*
+						 * Process backlog messages
+						 */
 						Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry() - message_data', $message_data );
-						// update message for processing
 						$aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
 						$aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
+						Mlog::addone ( __CLASS__ . __METHOD__ . '::$message_data', $message_data );
+						$result = $aws_manager->snsProcessMediaSubscribe ( $message_data );
 					}
 				} catch ( \Exception $e ) {
 					// continue processing - email likely sent
+				} finally {
+					/*
+					 * Reset and continue work on backlog
+					 */
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
+					unset ( $message_data );
+					unset ( $response );
+					unset ( $this->dbAdapter );
+					unset ( $aws_manager );
 				}
 			} // end while
 			exit ();
