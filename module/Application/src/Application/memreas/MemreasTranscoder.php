@@ -129,20 +129,12 @@ class MemreasTranscoder {
 			 * setup vars and store transaction
 			 */
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$message_data [is_video]', $message_data ['is_video'] );
-			if (! empty ( $message_data ['is_video'] )) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$message_data [is_video]', 'IS !EMPTY' );
-			}
-			if ($message_data ['is_video'] == 1) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$message_data [is_video]', '== 1' );
-			}
-			
-			if ((! empty ( $message_data ['is_video'] )) && ($message_data ['is_video'] == 1)) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_video', $is_video );
+			if (isset ( $message_data ['is_video'] ) && ($message_data ['is_video'] == 1)) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_video', $message_data ['is_video'] );
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
-			}
-			if ((! empty ( $message_data ['is_audio'] )) && ($message_data ['is_audio'] == 1)) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_audio', $is_audio );
+			} else if (isset ( $message_data ['is_audio'] ) && ($message_data ['is_audio'] == 1)) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_audio', $message_data ['is_audio'] );
 				$message_data ['is_image'] = 0;
 				$message_data ['is_video'] = 0;
 			} else { // It's an image just resize and store thumbnails
