@@ -150,7 +150,6 @@ class IndexController extends AbstractActionController {
 			 * Process initial message
 			 */
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::$message_data', $message_data );
-			die ();
 			$result = $aws_manager->snsProcessMediaSubscribe ( $message_data );
 			/*
 			 * Reset and work on backlog

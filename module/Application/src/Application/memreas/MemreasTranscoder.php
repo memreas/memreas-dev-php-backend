@@ -258,7 +258,6 @@ class MemreasTranscoder {
 					}
 				}
 				
-				Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 				// Set file related data
 				$this->original_file_name = $this->s3file_name;
 				$this->message_data = json_encode ( $message_data );
@@ -280,6 +279,7 @@ class MemreasTranscoder {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->MediaFileType', $this->MediaFileType );
 					switch (strtolower ( $this->MediaFileType )) {
 						case 'video/mp4' :
+							Mlog::addone ( __CLASS__ . __METHOD__, __LINE__, 'video/mp4' );
 							break;
 						case 'video/mov' :
 							$this->MediaFileType = 'video/quicktime';
@@ -386,7 +386,7 @@ class MemreasTranscoder {
 				
 				if ($this->is_video) {
 					error_log ( "video duration is " . $this->duration . PHP_EOL );
-					
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->memreas_media_metadata::before::', $this->memreas_media_metadata );
 					/*
 					 * Thumbnails
 					 */
@@ -436,6 +436,7 @@ class MemreasTranscoder {
 					// update media metadata and transcode transaction metadata
 					$this->persistMedia ();
 					$this->persistTranscodeTransaction ();
+					
 					// End if ($is_video)
 				} else if ($this->is_audio) {
 					// Audio section
@@ -483,6 +484,7 @@ class MemreasTranscoder {
 				// Debugging - log table entry
 				Mlog::addone ( __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
                         $memreas_media_data_array)', $this->transcode_status );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->memreas_media_metadata::after::', $this->memreas_media_metadata );
 			} // End if(isset($_POST))
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . "::line::" . $e->getLine () . '::Caught exception: ', $e->getMessage () );
