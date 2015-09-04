@@ -128,9 +128,9 @@ class MemreasTranscoder {
 			/*
 			 * setup vars and store transaction
 			 */
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$message_data [is_video]', $message_data ['is_video'] );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$message_data [is_video]', $message_data ['is_video'] );
 			if (isset ( $message_data ['is_video'] ) && ($message_data ['is_video'] == 1)) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_video', $message_data ['is_video'] );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::is_video', $message_data ['is_video'] );
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
 			} else if (isset ( $message_data ['is_audio'] ) && ($message_data ['is_audio'] == 1)) {
@@ -143,7 +143,6 @@ class MemreasTranscoder {
 				$message_data ['is_audio'] = 0;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_image', $message_data ['is_image'] );
 			}
-			die ();
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->user_id = $message_data ['user_id'];
 			$this->media_id = $message_data ['media_id'];
@@ -166,6 +165,8 @@ class MemreasTranscoder {
 			$this->transcode_start_time = $this->now ();
 			$this->memreas_media = $this->getMemreasTranscoderTables ()->getMediaTable ()->getMedia ( $this->media_id );
 			$this->memreas_media_metadata = json_decode ( $this->memreas_media->metadata, true );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->memreas_media->metadata', $this->memreas_media->metadata );
+			die ();
 			
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] = array ();
