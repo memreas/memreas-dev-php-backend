@@ -165,8 +165,6 @@ class MemreasTranscoder {
 			$this->transcode_start_time = $this->now ();
 			$this->memreas_media = $this->getMemreasTranscoderTables ()->getMediaTable ()->getMedia ( $this->media_id );
 			$this->memreas_media_metadata = json_decode ( $this->memreas_media->metadata, true );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->memreas_media->metadata', $this->memreas_media->metadata );
-			die ();
 			
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] = array ();
@@ -192,13 +190,12 @@ class MemreasTranscoder {
 		try {
 			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			/*
-			 * Processing for backlog entry if set
+			 * Processing for current entry if set
 			 */
 			if (! empty ( $message_data ['backlog'] )) {
 				$this->transcode_transaction_id = $message_data ['transcode_transaction_id'];
 			}
 			
-			Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 			if (isset ( $message_data )) {
 				if (getcwd () == '/var/www/memreas-dev-php-backend') {
 					// AWS ffmpeg && ffprobe
@@ -210,13 +207,11 @@ class MemreasTranscoder {
 					$this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL;
 				}
 				
-				Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 				// //////////////////////
 				// create work folders
 				$this->createFolders ();
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_folders_created';
 				
-				Mlog::addone ( __CLASS__ . __METHOD__, __LINE__ );
 				if (! $isUpload) {
 					$this->user_id = $message_data ['user_id'];
 					$s3file = $message_data ['s3path'] . $message_data ['s3file_name'];
