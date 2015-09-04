@@ -143,6 +143,7 @@ class MemreasTranscoder {
 				$message_data ['is_audio'] = 0;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'is_image', $message_data ['is_image'] );
 			}
+			die ();
 			$starttime = date ( 'Y-m-d H:i:s' );
 			$this->user_id = $message_data ['user_id'];
 			$this->media_id = $message_data ['media_id'];
