@@ -457,8 +457,9 @@ class MemreasTranscoder
                              $this->destRandMediaName;
                     $ffprobe_json = shell_exec($cmd);
                     $ffprobe_json_array = json_decode($ffprobe_json, true);
-                    Mlog::addone(__CLASS__ . __METHOD__ . '::' . $cmd, 
-                            $ffprobe_json);
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . __LINE__ . '::_FFPROBE_::' .
+                                     $cmd, $ffprobe_json);
                     
                     $this->duration = $ffprobe_json_array['format']['duration'];
                     $this->setNicePriorityAndCompression();
@@ -600,7 +601,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -662,7 +664,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
