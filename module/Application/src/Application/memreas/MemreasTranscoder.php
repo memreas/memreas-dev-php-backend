@@ -877,10 +877,13 @@ class MemreasTranscoder
                 // $qv = ' -c:v libx265 -preset ' .
                 // $this->compression_preset_web . ' -x265-params crf=28 -c:a
                 // aac -strict experimental -b:a 128k ';
+                
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
                 // need this for download
-                $qv = ' -c:v libx264 -preset ' . $this->compression_preset_web .
-                         ' crf=22 -c:a aac -strict experimental -b:a 128k ';
+                $qv = ' -c:v libx264 -c:a libfdk_aac ' .
+                         $this->compression_preset_web .
+                         ' -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+                
                 // ffmpeg -i input -c:v libx264 -preset slow -crf 22 -c:a copy
                 // output.mkv
                 $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR .
