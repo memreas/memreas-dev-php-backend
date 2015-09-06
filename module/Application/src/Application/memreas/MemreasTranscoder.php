@@ -601,7 +601,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -663,7 +664,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -877,8 +879,16 @@ class MemreasTranscoder
                  */
                 
                 // 4k codec level mp42 - can't be downloaded to apple
-                $this->memreas_media_metadata['S3_files']['format']['codec_level'] = $ffprobe_json_array['format']['tags']['major_brand'];
-                // if ($codec_level == 'mp42') <-- 4k
+                $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'] = (isset(
+                        $ffprobe_json_array['format']['tags']['major_brand']) &&
+                         ! empty(
+                                $ffprobe_json_array['format']['tags']['major_brand'])) ? $ffprobe_json_array['format']['tags']['major_brand'] : "";
+                $this->memreas_media_metadata['S3_files']['type']['video']['width'] = (isset(
+                        $ffprobe_json_array['streams'][0]['width']) &&
+                         ! empty($ffprobe_json_array['streams'][0]['width'])) ? $ffprobe_json_array['streams'][0]['width'] : "";
+                $this->memreas_media_metadata['S3_files']['type']['video']['height'] = (isset(
+                        $ffprobe_json_array['streams'][0]['height']) &&
+                         ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
                 $qv = ' -c:v libx265 -preset ' . $this->compression_preset_web .
                          ' -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
                 
