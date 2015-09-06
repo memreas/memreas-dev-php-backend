@@ -601,8 +601,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -664,8 +663,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -877,15 +875,19 @@ class MemreasTranscoder
                 /*
                  * Test lossless with best compression
                  */
-                // $qv = ' -c:v libx265 -preset ' .
-                // $this->compression_preset_web . ' -x265-params crf=28 -c:a
-                // aac -strict experimental -b:a 128k ';
+                
+                // 4k codec level mp42 - can't be downloaded to apple
+                $this->memreas_media_metadata['S3_files']['format']['codec_level'] = $ffprobe_json_array['format']['tags']['major_brand'];
+                // if ($codec_level == 'mp42') <-- 4k
+                $qv = ' -c:v libx265 -preset ' . $this->compression_preset_web .
+                         ' -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
                 
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
-                // need this for download
-                $qv = ' -c:v libx264 -c:a libfdk_aac ' .
-                         $this->compression_preset_web .
-                         ' -profile:v main -level 4.0 -movflags +faststart -pix_fmt yuv420p -b:a 128k ';
+                // need this for download but can't use for 4k??
+                // $qv = ' -c:v libx264 -c:a libfdk_aac ' .
+                // $this->compression_preset_web .
+                // ' -profile:v main -level 4.0 -movflags +faststart -pix_fmt
+                // yuv420p -b:a 128k ';
                 
                 // ffmpeg -i input -c:v libx264 -preset slow -crf 22 -c:a copy
                 // output.mkv
