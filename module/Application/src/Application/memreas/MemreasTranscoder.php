@@ -608,8 +608,8 @@ class MemreasTranscoder
             } // End if(isset($_POST))
         } catch (\Exception $e) {
             Mlog::addone(
-                    __CLASS__ . __METHOD__ . "::line::" . $e->getLine() .
-                             '::Caught exception: ', $e->getMessage());
+                    __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', 
+                    $e->getMessage());
             $message_data['error_line'] = $e->getLine();
             $message_data['error_message'] = $e->getMessage();
             $message_data['error_trace'] = $e->getTrace();
@@ -637,11 +637,17 @@ class MemreasTranscoder
             // persist
             $media_id = $this->persistMedia($this->memreas_media, 
                     $memreas_media_data_array);
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . LINE__ . '::catch throwing error', 
+                    $this->transcode_status);
             throw $e;
         } finally {
             // Always delete the temp dir...
             // Delete the temp dir if we got this far...
             try {
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ . LINE__ . '::inside finally::', 
+                        $this->transcode_status);
                 $result = $this->rmWorkDir($this->homeDir);
             } catch (\Exception $e) {
                 $error_data = [];
@@ -1089,6 +1095,8 @@ class MemreasTranscoder
     private function rmWorkDir ($dir)
     {
         try {
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'rmWorkDir ($dir)', 
+                    $dir);
             $it = new \RecursiveDirectoryIterator($dir);
             $files = new \RecursiveIteratorIterator($it, 
                     \RecursiveIteratorIterator::CHILD_FIRST);
