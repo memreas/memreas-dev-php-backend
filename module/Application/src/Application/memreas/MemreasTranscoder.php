@@ -508,7 +508,8 @@ class MemreasTranscoder
                      */
                     $this->transcode_job_meta = array();
                     Mlog::addone(__CLASS__ . __METHOD__, "starting web video");
-                    $this->transcode_job_meta['web'] = $this->transcode('web');
+                    $this->transcode('web'); // set $this->transcode_job_meta in
+                                             // function
                     Mlog::addone(__CLASS__ . __METHOD__, "finished web video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'web_mp4_complete';
                     // set status to show web available
@@ -522,8 +523,9 @@ class MemreasTranscoder
                      * High quality mp4 conversion (h.265)
                      */
                     Mlog::addone(__CLASS__ . __METHOD__, "starting 1080p video");
-                    $this->transcode_job_meta['1080p'] = $this->transcode(
-                            '1080p');
+                    $this->transcode('1080p'); // set $this->transcode_job_meta
+                                               // in
+                                               // function
                     Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
                     // set status to show 1080p available
@@ -538,7 +540,9 @@ class MemreasTranscoder
                      */
                     Mlog::addone(__CLASS__ . __METHOD__, 
                             '$this->transcode ( hls )');
-                    $this->transcode_job_meta['hls'] = $this->transcode('hls');
+                    $this->transcode('hls'); // set $this->transcode_job_meta
+                                             // in
+                                             // function
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'hls_complete';
                     // set status to show all (web,1080p,hls) available
                     $this->transcode_status = "success";
@@ -646,6 +650,12 @@ class MemreasTranscoder
             // Always delete the temp dir...
             // Delete the temp dir if we got this far...
             try {
+                //
+                // Ensure data is stored in media and transcode_transcaction
+                //
+                $this->persistMedia();
+                $this->persistTranscodeTransaction();
+                
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . LINE__ . '::inside finally::', 
                         $this->transcode_status);
@@ -1056,7 +1066,7 @@ class MemreasTranscoder
             // Log status
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_' .
                      $type . '_upload_S3';
-            $arr = array(
+            $this->transcode_job_meta[$type] = array(
                     "ffmpeg_cmd" => json_encode($cmd, JSON_UNESCAPED_SLASHES),
                     "ffmpeg_cmd_output" => json_encode($op, 
                             JSON_UNESCAPED_SLASHES),
@@ -1105,8 +1115,6 @@ class MemreasTranscoder
                     __CLASS__ . __METHOD__ . __LINE__ . 'return $type::' . $type);
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'return $arr::', 
                     $arr);
-            
-            return $arr;
         } catch (\Exception $e) {
             throw $e;
         }
