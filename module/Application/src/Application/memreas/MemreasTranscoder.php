@@ -601,8 +601,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -664,8 +663,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -1103,6 +1101,10 @@ class MemreasTranscoder
             Mlog::addone(
                     __CLASS__ . __METHOD__ . '::complete::transcode_status', 
                     $this->transcode_status);
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ . 'return $type::' . $type);
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'return $arr::', 
+                    $arr);
             
             return $arr;
         } catch (\Exception $e) {
