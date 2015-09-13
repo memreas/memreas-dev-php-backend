@@ -165,7 +165,7 @@ curl -O http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.4.tar.gz
 tar xzvf libvorbis-1.3.4.tar.gz
 cd libvorbis-1.3.4
 pwd
-LDFLAGS="-L $build_dir_lib" CPPFLAGS="-I $build_dir_include" ./configure --prefix="$build_dir" --with-ogg="$build_dir" --disable-shared
+LDFLAGS="-L$build_dir_lib" CPPFLAGS="-I$build_dir_include" ./configure --prefix="$build_dir" --with-ogg="$build_dir" --disable-shared
 make
 make install
 make distclean
