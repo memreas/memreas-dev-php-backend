@@ -605,8 +605,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -674,8 +673,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -886,7 +884,8 @@ class MemreasTranscoder
             //
             // 4k codec level mp42 - can't be downloaded to apple
             //
-            $isMP42 = false;
+            $isMP42 = false; // standard 4k hevc
+            $isMP41 = false; // gopro 4k
             $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'] = (isset(
                     $ffprobe_json_array['format']['tags']['major_brand']) &&
                      ! empty(
@@ -896,7 +895,12 @@ class MemreasTranscoder
                      "mp42") {
                 $isMP42 = true;
                 // ffmpeg -pix_fmt yuv420p -i any-source-video.webm output.y4m
-            }
+            } else 
+                if (strtolower(
+                        $this->memreas_media_metadata['S3_files']['type']['video']['codec_level']) ==
+                         "mp41") {
+                    $isMP42 = true;
+                }
             if ($type == 'web') {
                 /*
                  * Test lossless with best compression
@@ -909,7 +913,7 @@ class MemreasTranscoder
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
                 $qv = ' -c:v libx265 -preset ' . $this->compression_preset_web .
-                         ' -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
+                         ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
                 
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
                 // need this for download but can't use for 4k??
@@ -928,7 +932,7 @@ class MemreasTranscoder
                     
                     $qv = ' -c:v libx265 -preset ' .
                              $this->compression_preset_1080p .
-                             ' -x265-params crf=28 -c:a aac -strict experimental -b:a 128k ';
+                             ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -958,6 +962,19 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
+                        //
+                        // hevc try again...
+                        //
+                        $qv = ' -c:v libx265 -c:a aac -strict -2 -vbr 4 -f segment  -segment_list_type m3u8  -segment_list ' .
+                                 $this->destRandMediaName .
+                                 ' -segment_time 10  -segment_format mpeg_ts ' .
+                                 $transcoded_hls_ts_file . "%05d.ts ";
+                        
+                        $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                 $this->ffmpegcmd .
+                                 " -i $this->destRandMediaName $qv $transcoded_file " .
+                                 '2>&1';
+                        
                         // new h265 command - doesn't work
                         // $cmd = 'nice -' . $this->nice_priority . ' ' .
                         // $this->ffmpegcmd . " -i " .
@@ -965,6 +982,9 @@ class MemreasTranscoder
                         // ' -vcodec libx265 -acodec libfdk_aac -hls_flags
                         // single_file ' .
                         // $transcoded_file;
+                        
+                        ./ffmpeg -i IMG_0027.MOV 
+                        
                         
                         // h264 with single ts file - too long to download and
                         // play
@@ -975,6 +995,7 @@ class MemreasTranscoder
                         // ' 2>&1';
                         
                         // Old h264 impl
+                        /*
                         if ($isMP42) {
                             // downscale to 1080p
                             $cmd = 'nice -' . $this->nice_priority . ' ' .
@@ -1010,8 +1031,10 @@ class MemreasTranscoder
                                      $transcoded_hls_ts_file . "%05d.ts" .
                                      ' 2>&1';
                         }
+                        */
                         
-                        Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
+                        Mlog::addone(
+                                __CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
                         if ($type == 'audio') {
                             /*
