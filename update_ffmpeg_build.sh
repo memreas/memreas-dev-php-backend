@@ -132,7 +132,7 @@ make distclean
 cd $source_dir
 git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 cd ffmpeg
-PKG_CONFIG_PATH="${build)lib/pkgconfig" ./configure --prefix="${build_dir)" --extra-cflags="-I ${build_dir)include" --extra-ldflags="-L ${build_dir)lib" --bindir="${bin_dir}" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
+PKG_CONFIG_PATH="${build_dir)lib/pkgconfig" ./configure --prefix="${build_dir)" --extra-cflags="-I ${build_dir)include" --extra-ldflags="-L ${build_dir)lib" --bindir="${bin_dir}" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
 make
 make install
 make distclean
