@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -v
 #Purpose = update ffmpeg on fedora
 #Created on 12-SEP-2015
 #Author = John Meah
