@@ -7,9 +7,14 @@
 #vars
 cmd="" 
 base_dir="/var/www/memreas_ffmpeg_install.bak"
-source_dir="${base_dir}/ffmpeg_sources"
-build_dir="${base_dir}/ffmpeg_build"
-bin_dir="${base_dir}/bin"
+source_dir="$base_dir/ffmpeg_sources"
+build_dir="$base_dir/ffmpeg_build"
+bin_dir="$base_dir/bin"
+
+echo $base_dir
+echo $source_dir
+echo $build_dir
+echo $bin_dir
 
 rm -rf $base_dir
 mkdir $base_dir
@@ -17,10 +22,23 @@ mkdir $source_dir
 mkdir $build_dir
 mkdir $bin_dir
 
-base_dir="/var/www/memreas_ffmpeg_install.bak/"
-source_dir="${base_dir}ffmpeg_sources/"
-build_dir="${base_dir}ffmpeg_build/"
-bin_dir="${base_dir}bin/"
+base_dir+="/"
+source_dir+="/"
+build_dir+="/"
+bin_dir+="/"
+build_dir_lib=$build_dir + "lib"
+build_dir_include=$build_dir + "include"
+build_dir_lib_pkgconfig=$build_dir_lib + "/pkgconfig"
+
+
+echo $base_dir
+echo $source_dir
+echo $build_dir
+echo $build_dir_lib
+echo $build_dir_include
+echo $build_dir_lib_pkgconfig
+exit 1
+
 
 ####################################
 # remove old files and dependencies
@@ -57,7 +75,8 @@ make distclean
 ##############
 cd $source_dir
 hg clone https://bitbucket.org/multicoreware/x265
-cd $source_dirx265/build/linux
+cd $source_dir
+cd x265/build/linux
 cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$build_dir" -DENABLE_SHARED:bool=off ../../source
 make
 make install
@@ -117,7 +136,7 @@ cd $source_dir
 curl -O http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.4.tar.gz
 tar xzvf libvorbis-1.3.4.tar.gz
 cd libvorbis-1.3.4
-LDFLAGS="-L $build_dirlib" CPPFLAGS="-I $build_dirinclude" ./configure --prefix="$build_dir" --with-ogg="$build_dir" --disable-shared
+LDFLAGS="-L $build_dir_lib" CPPFLAGS="-I $build_dir_include" ./configure --prefix="$build_dir" --with-ogg="$build_dir" --disable-shared
 make
 make install
 make distclean
@@ -128,7 +147,7 @@ make distclean
 cd $source_dir
 git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 cd ffmpeg
-PKG_CONFIG_PATH="$build_dirlib/pkgconfig" ./configure --prefix="$build_dir" --extra-cflags="-I $build_dirinclude" --extra-ldflags="-L $build_dirlib" --bindir="$bin_dir" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
+PKG_CONFIG_PATH="$build_dir_lib_pkgconfig" ./configure --prefix="$build_dir" --extra-cflags="-I $build_dir_include" --extra-ldflags="-L $build_dir_lib" --bindir="$bin_dir" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
 make
 make install
 make distclean
