@@ -49,10 +49,10 @@ yum install autoconf automake cmake gcc gcc-c++ git libtool make mercurial nasm 
 # Install Yasm
 ##############
 cd $source_dir
-echo pwd
+pwd
 git clone --depth 1 git://github.com/yasm/yasm.git
 cd yasm
-echo pwd
+pwd
 autoreconf -fiv
 ./configure --prefix="$build_dir" --bindir="$bin_dir"
 make
@@ -65,10 +65,10 @@ sleep 30
 # Install x264
 ##############
 cd $source_dir
-echo pwd
+pwd
 git clone --depth 1 git://git.videolan.org/x264
 cd x264
-echo pwd
+pwd
 ./configure --prefix="$build_dir" --bindir="$bin_dir" --enable-static
 make
 make install
@@ -79,12 +79,12 @@ sleep 30
 # Install x265
 ##############
 cd $source_dir
-echo pwd
+pwd
 hg clone https://bitbucket.org/multicoreware/x265
 cd $source_dir
-echo pwd
+pwd
 cd x265/build/linux
-echo pwd
+pwd
 cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$build_dir" -DENABLE_SHARED:bool=off ../../source
 make
 make install
@@ -94,10 +94,10 @@ sleep 30
 # Install aac
 ##############
 cd $source_dir
-echo pwd
+pwd
 git clone --depth 1 git://git.code.sf.net/p/opencore-amr/fdk-aac
 cd fdk-aac
-echo pwd
+pwd
 autoreconf -fiv
 ./configure --prefix="$build_dir" --disable-shared
 make
@@ -109,11 +109,11 @@ sleep 30
 # Install libmp3lame
 ####################
 cd $source_dir
-echo pwd
+pwd
 curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz
 tar xzvf lame-3.99.5.tar.gz
 cd lame-3.99.5
-echo pwd
+pwd
 ./configure --prefix="$build_dir" --bindir="$bin_dir" --disable-shared --enable-nasm
 make
 make install
@@ -124,10 +124,10 @@ sleep 30
 # Install libmopus
 ####################
 cd $source_dir
-echo pwd
+pwd
 git clone git://git.opus-codec.org/opus.git
 cd opus
-echo pwd
+pwd
 autoreconf -fiv
 ./configure --prefix="$build_dir" --disable-shared
 make
@@ -139,11 +139,11 @@ sleep 30
 # Install libopus
 ####################
 cd $source_dir
-echo pwd
+pwd
 curl -O http://downloads.xiph.org/releases/ogg/libogg-1.3.2.tar.gz
 tar xzvf libogg-1.3.2.tar.gz
 cd libogg-1.3.2
-echo pwd
+pwd
 ./configure --prefix="$build_dir" --disable-shared
 make
 make install
@@ -154,11 +154,11 @@ sleep 30
 # Install libvoribis
 ####################
 cd $source_dir
-echo pwd
+pwd
 curl -O http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.4.tar.gz
 tar xzvf libvorbis-1.3.4.tar.gz
 cd libvorbis-1.3.4
-echo pwd
+pwd
 LDFLAGS="-L $build_dir_lib" CPPFLAGS="-I $build_dir_include" ./configure --prefix="$build_dir" --with-ogg="$build_dir" --disable-shared
 make
 make install
@@ -169,10 +169,10 @@ sleep 30
 # Install ffmpeg
 ####################
 cd $source_dir
-echo pwd
+pwd
 git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 cd ffmpeg
-echo pwd
+pwd
 PKG_CONFIG_PATH="$build_dir_lib_pkgconfig" ./configure --prefix="$build_dir" --extra-cflags="-I $build_dir_include" --extra-ldflags="-L $build_dir_lib" --bindir="$bin_dir" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
 make
 make install
