@@ -22,7 +22,7 @@ $cmd
 ##############
 # Update Yasm
 ##############
-cmd="cd $source_dir"+"yasm"
+cmd="cd ${source_dir}yasm"
 $cmd
 cmd="make distclean"
 $cmd
@@ -38,7 +38,7 @@ $cmd
 ##############
 # Update x264
 ##############
-cmd="cd $source_dir"+"x264"
+cmd="cd ${source_dir}x264"
 $cmd
 cmd="make distclean"
 $cmd
@@ -55,13 +55,13 @@ $cmd
 ##############
 # Update x265
 ##############
-cmd="cd $source_dir"+"x265"
+cmd="cd ${source_dir}x265"
 $cmd
-cmd="rm -rf $source_dir"+"x265/build/linux/*"
+cmd="rm -rf ${source_dir}x265/build/linux/*"
 $cmd
 cmd="hg update"
 $cmd
-cmd="cd $source_dir"+"x265/build/linux"
+cmd="cd ${source_dir}x265/build/linux"
 $cmd
 cmd="cmake -G \"Unix Makefiles\" -DCMAKE_INSTALL_PREFIX=\"$build_dir\" -DENABLE_SHARED:bool=off ../../source"
 $cmd
@@ -73,7 +73,7 @@ $cmd
 #################
 # Update fdk_aac
 #################
-cmd="cd $source_dir"+"fdk_aac"
+cmd="cd ${source_dir}fdk_aac"
 $cmd
 cmd="make distclean"
 $cmd
@@ -89,7 +89,7 @@ $cmd
 #################
 # Update libvpx
 #################
-cmd="cd $source_dir"+"libvpx"
+cmd="cd ${source_dir}libvpx"
 $cmd
 cmd="make clean"
 $cmd
@@ -105,13 +105,13 @@ $cmd
 #################
 # Update ffmpeg
 #################
-cmd="cd $source_dir"+"ffmpeg"
+cmd="cd ${source_dir}ffmpeg"
 $cmd
 cmd="make distclean"
 $cmd
 cmd="git pull"
 $cmd
-cmd="PKG_CONFIG_PATH=\"$build_dir"+"lib/pkgconfig\" ./configure --prefix=\"$build_dir\" --extra-cflags=\"-I $build_dir"+"include\" --extra-ldflags=\"-L $build_dir"+"lib\" --bindir=\"$bin_dir\" --pkg-config-flags=\"--static\" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265"
+cmd="PKG_CONFIG_PATH=\"${build_dir}lib/pkgconfig\" ./configure --prefix=\"$build_dir\" --extra-cflags=\"-I ${build_dir}include\" --extra-ldflags=\"-L ${build_dir}lib\" --bindir=\"$bin_dir\" --pkg-config-flags=\"--static\" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265"
 $cmd
 cmd="make"
 $cmd
