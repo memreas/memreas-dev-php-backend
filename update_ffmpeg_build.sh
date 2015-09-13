@@ -14,111 +14,123 @@ bin_dir="${base_dir}bin/"
 ####################################
 # remove old files and dependencies
 ####################################
-cmd="rm -rf $build_dir $bin_dir{ffmpeg,ffprobe,ffserver,lame,vsyasm,x264,x265,yasm,ytasm}"
-$cmd
-cmd="sudo yum install autoconf automake cmake gcc gcc-c++ git libtool make mercurial nasm pkgconfig zlib-devel"
-$cmd
+sudo rm -rf $source_dir $build_dir $bin_dir{ffmpeg,ffprobe,ffserver,lame,vsyasm,x264,x265,yasm,ytasm}
+sudo yum install autoconf automake cmake gcc gcc-c++ git libtool make mercurial nasm pkgconfig zlib-devel
 
 ##############
-# Update Yasm
+# Install Yasm
 ##############
-cmd="cd ${source_dir}yasm"
-$cmd
-#cmd="make distclean"
-#$cmd
-cmd="git pull"
-$cmd
-cmd="./configure --prefix=\"$build_dir\" --bindir=\"$bin_dir\""
-$cmd
-cmd="make"
-$cmd
-cmd="make install"
-$cmd
-
-exit 1
-
-##############
-# Update x264
-##############
-cmd="cd ${source_dir}x264"
-$cmd
-cmd="make distclean"
-$cmd
-cmd="git pull"
-$cmd
-cmd="./configure --prefix=\"$build_dir\" --bindir=\"$bin_dir\" --enable-static"
-$cmd
-cmd="make"
-$cmd
-cmd="make install"
-$cmd
+cd $source_dir
+git clone --depth 1 git://github.com/yasm/yasm.git
+cd yasm
+autoreconf -fiv
+./configure --prefix="$build_dir/ffmpeg_build" --bindir="$bind_dir"
+make
+make install
+make distclean
 
 
 ##############
-# Update x265
+# Install x264
 ##############
-cmd="cd ${source_dir}x265"
-$cmd
-cmd="rm -rf ${source_dir}x265/build/linux/*"
-$cmd
-cmd="hg update"
-$cmd
-cmd="cd ${source_dir}x265/build/linux"
-$cmd
-cmd="cmake -G \"Unix Makefiles\" -DCMAKE_INSTALL_PREFIX=\"$build_dir\" -DENABLE_SHARED:bool=off ../../source"
-$cmd
-cmd="make"
-$cmd
-cmd="make install"
-$cmd
+cd $source_dir
+git clone --depth 1 git://git.videolan.org/x264
+cd x264
+./configure --prefix="$build_dir" --bindir="$bin_dir" --enable-static
+make
+make install
+make distclean
 
-#################
-# Update fdk_aac
-#################
-cmd="cd ${source_dir}fdk_aac"
-$cmd
-cmd="make distclean"
-$cmd
-cmd="git pull"
-$cmd
-cmd="./configure --prefix=\"$build_dir\" --disable-shared"
-$cmd
-cmd="make"
-$cmd
-cmd="make install"
-$cmd
 
-#################
-# Update libvpx
-#################
-cmd="cd ${source_dir}libvpx"
-$cmd
-cmd="make clean"
-$cmd
-cmd="git pull"
-$cmd
-cmd="./configure --prefix=\"$build_dir\" --disable-examples"
-$cmd
-cmd="make"
-$cmd
-cmd="make install"
-$cmd
 
-#################
-# Update ffmpeg
-#################
-cmd="cd ${source_dir}ffmpeg"
-$cmd
-cmd="make distclean"
-$cmd
-cmd="git pull"
-$cmd
-cmd="PKG_CONFIG_PATH=\"${build_dir}lib/pkgconfig\" ./configure --prefix=\"$build_dir\" --extra-cflags=\"-I ${build_dir}include\" --extra-ldflags=\"-L ${build_dir}lib\" --bindir=\"$bin_dir\" --pkg-config-flags=\"--static\" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265"
-$cmd
-cmd="make"
-$cmd
-cmd="make install"
-$cmd
+##############
+# Install x265
+##############
+cd $source_dir
+hg clone https://bitbucket.org/multicoreware/x265
+cd $source_dir
+cd x265/build/linux
+cd "${source_dir}x265/build/linux"
+cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="${build}" -DENABLE_SHARED:bool=off ../../source
+make
+make install
 
+
+##############
+# Install aac
+##############
+cd $source_dir
+git clone --depth 1 git://git.code.sf.net/p/opencore-amr/fdk-aac
+cd fdk-aac
+autoreconf -fiv
+./configure --prefix="$build_dir" --disable-shared
+make
+make install
+make distclean
+
+
+####################
+# Install libmp3lame
+####################
+cd $source_dir
+curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz
+tar xzvf lame-3.99.5.tar.gz
+cd lame-3.99.5
+./configure --prefix="$build_dir" --bindir="$bin_dir" --disable-shared --enable-nasm
+make
+make install
+make distclean
+
+
+####################
+# Install libmopus
+####################
+cd $source_dir
+git clone git://git.opus-codec.org/opus.git
+cd opus
+autoreconf -fiv
+./configure --prefix="$build_dir" --disable-shared
+make
+make install
+make distclean
+
+
+####################
+# Install libopus
+####################
+cd $source_dir
+curl -O http://downloads.xiph.org/releases/ogg/libogg-1.3.2.tar.gz
+tar xzvf libogg-1.3.2.tar.gz
+cd libogg-1.3.2
+./configure --prefix="build_dir" --disable-shared
+make
+make install
+make distclean
+
+
+####################
+# Install libvoribis
+####################
+cd $source_dir
+curl -O http://downloads.xiph.org/releases/vorbis/libvorbis-1.3.4.tar.gz
+tar xzvf libvorbis-1.3.4.tar.gz
+cd libvorbis-1.3.4
+LDFLAGS="-L ${build_dir}lib" CPPFLAGS="-I ${build_dir}include" ./configure --prefix="${build_dir}" --with-ogg="${build_dir}" --disable-shared
+make
+make install
+make distclean
+
+
+####################
+# Install ffmpeg
+####################
+cd $source_dir
+git clone --depth 1 git://source.ffmpeg.org/ffmpeg
+cd ffmpeg
+PKG_CONFIG_PATH="${build)lib/pkgconfig" ./configure --prefix="${build)" --extra-cflags="-I ${build)include" --extra-ldflags="-L ${build)lib" --bindir="${bin_dir}" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
+make
+make install
+make distclean
+hash -r
 
 #END
