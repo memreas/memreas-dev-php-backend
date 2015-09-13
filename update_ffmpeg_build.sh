@@ -59,7 +59,8 @@ pwd
 make
 make install
 make distclean
-sleep 30
+sudo PATH=$PATH:$bin_dir
+sleep 10
 
 
 ##############
@@ -74,7 +75,7 @@ pwd
 make
 make install
 make distclean
-sleep 30
+sleep 10
 
 
 # Install x265
@@ -89,7 +90,7 @@ pwd
 cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$build_dir" -DENABLE_SHARED:bool=off ../../source
 make
 make install
-sleep 30
+sleep 10
 
 ##############
 # Install aac
@@ -104,7 +105,7 @@ autoreconf -fiv
 make
 make install
 make distclean
-sleep 30
+sleep 10
 
 ####################
 # Install libmp3lame
@@ -119,7 +120,7 @@ pwd
 make
 make install
 make distclean
-sleep 30
+sleep 10
 
 ####################
 # Install libmopus
@@ -134,7 +135,7 @@ autoreconf -fiv
 make
 make install
 make distclean
-sleep 30
+sleep 10
 
 ####################
 # Install libopus
@@ -149,7 +150,7 @@ pwd
 make
 make install
 make distclean
-sleep 30
+sleep 10
 
 ####################
 # Install libvoribis
@@ -164,7 +165,7 @@ LDFLAGS="-L $build_dir_lib" CPPFLAGS="-I $build_dir_include" ./configure --prefi
 make
 make install
 make distclean
-sleep 30
+sleep 10
 
 ####################
 # Install ffmpeg
