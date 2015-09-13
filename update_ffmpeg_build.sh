@@ -12,9 +12,9 @@ build_dir="${base_dir}ffmpeg_build/"
 bin_dir="${base_dir}bin/"
 
 rm -rf $base_dir
-mkdir $source_dir"
-mkdir $build_dir"
-mkdir $bin_dir"
+mkdir $source_dir
+mkdir $build_dir
+mkdir $bin_dir
 
 ####################################
 # remove old files and dependencies
