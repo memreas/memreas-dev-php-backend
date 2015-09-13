@@ -37,7 +37,6 @@ echo $build_dir
 echo $build_dir_lib
 echo $build_dir_include
 echo $build_dir_lib_pkgconfig
-exit 1
 
 
 ####################################
