@@ -29,7 +29,7 @@ cd ${source_dir}
 git clone --depth 1 git://github.com/yasm/yasm.git
 cd yasm
 autoreconf -fiv
-./configure --prefix="$build_dir/ffmpeg_build" --bindir="$bind_dir"
+./configure --prefix="$build_dir/ffmpeg_build" --bindir="$bin_dir"
 make
 make install
 make distclean
