@@ -26,9 +26,9 @@ base_dir+="/"
 source_dir+="/"
 build_dir+="/"
 bin_dir+="/"
-build_dir_lib=$build_dir + "lib"
-build_dir_include=$build_dir + "include"
-build_dir_lib_pkgconfig=$build_dir_lib + "/pkgconfig"
+build_dir_lib="$build_dir"'lib'
+build_dir_include="$build_dir"'include'
+build_dir_lib_pkgconfig="$build_dir_lib"'/pkgconfig'
 
 
 echo $base_dir
