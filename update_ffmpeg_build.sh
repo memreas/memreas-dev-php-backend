@@ -35,6 +35,8 @@ $cmd
 cmd="make install"
 $cmd
 
+exit 1
+
 ##############
 # Update x264
 ##############
