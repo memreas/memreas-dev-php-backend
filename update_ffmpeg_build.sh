@@ -6,7 +6,7 @@
 
 #vars
 cmd="" 
-base_dir="/var/www/memreas_ffmpeg_install/"
+base_dir="/var/www/memreas_ffmpeg_install.bak/"
 source_dir="/var/www/memreas_ffmpeg_install/ffmpeg_sources/"
 build_dir="/var/www/memreas_ffmpeg_install/ffmpeg_build/"
 bin_dir="/var/www/memreas_ffmpeg_install/bin/"
