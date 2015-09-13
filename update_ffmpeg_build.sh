@@ -24,8 +24,8 @@ $cmd
 ##############
 cmd="cd ${source_dir}yasm"
 $cmd
-cmd="make distclean"
-$cmd
+//cmd="make distclean"
+//$cmd
 cmd="git pull"
 $cmd
 cmd="./configure --prefix=\"$build_dir\" --bindir=\"$bin_dir\""
