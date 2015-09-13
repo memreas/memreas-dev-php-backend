@@ -125,22 +125,24 @@ make distclean
 sleep 10
 
 ####################
-# Install libmopus
+# Install libopus
+# - fails git clone
+# - unnecessary
 ####################
-cd $source_dir
-pwd
-git clone git://git.opus-codec.org/opus.git
-cd opus
-pwd
-autoreconf -fiv
-./configure --prefix="$build_dir" --disable-shared
-make
-make install
-make distclean
-sleep 10
+#cd $source_dir
+#pwd
+#git clone git://git.opus-codec.org/opus.git
+#cd opus
+#pwd
+#autoreconf -fiv
+#./configure --prefix="$build_dir" --disable-shared
+#make
+#make install
+#make distclean
+#sleep 10
 
 ####################
-# Install libopus
+# Install libogg
 ####################
 cd $source_dir
 pwd
@@ -155,7 +157,7 @@ make distclean
 sleep 10
 
 ####################
-# Install libvoribis
+# Install libvorbis
 ####################
 cd $source_dir
 pwd
