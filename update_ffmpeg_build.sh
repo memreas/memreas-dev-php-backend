@@ -132,6 +132,6 @@ PKG_CONFIG_PATH="${build_dir)lib/pkgconfig" ./configure --prefix="${build_dir)" 
 make
 make install
 make distclean
-"hash -r"
+hash -r
 
 #END
