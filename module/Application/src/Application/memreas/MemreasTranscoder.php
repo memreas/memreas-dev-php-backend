@@ -605,7 +605,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -673,7 +674,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -983,9 +985,6 @@ class MemreasTranscoder
                         // single_file ' .
                         // $transcoded_file;
                         
-                        ./ffmpeg -i IMG_0027.MOV 
-                        
-                        
                         // h264 with single ts file - too long to download and
                         // play
                         // $cmd = 'nice -' . $this->nice_priority . ' ' .
@@ -996,45 +995,44 @@ class MemreasTranscoder
                         
                         // Old h264 impl
                         /*
-                        if ($isMP42) {
-                            // downscale to 1080p
-                            $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                     $this->ffmpegcmd . " -re -y -i " .
-                                     $transcoded_mp4_file . " -map 0 " .
-                                     " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                                     " -acodec libfdk_aac " . " -r 25 " .
-                                     " -profile:v main -level 4.0 " .
-                                     " -b:v 1500k " .
-                                     " -s 1920x1080 -maxrate 2000k " .
-                                     " -force_key_frames 50 " .
-                                     " -flags -global_header " . " -f segment " .
-                                     " -segment_list_type m3u8 " .
-                                     " -segment_list " . $transcoded_file .
-                                     " -segment_time 10 " .
-                                     " -segment_format mpeg_ts " .
-                                     $transcoded_hls_ts_file . "%05d.ts" .
-                                     ' 2>&1';
-                        } else {
-                            $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                     $this->ffmpegcmd . " -re -y -i " .
-                                     $transcoded_mp4_file . " -map 0 " .
-                                     " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                                     " -acodec libfdk_aac " . " -r 25 " .
-                                     " -profile:v main -level 4.0 " .
-                                     " -b:v 1500k " . " -maxrate 2000k " .
-                                     " -force_key_frames 50 " .
-                                     " -flags -global_header " . " -f segment " .
-                                     " -segment_list_type m3u8 " .
-                                     " -segment_list " . $transcoded_file .
-                                     " -segment_time 10 " .
-                                     " -segment_format mpeg_ts " .
-                                     $transcoded_hls_ts_file . "%05d.ts" .
-                                     ' 2>&1';
-                        }
-                        */
+                         * if ($isMP42) {
+                         * // downscale to 1080p
+                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
+                         * $this->ffmpegcmd . " -re -y -i " .
+                         * $transcoded_mp4_file . " -map 0 " .
+                         * " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                         * " -acodec libfdk_aac " . " -r 25 " .
+                         * " -profile:v main -level 4.0 " .
+                         * " -b:v 1500k " .
+                         * " -s 1920x1080 -maxrate 2000k " .
+                         * " -force_key_frames 50 " .
+                         * " -flags -global_header " . " -f segment " .
+                         * " -segment_list_type m3u8 " .
+                         * " -segment_list " . $transcoded_file .
+                         * " -segment_time 10 " .
+                         * " -segment_format mpeg_ts " .
+                         * $transcoded_hls_ts_file . "%05d.ts" .
+                         * ' 2>&1';
+                         * } else {
+                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
+                         * $this->ffmpegcmd . " -re -y -i " .
+                         * $transcoded_mp4_file . " -map 0 " .
+                         * " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                         * " -acodec libfdk_aac " . " -r 25 " .
+                         * " -profile:v main -level 4.0 " .
+                         * " -b:v 1500k " . " -maxrate 2000k " .
+                         * " -force_key_frames 50 " .
+                         * " -flags -global_header " . " -f segment " .
+                         * " -segment_list_type m3u8 " .
+                         * " -segment_list " . $transcoded_file .
+                         * " -segment_time 10 " .
+                         * " -segment_format mpeg_ts " .
+                         * $transcoded_hls_ts_file . "%05d.ts" .
+                         * ' 2>&1';
+                         * }
+                         */
                         
-                        Mlog::addone(
-                                __CLASS__ . __METHOD__ . '$cmd', $cmd);
+                        Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
                         if ($type == 'audio') {
                             /*
