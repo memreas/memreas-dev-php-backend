@@ -78,7 +78,7 @@ make distclean
 # Install libmp3lame
 ####################
 cd $source_dir
-curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz"
+curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz
 tar xzvf lame-3.99.5.tar.gz
 cd lame-3.99.5
 ./configure --prefix="${build_dir}" --bindir="${bin_dir}" --disable-shared --enable-nasm
