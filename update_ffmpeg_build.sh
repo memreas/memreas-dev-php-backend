@@ -6,15 +6,20 @@
 
 #vars
 cmd="" 
-base_dir="/var/www/memreas_ffmpeg_install.bak/"
-source_dir="${base_dir}ffmpeg_sources/"
-build_dir="${base_dir}ffmpeg_build/"
-bin_dir="${base_dir}bin/"
+base_dir="/var/www/memreas_ffmpeg_install.bak"
+source_dir="${base_dir}ffmpeg_sources"
+build_dir="${base_dir}ffmpeg_build"
+bin_dir="${base_dir}bin"
 
 rm -rf $base_dir
 mkdir $source_dir
 mkdir $build_dir
 mkdir $bin_dir
+
+base_dir="/var/www/memreas_ffmpeg_install.bak/"
+source_dir="${base_dir}ffmpeg_sources/"
+build_dir="${base_dir}ffmpeg_build/"
+bin_dir="${base_dir}bin/"
 
 ####################################
 # remove old files and dependencies
@@ -25,22 +30,15 @@ yum install autoconf automake cmake gcc gcc-c++ git libtool make mercurial nasm 
 ##############
 # Install Yasm
 ##############
-$cmd="cd ${source_dir}"
+cd $source_dir
+git clone --depth 1 git://github.com/yasm/yasm.git
+cd yasm
+autoreconf -fiv
+$cmd="./configure --prefix=\"${build_dir}\" --bindir=\"${bin_dir}\""
 $cmd
-$cmd="git clone --depth 1 git://github.com/yasm/yasm.git"
-$cmd
-$cmd="cd yasm"
-$cmd
-$cmd="autoreconf -fiv"
-$cmd
-$cmd="./configure --prefix=\"${build_dir/ffmpeg_build\" --bindir=\"${bin_dir\""
-$cmd
-$cmd="make"
-$cmd
-$cmd="make install"
-$cmd
-$cmd="make distclean"
-$cmd
+make
+make install
+make distclean
 
 
 ##############
@@ -52,7 +50,7 @@ $cmd="git clone --depth 1 git://git.videolan.org/x264"
 $cmd
 $cmd="cd x264"
 $cmd
-$cmd="./configure --prefix="${build_dir" --bindir="${bin_dir" --enable-static"
+$cmd="./configure --prefix=\"${build_dir}\" --bindir=\"${bin_dir}\" --enable-static"
 $cmd
 $cmd="make"
 $cmd
