@@ -59,7 +59,7 @@ pwd
 make
 make install
 make distclean
-sudo PATH=$PATH:$bin_dir
+PATH=$PATH:$bin_dir
 sleep 10
 
 
