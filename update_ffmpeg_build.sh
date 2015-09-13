@@ -179,7 +179,8 @@ pwd
 git clone --depth 1 git://source.ffmpeg.org/ffmpeg
 cd ffmpeg
 pwd
-PKG_CONFIG_PATH="$build_dir_lib_pkgconfig" ./configure --prefix="$build_dir" --extra-cflags="-I $build_dir_include" --extra-ldflags="-L $build_dir_lib" --bindir="$bin_dir" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
+#PKG_CONFIG_PATH="$build_dir_lib_pkgconfig" ./configure --prefix="$build_dir" --extra-cflags="-I $build_dir_include" --extra-ldflags="-L $build_dir_lib" --bindir="$bin_dir" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
+PKG_CONFIG_PATH="$build_dir_lib_pkgconfig" ./configure --prefix="$build_dir" --extra-cflags="-I $build_dir_include" --extra-ldflags="-L $build_dir_lib" --bindir="$bin_dir" --pkg-config-flags="--static" --enable-gpl --enable-nonfree --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265
 make
 make install
 make distclean
