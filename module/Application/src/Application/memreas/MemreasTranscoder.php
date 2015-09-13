@@ -605,7 +605,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -673,7 +674,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -881,16 +883,25 @@ class MemreasTranscoder
             $mpeg4ext = '.mp4';
             $tsext = '.ts';
             $aacext = '.m4a';
+            //
+            // 4k codec level mp42 - can't be downloaded to apple
+            //
+            $isMP42 = false;
+            $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'] = (isset(
+                    $ffprobe_json_array['format']['tags']['major_brand']) &&
+                     ! empty(
+                            $ffprobe_json_array['format']['tags']['major_brand'])) ? $ffprobe_json_array['format']['tags']['major_brand'] : "";
+            if (strtolower(
+                    $this->memreas_media_metadata['S3_files']['type']['video']['codec_level']) ==
+                     "mp42") {
+                $isMP42 = true;
+                // ffmpeg -pix_fmt yuv420p -i any-source-video.webm output.y4m
+            }
             if ($type == 'web') {
                 /*
                  * Test lossless with best compression
                  */
                 
-                // 4k codec level mp42 - can't be downloaded to apple
-                $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'] = (isset(
-                        $ffprobe_json_array['format']['tags']['major_brand']) &&
-                         ! empty(
-                                $ffprobe_json_array['format']['tags']['major_brand'])) ? $ffprobe_json_array['format']['tags']['major_brand'] : "";
                 $this->memreas_media_metadata['S3_files']['type']['video']['width'] = (isset(
                         $ffprobe_json_array['streams'][0]['width']) &&
                          ! empty($ffprobe_json_array['streams'][0]['width'])) ? $ffprobe_json_array['streams'][0]['width'] : "";
@@ -906,9 +917,6 @@ class MemreasTranscoder
                 // $this->compression_preset_web .
                 // ' -profile:v main -level 4.0 -movflags +faststart -pix_fmt
                 // yuv420p -b:a 128k ';
-                
-                // ffmpeg -i input -c:v libx264 -preset slow -crf 22 -c:a copy
-                // output.mkv
                 $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR .
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -967,18 +975,41 @@ class MemreasTranscoder
                         // ' 2>&1';
                         
                         // Old h264 impl
-                        $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -re -y -i " .
-                                 $transcoded_mp4_file . " -map 0 " .
-                                 " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                                 " -acodec libfdk_aac " . " -r 25 " .
-                                 " -profile:v main -level 4.0 " . " -b:v 1500k " .
-                                 " -maxrate 2000k " . " -force_key_frames 50 " .
-                                 " -flags -global_header " . " -f segment " .
-                                 " -segment_list_type m3u8 " . " -segment_list " .
-                                 $transcoded_file . " -segment_time 10 " .
-                                 " -segment_format mpeg_ts " .
-                                 $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+                        if ($isMP42) {
+                            // downscale to 1080p
+                            $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                     $this->ffmpegcmd . " -re -y -i " .
+                                     $transcoded_mp4_file . " -map 0 " .
+                                     " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                                     " -acodec libfdk_aac " . " -r 25 " .
+                                     " -profile:v main -level 4.0 " .
+                                     " -b:v 1500k " .
+                                     " -s 1920x1080 -maxrate 2000k " .
+                                     " -force_key_frames 50 " .
+                                     " -flags -global_header " . " -f segment " .
+                                     " -segment_list_type m3u8 " .
+                                     " -segment_list " . $transcoded_file .
+                                     " -segment_time 10 " .
+                                     " -segment_format mpeg_ts " .
+                                     $transcoded_hls_ts_file . "%05d.ts" .
+                                     ' 2>&1';
+                        } else {
+                            $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                     $this->ffmpegcmd . " -re -y -i " .
+                                     $transcoded_mp4_file . " -map 0 " .
+                                     " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                                     " -acodec libfdk_aac " . " -r 25 " .
+                                     " -profile:v main -level 4.0 " .
+                                     " -b:v 1500k " . " -maxrate 2000k " .
+                                     " -force_key_frames 50 " .
+                                     " -flags -global_header " . " -f segment " .
+                                     " -segment_list_type m3u8 " .
+                                     " -segment_list " . $transcoded_file .
+                                     " -segment_time 10 " .
+                                     " -segment_format mpeg_ts " .
+                                     $transcoded_hls_ts_file . "%05d.ts" .
+                                     ' 2>&1';
+                        }
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
