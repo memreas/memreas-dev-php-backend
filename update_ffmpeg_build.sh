@@ -11,7 +11,7 @@ source_dir="${base_dir}ffmpeg_sources/"
 build_dir="${base_dir}ffmpeg_build/"
 bin_dir="${base_dir}bin/"
 
-sudo -rm rf $base_dir
+ -rm rf $base_dir
 mkdir $base_dir
 mkdir $source_dir"
 mkdir $build_dir"
@@ -20,8 +20,8 @@ mkdir $bin_dir"
 ####################################
 # remove old files and dependencies
 ####################################
-#sudo rm -rf $source_dir $build_dir $bin_dir{ffmpeg,ffprobe,ffserver,lame,vsyasm,x264,x265,yasm,ytasm}
-sudo yum install autoconf automake cmake gcc gcc-c++ git libtool make mercurial nasm pkgconfig zlib-devel
+# rm -rf $source_dir $build_dir $bin_dir{ffmpeg,ffprobe,ffserver,lame,vsyasm,x264,x265,yasm,ytasm}
+yum install autoconf automake cmake gcc gcc-c++ git libtool make mercurial nasm pkgconfig zlib-devel
 
 ##############
 # Install Yasm
