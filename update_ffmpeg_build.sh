@@ -25,7 +25,7 @@ yum install autoconf automake cmake gcc gcc-c++ git libtool make mercurial nasm 
 ##############
 # Install Yasm
 ##############
-cd $source_dir
+cd ${source_dir}
 git clone --depth 1 git://github.com/yasm/yasm.git
 cd yasm
 autoreconf -fiv
