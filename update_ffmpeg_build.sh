@@ -22,12 +22,12 @@ mkdir $source_dir
 mkdir $build_dir
 mkdir $bin_dir
 
-base_dir+="/"
-source_dir+="/"
-build_dir+="/"
-bin_dir+="/"
-build_dir_lib="$build_dir"'lib'
-build_dir_include="$build_dir"'include'
+#base_dir+="/"
+#source_dir+="/"
+#build_dir+="/"
+#bin_dir+="/"
+build_dir_lib="$build_dir"'/lib'
+build_dir_include="$build_dir"'/include'
 build_dir_lib_pkgconfig="$build_dir_lib"'/pkgconfig'
 
 
@@ -60,6 +60,7 @@ make
 make install
 make distclean
 PATH=$PATH:$bin_dir
+echo $PATH
 sleep 10
 
 
@@ -78,6 +79,7 @@ make distclean
 sleep 10
 
 
+##############
 # Install x265
 ##############
 cd $source_dir
