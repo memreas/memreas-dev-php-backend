@@ -557,8 +557,7 @@ class MemreasTranscoder
                         // Audio section
                         // Create web quality mp3
                         $this->transcode_job_meta = array();
-                        $this->transcode_job_meta['audio'] = $this->transcode(
-                                'audio');
+                        $this->transcode('audio');
                         $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'audio_complete';
                         // update media metadata and transcode transaction
                         // metadata
@@ -568,8 +567,7 @@ class MemreasTranscoder
                         if ($this->is_image) {
                             // Image section
                             $this->transcode_job_meta = array();
-                            $this->transcode_job_meta = $this->createThumbNails(
-                                    $this->is_image);
+                            $this->createThumbNails($this->is_image);
                             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'thumbnails_complete';
                             // update media metadata and transcode transaction
                             // metadata
@@ -965,17 +963,21 @@ class MemreasTranscoder
                                 $transcoded_hls_ts_file);
                         
                         //
-                        // hevc try again...
+                        // attempt h264 approach for 4k and lower...
                         //
-                        $qv = ' -c:v libx265 -c:a aac -strict -2 -vbr 4 -f segment  -segment_list_type m3u8  -segment_list ' .
-                                 $this->destRandMediaName .
+                        $qv = ' -map 0:0 -map 0:1 ' . ' -acodec libfdk_aac ' .
+                                 ' -r 25 ' . ' -b:v 1500k ' . ' -maxrate 2000k ' .
+                                 ' -pix_fmt yuv420p ' . ' -vcodec libx264 ' .
+                                 ' -vf scale=1920:1080 ' . ' -crf 20 ' .
+                                 ' -preset veryfast ' . ' -f segment ' .
+                                 ' -segment_list_type m3u8 ' . ' -segment_list ' .
+                                 $this->destRandMediaName . '.m3u8' .
                                  ' -segment_time 10  -segment_format mpeg_ts ' .
                                  $transcoded_hls_ts_file . "%05d.ts ";
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd .
-                                 " -i $this->destRandMediaName $qv $transcoded_file " .
-                                 '2>&1';
+                                 $this->ffmpegcmd . " -re -y -i  " .
+                                 $this->destRandMediaName . $qv . ' 2>&1';
                         
                         // new h265 command - doesn't work
                         // $cmd = 'nice -' . $this->nice_priority . ' ' .
@@ -1057,15 +1059,38 @@ class MemreasTranscoder
             $this->pass = 0;
             $output_start_time = date("Y-m-d H:i:s");
             try {
+                // Log command
+                $this->transcode_job_meta[$type]["ffmpeg_cmd"] = json_encode(
+                        $cmd, JSON_UNESCAPED_SLASHES);
+                $this->persistTranscodeTransaction();
                 $op = shell_exec($cmd);
                 if (! file_exists($transcoded_file)) {
                     throw new \Exception($op);
                 } else {
-                    $pass = 1;
+                    $this->pass = 1;
+                    // Log pass
+                    $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
+                            $op, JSON_UNESCAPED_SLASHES);
+                    $this->transcode_job_meta[$type]["output_size"] = $fsize;
+                    $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
+                    $this->transcode_job_meta[$type]["error_message"] = "";
+                    $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
+                    $this->transcode_job_meta[$type]["output_end_time"] = date(
+                            "Y-m-d H:i:s");
                 }
+                $this->persistTranscodeTransaction();
             } catch (\Exception $e) {
                 $this->pass = 0;
                 error_log("transcoder $type failed - op -->" . $op . PHP_EOL);
+                // Log pass
+                $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
+                        $op, JSON_UNESCAPED_SLASHES);
+                $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
+                $this->transcode_job_meta[$type]["error_message"] = $e->getMessage();
+                $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
+                $this->transcode_job_meta[$type]["output_end_time"] = date(
+                        "Y-m-d H:i:s");
+                $this->persistTranscodeTransaction();
                 throw $e;
             }
             
@@ -1118,16 +1143,6 @@ class MemreasTranscoder
             // Log status
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_' .
                      $type . '_upload_S3';
-            $this->transcode_job_meta[$type] = array(
-                    "ffmpeg_cmd" => json_encode($cmd, JSON_UNESCAPED_SLASHES),
-                    "ffmpeg_cmd_output" => json_encode($op, 
-                            JSON_UNESCAPED_SLASHES),
-                    "output_size" => $fsize,
-                    "pass_fail" => $this->pass,
-                    "error_message" => "",
-                    "output_start_time" => $output_start_time,
-                    "output_end_time" => date("Y-m-d H:i:s")
-            );
             $this->memreas_media_metadata['S3_files'][$type] = $s3file;
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_' .
                      $type . '_completed';
