@@ -196,7 +196,7 @@ class IndexController extends AbstractActionController
             
             $keep_processing = true;
             while ($keep_processing) {
-                if (! $this->awsManagerAutoScaler->serverReadyToProcessTask()) {
+                if (!$this->awsManagerAutoScaler->serverReadyToProcessTask() || $get_server_memory_usage()) {
                     sleep(10);
                 }
                 try {
