@@ -51,13 +51,18 @@ class AWSManagerAutoScaler
         $server_data = $this->fetchServerData();
         
         /*
+         * Check memory level
+         */
+        $memory_usage = $this->get_server_memory_usage();
+        
+        /*
          * Check if server is in server_monitor
          */
         // $server = $this->checkServer($server_data['server_name']);
         $process_task = false;
         Mlog::addone(__FILE__ . __METHOD__ . '$server_data [cpu_util] [0]', 
                 $server_data['cpu_util'][0]);
-        if ($server_data['cpu_util'][0] < 75) {
+        if (($server_data['cpu_util'][0] < 75) && ($memory_usage < 75)) {
             /*
              * no servers so we're starting up - add me
              */
@@ -84,15 +89,10 @@ class AWSManagerAutoScaler
         $server_data['hostname'] = gethostname();
         // $memory = $this->get_server_memory_usage();
         Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
-        if ($server_data['cpu_util'][0] > 80) {
-            Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>80', 
+        if ($server_data['cpu_util'][0] > 75) {
+            Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>75', 
                     $server_data['cpu_util']);
         }
-        
-        //
-        // Checking memory usage
-        //
-        $this->get_server_memory_usage();
         
         return $server_data;
     }
@@ -101,16 +101,14 @@ class AWSManagerAutoScaler
     {
         $free = shell_exec('free');
         $free = (string) trim($free);
-        Mlog::addone(__CLASS__ . __METHOD__ . 'get_server_memory_usage::$free', 
-                $free);
         $free_arr = explode("\n", $free);
         $mem = explode(" ", $free_arr[1]);
         $mem = array_filter($mem);
         $mem = array_merge($mem);
         $memory_usage = $mem[2] / $mem[1] * 100;
-        Mlog::addone(
-                __CLASS__ . __METHOD__ . 'get_server_memory_usage::$memory_usage', 
-                $memory_usage);
+        // Mlog::addone(
+        // __CLASS__ . __METHOD__ . 'get_server_memory_usage::$memory_usage',
+        // $memory_usage);
         
         return $memory_usage;
     }
