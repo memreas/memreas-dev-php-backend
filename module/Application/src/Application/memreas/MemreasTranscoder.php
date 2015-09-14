@@ -910,7 +910,8 @@ class MemreasTranscoder
                 $this->memreas_media_metadata['S3_files']['type']['video']['height'] = (isset(
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
-                $qv = ' -c:v libx265 -preset ' . $this->compression_preset_web .
+                $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
+                         $this->compression_preset_web .
                          ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
                 
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -928,7 +929,7 @@ class MemreasTranscoder
             } else 
                 if ($type == '1080p') {
                     
-                    $qv = ' -c:v libx265 -preset ' .
+                    $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
                              $this->compression_preset_1080p .
                              ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
@@ -983,10 +984,10 @@ class MemreasTranscoder
                             //
                             // attempt h264 approach for 4k and lower...
                             //
-                            $qv = ' -map 0:0 -map 0:1 ' . ' -acodec libfdk_aac ' .
-                                     ' -r 25 ' . ' -b:v 1500k ' .
-                                     ' -maxrate 2000k ' . ' -pix_fmt yuv420p ' .
-                                     ' -vcodec libx264 ' .
+                            $qv = ' -threads 0 ' . '-map 0:0 ' . ' -map 0:1 ' .
+                                     ' -acodec libfdk_aac ' . ' -r 25 ' .
+                                     ' -b:v 1500k ' . ' -maxrate 2000k ' .
+                                     ' -pix_fmt yuv420p ' . ' -vcodec libx264 ' .
                                      ' -vf scale=1920:1080 ' . ' -crf 20 ' .
                                      ' -preset veryfast ' . ' -f segment ' .
                                      ' -segment_list_type m3u8 ' .
@@ -1002,10 +1003,10 @@ class MemreasTranscoder
                         } else {
                             $cmd = 'nice -' . $this->nice_priority . ' ' .
                                      $this->ffmpegcmd . " -re -y -i " .
-                                     $transcoded_mp4_file . " -map 0 " .
-                                     " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                                     " -acodec libfdk_aac " . " -r 25 " .
-                                     " -profile:v main -level 4.0 " .
+                                     $transcoded_mp4_file . " -threads 0 " .
+                                     " -map 0 " . " -pix_fmt yuv420p " .
+                                     " -vcodec libx264 " . " -acodec libfdk_aac " .
+                                     " -r 25 " . " -profile:v main -level 4.0 " .
                                      " -b:v 1500k " . " -maxrate 2000k " .
                                      " -force_key_frames 50 " .
                                      " -flags -global_header " . " -f segment " .
