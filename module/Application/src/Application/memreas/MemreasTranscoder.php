@@ -603,8 +603,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -672,8 +671,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -899,7 +897,7 @@ class MemreasTranscoder
                 if (strtolower(
                         $this->memreas_media_metadata['S3_files']['type']['video']['codec_level']) ==
                          "mp41") {
-                    $isMP42 = true;
+                    $isMP41 = true;
                 }
             if ($type == 'web') {
                 /*
@@ -962,23 +960,6 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
-                        //
-                        // attempt h264 approach for 4k and lower...
-                        //
-                        $qv = ' -map 0:0 -map 0:1 ' . ' -acodec libfdk_aac ' .
-                                 ' -r 25 ' . ' -b:v 1500k ' . ' -maxrate 2000k ' .
-                                 ' -pix_fmt yuv420p ' . ' -vcodec libx264 ' .
-                                 ' -vf scale=1920:1080 ' . ' -crf 20 ' .
-                                 ' -preset veryfast ' . ' -f segment ' .
-                                 ' -segment_list_type m3u8 ' . ' -segment_list ' .
-                                 $this->destRandMediaName . '.m3u8' .
-                                 ' -segment_time 10  -segment_format mpeg_ts ' .
-                                 $transcoded_hls_ts_file . "%05d.ts ";
-                        
-                        $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -re -y -i  " .
-                                 $this->destRandMediaName . $qv . ' 2>&1';
-                        
                         // new h265 command - doesn't work
                         // $cmd = 'nice -' . $this->nice_priority . ' ' .
                         // $this->ffmpegcmd . " -i " .
@@ -995,44 +976,46 @@ class MemreasTranscoder
                         // ' -hls_flags single_file ' . $transcoded_file .
                         // ' 2>&1';
                         
-                        // Old h264 impl
-                        /*
-                         * if ($isMP42) {
-                         * // downscale to 1080p
-                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
-                         * $this->ffmpegcmd . " -re -y -i " .
-                         * $transcoded_mp4_file . " -map 0 " .
-                         * " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                         * " -acodec libfdk_aac " . " -r 25 " .
-                         * " -profile:v main -level 4.0 " .
-                         * " -b:v 1500k " .
-                         * " -s 1920x1080 -maxrate 2000k " .
-                         * " -force_key_frames 50 " .
-                         * " -flags -global_header " . " -f segment " .
-                         * " -segment_list_type m3u8 " .
-                         * " -segment_list " . $transcoded_file .
-                         * " -segment_time 10 " .
-                         * " -segment_format mpeg_ts " .
-                         * $transcoded_hls_ts_file . "%05d.ts" .
-                         * ' 2>&1';
-                         * } else {
-                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
-                         * $this->ffmpegcmd . " -re -y -i " .
-                         * $transcoded_mp4_file . " -map 0 " .
-                         * " -pix_fmt yuv420p " . " -vcodec libx264 " .
-                         * " -acodec libfdk_aac " . " -r 25 " .
-                         * " -profile:v main -level 4.0 " .
-                         * " -b:v 1500k " . " -maxrate 2000k " .
-                         * " -force_key_frames 50 " .
-                         * " -flags -global_header " . " -f segment " .
-                         * " -segment_list_type m3u8 " .
-                         * " -segment_list " . $transcoded_file .
-                         * " -segment_time 10 " .
-                         * " -segment_format mpeg_ts " .
-                         * $transcoded_hls_ts_file . "%05d.ts" .
-                         * ' 2>&1';
-                         * }
-                         */
+                        //
+                        // Check if 4k or not
+                        //
+                        if ($isMP42) {
+                            //
+                            // attempt h264 approach for 4k and lower...
+                            //
+                            $qv = ' -map 0:0 -map 0:1 ' . ' -acodec libfdk_aac ' .
+                                     ' -r 25 ' . ' -b:v 1500k ' .
+                                     ' -maxrate 2000k ' . ' -pix_fmt yuv420p ' .
+                                     ' -vcodec libx264 ' .
+                                     ' -vf scale=1920:1080 ' . ' -crf 20 ' .
+                                     ' -preset veryfast ' . ' -f segment ' .
+                                     ' -segment_list_type m3u8 ' .
+                                     ' -segment_list ' . $this->destRandMediaName .
+                                     '.m3u8' .
+                                     ' -segment_time 10  -segment_format mpeg_ts ' .
+                                     $transcoded_hls_ts_file . "%05d.ts " .
+                                     ' 2>&1';
+                            
+                            $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                     $this->ffmpegcmd . " -re -y -i  " .
+                                     $this->destRandMediaName . $qv . ' 2>&1';
+                        } else {
+                            $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                     $this->ffmpegcmd . " -re -y -i " .
+                                     $transcoded_mp4_file . " -map 0 " .
+                                     " -pix_fmt yuv420p " . " -vcodec libx264 " .
+                                     " -acodec libfdk_aac " . " -r 25 " .
+                                     " -profile:v main -level 4.0 " .
+                                     " -b:v 1500k " . " -maxrate 2000k " .
+                                     " -force_key_frames 50 " .
+                                     " -flags -global_header " . " -f segment " .
+                                     " -segment_list_type m3u8 " .
+                                     " -segment_list " . $transcoded_file .
+                                     " -segment_time 10 " .
+                                     " -segment_format mpeg_ts " .
+                                     $transcoded_hls_ts_file . "%05d.ts" .
+                                     ' 2>&1';
+                        }
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
