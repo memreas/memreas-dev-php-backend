@@ -603,7 +603,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -671,7 +672,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -1325,25 +1327,25 @@ class MemreasTranscoder
         try {
             // duration stored in db in seconds
             $duration_in_minutes = $this->duration / 60;
-            if ($duration_in_minutes <= 2) {
-                $this->nice_priority = 5;
+            if ($duration_in_minutes <= 5) {
+                $this->nice_priority = 0;
                 $this->compression_preset_web = self::MEDIUM;
                 $this->compression_preset_1080p = self::SLOW;
             } else 
-                if ($duration_in_minutes > 2 && $duration_in_minutes <= 6) {
-                    $this->nice_priority = 10;
+                if ($duration_in_minutes > 5 && $duration_in_minutes <= 10) {
+                    $this->nice_priority = 5;
                     $this->compression_preset_web = self::FASTER;
                     $this->compression_preset_1080p = self::MEDIUM;
                 } else 
-                    if ($duration_in_minutes > 6 && $duration_in_minutes <= 15) {
+                    if ($duration_in_minutes > 10 && $duration_in_minutes <= 30) {
                         $this->nice_priority = 15;
-                        $this->compression_preset_web = self::SUPERFAST;
+                        $this->compression_preset_web = self::VERYFAST;
                         $this->compression_preset_1080p = self::FASTER;
                     } else 
-                        if ($duration_in_minutes > 15) {
+                        if ($duration_in_minutes > 30) {
                             $this->nice_priority = 20;
                             $this->compression_preset_web = self::ULTRAFAST;
-                            $this->compression_preset_1080p = self::VERYFAST;
+                            $this->compression_preset_1080p = self::SUPERFAST;
                         }
         } catch (\Exception $e) {
             throw $e;
