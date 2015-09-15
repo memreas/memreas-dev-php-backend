@@ -196,7 +196,8 @@ class IndexController extends AbstractActionController
             
             $keep_processing = true;
             while ($keep_processing) {
-                if (!$this->awsManagerAutoScaler->serverReadyToProcessTask() || $get_server_memory_usage()) {
+                if (! $this->awsManagerAutoScaler->serverReadyToProcessTask() ||
+                         $get_server_memory_usage()) {
                     sleep(10);
                 }
                 try {
@@ -229,6 +230,14 @@ class IndexController extends AbstractActionController
                 } catch (\Exception $e) {
                     // continue processing - email likely sent
                 } finally {
+                    //
+                    // remove work dir
+                    //
+                    $result = $aws_manager->memreasTranscoder->rmWorkDir(
+                            $aws_manager->memreasTranscoder->homeDir);
+                    Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                            '$aws_manager->memreasTranscoder->rmWorkDir($aws_manager->memreasTranscoder->homeDir)');
+                    
                     /*
                      * Reset and continue work on backlog
                      */

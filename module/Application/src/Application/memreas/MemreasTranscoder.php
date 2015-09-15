@@ -166,7 +166,7 @@ class MemreasTranscoder
     {
         try {
             $this->aws_manager_receiver = $aws_manager_receiver;
-            $this->temp_job_uuid_dir = MUUID::fetchUUID();
+            $this->temp_job_uuid_dir = 'bew_' . MUUID::fetchUUID();
             $this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/';
             
             $this->service_locator = $service_locator;
@@ -644,37 +644,35 @@ class MemreasTranscoder
                     __CLASS__ . __METHOD__ . LINE__ . '::catch throwing error', 
                     $this->transcode_status);
             throw $e;
-        } finally {
-            // Always delete the temp dir...
-            // Delete the temp dir if we got this far...
-            try {
-                //
-                // Ensure data is stored in media and transcode_transcaction
-                //
-                $this->persistMedia();
-                $this->persistTranscodeTransaction();
-                
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . LINE__ . '::inside finally::', 
-                        $this->transcode_status);
-                $result = $this->rmWorkDir($this->homeDir);
-            } catch (\Exception $e) {
-                $error_data = [];
-                $error_data['custom_message'] = __CLASS__ . __METHOD__ .
-                         '::failed to remove work directory::' . $this->homeDir;
-                $error_data['error_line'] = $e->getLine();
-                $error_data['error_message'] = $e->getMessage();
-                $error_data['error_trace'] = $e->getTrace();
-                $this->aws_manager_receiver->sesEmailErrorToAdmin(
-                        json_encode($error_data, JSON_PRETTY_PRINT));
-                
-                // Debugging - log table entry
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', $this->transcode_status);
-                error_log("error string ---> " . $e->getMessage() . PHP_EOL);
-                throw $e;
-            }
+            /*
+             * //work dir is removed in indexController...
+             * } finally {
+             * // Always delete the temp dir...
+             * // Delete the temp dir if we got this far...
+             * try {
+             * Mlog::addone(
+             * __CLASS__ . __METHOD__ . LINE__ . '::inside finally::',
+             * $this->transcode_status);
+             * $result = $this->rmWorkDir($this->homeDir);
+             * } catch (\Exception $e) {
+             * $error_data = [];
+             * $error_data['custom_message'] = __CLASS__ . __METHOD__ .
+             * '::failed to remove work directory::' . $this->homeDir;
+             * $error_data['error_line'] = $e->getLine();
+             * $error_data['error_message'] = $e->getMessage();
+             * $error_data['error_trace'] = $e->getTrace();
+             * $this->aws_manager_receiver->sesEmailErrorToAdmin(
+             * json_encode($error_data, JSON_PRETTY_PRINT));
+             *
+             * // Debugging - log table entry
+             * Mlog::addone(
+             * __CLASS__ . __METHOD__ .
+             * '::$this->persistMedia($this->memreas_media,
+             * $memreas_media_data_array)', $this->transcode_status);
+             * error_log("error string ---> " . $e->getMessage() . PHP_EOL);
+             * throw $e;
+             * }
+             */
         }
         
         return $this->pass;
