@@ -603,8 +603,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -672,8 +671,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media,
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 error_log("error string ---> " . $e->getMessage() . PHP_EOL);
                 throw $e;
             }
@@ -882,25 +880,18 @@ class MemreasTranscoder
             $tsext = '.ts';
             $aacext = '.m4a';
             //
-            // 4k codec level mp42 - can't be downloaded to apple
+            // 4k codec level - can't be downloaded to apple
             //
-            $isMP42 = false; // standard 4k hevc
-            $isMP41 = false; // gopro 4k
+            $isMP4 = false; // 4k
             $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'] = (isset(
                     $ffprobe_json_array['format']['tags']['major_brand']) &&
                      ! empty(
                             $ffprobe_json_array['format']['tags']['major_brand'])) ? $ffprobe_json_array['format']['tags']['major_brand'] : "";
-            if (strtolower(
-                    $this->memreas_media_metadata['S3_files']['type']['video']['codec_level']) ==
-                     "mp42") {
-                $isMP42 = true;
-                // ffmpeg -pix_fmt yuv420p -i any-source-video.webm output.y4m
-            } else 
-                if (strtolower(
-                        $this->memreas_media_metadata['S3_files']['type']['video']['codec_level']) ==
-                         "mp41") {
-                    $isMP41 = true;
-                }
+            if (strripos(
+                    $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'], 
+                    "mp4")) {
+                $isMP4 = true;
+            }
             if ($type == 'web') {
                 /*
                  * Test lossless with best compression
@@ -916,12 +907,10 @@ class MemreasTranscoder
                          $this->compression_preset_web .
                          ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
                 
+                //
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
                 // need this for download but can't use for 4k??
-                // $qv = ' -c:v libx264 -c:a libfdk_aac ' .
-                // $this->compression_preset_web .
-                // ' -profile:v main -level 4.0 -movflags +faststart -pix_fmt
-                // yuv420p -b:a 128k ';
+                //
                 $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR .
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -949,8 +938,7 @@ class MemreasTranscoder
                         // Note: this section uses the transcoded 1080p file
                         // above
                         $transcoded_mp4_file = $this->homeDir . self::CONVDIR .
-                                 self::WEBDIR . $this->MediaFileName . $mpeg4ext;
-                        
+                                 self::HLSDIR . $this->MediaFileName . $mpeg4ext;
                         $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                         $transcoded_file = $this->homeDir . self::CONVDIR .
                                  self::HLSDIR . $this->MediaFileName . '.m3u8';
@@ -963,94 +951,37 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
-                        // new h265 command - doesn't work
-                        // $cmd = 'nice -' . $this->nice_priority . ' ' .
-                        // $this->ffmpegcmd . " -i " .
-                        // $this->destRandMediaName .
-                        // ' -vcodec libx265 -acodec libfdk_aac -hls_flags
-                        // single_file ' .
-                        // $transcoded_file;
-                        
-                        // h264 with single ts file - too long to download and
-                        // play
-                        // $cmd = 'nice -' . $this->nice_priority . ' ' .
-                        // $this->ffmpegcmd . " -i " .
-                        // $this->destRandMediaName .
-                        // ' -hls_flags single_file ' . $transcoded_file .
-                        // ' 2>&1';
-                        
                         //
                         // Check if 4k or not
                         //
-                        if ($isMP42) {
+                        if ($isMP4) {
                             //
                             // convert hevc to h264
                             //
-                            $transcoded_h264_mp4_file = $this->homeDir .
-                                     self::CONVDIR . self::WEBDIR .
-                                     $this->MediaFileName . $mpeg4ext;
                             $qv = ' -preset ultrafast ' . ' -c:a copy ' .
                                      ' -x265-params ' . ' crf=25 ';
                             $cmd = 'nice -' . $this->nice_priority . ' ' .
                                      $this->ffmpegcmd . " -re -y -i  " .
                                      $this->destRandMediaName . $qv .
-                                     $transcoded_h264_mp4_file . ' 2>&1';
-                            $op = shell_exec($cmd);
-                            $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                     $this->ffmpegcmd . " -re -y -i " .
-                                     $transcoded_h264_mp4_file . " -threads 0 " .
-                                     " -map 0 " . " -pix_fmt yuv420p " .
-                                     " -vcodec libx264 " . " -acodec libfdk_aac " .
-                                     " -r 25 " . " -profile:v main -level 4.0 " .
-                                     " -b:v 1500k " . " -maxrate 2000k " .
-                                     " -force_key_frames 50 " .
-                                     " -flags -global_header " . " -f segment " .
-                                     " -segment_list_type m3u8 " .
-                                     " -segment_list " . $transcoded_file .
-                                     " -segment_time 10 " .
-                                     " -segment_format mpeg_ts " .
-                                     $transcoded_hls_ts_file . "%05d.ts" .
-                                     ' 2>&1';
-                            
+                                     $transcoded_mp4_file . ' 2>&1';
                             //
-                            // now create hls from h264 file
+                            // exec ffmpeg operation
                             //
-                            /*
-                             * $qv = ' -threads 0 ' . '-map 0:0 ' . ' -map 0:1 '
-                             * .
-                             * ' -acodec libfdk_aac ' . ' -r 25 ' .
-                             * ' -b:v 1500k ' . ' -maxrate 2000k ' .
-                             * ' -pix_fmt yuv420p ' . ' -vcodec libx264 ' .
-                             * ' -vf scale=1920:1080 ' . ' -crf 20 ' .
-                             * ' -preset veryfast ' . ' -f segment ' .
-                             * ' -segment_list_type m3u8 ' .
-                             * ' -segment_list ' . $this->destRandMediaName .
-                             * '.m3u8' .
-                             * ' -segment_time 10 -segment_format mpeg_ts ' .
-                             * $transcoded_hls_ts_file . "%05d.ts " .
-                             * ' 2>&1';
-                             *
-                             * $cmd = 'nice -' . $this->nice_priority . ' ' .
-                             * $this->ffmpegcmd . " -re -y -i " .
-                             * $transcoded_h264_mp4_file . $qv . ' 2>&1';
-                             */
-                        } else {
-                            $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                     $this->ffmpegcmd . " -re -y -i " .
-                                     $transcoded_mp4_file . " -threads 0 " .
-                                     " -map 0 " . " -pix_fmt yuv420p " .
-                                     " -vcodec libx264 " . " -acodec libfdk_aac " .
-                                     " -r 25 " . " -profile:v main -level 4.0 " .
-                                     " -b:v 1500k " . " -maxrate 2000k " .
-                                     " -force_key_frames 50 " .
-                                     " -flags -global_header " . " -f segment " .
-                                     " -segment_list_type m3u8 " .
-                                     " -segment_list " . $transcoded_file .
-                                     " -segment_time 10 " .
-                                     " -segment_format mpeg_ts " .
-                                     $transcoded_hls_ts_file . "%05d.ts" .
-                                     ' 2>&1';
+                            $op = $this->execFFMPEG($cmd);
                         }
+                        $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                 $this->ffmpegcmd . " -re -y -i " .
+                                 $transcoded_mp4_file . " -threads 0 " .
+                                 " -map 0 " . " -pix_fmt yuv420p " .
+                                 " -vcodec libx264 " . " -acodec libfdk_aac " .
+                                 " -r 25 " . " -profile:v main -level 4.0 " .
+                                 " -b:v 1500k " . " -maxrate 2000k " .
+                                 " -force_key_frames 50 " .
+                                 " -flags -global_header " . " -f segment " .
+                                 " -segment_list_type m3u8 " . " -segment_list " .
+                                 $transcoded_file . " -segment_time 10 " .
+                                 " -segment_format mpeg_ts " .
+                                 $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
@@ -1076,41 +1007,11 @@ class MemreasTranscoder
             
             $this->pass = 0;
             $output_start_time = date("Y-m-d H:i:s");
-            try {
-                // Log command
-                $this->transcode_job_meta[$type]["ffmpeg_cmd"] = json_encode(
-                        $cmd, JSON_UNESCAPED_SLASHES);
-                $this->persistTranscodeTransaction();
-                $op = shell_exec($cmd);
-                if (! file_exists($transcoded_file)) {
-                    throw new \Exception($op);
-                } else {
-                    $this->pass = 1;
-                    // Log pass
-                    $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
-                            $op, JSON_UNESCAPED_SLASHES);
-                    $this->transcode_job_meta[$type]["output_size"] = $fsize;
-                    $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
-                    $this->transcode_job_meta[$type]["error_message"] = "";
-                    $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
-                    $this->transcode_job_meta[$type]["output_end_time"] = date(
-                            "Y-m-d H:i:s");
-                }
-                $this->persistTranscodeTransaction();
-            } catch (\Exception $e) {
-                $this->pass = 0;
-                error_log("transcoder $type failed - op -->" . $op . PHP_EOL);
-                // Log pass
-                $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
-                        $op, JSON_UNESCAPED_SLASHES);
-                $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
-                $this->transcode_job_meta[$type]["error_message"] = $e->getMessage();
-                $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
-                $this->transcode_job_meta[$type]["output_end_time"] = date(
-                        "Y-m-d H:i:s");
-                $this->persistTranscodeTransaction();
-                throw $e;
-            }
+            
+            //
+            // exec ffmpeg operation
+            //
+            $this->execFFMPEG($cmd);
             
             // Push to S3
             $s3file = $this->s3prefixpath . $type . '/' . $transcoded_file_name;
@@ -1205,6 +1106,46 @@ class MemreasTranscoder
         }
     }
     // End transcode
+    private function execFFMPEG ($cmd)
+    {
+        try {
+            // Log command
+            $this->transcode_job_meta[$type]["ffmpeg_cmd"] = json_encode($cmd, 
+                    JSON_UNESCAPED_SLASHES);
+            $this->persistTranscodeTransaction();
+            $op = shell_exec($cmd);
+            if (! file_exists($transcoded_file)) {
+                throw new \Exception($op);
+            } else {
+                $this->pass = 1;
+                // Log pass
+                $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
+                        $op, JSON_UNESCAPED_SLASHES);
+                $this->transcode_job_meta[$type]["output_size"] = $fsize;
+                $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
+                $this->transcode_job_meta[$type]["error_message"] = "";
+                $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
+                $this->transcode_job_meta[$type]["output_end_time"] = date(
+                        "Y-m-d H:i:s");
+            }
+            $this->persistTranscodeTransaction();
+        } catch (\Exception $e) {
+            $this->pass = 0;
+            error_log("transcoder $type failed - op -->" . $op . PHP_EOL);
+            // Log pass
+            $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
+                    $op, JSON_UNESCAPED_SLASHES);
+            $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
+            $this->transcode_job_meta[$type]["error_message"] = $e->getMessage();
+            $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
+            $this->transcode_job_meta[$type]["output_end_time"] = date(
+                    "Y-m-d H:i:s");
+            $this->persistTranscodeTransaction();
+            throw $e;
+        }
+        return $op;
+    }
+
     private function rmWorkDir ($dir)
     {
         try {
@@ -1390,4 +1331,20 @@ class MemreasTranscoder
     }
 } //End class
 
+
+// new h265 command - doesn't work
+// $cmd = 'nice -' . $this->nice_priority . ' ' .
+// $this->ffmpegcmd . " -i " .
+// $this->destRandMediaName .
+// ' -vcodec libx265 -acodec libfdk_aac -hls_flags
+// single_file ' .
+// $transcoded_file;
+
+// h264 with single ts file - too long to download and
+// play
+// $cmd = 'nice -' . $this->nice_priority . ' ' .
+// $this->ffmpegcmd . " -i " .
+// $this->destRandMediaName .
+// ' -hls_flags single_file ' . $transcoded_file .
+// ' 2>&1';
 
