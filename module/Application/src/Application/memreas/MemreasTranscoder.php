@@ -984,24 +984,56 @@ class MemreasTranscoder
                         //
                         if ($isMP42) {
                             //
-                            // attempt h264 approach for 4k and lower...
+                            // convert hevc to h264
                             //
-                            $qv = ' -threads 0 ' . '-map 0:0 ' . ' -map 0:1 ' .
-                                     ' -acodec libfdk_aac ' . ' -r 25 ' .
-                                     ' -b:v 1500k ' . ' -maxrate 2000k ' .
-                                     ' -pix_fmt yuv420p ' . ' -vcodec libx264 ' .
-                                     ' -vf scale=1920:1080 ' . ' -crf 20 ' .
-                                     ' -preset veryfast ' . ' -f segment ' .
-                                     ' -segment_list_type m3u8 ' .
-                                     ' -segment_list ' . $this->destRandMediaName .
-                                     '.m3u8' .
-                                     ' -segment_time 10  -segment_format mpeg_ts ' .
-                                     $transcoded_hls_ts_file . "%05d.ts " .
-                                     ' 2>&1';
-                            
+                            $transcoded_h264_mp4_file = $this->homeDir .
+                                     self::CONVDIR . self::WEBDIR .
+                                     $this->MediaFileName . $mpeg4ext;
+                            $qv = ' -preset ultrafast ' . ' -c:a copy ' .
+                                     ' -x265-params ' . ' crf=25 ';
                             $cmd = 'nice -' . $this->nice_priority . ' ' .
                                      $this->ffmpegcmd . " -re -y -i  " .
-                                     $this->destRandMediaName . $qv . ' 2>&1';
+                                     $this->destRandMediaName . $qv .
+                                     $transcoded_h264_mp4_file . ' 2>&1';
+                            $op = shell_exec($cmd);
+                            $cmd = 'nice -' . $this->nice_priority . ' ' .
+                                     $this->ffmpegcmd . " -re -y -i " .
+                                     $transcoded_h264_mp4_file . " -threads 0 " .
+                                     " -map 0 " . " -pix_fmt yuv420p " .
+                                     " -vcodec libx264 " . " -acodec libfdk_aac " .
+                                     " -r 25 " . " -profile:v main -level 4.0 " .
+                                     " -b:v 1500k " . " -maxrate 2000k " .
+                                     " -force_key_frames 50 " .
+                                     " -flags -global_header " . " -f segment " .
+                                     " -segment_list_type m3u8 " .
+                                     " -segment_list " . $transcoded_file .
+                                     " -segment_time 10 " .
+                                     " -segment_format mpeg_ts " .
+                                     $transcoded_hls_ts_file . "%05d.ts" .
+                                     ' 2>&1';
+                            
+                            //
+                            // now create hls from h264 file
+                            //
+                            /*
+                             * $qv = ' -threads 0 ' . '-map 0:0 ' . ' -map 0:1 '
+                             * .
+                             * ' -acodec libfdk_aac ' . ' -r 25 ' .
+                             * ' -b:v 1500k ' . ' -maxrate 2000k ' .
+                             * ' -pix_fmt yuv420p ' . ' -vcodec libx264 ' .
+                             * ' -vf scale=1920:1080 ' . ' -crf 20 ' .
+                             * ' -preset veryfast ' . ' -f segment ' .
+                             * ' -segment_list_type m3u8 ' .
+                             * ' -segment_list ' . $this->destRandMediaName .
+                             * '.m3u8' .
+                             * ' -segment_time 10 -segment_format mpeg_ts ' .
+                             * $transcoded_hls_ts_file . "%05d.ts " .
+                             * ' 2>&1';
+                             *
+                             * $cmd = 'nice -' . $this->nice_priority . ' ' .
+                             * $this->ffmpegcmd . " -re -y -i " .
+                             * $transcoded_h264_mp4_file . $qv . ' 2>&1';
+                             */
                         } else {
                             $cmd = 'nice -' . $this->nice_priority . ' ' .
                                      $this->ffmpegcmd . " -re -y -i " .
