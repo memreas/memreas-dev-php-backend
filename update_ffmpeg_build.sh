@@ -112,17 +112,17 @@ sleep 10
 ####################
 # Install libmp3lame
 ####################
-#cd $source_dir
-#pwd
-#curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz
-#tar xzvf lame-3.99.5.tar.gz
-#cd lame-3.99.5
-#pwd
-#./configure --prefix="$build_dir" --bindir="$bin_dir" --disable-shared --enable-nasm
-#make
-#make install
-#make distclean
-#sleep 10
+cd $source_dir
+pwd
+curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz
+tar xzvf lame-3.99.5.tar.gz
+cd lame-3.99.5
+pwd
+./configure --prefix="$build_dir" --bindir="$bin_dir" --disable-shared --enable-nasm
+make
+make install
+make distclean
+sleep 10
 
 ####################
 # Install libopus
