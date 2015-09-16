@@ -603,7 +603,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -613,6 +614,7 @@ class MemreasTranscoder
             Mlog::addone(
                     __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', 
                     $e->getMessage());
+            $message_data['command'] = $cmd;
             $message_data['error_line'] = $e->getLine();
             $message_data['error_message'] = $e->getMessage();
             $message_data['error_trace'] = $e->getTrace();
@@ -901,9 +903,10 @@ class MemreasTranscoder
                 $this->memreas_media_metadata['S3_files']['type']['video']['height'] = (isset(
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
-                $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
-                         $this->compression_preset_web .
-                         ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
+                $qv = ' -threads 0 ' . '-c:v libx264 ' . '-profile:v high ' .
+                         '-level 4.2 ' . '-preset ' .
+                         $this->compression_preset_web . ' -c:a libfdk_aac ' .
+                         '-b:a 128k ';
                 
                 //
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -918,9 +921,13 @@ class MemreasTranscoder
             } else 
                 if ($type == '1080p') {
                     
-                    $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
+                    // $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
+                    // $this->compression_preset_1080p .
+                    // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
+                    $qv = ' -threads 0 ' . '-c:v libx265 ' . '-preset ' .
                              $this->compression_preset_1080p .
-                             ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
+                             ' -x265-params crf=28 ' . '-c:a aac ' .
+                             '-strict experimental ' . '-b:a 128k ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -952,33 +959,48 @@ class MemreasTranscoder
                         //
                         // Check if 4k or not
                         //
-                        if ($isMP4) {
-                            //
-                            // convert hevc to h264
-                            //
-                            $qv = ' -preset ultrafast ' . ' -c:a copy ' .
-                                     ' -x265-params ' . ' crf=25 ';
-                            $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                     $this->ffmpegcmd . " -re -y -i  " .
-                                     $this->destRandMediaName . $qv .
-                                     $transcoded_mp4_file . ' 2>&1';
-                            //
-                            // exec ffmpeg operation
-                            //
-                            $op = $this->execFFMPEG($cmd);
-                        }
+                        /*
+                         * if ($isMP4) {
+                         * //
+                         * // convert hevc to h264
+                         * //
+                         * $qv = ' -preset ultrafast ' . ' -c:a copy ' .
+                         * ' -x265-params ' . ' crf=25 ';
+                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
+                         * $this->ffmpegcmd . " -re -y -i " .
+                         * $this->destRandMediaName . $qv .
+                         * $transcoded_mp4_file . ' 2>&1';
+                         * //
+                         * // exec ffmpeg operation
+                         * //
+                         * $op = $this->execFFMPEG($cmd);
+                         * }
+                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
+                         * $this->ffmpegcmd . " -re -y -i " .
+                         * $transcoded_mp4_file .
+                         * " -threads 0 " .
+                         * " -map 0 " . " -pix_fmt yuv420p " .
+                         * " -vcodec libx264 " . " -acodec libfdk_aac " .
+                         * " -r 25 " . " -profile:v main -level 4.0 " .
+                         * " -b:v 1500k " . " -maxrate 2000k " .
+                         * " -force_key_frames 50 " .
+                         * " -flags -global_header " . " -f segment " .
+                         * " -segment_list_type m3u8 " . " -segment_list " .
+                         * $transcoded_file . " -segment_time 10 " .
+                         * " -segment_format mpeg_ts " .
+                         * $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+                         */
+                        
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . " -re -y -i " .
-                                 $transcoded_mp4_file . " -threads 0 " .
-                                 " -map 0 " . " -pix_fmt yuv420p " .
-                                 " -vcodec libx264 " . " -acodec libfdk_aac " .
-                                 " -r 25 " . " -profile:v main -level 4.0 " .
-                                 " -b:v 1500k " . " -maxrate 2000k " .
-                                 " -force_key_frames 50 " .
-                                 " -flags -global_header " . " -f segment " .
-                                 " -segment_list_type m3u8 " . " -segment_list " .
-                                 $transcoded_file . " -segment_time 10 " .
-                                 " -segment_format mpeg_ts " .
+                                 $this->destRandMediaName . ' -threads 0 ' .
+                                 '-map 0 ' . '-pix_fmt yuv420p ' .
+                                 '-c:v libx264 ' . '-profile:v high -level 4.2 ' .
+                                 '-c:a libfdk_aac ' . '-r 25 ' . '-b:v 1500k ' .
+                                 '-maxrate 2000k ' . '-force_key_frames 50 ' .
+                                 '-flags ' . '-global_header ' . '-f segment ' .
+                                 '-segment_list_type m3u8  ' . '-segment_list ' .
+                                 $transcoded_file . '  -segment_format mpeg_ts ' .
                                  $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
@@ -1108,6 +1130,8 @@ class MemreasTranscoder
     {
         try {
             // Log command
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                    "type::$type cmd::$cmd");
             $this->transcode_job_meta[$type]["ffmpeg_cmd"] = json_encode($cmd, 
                     JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
@@ -1131,6 +1155,7 @@ class MemreasTranscoder
             $this->pass = 0;
             error_log("transcoder $type failed - op -->" . $op . PHP_EOL);
             // Log pass
+            $this->transcode_job_meta[$type]["ffmpeg_cmd"] = $cmd;
             $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
                     $op, JSON_UNESCAPED_SLASHES);
             $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
