@@ -25,7 +25,7 @@ class MemreasConstants
     const SIGNURLS = false;
 
     const EXPIRES = 3600;
-    // 1 hour should be enough to transcode
+ // 1 hour should be enough to transcode
     const MEMREASDB = 'memreasintdb';
 
     const MEMREASBEDB = 'memreasbackenddb';
