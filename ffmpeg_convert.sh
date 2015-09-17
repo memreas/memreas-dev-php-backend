@@ -24,7 +24,7 @@ echo "transcode for h265"
 echo "*****************"
 cmd="ffmpeg -i " 
 cmd+=$infile
-cmd+=" -threads 0 -c:v libx265 -preset medium -x265-params crf=28 -c:a aac -strict experimental -b:a 128k transcode/h265_"
+cmd+=" -threads 0 -c:v libx265 -preset veryfast -x265-params crf=28 -c:a aac -strict experimental -b:a 128k transcode/h265_"
 cmd+=$infile
 echo $cmd
 $cmd

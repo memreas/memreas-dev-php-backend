@@ -603,7 +603,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -881,16 +882,20 @@ class MemreasTranscoder
             //
             // 4k codec level - can't be downloaded to apple
             //
-            $isMP4 = false; // 4k
-            $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'] = (isset(
-                    $ffprobe_json_array['format']['tags']['major_brand']) &&
-                     ! empty(
-                            $ffprobe_json_array['format']['tags']['major_brand'])) ? $ffprobe_json_array['format']['tags']['major_brand'] : "";
-            if (strripos(
-                    $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'], 
-                    "mp4")) {
-                $isMP4 = true;
-            }
+            /*
+             * $isMP4 = false; // 4k
+             * $this->memreas_media_metadata['S3_files']['type']['video']['codec_level']
+             * = (isset(
+             * $ffprobe_json_array['format']['tags']['major_brand']) &&
+             * ! empty(
+             * $ffprobe_json_array['format']['tags']['major_brand'])) ?
+             * $ffprobe_json_array['format']['tags']['major_brand'] : "";
+             * if (strripos(
+             * $this->memreas_media_metadata['S3_files']['type']['video']['codec_level'],
+             * "mp4")) {
+             * $isMP4 = true;
+             * }
+             */
             if ($type == 'web') {
                 /*
                  * Test lossless with best compression
@@ -902,9 +907,8 @@ class MemreasTranscoder
                 $this->memreas_media_metadata['S3_files']['type']['video']['height'] = (isset(
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
-                $qv = ' -threads 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' .
-                         '-profile:v high ' . '-level 4.2 ' . '-preset ' .
-                         $this->compression_preset_web .
+                $qv = '-c:v libx264 ' . '-profile:v high ' . '-level 4.2 ' .
+                         '-preset ' . $this->compression_preset_web .
                          ' -c:a aac -strict experimental ' . '-b:a 128k ';
                 
                 //
@@ -923,7 +927,7 @@ class MemreasTranscoder
                     // $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
                     // $this->compression_preset_1080p .
                     // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
-                    $qv = ' -threads 0 ' . '-c:v libx265 ' . '-preset ' .
+                    $qv = '-c:v libx265 ' . '-preset ' .
                              $this->compression_preset_1080p .
                              ' -x265-params crf=28 ' . '-c:a aac ' .
                              '-strict experimental ' . '-b:a 128k ';
