@@ -60,19 +60,17 @@ class AWSManagerAutoScaler
          */
         // $server = $this->checkServer($server_data['server_name']);
         $process_task = false;
-        Mlog::addone(__FILE__ . __METHOD__ . '$server_data [cpu_util] [0]', 
+        Mlog::addone(__FILE__ . __METHOD__ . '::$server_data [cpu_util] [0]', 
                 $server_data['cpu_util'][0]);
+        Mlog::addone(__FILE__ . __METHOD__ . '::$memory_usage::', $memory_usage);
         if (($server_data['cpu_util'][0] < 75) && ($memory_usage < 75)) {
-            /*
-             * no servers so we're starting up - add me
-             */
             // $this->addServer($server_data);
             $process_task = true;
         } else {
             /*
-             * Server exists so update stats
+             * Server exists so update stats - check if need to start new server
+             * here
              */
-            // $this->updateServer($server_data);
             $process_task = false;
         }
         $server = $this->checkServer();
@@ -82,11 +80,17 @@ class AWSManagerAutoScaler
 
     function fetchServerData ()
     {
+        $loads = sys_getloadavg();
+        $core_nums = trim(
+                shell_exec("grep -P '^processor' /proc/cpuinfo|wc -l"));
+        $load = round($loads[0] / ($core_nums + 1) * 100, 2);
+        
         $server_data = [];
-        $server_data['cpu_util'] = sys_getloadavg();
+        $server_data['cpu_util'] = $load;
         $server_data['server_name'] = $_SERVER['SERVER_NAME'];
         $server_data['server_addr'] = $_SERVER['SERVER_ADDR'];
         $server_data['hostname'] = gethostname();
+        
         // $memory = $this->get_server_memory_usage();
         Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
         if ($server_data['cpu_util'][0] > 75) {

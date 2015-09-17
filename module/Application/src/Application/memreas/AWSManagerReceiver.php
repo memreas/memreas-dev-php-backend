@@ -91,12 +91,14 @@ class AWSManagerReceiver
             $result = $this->memreasTranscoder->exec($message_data, false);
             return $result;
         } catch (Exception $e) {
-            Mlog::addone(__FILE__ . __METHOD__ . __LINE__. 'Caught exception: ', 
+            Mlog::addone(__FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
                     $e->getMessage());
             // Remove the work directory
-            $dir = getcwd() . MemreasConstants::DATA_PATH . $this->temp_job_uuid;
-            $dirRemoved = new RmWorkDir($dir);
-            return false;
+            // $dir = getcwd() . MemreasConstants::DATA_PATH .
+            // $this->temp_job_uuid;
+            // $dirRemoved = new RmWorkDir($dir);
+            // return false;
+            throw $e;
         }
     }
 
@@ -219,9 +221,10 @@ class AWSManagerReceiver
             $uploader = UploadBuilder::newInstance()->setClient($this->s3)
                 ->setSource($body)
                 ->setBucket($bucket)
-                ->setHeaders(array(
-                    'Content-Type' => $content_type
-            ))
+                ->setHeaders(
+                    array(
+                            'Content-Type' => $content_type
+                    ))
                 ->setOption('CacheControl', 'max-age=3600')
                 ->setOption('ServerSideEncryption', 'AES256')
                 ->setOption('x-amz-storage-class', 'REDUCED_REDUNDANCY')
