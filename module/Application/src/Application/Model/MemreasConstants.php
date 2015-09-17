@@ -18,9 +18,9 @@ class MemreasConstants
 
     const MEMREAS_TRANSCODER_FFPROBE = 'ffprobe';
 
-    const MEMREAS_TRANSCODER_FFMPEG_LOCAL = 'ffmpeg';
+    const MEMREAS_TRANSCODER_FFMPEG_LOCAL = '/usr/local/bin/ffmpeg';
 
-    const MEMREAS_TRANSCODER_FFPROBE_LOCAL = 'ffprobe';
+    const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/usr/local/bin/ffprobe';
 
     const SIGNURLS = false;
 
