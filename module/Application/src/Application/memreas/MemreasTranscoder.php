@@ -603,8 +603,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -924,8 +923,8 @@ class MemreasTranscoder
                     // $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
                     // $this->compression_preset_1080p .
                     // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
-                    $qv = ' -threads 0 ' . '-pix_fmt yuv420p ' . '-c:v libx265 ' .
-                             '-preset ' . $this->compression_preset_1080p .
+                    $qv = ' -threads 0 ' . '-c:v libx265 ' . '-preset ' .
+                             $this->compression_preset_1080p .
                              ' -x265-params crf=28 ' . '-c:a aac ' .
                              '-strict experimental ' . '-b:a 128k ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
