@@ -906,9 +906,8 @@ class MemreasTranscoder
                 $this->memreas_media_metadata['S3_files']['type']['video']['height'] = (isset(
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
-                $qv = ' -threads 1 -c:v libx264 ' . '-profile:v high ' .
-                         '-level 4.2 ' . '-preset ' .
-                         $this->compression_preset_web .
+                $qv = ' -c:v libx264 ' . '-profile:v high ' . '-level 4.2 ' .
+                         '-preset ' . $this->compression_preset_web .
                          ' -c:a aac -strict experimental ' . '-b:a 128k ';
                 
                 //
@@ -919,7 +918,7 @@ class MemreasTranscoder
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
-                         " -i $this->destRandMediaName $qv $transcoded_file " .
+                         "  -threads 1 -i $this->destRandMediaName $qv $transcoded_file " .
                          '2>&1';
             } else 
                 if ($type == '1080p') {
@@ -927,7 +926,7 @@ class MemreasTranscoder
                     // $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
                     // $this->compression_preset_1080p .
                     // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
-                    $qv = ' -threads 1 -c:v libx265 ' . '-preset ' .
+                    $qv = ' -c:v libx265 ' . '-preset ' .
                              $this->compression_preset_1080p .
                              ' -x265-params crf=28 ' . '-c:a aac ' .
                              '-strict experimental ' . '-b:a 128k ';
@@ -936,7 +935,7 @@ class MemreasTranscoder
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                     $cmd = 'nice -' . $this->nice_priority . ' ' .
                              $this->ffmpegcmd .
-                             " -i $this->destRandMediaName $qv $transcoded_file " .
+                             "  -threads 1 -i $this->destRandMediaName $qv $transcoded_file " .
                              '2>&1';
                 } else 
                     if ($type == 'hls') {
@@ -995,10 +994,10 @@ class MemreasTranscoder
                          */
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . " -re -y -i " .
-                                 $this->destRandMediaName . ' -threads 1 ' .
-                                 '-map 0 ' . '-pix_fmt yuv420p ' .
-                                 '-c:v libx264 ' . '-profile:v high -level 4.2 ' .
+                                 $this->ffmpegcmd . "  -threads 1 -re -y -i " .
+                                 $this->destRandMediaName . '-map 0 ' .
+                                 '-pix_fmt yuv420p ' . '-c:v libx264 ' .
+                                 '-profile:v high -level 4.2 ' .
                                  '-c:a aac -strict experimental ' . '-r 25 ' .
                                  '-b:v 1500k ' . '-maxrate 2000k ' .
                                  '-force_key_frames 50 ' . '-flags ' .

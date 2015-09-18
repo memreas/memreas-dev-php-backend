@@ -80,9 +80,7 @@ class AWSManagerAutoScaler
 
     function fetchServerData ()
     {
-        $cmd = 'top -bn1 | grep "Cpu(s)" | ' .
-                 ' sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | ' .
-                 ' awk {print 100 - $1}';
+        $cmd = "mpstat | awk '$12 ~ /[0-9.]+/ { print 100 - $12 }'";
         $cpu_util = shell_exec($cmd);
         
         $server_data = [];
