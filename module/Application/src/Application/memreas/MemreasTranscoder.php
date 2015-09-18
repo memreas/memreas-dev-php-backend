@@ -675,6 +675,13 @@ class MemreasTranscoder
              * throw $e;
              * }
              */
+        } finally {
+            //
+            // remove work dir
+            //
+            $result = $this->rmWorkDir($this->homeDir);
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                    '::removed directory::', $this->homeDir);
         }
         
         return $this->pass;
@@ -1194,6 +1201,9 @@ class MemreasTranscoder
             }
             rmdir($dir);
         } catch (\Exception $e) {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ .
+                             '::rmWorkDir failed for dir::', $dir);
             throw $e;
         }
     }

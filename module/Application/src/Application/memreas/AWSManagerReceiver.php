@@ -8,7 +8,6 @@ use Aws\Common\Exception\MultipartUploadException;
 use Aws\S3\Model\MultipartUpload\UploadBuilder;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
-use Application\memreas\RmWorkDir;
 use Application\memreas\Mlog;
 
 class AWSManagerReceiver
@@ -91,7 +90,8 @@ class AWSManagerReceiver
             $result = $this->memreasTranscoder->exec($message_data, false);
             return $result;
         } catch (Exception $e) {
-            Mlog::addone(__FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
+            Mlog::addone(
+                    __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
                     $e->getMessage());
             // Remove the work directory
             // $dir = getcwd() . MemreasConstants::DATA_PATH .
