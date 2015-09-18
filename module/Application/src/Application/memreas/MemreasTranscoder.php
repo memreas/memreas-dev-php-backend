@@ -927,7 +927,7 @@ class MemreasTranscoder
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
-                         " -i $this->destRandMediaName $qv $transcoded_file " .
+                         " -nostats -loglevel 0 -i $this->destRandMediaName $qv $transcoded_file " .
                          '2>&1';
             } else 
                 if ($type == '1080p') {
@@ -944,7 +944,7 @@ class MemreasTranscoder
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                     $cmd = 'nice -' . $this->nice_priority . ' ' .
                              $this->ffmpegcmd .
-                             "  -i $this->destRandMediaName $qv $transcoded_file " .
+                             " -nostats -loglevel 0 -i $this->destRandMediaName $qv $transcoded_file " .
                              '2>&1';
                 } else 
                     if ($type == 'hls') {
@@ -1003,7 +1003,8 @@ class MemreasTranscoder
                          */
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . "  -re -y -i " .
+                                 $this->ffmpegcmd .
+                                 " -nostats -loglevel 0 -re -y -i " .
                                  $this->destRandMediaName . ' -map 0 ' .
                                  '-pix_fmt yuv420p ' . '-c:v libx264 ' .
                                  ' -threads 1 ' . '-profile:v high -level 4.2 ' .
