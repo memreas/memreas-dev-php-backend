@@ -14,18 +14,18 @@ class MemreasConstants
 
     const AWS_APPREG = 'us-east-1';
 
-    const MEMREAS_TRANSCODER_FFMPEG = 'ffmpeg';
+    const MEMREAS_TRANSCODER_FFMPEG = '/var/www/memreas_ffmpeg_install/ffmpeg';
 
-    const MEMREAS_TRANSCODER_FFPROBE = 'ffprobe';
+    const MEMREAS_TRANSCODER_FFPROBE = '/var/www/memreas_ffmpeg_install/ffprobe';
 
-    const MEMREAS_TRANSCODER_FFMPEG_LOCAL = '/usr/local/bin/ffmpeg';
+    const MEMREAS_TRANSCODER_FFMPEG_LOCAL = 'ffmpeg';
 
-    const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/usr/local/bin/ffprobe';
+    const MEMREAS_TRANSCODER_FFPROBE_LOCAL = 'ffprobe';
 
     const SIGNURLS = false;
 
     const EXPIRES = 3600;
- // 1 hour should be enough to transcode
+    // 1 hour should be enough to transcode
     const MEMREASDB = 'memreasintdb';
 
     const MEMREASBEDB = 'memreasbackenddb';
