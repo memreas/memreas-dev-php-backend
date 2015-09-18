@@ -80,13 +80,13 @@ class AWSManagerAutoScaler
 
     function fetchServerData ()
     {
-        $loads = sys_getloadavg();
-        $core_nums = trim(
-                shell_exec("grep -P '^processor' /proc/cpuinfo|wc -l"));
-        $load = round($loads[0] / ($core_nums + 1) * 100, 2);
+        $cmd = 'top -bn1 | grep "Cpu(s)" | ' .
+                 ' sed "s/.*, *\([0-9.]*\)%* id.*/\1/" | ' .
+                 ' awk {print 100 - $1}';
+        $cpu_util = shell_exec($cmd);
         
         $server_data = [];
-        $server_data['cpu_util'] = $load;
+        $server_data['cpu_util'] = $cpu_util;
         $server_data['server_name'] = $_SERVER['SERVER_NAME'];
         $server_data['server_addr'] = $_SERVER['SERVER_ADDR'];
         $server_data['hostname'] = gethostname();
