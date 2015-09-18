@@ -907,8 +907,9 @@ class MemreasTranscoder
                 $this->memreas_media_metadata['S3_files']['type']['video']['height'] = (isset(
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
-                $qv = ' -c:v libx264 ' . '-profile:v high ' . '-level 4.2 ' .
-                         '-preset ' . $this->compression_preset_web .
+                $qv = ' -c:v libx264 ' . ' -threads 1 ' . '-profile:v high ' .
+                         '-level 4.2 ' . '-preset ' .
+                         $this->compression_preset_web .
                          ' -c:a aac -strict experimental ' . '-b:a 128k ';
                 
                 //
@@ -919,7 +920,7 @@ class MemreasTranscoder
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
-                         "  -threads 1 -i $this->destRandMediaName $qv $transcoded_file " .
+                         " -i $this->destRandMediaName $qv $transcoded_file " .
                          '2>&1';
             } else 
                 if ($type == '1080p') {
@@ -996,9 +997,9 @@ class MemreasTranscoder
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . "  -re -y -i " .
-                                 $this->destRandMediaName . ' -threads 1 ' .
-                                 ' -map 0 ' . '-pix_fmt yuv420p ' .
-                                 '-c:v libx264 ' . '-profile:v high -level 4.2 ' .
+                                 $this->destRandMediaName . ' -map 0 ' .
+                                 '-pix_fmt yuv420p ' . '-c:v libx264 ' .
+                                 ' -threads 1 ' . '-profile:v high -level 4.2 ' .
                                  '-c:a aac -strict experimental ' . '-r 25 ' .
                                  '-b:v 1500k ' . '-maxrate 2000k ' .
                                  '-force_key_frames 50 ' . '-flags ' .
