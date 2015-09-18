@@ -603,7 +603,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -926,7 +927,7 @@ class MemreasTranscoder
                     // $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
                     // $this->compression_preset_1080p .
                     // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
-                    $qv = ' -c:v libx265 ' . '-preset ' .
+                    $qv = ' -c:v libx265 ' . '-threads 1 ' . '-preset ' .
                              $this->compression_preset_1080p .
                              ' -x265-params crf=28 ' . '-c:a aac ' .
                              '-strict experimental ' . '-b:a 128k ';
@@ -935,7 +936,7 @@ class MemreasTranscoder
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                     $cmd = 'nice -' . $this->nice_priority . ' ' .
                              $this->ffmpegcmd .
-                             "  -threads 1 -i $this->destRandMediaName $qv $transcoded_file " .
+                             "  -i $this->destRandMediaName $qv $transcoded_file " .
                              '2>&1';
                 } else 
                     if ($type == 'hls') {
@@ -994,10 +995,10 @@ class MemreasTranscoder
                          */
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . "  -threads 1 -re -y -i " .
-                                 $this->destRandMediaName . '-map 0 ' .
-                                 '-pix_fmt yuv420p ' . '-c:v libx264 ' .
-                                 '-profile:v high -level 4.2 ' .
+                                 $this->ffmpegcmd . "  -re -y -i " .
+                                 $this->destRandMediaName . ' -threads 1 ' .
+                                 ' -map 0 ' . '-pix_fmt yuv420p ' .
+                                 '-c:v libx264 ' . '-profile:v high -level 4.2 ' .
                                  '-c:a aac -strict experimental ' . '-r 25 ' .
                                  '-b:v 1500k ' . '-maxrate 2000k ' .
                                  '-force_key_frames 50 ' . '-flags ' .
@@ -1014,7 +1015,7 @@ class MemreasTranscoder
                              */
                             // error_log("Inside transcode type=audio
                             // ...".PHP_EOL);
-                            $qv = ' -c:a libfdk_aac -movflags +faststart ';
+                            $qv = ' -c:a libfdk_aac -movflags +faststart -threads 1 ';
                             $transcoded_file = $this->homeDir . self::CONVDIR .
                                      self::AUDIODIR . $this->MediaFileName .
                                      $aacext;
