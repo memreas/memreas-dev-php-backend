@@ -80,9 +80,9 @@ class AWSManagerAutoScaler
 
     function fetchServerData ()
     {
-        $cmd = "mpstat | awk '$12 ~ /[0-9.]+/ { print 100 - $12 }'";
-        $cpu_util = shell_exec($cmd);
-        
+        // $cmd = "mpstat | awk '$12 ~ /[0-9.]+/ { print 100 - $12 }'";
+        // $cpu_util = shell_exec($cmd);
+        $cpu_util = sys_getloadavg();
         $server_data = [];
         $server_data['cpu_util'] = $cpu_util;
         $server_data['server_name'] = $_SERVER['SERVER_NAME'];
