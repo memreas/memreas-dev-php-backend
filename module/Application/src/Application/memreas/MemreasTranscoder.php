@@ -455,15 +455,20 @@ class MemreasTranscoder
                     $cmd = $this->ffprobecmd .
                              ' -v error -print_format json -show_format -show_streams ' .
                              $this->destRandMediaName;
-                    $ffprobe_json = shell_exec($cmd);
-                    $ffprobe_json_array = json_decode($ffprobe_json, true);
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ . '::_FFPROBE_::' .
-                                     $cmd, $ffprobe_json);
-                    
-                    $this->duration = $ffprobe_json_array['format']['duration'];
-                    $this->setNicePriorityAndCompression();
-                    $this->filesize = $ffprobe_json_array['format']['size'];
+                    try {
+                        $ffprobe_json = shell_exec($cmd);
+                        $ffprobe_json_array = json_decode($ffprobe_json, true);
+                        Mlog::addone(
+                                __CLASS__ . __METHOD__ . __LINE__ .
+                                         '::_FFPROBE_::' . $cmd, $ffprobe_json);
+                        
+                        $this->duration = $ffprobe_json_array['format']['duration'];
+                        $this->setNicePriorityAndCompression();
+                        $this->filesize = $ffprobe_json_array['format']['size'];
+                    } catch (\Exception $e) {
+                        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                "::ffprobe cmd:: $cmd \n exception:: $e->getMessage()");
+                    }
                     $this->transcode_start_time = date("Y-m-d H:i:s");
                 } else {
                     $ffprobe_json_array = [];
@@ -646,40 +651,11 @@ class MemreasTranscoder
                     __CLASS__ . __METHOD__ . LINE__ . '::catch throwing error', 
                     $this->transcode_status);
             throw $e;
-            /*
-             * //work dir is removed in indexController...
-             * } finally {
-             * // Always delete the temp dir...
-             * // Delete the temp dir if we got this far...
-             * try {
-             * Mlog::addone(
-             * __CLASS__ . __METHOD__ . LINE__ . '::inside finally::',
-             * $this->transcode_status);
-             * $result = $this->rmWorkDir($this->homeDir);
-             * } catch (\Exception $e) {
-             * $error_data = [];
-             * $error_data['custom_message'] = __CLASS__ . __METHOD__ .
-             * '::failed to remove work directory::' . $this->homeDir;
-             * $error_data['error_line'] = $e->getLine();
-             * $error_data['error_message'] = $e->getMessage();
-             * $error_data['error_trace'] = $e->getTrace();
-             * $this->aws_manager_receiver->sesEmailErrorToAdmin(
-             * json_encode($error_data, JSON_PRETTY_PRINT));
-             *
-             * // Debugging - log table entry
-             * Mlog::addone(
-             * __CLASS__ . __METHOD__ .
-             * '::$this->persistMedia($this->memreas_media,
-             * $memreas_media_data_array)', $this->transcode_status);
-             * error_log("error string ---> " . $e->getMessage() . PHP_EOL);
-             * throw $e;
-             * }
-             */
         } finally {
             //
             // remove work dir
             //
-            $result = $this->rmWorkDir($this->homeDir);
+            // $result = $this->rmWorkDir($this->homeDir);
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
                     '::removed directory::', $this->homeDir);
         }
@@ -914,10 +890,16 @@ class MemreasTranscoder
                 $this->memreas_media_metadata['S3_files']['type']['video']['height'] = (isset(
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
-                $qv = ' -c:v libx264 ' . ' -threads 1 ' . '-profile:v high ' .
-                         '-level 4.2 ' . '-preset ' .
-                         $this->compression_preset_web .
-                         ' -c:a aac -strict experimental ' . '-b:a 128k ';
+                
+                // $qv = ' -c:v libx264 ' . ' -threads 1 ' . '-profile:v high '
+                // .
+                // '-level 4.2 ' . '-preset ' .
+                // $this->compression_preset_web . ' -c:a libfdk_aac ' .
+                // '-b:a 128k ';
+                
+                $qv = ' -c:v libx264 ' . ' -threads 1 ' . '-preset ' .
+                         $this->compression_preset_web . ' -c:a libfdk_aac ' .
+                         '-b:a 128k ';
                 
                 //
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -927,8 +909,9 @@ class MemreasTranscoder
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
-                         " -nostats -loglevel 0 -i $this->destRandMediaName $qv $transcoded_file " .
-                         '2>&1';
+                         ' -vsync passthrough ' . ' -frame_drop_threshold 4 ' .
+                         ' -loglevel error ' . ' -i  ' . $this->destRandMediaName .
+                         ' ' . $qv . ' ' . $transcoded_file . ' 2>&1 &';
             } else 
                 if ($type == '1080p') {
                     
@@ -943,8 +926,9 @@ class MemreasTranscoder
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                     $cmd = 'nice -' . $this->nice_priority . ' ' .
-                             $this->ffmpegcmd .
-                             " -nostats -loglevel 0 -i $this->destRandMediaName $qv $transcoded_file " .
+                             $this->ffmpegcmd . ' -vsync passthrough ' .
+                             ' -frame_drop_threshold 4 ' . ' -loglevel error ' .
+                             " -i $this->destRandMediaName $qv $transcoded_file " .
                              '2>&1';
                 } else 
                     if ($type == 'hls') {
@@ -1003,15 +987,13 @@ class MemreasTranscoder
                          */
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd .
-                                 " -nostats -loglevel 0 -re -y -i " .
+                                 $this->ffmpegcmd . "  -re -y -i " .
                                  $this->destRandMediaName . ' -map 0 ' .
                                  '-pix_fmt yuv420p ' . '-c:v libx264 ' .
-                                 ' -threads 1 ' . '-profile:v high -level 4.2 ' .
-                                 '-c:a aac -strict experimental ' . '-r 25 ' .
-                                 '-b:v 1500k ' . '-maxrate 2000k ' .
-                                 '-force_key_frames 50 ' . '-flags ' .
-                                 '-global_header ' . '-f segment ' .
+                                 ' -threads 1 ' . '-profile:v high -level 4.0 ' .
+                                 '-c:a libfdk_aac ' . '-r 25 ' . '-b:v 1500k ' .
+                                 '-maxrate 2000k ' . '-force_key_frames 50 ' .
+                                 '-flags ' . '-global_header ' . '-f segment ' .
                                  '-segment_list_type m3u8  ' . '-segment_list ' .
                                  $transcoded_file . '  -segment_format mpeg_ts ' .
                                  $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
@@ -1045,6 +1027,7 @@ class MemreasTranscoder
             // exec ffmpeg operation
             //
             $this->execFFMPEG($cmd);
+            exit();
             
             // Push to S3
             $s3file = $this->s3prefixpath . $type . '/' . $transcoded_file_name;
@@ -1149,6 +1132,97 @@ class MemreasTranscoder
                     JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
             $op = shell_exec($cmd);
+            // $op = array();
+            // $result = 0;
+            // $pid = exec($command, &$op, &$result);
+            // $op = system($cmd, $ret_val);
+            
+            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, "::op::$op");
+            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
+            // "::op::$ret_val");
+            /*
+             * //
+             * // Trying proc_open to control long duration of ffmpeg
+             * //
+             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
+             * '::Setting up descriptors');
+             * $descriptorspec = array(
+             * 0 => array(
+             * "pipe",
+             * "r"
+             * ), // stdin is a pipe that the child
+             * // will read from
+             * 1 => array(
+             * "pipe",
+             * "w"
+             * ), // stdout is a pipe that the child
+             * // will write to
+             * 2 => array(
+             * "pipe",
+             * "w"
+             * )
+             * ); // stderr is a file to write to
+             *
+             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
+             * '::About to open process');
+             * $pipes = array();
+             * $process = proc_open($cmd, $descriptorspec, $pipes);
+             * $op = "";
+             *
+             * if (! is_resource($process)) {
+             * // close child's input imidiately
+             * fclose($pipes[0]);
+             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
+             * '::Process did not open!');
+             * } else {
+             * stream_set_blocking($pipes[1], false);
+             * stream_set_blocking($pipes[2], false);
+             *
+             * $todo = array(
+             * $pipes[1],
+             * $pipes[2]
+             * );
+             *
+             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
+             * '::Process did not open!');
+             * while (true) {
+             * $read = array();
+             * if (! feof($pipes[1])) {
+             * $read[] = $pipes[1];
+             * }
+             * if (! feof($pipes[2])) {
+             * $read[] = $pipes[2];
+             * }
+             *
+             * if (! $read) {
+             * break;
+             * }
+             *
+             * $ready = stream_select($read, $write = NULL, $ex = NULL, 2);
+             * if ($ready === false) {
+             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
+             * '::Process died!');
+             * break; // should never happen - something died
+             * }
+             *
+             * foreach ($read as $r) {
+             * $s = fread($r, 1024);
+             * $op .= $s;
+             * }
+             * }
+             *
+             * fclose($pipes[1]);
+             * fclose($pipes[2]);
+             * $code = proc_close($process);
+             *
+             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
+             * '::Process completed::op->' . $op);
+             * }
+             */
+            
+            //
+            // Command should be complete check for file...
+            //
             if (! file_exists($transcoded_file)) {
                 throw new \Exception($op);
             } else {
