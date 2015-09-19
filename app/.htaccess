@@ -1,7 +1,8 @@
 <IfModule mod_php5.c>
 php_value session.auto_start 0
-#Limits for file uploads
+#Limits for file processing
 php_value memory_limit -1
+php_value realpath_cache_size 5M
 php_value max_execution_time 259200
 php_value max_input_time 259200
 php_value session.gc_maxlifetime 259200

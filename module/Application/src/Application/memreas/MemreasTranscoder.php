@@ -608,8 +608,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1027,7 +1026,6 @@ class MemreasTranscoder
             // exec ffmpeg operation
             //
             $this->execFFMPEG($cmd);
-            exit();
             
             // Push to S3
             $s3file = $this->s3prefixpath . $type . '/' . $transcoded_file_name;
@@ -1126,12 +1124,13 @@ class MemreasTranscoder
     {
         try {
             // Log command
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                    "type::$type cmd::$cmd");
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, "cmd::$cmd");
             $this->transcode_job_meta[$type]["ffmpeg_cmd"] = json_encode($cmd, 
                     JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
-            $op = shell_exec($cmd);
+            // $op = shell_exec($cmd);
+            putenv("SHELL=/bin/bash");
+            $op = passthru($cmd, $ret_val);
             // $op = array();
             // $result = 0;
             // $pid = exec($command, &$op, &$result);
