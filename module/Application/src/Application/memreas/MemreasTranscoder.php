@@ -910,7 +910,7 @@ class MemreasTranscoder
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
                          ' -vsync passthrough ' . ' -frame_drop_threshold 4 ' .
                          ' -loglevel error ' . ' -i  ' . $this->destRandMediaName .
-                         ' ' . $qv . ' ' . $transcoded_file . ' 2>&1 &';
+                         ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
             } else 
                 if ($type == '1080p') {
                     
@@ -1129,7 +1129,7 @@ class MemreasTranscoder
                     JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
             // $op = shell_exec($cmd);
-            putenv("SHELL=/bin/bash");
+            // putenv("SHELL=/bin/bash");
             $op = passthru($cmd, $ret_val);
             // $op = array();
             // $result = 0;

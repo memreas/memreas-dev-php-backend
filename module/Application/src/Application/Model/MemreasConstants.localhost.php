@@ -14,13 +14,13 @@ class MemreasConstants
 
     const AWS_APPREG = 'us-east-1';
 
-    const MEMREAS_TRANSCODER_FFMPEG = '/usr/bin/ffmpeg';
+    const MEMREAS_TRANSCODER_FFMPEG = '/var/www/memreas_ffmpeg_install/bin/ffmpeg';
 
-    const MEMREAS_TRANSCODER_FFPROBE = '/usr/bin/ffprobe';
+    const MEMREAS_TRANSCODER_FFPROBE = '/var/www/memreas_ffmpeg_install/bin/ffprobe';
 
-    const MEMREAS_TRANSCODER_FFMPEG_LOCAL = '/usr/local/bin/ffmpeg';
+    const MEMREAS_TRANSCODER_FFMPEG_LOCAL = '/var/www/memreas_ffmpeg_install/bin/ffmpeg';
 
-    const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/usr/local/bin/ffprobe';
+    const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/var/www/memreas_ffmpeg_install/bin/ffprobe';
 
     const SIGNURLS = false;
 
