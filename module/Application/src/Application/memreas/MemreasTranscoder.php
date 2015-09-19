@@ -608,7 +608,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -898,7 +899,7 @@ class MemreasTranscoder
                 
                 $qv = ' -c:v libx264 ' . ' -threads 1 ' . '-preset ' .
                          $this->compression_preset_web . ' -c:a libfdk_aac ' .
-                         '-b:a 128k ';
+                         '-b:a 128k ' . ' -threads 1 ';
                 
                 //
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -920,7 +921,8 @@ class MemreasTranscoder
                     $qv = ' -c:v libx265 ' . '-threads 1 ' . '-preset ' .
                              $this->compression_preset_1080p .
                              ' -x265-params crf=28 ' . '-c:a aac ' .
-                             '-strict experimental ' . '-b:a 128k ';
+                             '-strict experimental ' . '-b:a 128k ' .
+                             ' -threads 1 ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -936,6 +938,8 @@ class MemreasTranscoder
                         
                         // Note: this section uses the transcoded 1080p file
                         // above
+                        $input_file = $this->homeDir . self::CONVDIR .
+                                 self::WEBDIR . $this->MediaFileName . $mpeg4ext;
                         $transcoded_mp4_file = $this->homeDir . self::CONVDIR .
                                  self::HLSDIR . $this->MediaFileName . $mpeg4ext;
                         $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -950,51 +954,17 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
-                        //
-                        // Check if 4k or not
-                        //
-                        /*
-                         * if ($isMP4) {
-                         * //
-                         * // convert hevc to h264
-                         * //
-                         * $qv = ' -preset ultrafast ' . ' -c:a copy ' .
-                         * ' -x265-params ' . ' crf=25 ';
-                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
-                         * $this->ffmpegcmd . " -re -y -i " .
-                         * $this->destRandMediaName . $qv .
-                         * $transcoded_mp4_file . ' 2>&1';
-                         * //
-                         * // exec ffmpeg operation
-                         * //
-                         * $op = $this->execFFMPEG($cmd);
-                         * }
-                         * $cmd = 'nice -' . $this->nice_priority . ' ' .
-                         * $this->ffmpegcmd . " -re -y -i " .
-                         * $transcoded_mp4_file .
-                         * " -threads 0 " .
-                         * " -map 0 " . " -pix_fmt yuv420p " .
-                         * " -vcodec libx264 " . " -acodec libfdk_aac " .
-                         * " -r 25 " . " -profile:v main -level 4.0 " .
-                         * " -b:v 1500k " . " -maxrate 2000k " .
-                         * " -force_key_frames 50 " .
-                         * " -flags -global_header " . " -f segment " .
-                         * " -segment_list_type m3u8 " . " -segment_list " .
-                         * $transcoded_file . " -segment_time 10 " .
-                         * " -segment_format mpeg_ts " .
-                         * $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-                         */
-                        
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . "  -re -y -i " .
-                                 $this->destRandMediaName . ' -map 0 ' .
-                                 '-pix_fmt yuv420p ' . '-c:v libx264 ' .
-                                 ' -threads 1 ' . '-profile:v high -level 4.0 ' .
+                                 $this->ffmpegcmd . "  -re -y -i " . $input_file .
+                                 ' -map 0 ' . '-pix_fmt yuv420p ' .
+                                 '-c:v libx264 ' . ' -threads 1 ' .
+                                 '-profile:v high -level 4.0 ' .
                                  '-c:a libfdk_aac ' . '-r 25 ' . '-b:v 1500k ' .
                                  '-maxrate 2000k ' . '-force_key_frames 50 ' .
-                                 '-flags ' . '-global_header ' . '-f segment ' .
-                                 '-segment_list_type m3u8  ' . '-segment_list ' .
-                                 $transcoded_file . '  -segment_format mpeg_ts ' .
+                                 '-flags ' . '-global_header ' . ' -threads 1' .
+                                 '-f segment ' . '-segment_list_type m3u8  ' .
+                                 '-segment_list ' . $transcoded_file .
+                                 '  -segment_format mpeg_ts ' .
                                  $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
@@ -1135,89 +1105,6 @@ class MemreasTranscoder
             // $result = 0;
             // $pid = exec($command, &$op, &$result);
             // $op = system($cmd, $ret_val);
-            
-            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, "::op::$op");
-            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
-            // "::op::$ret_val");
-            /*
-             * //
-             * // Trying proc_open to control long duration of ffmpeg
-             * //
-             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
-             * '::Setting up descriptors');
-             * $descriptorspec = array(
-             * 0 => array(
-             * "pipe",
-             * "r"
-             * ), // stdin is a pipe that the child
-             * // will read from
-             * 1 => array(
-             * "pipe",
-             * "w"
-             * ), // stdout is a pipe that the child
-             * // will write to
-             * 2 => array(
-             * "pipe",
-             * "w"
-             * )
-             * ); // stderr is a file to write to
-             *
-             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
-             * '::About to open process');
-             * $pipes = array();
-             * $process = proc_open($cmd, $descriptorspec, $pipes);
-             * $op = "";
-             *
-             * if (! is_resource($process)) {
-             * // close child's input imidiately
-             * fclose($pipes[0]);
-             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
-             * '::Process did not open!');
-             * } else {
-             * stream_set_blocking($pipes[1], false);
-             * stream_set_blocking($pipes[2], false);
-             *
-             * $todo = array(
-             * $pipes[1],
-             * $pipes[2]
-             * );
-             *
-             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
-             * '::Process did not open!');
-             * while (true) {
-             * $read = array();
-             * if (! feof($pipes[1])) {
-             * $read[] = $pipes[1];
-             * }
-             * if (! feof($pipes[2])) {
-             * $read[] = $pipes[2];
-             * }
-             *
-             * if (! $read) {
-             * break;
-             * }
-             *
-             * $ready = stream_select($read, $write = NULL, $ex = NULL, 2);
-             * if ($ready === false) {
-             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
-             * '::Process died!');
-             * break; // should never happen - something died
-             * }
-             *
-             * foreach ($read as $r) {
-             * $s = fread($r, 1024);
-             * $op .= $s;
-             * }
-             * }
-             *
-             * fclose($pipes[1]);
-             * fclose($pipes[2]);
-             * $code = proc_close($process);
-             *
-             * Mlog::addone(__CLASS__ . __METHOD__ . __LINE__,
-             * '::Process completed::op->' . $op);
-             * }
-             */
             
             //
             // Command should be complete check for file...
