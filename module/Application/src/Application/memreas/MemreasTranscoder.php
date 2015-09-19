@@ -122,6 +122,8 @@ class MemreasTranscoder
 
     protected $pass = 0;
 
+    protected $type;
+
     protected $input_message_data_json;
 
     protected $json_metadata;
@@ -513,8 +515,9 @@ class MemreasTranscoder
                      */
                     $this->transcode_job_meta = array();
                     Mlog::addone(__CLASS__ . __METHOD__, "starting web video");
-                    $this->transcode('web'); // set $this->transcode_job_meta in
-                                             // function
+                    $this->type = 'web';
+                    $this->transcode(); // set $this->transcode_job_meta in
+                                        // function
                     Mlog::addone(__CLASS__ . __METHOD__, "finished web video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'web_mp4_complete';
                     // set status to show web available
@@ -528,9 +531,10 @@ class MemreasTranscoder
                      * High quality mp4 conversion (h.265)
                      */
                     Mlog::addone(__CLASS__ . __METHOD__, "starting 1080p video");
-                    $this->transcode('1080p'); // set $this->transcode_job_meta
-                                               // in
-                                               // function
+                    $this->type = '1080p';
+                    $this->transcode(); // set $this->transcode_job_meta
+                                        // in
+                                        // function
                     Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p video");
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
                     // set status to show 1080p available
@@ -545,9 +549,10 @@ class MemreasTranscoder
                      */
                     Mlog::addone(__CLASS__ . __METHOD__, 
                             '$this->transcode ( hls )');
-                    $this->transcode('hls'); // set $this->transcode_job_meta
-                                             // in
-                                             // function
+                    $this->type = 'hls';
+                    $this->transcode(); // set $this->transcode_job_meta
+                                        // in
+                                        // function
                     $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'hls_complete';
                     // set status to show all (web,1080p,hls) available
                     $this->transcode_status = "success";
@@ -608,8 +613,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -854,7 +858,7 @@ class MemreasTranscoder
         }
     }
 
-    public function transcode ($type)
+    public function transcode ()
     {
         try {
             
@@ -879,7 +883,7 @@ class MemreasTranscoder
              * $isMP4 = true;
              * }
              */
-            if ($type == 'web') {
+            if ($this->type == 'web') {
                 /*
                  * Test lossless with best compression
                  */
@@ -913,7 +917,7 @@ class MemreasTranscoder
                          ' -loglevel error ' . ' -i  ' . $this->destRandMediaName .
                          ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
             } else 
-                if ($type == '1080p') {
+                if ($this->type == '1080p') {
                     
                     // $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
                     // $this->compression_preset_1080p .
@@ -932,9 +936,9 @@ class MemreasTranscoder
                              " -i $this->destRandMediaName $qv $transcoded_file " .
                              '2>&1';
                 } else 
-                    if ($type == 'hls') {
+                    if ($this->type == 'hls') {
                         Mlog::addone(__CLASS__ . __METHOD__, 
-                                "else if ($type == 'hls')");
+                                "else if ($this->type == 'hls')");
                         
                         // Note: this section uses the transcoded 1080p file
                         // above
@@ -969,7 +973,7 @@ class MemreasTranscoder
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
                     } else 
-                        if ($type == 'audio') {
+                        if ($this->type == 'audio') {
                             /*
                              * TODO: add audio cmd
                              */
@@ -986,7 +990,7 @@ class MemreasTranscoder
                                      '2>&1';
                         } else {
                             throw new \Exception(
-                                    "MemreasTranscoder $type not found.");
+                                    "MemreasTranscoder $this->type not found.");
                         }
             
             $this->pass = 0;
@@ -998,9 +1002,10 @@ class MemreasTranscoder
             $this->execFFMPEG($cmd);
             
             // Push to S3
-            $s3file = $this->s3prefixpath . $type . '/' . $transcoded_file_name;
-            if ($type == "hls") {
-                $s3file = $this->s3prefixpath . $type . '/' .
+            $s3file = $this->s3prefixpath . $this->type . '/' .
+                     $transcoded_file_name;
+            if ($this->type == "hls") {
+                $s3file = $this->s3prefixpath . $this->type . '/' .
                          $this->MediaFileName . '.m3u8';
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . 'MemreasConstants::S3HLSBUCKET', 
@@ -1018,7 +1023,7 @@ class MemreasTranscoder
                 $fsize = 0;
                 foreach (glob($pat) as $filename) {
                     $fsize += filesize($filename);
-                    $s3tsfile = $this->s3prefixpath . $type . '/' .
+                    $s3tsfile = $this->s3prefixpath . $this->type . '/' .
                              basename($filename);
                     Mlog::addone(
                             __CLASS__ . __METHOD__ .
@@ -1045,10 +1050,10 @@ class MemreasTranscoder
             
             // Log status
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_' .
-                     $type . '_upload_S3';
-            $this->memreas_media_metadata['S3_files'][$type] = $s3file;
+                     $this->type . '_upload_S3';
+            $this->memreas_media_metadata['S3_files'][$this->type] = $s3file;
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_' .
-                     $type . '_completed';
+                     $this->type . '_completed';
             
             /**
              * Dedup the array in case of retranscode
@@ -1082,7 +1087,8 @@ class MemreasTranscoder
                     __CLASS__ . __METHOD__ . '::complete::transcode_status', 
                     $this->transcode_status);
             Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ . 'return $type::' . $type);
+                    __CLASS__ . __METHOD__ . __LINE__ . 'return $this->type::' .
+                             $this->type);
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'return $arr::', 
                     $arr);
         } catch (\Exception $e) {
@@ -1095,8 +1101,8 @@ class MemreasTranscoder
         try {
             // Log command
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, "cmd::$cmd");
-            $this->transcode_job_meta[$type]["ffmpeg_cmd"] = json_encode($cmd, 
-                    JSON_UNESCAPED_SLASHES);
+            $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = json_encode(
+                    $cmd, JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
             // $op = shell_exec($cmd);
             // putenv("SHELL=/bin/bash");
@@ -1114,27 +1120,27 @@ class MemreasTranscoder
             } else {
                 $this->pass = 1;
                 // Log pass
-                $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
+                $this->transcode_job_meta[$this->type]["ffmpeg_cmd_output"] = json_encode(
                         $op, JSON_UNESCAPED_SLASHES);
-                $this->transcode_job_meta[$type]["output_size"] = $fsize;
-                $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
-                $this->transcode_job_meta[$type]["error_message"] = "";
-                $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
-                $this->transcode_job_meta[$type]["output_end_time"] = date(
+                $this->transcode_job_meta[$this->type]["output_size"] = $fsize;
+                $this->transcode_job_meta[$this->type]["pass_fail"] = $this->pass;
+                $this->transcode_job_meta[$this->type]["error_message"] = "";
+                $this->transcode_job_meta[$this->type]["output_start_time"] = $output_start_time;
+                $this->transcode_job_meta[$this->type]["output_end_time"] = date(
                         "Y-m-d H:i:s");
             }
             $this->persistTranscodeTransaction();
         } catch (\Exception $e) {
             $this->pass = 0;
-            error_log("transcoder $type failed - op -->" . $op . PHP_EOL);
+            error_log("transcoder $this->type failed - op -->" . $op . PHP_EOL);
             // Log pass
-            $this->transcode_job_meta[$type]["ffmpeg_cmd"] = $cmd;
-            $this->transcode_job_meta[$type]["ffmpeg_cmd_output"] = json_encode(
+            $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = $cmd;
+            $this->transcode_job_meta[$this->type]["ffmpeg_cmd_output"] = json_encode(
                     $op, JSON_UNESCAPED_SLASHES);
-            $this->transcode_job_meta[$type]["pass_fail"] = $this->pass;
-            $this->transcode_job_meta[$type]["error_message"] = $e->getMessage();
-            $this->transcode_job_meta[$type]["output_start_time"] = $output_start_time;
-            $this->transcode_job_meta[$type]["output_end_time"] = date(
+            $this->transcode_job_meta[$this->type]["pass_fail"] = $this->pass;
+            $this->transcode_job_meta[$this->type]["error_message"] = $e->getMessage();
+            $this->transcode_job_meta[$this->type]["output_start_time"] = $output_start_time;
+            $this->transcode_job_meta[$this->type]["output_end_time"] = date(
                     "Y-m-d H:i:s");
             $this->persistTranscodeTransaction();
             throw $e;
