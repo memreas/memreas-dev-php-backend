@@ -59,7 +59,7 @@ class CheckGitPull
                 // $output .= $this->execOps ( "git pull" );
                 $pulled_latest = true;
                 
-                $output .= $this->execOps("php composer.phar upgrade");
+                $output .= $this->execOps("php composer.phar self-update");
                 $output .= $this->execOps("php composer.phar update");
                 
                 Mlog::addone('output::', $output);
