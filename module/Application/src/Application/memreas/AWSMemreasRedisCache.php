@@ -14,14 +14,12 @@ class AWSMemreasRedisCache
 
     private $isCacheEnable = MemreasConstants::REDIS_SERVER_USE;
 
-    public function __construct ($service_locator)
+    public function __construct ()
     {
         if (! $this->isCacheEnable) {
             return;
         }
         
-        $this->dbAdapter = $service_locator->get(
-                'doctrine.entitymanager.orm_default');
         try {
             $this->cache = new \Predis\Client(
                     [

@@ -48,7 +48,7 @@ class AWSManagerAutoScaler
             //
             // Fetch Redis Handle
             //
-            $this->redis = new AWSMemreasRedisCache($service_locator);
+            $this->redis = new AWSMemreasRedisCache();
         } catch (Exception $e) {
             Mlog::addone(
                     __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
@@ -81,10 +81,18 @@ class AWSManagerAutoScaler
     function fetchTranscodingProcessHandleFromRedis ()
     {
         if ($this->redis->getCache($this->server_name . "_trancode_lock") == 0) {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ .
+                             '::$this->redis->getCache($this->server_name . "_trancode_lock")::', 
+                            0);
             return 0;
         } else {
             $this->redis->setCache($this->server_name . "_trancode_lock", 
                     getmypid());
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ .
+                             '::$this->redis->getCache($this->server_name . "_trancode_lock")::', 
+                            getmypid());
             return getmypid();
         }
     }
