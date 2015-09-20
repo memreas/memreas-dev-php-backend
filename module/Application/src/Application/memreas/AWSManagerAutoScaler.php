@@ -48,7 +48,7 @@ class AWSManagerAutoScaler
             //
             // Fetch Redis Handle
             //
-            $this->redis = new AWSMemreasRedisCache($this->getServiceLocator());
+            $this->redis = new AWSMemreasRedisCache($service_locator);
         } catch (Exception $e) {
             Mlog::addone(
                     __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
