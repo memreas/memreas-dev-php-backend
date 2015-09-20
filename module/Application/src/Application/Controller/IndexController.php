@@ -32,8 +32,6 @@ use Application\memreas\CheckGitPull;
 class IndexController extends AbstractActionController
 {
 
-    public static $isTranscodingSoWait = false;
-
     protected $dbAdapter = null;
 
     protected $url;
@@ -119,19 +117,6 @@ class IndexController extends AbstractActionController
         exit();
     }
 
-    protected function get_server_memory_usage ()
-    {
-        $free = shell_exec('free -m');
-        $free = (string) trim($free);
-        $free_arr = explode("\n", $free);
-        $mem = explode(" ", $free_arr[1]);
-        $mem = array_filter($mem);
-        $mem = array_merge($mem);
-        $memory_usage = $mem[2] / $mem[1] * 100;
-        
-        return $memory_usage;
-    }
-
     protected function transcoderAction ()
     {
         Mlog::addone(__CLASS__ . __METHOD__, 'transcoderAction()');
@@ -139,8 +124,6 @@ class IndexController extends AbstractActionController
         // Web Server Handle
         $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : '';
         $json = isset($_REQUEST["json"]) ? $_REQUEST["json"] : '';
-        Mlog::addone(__CLASS__ . __METHOD__ . '$action', $action);
-        Mlog::addone(__CLASS__ . __METHOD__ . '$json', $json);
         $proceed = 0;
         $response = 'error - check action or json';
         
@@ -149,38 +132,22 @@ class IndexController extends AbstractActionController
             $response = 'received';
         }
         if ($proceed) {
-            Mlog::addone(__CLASS__ . __METHOD__ . '$proceed', $proceed);
+            //
+            // Mark all entries as backlog until server is ready to process for
+            // single thread ffmpeg
+            //
             $message_data = json_decode($json, true);
             $message_data['process_task'] = $this->awsManagerAutoScaler->serverReadyToProcessTask();
-            $message_data['backlog'] = 0;
-            
-            Mlog::addone(__CLASS__ . __METHOD__ . 'process_task', 
-                    $message_data['process_task']);
-            
+            $message_data['backlog'] = 1;
             /*
              * Here if no media_id is set then work on any backlog items...
              */
             $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
             if (! empty($message_data['media_id'])) {
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . '!empty($message_data[media_id]', 
-                        $message_data['media_id']);
-                
                 $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
                         $message_data);
             } else {
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . 'empty($message_data[media_id]', 
-                        'backlog');
-                $response = json_encode('backlog');
-                $message_data['backlog'] = 1;
-            }
-            
-            if (! self::$isTranscodingSoWait) {
-                $response = json_encode('backlog');
-                $message_data['backlog'] = 1;
-            } else {
-                // do nothing... use response above
+                throw new \Exception("Transcoder::media_id is empty!");
             }
             
             $this->returnResponse($response);
@@ -190,77 +157,28 @@ class IndexController extends AbstractActionController
              * ** after completing task fetch another
              */
             /*
-             * Process initial message
+             * Process initial message - no longer necessary all messages
+             * backlog
              */
             Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
                     $message_data);
-            self::$isTranscodingSoWait = true;
-            $result = $aws_manager->snsProcessMediaSubscribe($message_data);
-            self::$isTranscodingSoWait = false;
-            /*
-             * Reset and work on backlog
-             */
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                    'transcoderAction::unset vars');
-            unset($message_data);
-            unset($response);
-            unset($this->dbAdapter);
-            unset($aws_manager);
-            
-            $keep_processing = true;
-            while ($keep_processing) {
-                /*
-                 * if (! $this->awsManagerAutoScaler->serverReadyToProcessTask()
-                 * ||
-                 * $get_server_memory_usage()) {
-                 * sleep(10);
-                 * }
-                 */
-                
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ .
+                             '::$this->awsManagerAutoScaler->serverReadyToProcessTask()::', 
+                            $this->awsManagerAutoScaler->serverReadyToProcessTask());
+            Mlog::addone(__CLASS__ . __METHOD__ . '::getmypid()::', getmypid());
+            if ((! $this->awsManagerAutoScaler->serverReadyToProcessTask()) &&
+                     (getmypid() !=
+                     $this->awsManagerAutoScaler->serverReadyToProcessTask())) {
                 //
-                // Transcoding from another process so wait...
+                // end process here is already a process operating on the
+                // backlog
                 //
-                while (self::$isTranscodingSoWait) {
-                    sleep(10);
-                }
-                try {
-                    
-                    //
-                    // Process completed so continue - possible race condition??
-                    //
-                    $aws_manager = new AWSManagerReceiver(
-                            $this->getServiceLocator());
-                    $message_data = $aws_manager->fetchBackLogEntry();
-                    if (empty($message_data)) {
-                        Mlog::addone(
-                                __CLASS__ . __METHOD__ .
-                                         '$this->fetchBackLogEntry()', 
-                                        ' returned null - processing complete');
-                        exit();
-                    } else {
-                        /*
-                         * Process backlog messages
-                         */
-                        Mlog::addone(
-                                __CLASS__ . __METHOD__ .
-                                         '$this->fetchBackLogEntry() - message_data', 
-                                        $message_data);
-                        $aws_manager = new AWSManagerReceiver(
-                                $this->getServiceLocator());
-                        $aws_manager->memreasTranscoder->markMediaForTranscoding(
-                                $message_data);
-                        Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
-                                $message_data);
-                        self::$isTranscodingSoWait = true;
-                        $result = $aws_manager->snsProcessMediaSubscribe(
-                                $message_data);
-                        self::$isTranscodingSoWait = false;
-                    }
-                } catch (\Exception $e) {
-                    // continue processing - email likely sent
-                } finally {
+                exit();
+            } else 
+                if ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
                     /*
-                     * Reset and continue work on backlog
+                     * Reset and work on backlog
                      */
                     Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
                             'transcoderAction::unset vars');
@@ -268,9 +186,81 @@ class IndexController extends AbstractActionController
                     unset($response);
                     unset($this->dbAdapter);
                     unset($aws_manager);
-                }
-            } // end while
+                    
+                    $keep_processing = true;
+                    while ($keep_processing) {
+                        
+                        //
+                        // Transcoding from another process so wait...
+                        //
+                        while (! $this->awsManagerAutoScaler->serverReadyToProcessTask()) {
+                            sleep(10);
+                        }
+                        try {
+                            
+                            //
+                            // Process completed so continue - possible race
+                            // condition??
+                            //
+                            $aws_manager = new AWSManagerReceiver(
+                                    $this->getServiceLocator());
+                            $message_data = $aws_manager->fetchBackLogEntry();
+                            if (empty($message_data)) {
+                                Mlog::addone(
+                                        __CLASS__ . __METHOD__ .
+                                                 '$this->fetchBackLogEntry()', 
+                                                ' returned null - processing complete');
+                                exit();
+                            } else {
+                                /*
+                                 * Process backlog messages
+                                 */
+                                Mlog::addone(
+                                        __CLASS__ . __METHOD__ .
+                                                 '$this->fetchBackLogEntry() - message_data', 
+                                                $message_data);
+                                $aws_manager = new AWSManagerReceiver(
+                                        $this->getServiceLocator());
+                                $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                                        $message_data);
+                                Mlog::addone(
+                                        __CLASS__ . __METHOD__ .
+                                                 '::$message_data', 
+                                                $message_data);
+                                $this->isTranscodingSoWait = true;
+                                $result = $aws_manager->snsProcessMediaSubscribe(
+                                        $message_data);
+                                $this->isTranscodingSoWait = false;
+                            }
+                        } catch (\Exception $e) {
+                            // continue processing - email likely sent
+                        } finally {
+                            /*
+                             * Reset and continue work on backlog
+                             */
+                            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                    'transcoderAction::unset vars');
+                            unset($message_data);
+                            unset($response);
+                            unset($this->dbAdapter);
+                            unset($aws_manager);
+                        }
+                    } // end while
+                      //
+                      // If the while finished we release the lock
+                      //
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . __LINE__ .
+                                     '::$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis()::', 
+                                    'lock release for pid::' . getmypid());
+                    $this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis();
+                } // end else if
+                  // ($this->awsManagerAutoScaler->serverReadyToProcessTask())
+            
             exit();
+            // At this point it's time to exit. The while loop is finished
+            // and/or the pid doesn't match.
+            //
         }
     }
 

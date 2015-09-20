@@ -35,6 +35,18 @@ class MemreasConstants
     const S3HLSBUCKET = "memreasdevhls";
 
     const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
+    
+    // Redis section
+    const REDIS_SERVER_ENDPOINT = "54.204.57.197";
+
+    const REDIS_SERVER_USE = true;
+
+    const REDIS_SERVER_SESSION_ONLY = true;
+
+    const REDIS_SERVER_PORT = "6379";
+    
+    // 12hour handle for process
+    const REDIS_CACHE_TTL = 43200;
 
     const URL = "/index";
 

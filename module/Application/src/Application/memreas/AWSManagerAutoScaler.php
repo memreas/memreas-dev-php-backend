@@ -1,10 +1,10 @@
 <?php
 namespace Application\memreas;
 use Application\Model\MemreasConstants;
-use Application\memreas\RmWorkDir;
 use Application\memreas\MUUID;
 use Application\memreas\Mlog;
 use Application\Entity\ServerMonitor;
+use Application\memreas\AWSMemreasRedisCache;
 use Aws\Common\Aws;
 
 class AWSManagerAutoScaler
@@ -17,6 +17,18 @@ class AWSManagerAutoScaler
     protected $dbAdapter = null;
 
     protected $autoscaler = null;
+
+    protected $redis;
+
+    protected $server_name;
+
+    protected $cpu_util;
+
+    protected $server_name;
+
+    protected $server_addr;
+
+    protected $hostname;
 
     public function __construct ($service_locator)
     {
@@ -34,6 +46,11 @@ class AWSManagerAutoScaler
                     ));
             // Fetch the AutoScaling class
             $this->autoscaler = $this->aws->get('AutoScaling');
+            
+            //
+            // Fetch Redis Handle
+            //
+            $this->redis = new AWSMemreasRedisCache($this->getServiceLocator());
         } catch (Exception $e) {
             Mlog::addone(
                     __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
@@ -45,58 +62,49 @@ class AWSManagerAutoScaler
 
     public function serverReadyToProcessTask ()
     {
-        /*
-         * Check CPU level
-         */
-        $server_data = $this->fetchServerData();
+        //
+        // Set Server Data
+        //
+        $this->setServerData();
+        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '$this->checkServer()', 
+                $this->checkServer());
         
-        /*
-         * Check memory level
-         */
-        $memory_usage = $this->get_server_memory_usage();
-        
-        /*
-         * Check if server is in server_monitor
-         */
-        // $server = $this->checkServer($server_data['server_name']);
-        $process_task = false;
-        Mlog::addone(__FILE__ . __METHOD__ . '::$server_data [cpu_util] [0]', 
-                $server_data['cpu_util'][0]);
-        Mlog::addone(__FILE__ . __METHOD__ . '::$memory_usage::', $memory_usage);
-        if (($server_data['cpu_util'][0] < 75) && ($memory_usage < 75)) {
-            // $this->addServer($server_data);
-            $process_task = true;
-        } else {
-            /*
-             * Server exists so update stats - check if need to start new server
-             * here
-             */
-            $process_task = false;
-        }
-        $server = $this->checkServer();
-        // Mlog::addone(__CLASS__ . __METHOD__ . '::$server', $server);
-        return $process_task;
+        //
+        // $this->fetchTranscodingProcessHandleFromRedis returns 1 for handle 0
+        // if locked
+        //
+        return $this->fetchTranscodingProcessHandleFromRedis();
     }
 
-    function fetchServerData ()
+    function fetchTranscodingProcessHandleFromRedis ()
     {
-        // $cmd = "mpstat | awk '$12 ~ /[0-9.]+/ { print 100 - $12 }'";
-        // $cpu_util = shell_exec($cmd);
-        $cpu_util = sys_getloadavg();
-        $server_data = [];
-        $server_data['cpu_util'] = $cpu_util;
-        $server_data['server_name'] = $_SERVER['SERVER_NAME'];
-        $server_data['server_addr'] = $_SERVER['SERVER_ADDR'];
-        $server_data['hostname'] = gethostname();
+        if ($this->redis->getCache($this->server_name . "_trancode_lock") == 0) {
+            return 0;
+        } else {
+            $this->redis->setCache($this->server_name . "_trancode_lock", 
+                    getmypid());
+            return getmypid();
+        }
+    }
+
+    function releaseTranscodeingProcessHandleFromRedis ()
+    {
+        $this->redis->setCache($this->server_name . "_trancode_lock", "0");
+    }
+
+    function setServerData ()
+    {
+        $this->cpu_util = sys_getloadavg();
+        $this->server_name = $_SERVER['SERVER_NAME'];
+        $this->server_addr = $_SERVER['SERVER_ADDR'];
+        $this->hostname = gethostname();
         
         // $memory = $this->get_server_memory_usage();
-        Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
-        if ($server_data['cpu_util'][0] > 75) {
-            Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>75', 
-                    $server_data['cpu_util']);
-        }
-        
-        return $server_data;
+        // Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
+        // if ($server_data['cpu_util'][0] > 75) {
+        // Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>75',
+        // $server_data['cpu_util']);
+        // }
     }
 
     function get_server_memory_usage ()
@@ -115,31 +123,32 @@ class AWSManagerAutoScaler
         return $memory_usage;
     }
 
-    function checkServer ($server_name = null)
+    function checkServer ()
     {
         $query_string = "SELECT sm FROM " .
                  " Application\Entity\ServerMonitor sm";
-        if ($server_name) {
-            $query_string .= " where sm.server_name = '$server_name'";
+        if ($this->server_name) {
+            $query_string .= " where sm.server_name = '" . $this->server_name .
+                     "'";
         }
         
         $query = $this->dbAdapter->createQuery($query_string);
         return $query->getArrayResult();
     }
 
-    function addServer ($server_data)
+    function addServer ()
     {
         $tblServerMonitor = new \Application\Entity\ServerMonitor();
         $now = new \DateTime("now");
         $tblServerMonitor->server_id = MUUID::fetchUUID();
-        $tblServerMonitor->server_name = $server_data['server_name'];
-        $tblServerMonitor->server_addr = $server_data['server_addr'];
-        $tblServerMonitor->hostname = $server_data['hostname'];
+        $tblServerMonitor->server_name = $this->server_name;
+        $tblServerMonitor->server_addr = $this->server_addr;
+        $tblServerMonitor->hostname = $this->hostname;
         $tblServerMonitor->status = ServerMonitor::WAITING;
         $tblServerMonitor->job_count = 0;
-        $tblServerMonitor->cpu_util_1min = $server_data['cpu_util'][0];
-        $tblServerMonitor->cpu_util_5min = $server_data['cpu_util'][1];
-        $tblServerMonitor->cpu_util_15min = $server_data['cpu_util'][2];
+        $tblServerMonitor->cpu_util_1min = $this->cpu_util[0];
+        $tblServerMonitor->cpu_util_5min = $this->cpu_util[1];
+        $tblServerMonitor->cpu_util_15min = $this->cpu_util[2];
         $tblServerMonitor->last_cpu_check = $now;
         $tblServerMonitor->start_time = $now;
         
