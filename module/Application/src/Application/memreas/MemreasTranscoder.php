@@ -277,7 +277,6 @@ class MemreasTranscoder
     public function exec ($message_data, $isUpload = false)
     {
         try {
-            Mlog::addone(__CLASS__ . __METHOD__, __LINE__);
             /*
              * Processing for current entry if set
              */
@@ -286,14 +285,34 @@ class MemreasTranscoder
             }
             
             if (isset($message_data)) {
-                if (getcwd() == '/var/www/memreas-dev-php-backend') {
+                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                        'message_data is set');
+                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::getcwd()::', 
+                        getcwd());
+                if (getcwd() === '/var/www/memreas-dev-php-backend') {
                     // AWS ffmpeg && ffprobe
                     $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG;
                     $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE;
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . __LINE__ .
+                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFMPEG::', 
+                                    MemreasConstants::MEMREAS_TRANSCODER_FFMPEG);
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . __LINE__ .
+                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFPROBE::', 
+                                    MemreasConstants::MEMREAS_TRANSCODER_FFPROBE);
                 } else {
                     // Local ffmpeg && ffprobe
                     $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL;
                     $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL;
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . __LINE__ .
+                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL::', 
+                                    MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL);
+                    Mlog::addone(
+                            __CLASS__ . __METHOD__ . __LINE__ .
+                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL::', 
+                                    MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL);
                 }
                 
                 // //////////////////////
@@ -613,7 +632,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -659,7 +679,7 @@ class MemreasTranscoder
             //
             // remove work dir
             //
-            // $result = $this->rmWorkDir($this->homeDir);
+            $result = $this->rmWorkDir($this->homeDir);
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
                     '::removed directory::', $this->homeDir);
         }
@@ -695,7 +715,9 @@ class MemreasTranscoder
                         }
                 // $interval = $this->duration/20; //create a total of 20
                 // thumbnails
-                $tnfreqency = 1 / $interval;
+                if ($interval > 0) {
+                    $tnfreqency = 1 / $interval;
+                }
                 $imagename = 'thumbnail_' . $this->original_file_name .
                          '_media-%d.png';
                 $command = array(
@@ -901,9 +923,9 @@ class MemreasTranscoder
                 // $this->compression_preset_web . ' -c:a libfdk_aac ' .
                 // '-b:a 128k ';
                 
-                $qv = ' -c:v libx264 ' . ' -threads 1 ' . '-preset ' .
+                $qv = ' -c:v libx264 ' . '-preset ' .
                          $this->compression_preset_web . ' -c:a libfdk_aac ' .
-                         '-b:a 128k ' . ' -threads 1 ';
+                         '-b:a 128k ';
                 
                 //
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -913,26 +935,23 @@ class MemreasTranscoder
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
-                         ' -vsync passthrough ' . ' -frame_drop_threshold 4 ' .
-                         ' -loglevel error ' . ' -i  ' . $this->destRandMediaName .
-                         ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
+                         ' -i  ' . $this->destRandMediaName . ' ' . $qv . ' ' .
+                         $transcoded_file . ' 2>&1';
             } else 
                 if ($this->type == '1080p') {
                     
                     // $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
                     // $this->compression_preset_1080p .
                     // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
-                    $qv = ' -c:v libx265 ' . '-threads 1 ' . '-preset ' .
+                    $qv = ' -c:v libx265 ' . '-preset ' .
                              $this->compression_preset_1080p .
                              ' -x265-params crf=28 ' . '-c:a aac ' .
-                             '-strict experimental ' . '-b:a 128k ' .
-                             ' -threads 1 ';
+                             '-strict experimental ' . '-b:a 128k ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                     $cmd = 'nice -' . $this->nice_priority . ' ' .
-                             $this->ffmpegcmd . ' -vsync passthrough ' .
-                             ' -frame_drop_threshold 4 ' . ' -loglevel error ' .
+                             $this->ffmpegcmd .
                              " -i $this->destRandMediaName $qv $transcoded_file " .
                              '2>&1';
                 } else 
@@ -961,14 +980,12 @@ class MemreasTranscoder
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . "  -re -y -i " . $input_file .
                                  ' -map 0 ' . '-pix_fmt yuv420p ' .
-                                 '-c:v libx264 ' . ' -threads 1 ' .
-                                 '-profile:v high -level 4.0 ' .
+                                 '-c:v libx264 ' . '-profile:v high -level 4.0 ' .
                                  '-c:a libfdk_aac ' . '-r 25 ' . '-b:v 1500k ' .
                                  '-maxrate 2000k ' . '-force_key_frames 50 ' .
-                                 '-flags ' . '-global_header ' . ' -threads 1' .
-                                 '-f segment ' . '-segment_list_type m3u8  ' .
-                                 '-segment_list ' . $transcoded_file .
-                                 '  -segment_format mpeg_ts ' .
+                                 '-flags ' . '-global_header ' . '-f segment ' .
+                                 '-segment_list_type m3u8  ' . '-segment_list ' .
+                                 $transcoded_file . '  -segment_format mpeg_ts ' .
                                  $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
                         
                         Mlog::addone(__CLASS__ . __METHOD__ . '$cmd', $cmd);
@@ -979,15 +996,15 @@ class MemreasTranscoder
                              */
                             // error_log("Inside transcode type=audio
                             // ...".PHP_EOL);
-                            $qv = ' -c:a libfdk_aac -movflags +faststart -threads 1 ';
+                            $qv = ' -c:a libfdk_aac -movflags +faststart ';
                             $transcoded_file = $this->homeDir . self::CONVDIR .
                                      self::AUDIODIR . $this->MediaFileName .
                                      $aacext;
                             $transcoded_file_name = $this->MediaFileName .
                                      $aacext;
                             $cmd = 'nice ' . $this->ffmpegcmd .
-                                     " -i $this->destRandMediaName $qv $transcoded_file " .
-                                     '2>&1';
+                                     " -i $this->destRandMediaName $qv $transcoded_file ";
+                            // . '2>&1';
                         } else {
                             throw new \Exception(
                                     "MemreasTranscoder $this->type not found.");
@@ -999,7 +1016,7 @@ class MemreasTranscoder
             //
             // exec ffmpeg operation
             //
-            $this->execFFMPEG($cmd);
+            $this->execFFMPEG($cmd, $transcoded_file);
             
             // Push to S3
             $s3file = $this->s3prefixpath . $this->type . '/' .
@@ -1096,7 +1113,7 @@ class MemreasTranscoder
         }
     }
     // End transcode
-    private function execFFMPEG ($cmd)
+    private function execFFMPEG ($cmd, $transcoded_file)
     {
         try {
             // Log command
@@ -1104,13 +1121,13 @@ class MemreasTranscoder
             $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = json_encode(
                     $cmd, JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
-            // $op = shell_exec($cmd);
-            // putenv("SHELL=/bin/bash");
-            $op = passthru($cmd, $ret_val);
-            // $op = array();
-            // $result = 0;
-            // $pid = exec($command, &$op, &$result);
-            // $op = system($cmd, $ret_val);
+            $op = shell_exec($cmd);
+            // $file = getcwd() . "/ffmpeg_processor.sh ";
+            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, "$file '" .
+            // "$cmd'");
+            // $op = shell_exec("$file '" . "$cmd'");
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                    "PAST SHELL_EXEC!!!!");
             
             //
             // Command should be complete check for file...

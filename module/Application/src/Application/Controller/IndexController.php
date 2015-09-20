@@ -32,6 +32,8 @@ use Application\memreas\CheckGitPull;
 class IndexController extends AbstractActionController
 {
 
+    public static $isTranscodingSoWait = false;
+
     protected $dbAdapter = null;
 
     protected $url;
@@ -163,6 +165,7 @@ class IndexController extends AbstractActionController
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '!empty($message_data[media_id]', 
                         $message_data['media_id']);
+                
                 $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
                         $message_data);
             } else {
@@ -170,6 +173,12 @@ class IndexController extends AbstractActionController
                         __CLASS__ . __METHOD__ . 'empty($message_data[media_id]', 
                         'backlog');
                 $response = json_encode('backlog');
+            }
+            
+            if (! self::$isTranscodingSoWait) {
+                $response = json_encode('backlog');
+            } else {
+                // do nothing... use response above
             }
             
             $this->returnResponse($response);
@@ -183,7 +192,9 @@ class IndexController extends AbstractActionController
              */
             Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
                     $message_data);
+            self::$isTranscodingSoWait = true;
             $result = $aws_manager->snsProcessMediaSubscribe($message_data);
+            self::$isTranscodingSoWait = false;
             /*
              * Reset and work on backlog
              */
@@ -196,11 +207,25 @@ class IndexController extends AbstractActionController
             
             $keep_processing = true;
             while ($keep_processing) {
-                if (! $this->awsManagerAutoScaler->serverReadyToProcessTask() ||
-                         $get_server_memory_usage()) {
+                /*
+                 * if (! $this->awsManagerAutoScaler->serverReadyToProcessTask()
+                 * ||
+                 * $get_server_memory_usage()) {
+                 * sleep(10);
+                 * }
+                 */
+                
+                //
+                // Transcoding from another process so wait...
+                //
+                while (self::$isTranscodingSoWait) {
                     sleep(10);
                 }
                 try {
+                    
+                    //
+                    // Process completed so continue - possible race condition??
+                    //
                     $aws_manager = new AWSManagerReceiver(
                             $this->getServiceLocator());
                     $message_data = $aws_manager->fetchBackLogEntry();
@@ -224,8 +249,10 @@ class IndexController extends AbstractActionController
                                 $message_data);
                         Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
                                 $message_data);
+                        self::$isTranscodingSoWait = true;
                         $result = $aws_manager->snsProcessMediaSubscribe(
                                 $message_data);
+                        self::$isTranscodingSoWait = false;
                     }
                 } catch (\Exception $e) {
                     // continue processing - email likely sent
