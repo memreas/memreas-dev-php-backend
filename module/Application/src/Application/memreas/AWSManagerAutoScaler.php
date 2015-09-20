@@ -80,6 +80,14 @@ class AWSManagerAutoScaler
 
     function fetchTranscodingProcessHandleFromRedis ()
     {
+        Mlog::addone(
+                __CLASS__ . __METHOD__ . __LINE__ .
+                         '::$this->server_name . "_trancode_lock"::', 
+                        $this->server_name . "_trancode_lock");
+        $result = $this->redis->getCache($this->server_name . "_trancode_lock");
+        error_log(
+                'WITNESS_ME!!!--->$this->redis->getCache($this->server_name . "_trancode_lock")--->' .
+                         $result . PHP_EOL);
         if ($this->redis->getCache($this->server_name . "_trancode_lock") == 0) {
             Mlog::addone(
                     __CLASS__ . __METHOD__ . __LINE__ .
