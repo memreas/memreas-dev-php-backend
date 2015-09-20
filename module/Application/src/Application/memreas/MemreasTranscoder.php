@@ -638,8 +638,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1266,7 +1265,7 @@ class MemreasTranscoder
     {
         $row = $this->getMemreasTranscoderTables()
             ->getTranscodeTransactionTable()
-            ->saveTranscodeTransaction($this->media_id);
+            ->fetchTranscodeTransactionByMediaId($this->media_id);
         
         return $row;
     }
