@@ -257,15 +257,21 @@ class MemreasTranscoder
             $this->memreas_media_metadata['S3_files']['transcode_progress'][] = 'transcode_start@' .
                      $starttime;
             
-            // persist uses $this for insert
+            //
+            // All entries are backlog to start with
+            //
             if ($this->transcode_status == 'backlog') {
-                Mlog::addone('$message_data[backlog] is not empty', 
-                        $message_data['backlog']);
-                $this->transcode_transaction_id = $message_data['transcode_transaction_id'];
-                $this->persistTranscodeTransaction();
-            } else {
-                Mlog::addone('$message_data[backlog] is empty', '...');
-                $this->transcode_transaction_id = $this->persistTranscodeTransaction();
+                Mlog::addone('$this->media_id', $this->media_id);
+                $row = $this->fetchTranscodeTransactionByMediaId(
+                        $this->media_id);
+                if ($row) {
+                    Mlog::addone('$row is not empty so entry exists', '...');
+                    error_log("" . print_r($row, true) . PHP_EOL);
+                    $this->transcode_transaction_id = $row->transcode_transaction_id;
+                } else {
+                    Mlog::addone('$message_data[backlog] is empty', '...');
+                    $this->transcode_transaction_id = $this->persistTranscodeTransaction();
+                }
             }
             
             return $this->transcode_transaction_id;
@@ -632,7 +638,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1253,6 +1260,15 @@ class MemreasTranscoder
                             json_encode($error_data, JSON_PRETTY_PRINT));
             throw $e;
         }
+    }
+
+    public function fetchTranscodeTransactionByMediaId ()
+    {
+        $row = $this->getMemreasTranscoderTables()
+            ->getTranscodeTransactionTable()
+            ->saveTranscodeTransaction($this->media_id);
+        
+        return $row;
     }
 
     public function persistTranscodeTransaction ()
