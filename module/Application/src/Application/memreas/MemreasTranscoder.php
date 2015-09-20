@@ -1108,8 +1108,8 @@ class MemreasTranscoder
             Mlog::addone(
                     __CLASS__ . __METHOD__ . __LINE__ . 'return $this->type::' .
                              $this->type);
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'return $arr::', 
-                    $arr);
+            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'return $arr::',
+            // $arr);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -1135,7 +1135,9 @@ class MemreasTranscoder
             // Command should be complete check for file...
             //
             if (! file_exists($transcoded_file)) {
-                throw new \Exception($op);
+                throw new \Exception(
+                        'Failed to find $transcoded_file::' . $transcoded_file .
+                                 '::op::' . $op);
             } else {
                 $this->pass = 1;
                 // Log pass
