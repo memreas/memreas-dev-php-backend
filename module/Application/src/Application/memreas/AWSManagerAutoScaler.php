@@ -20,8 +20,6 @@ class AWSManagerAutoScaler
 
     protected $redis;
 
-    protected $server_name;
-
     protected $cpu_util;
 
     protected $server_name;
