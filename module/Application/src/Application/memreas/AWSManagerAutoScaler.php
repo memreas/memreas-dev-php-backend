@@ -71,6 +71,10 @@ class AWSManagerAutoScaler
         // $this->fetchTranscodingProcessHandleFromRedis returns 1 for handle 0
         // if locked
         //
+        Mlog::addone(
+                __CLASS__ . __METHOD__ . __LINE__ .
+                         '::$this->fetchTranscodingProcessHandleFromRedis()::', 
+                        $this->fetchTranscodingProcessHandleFromRedis());
         return $this->fetchTranscodingProcessHandleFromRedis();
     }
 
