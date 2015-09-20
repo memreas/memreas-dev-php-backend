@@ -923,8 +923,8 @@ class MemreasTranscoder
                 // $this->compression_preset_web . ' -c:a libfdk_aac ' .
                 // '-b:a 128k ';
                 
-                $qv = ' -c:v libx264 ' . '-preset ' .
-                         $this->compression_preset_web .
+                $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' .
+                         ' -preset ' . $this->compression_preset_web .
                          ' -c:a aac -strict experimental  ' . '-b:a 128k ';
                 
                 //
@@ -945,7 +945,7 @@ class MemreasTranscoder
                     // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
                     $qv = ' -c:v libx265 ' . '-preset ' .
                              $this->compression_preset_1080p .
-                             ' -x265-params crf=28 ' .
+                             ' -pix_fmt yuv420p -x265-params crf=28 ' .
                              '-c:a aac -strict experimental  ' . '-b:a 128k ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
