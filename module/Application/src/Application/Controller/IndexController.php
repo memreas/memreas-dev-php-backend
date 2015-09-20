@@ -173,10 +173,12 @@ class IndexController extends AbstractActionController
                         __CLASS__ . __METHOD__ . 'empty($message_data[media_id]', 
                         'backlog');
                 $response = json_encode('backlog');
+                $message_data['backlog'] = 1;
             }
             
             if (! self::$isTranscodingSoWait) {
                 $response = json_encode('backlog');
+                $message_data['backlog'] = 1;
             } else {
                 // do nothing... use response above
             }
