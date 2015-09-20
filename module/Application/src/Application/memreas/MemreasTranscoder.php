@@ -632,7 +632,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -923,8 +924,8 @@ class MemreasTranscoder
                 // '-b:a 128k ';
                 
                 $qv = ' -c:v libx264 ' . '-preset ' .
-                         $this->compression_preset_web . ' -c:a libfdk_aac ' .
-                         '-b:a 128k ';
+                         $this->compression_preset_web .
+                         ' -c:a aac -strict experimental  ' . '-b:a 128k ';
                 
                 //
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -944,8 +945,8 @@ class MemreasTranscoder
                     // ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
                     $qv = ' -c:v libx265 ' . '-preset ' .
                              $this->compression_preset_1080p .
-                             ' -x265-params crf=28 ' . '-c:a libfdk_aac ' .
-                             '-b:a 128k ';
+                             ' -x265-params crf=28 ' .
+                             '-c:a aac -strict experimental  ' . '-b:a 128k ';
                     $transcoded_file = $this->homeDir . self::CONVDIR .
                              self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -977,12 +978,14 @@ class MemreasTranscoder
                                 $transcoded_hls_ts_file);
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . "  -re -y -i " . $input_file .
-                                 ' -map 0 ' . '-pix_fmt yuv420p ' .
-                                 '-c:v libx264 ' . '-profile:v high -level 4.0 ' .
-                                 '-c:a libfdk_aac ' . '-r 25 ' . '-b:v 1500k ' .
-                                 '-maxrate 2000k ' . '-force_key_frames 50 ' .
-                                 '-flags ' . '-global_header ' . '-f segment ' .
+                                 $this->ffmpegcmd . "  -re -y -i " .
+                                 $this->destRandMediaName . ' -map 0 ' .
+                                 '-pix_fmt yuv420p ' . '-c:v libx264 ' .
+                                 '-profile:v high -level 4.0 ' .
+                                 '-c:a aac -strict experimental ' . '-r 25 ' .
+                                 '-b:v 1500k ' . '-maxrate 2000k ' .
+                                 '-force_key_frames 50 ' . '-flags ' .
+                                 '-global_header ' . '-f segment ' .
                                  '-segment_list_type m3u8  ' . '-segment_list ' .
                                  $transcoded_file . '  -segment_format mpeg_ts ' .
                                  $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
