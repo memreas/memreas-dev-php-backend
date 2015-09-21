@@ -119,7 +119,7 @@ class AWSManagerAutoScaler
     function setServerData ()
     {
         $this->cpu_util = sys_getloadavg();
-        $this->server_name = $_SERVER['SERVER_NAME'];
+        $this->server_name = gethostname();
         Mlog::addone(__CLASS__ . __METHOD__ . '::$this->server_name', 
                 $this->server_name);
         $this->server_addr = $_SERVER['SERVER_ADDR'];
