@@ -641,8 +641,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1375,32 +1374,6 @@ class MemreasTranscoder
     function now ()
     {
         return date('Y-m-d H:i:s');
-    }
-
-    protected function checkDBConnection ()
-    {
-        //
-        // reset $this->dbAdapter is mysql has gone away
-        //
-        try {
-            
-            $DBC->query("SELECT 1");
-            
-            if (self::DEBUG)
-                $this->setStatus(" ++ EM connection was alive, continuing");
-        } catch (\Exception $e) {
-            
-            if (self::DEBUG)
-                $this->setStatus(" ++ EM connection had died.  Reviving.");
-            
-            $newEM = $this->getServiceLocator()->create(
-                    'doctrine.entitymanager.orm_default');
-            
-            if (self::DEBUG)
-                $this->setStatus(" ++ Created New EM.");
-            
-            $R->setEntityManager($newEM);
-        }
     }
 } //End class
 
