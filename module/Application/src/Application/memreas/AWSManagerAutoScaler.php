@@ -49,6 +49,11 @@ class AWSManagerAutoScaler
             // Fetch Redis Handle
             //
             $this->redis = new AWSMemreasRedisCache();
+            
+            //
+            // Set Server Data
+            //
+            $this->setServerData();
         } catch (Exception $e) {
             Mlog::addone(
                     __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
@@ -60,22 +65,6 @@ class AWSManagerAutoScaler
 
     public function serverReadyToProcessTask ()
     {
-        //
-        // Set Server Data
-        //
-        $this->setServerData();
-        // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ .
-        // '$this->checkServer()',
-        // $this->checkServer());
-        
-        //
-        // $this->fetchTranscodingProcessHandleFromRedis returns 1 for handle 0
-        // if locked
-        //
-        // Mlog::addone(
-        // __CLASS__ . __METHOD__ . __LINE__ .
-        // '::$this->fetchTranscodingProcessHandleFromRedis()::',
-        // $this->fetchTranscodingProcessHandleFromRedis());
         return $this->fetchTranscodingProcessHandleFromRedis();
     }
 
@@ -131,11 +120,17 @@ class AWSManagerAutoScaler
     {
         $this->cpu_util = sys_getloadavg();
         $this->server_name = $_SERVER['SERVER_NAME'];
+        Mlog::addone(__CLASS__ . __METHOD__ . '::$this->server_name', 
+                $this->server_name);
         $this->server_addr = $_SERVER['SERVER_ADDR'];
+        Mlog::addone(__CLASS__ . __METHOD__ . '::$this->server_addr', 
+                $this->server_addr);
         $this->hostname = gethostname();
+        Mlog::addone(__CLASS__ . __METHOD__ . '::$this->hostname', 
+                $this->hostname);
         
         // $memory = $this->get_server_memory_usage();
-        // Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
+        Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
         // if ($server_data['cpu_util'][0] > 75) {
         // Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>75',
         // $server_data['cpu_util']);
