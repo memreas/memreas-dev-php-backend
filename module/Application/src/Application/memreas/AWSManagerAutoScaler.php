@@ -86,8 +86,7 @@ class AWSManagerAutoScaler
                         $this->server_name . "_trancode_lock");
         $result = $this->redis->getCache("warming");
         error_log(
-                'WITNESS_ME!!!--->$this->redis->getCache($this->server_name . "_trancode_lock")--->' .
-                         $result . PHP_EOL);
+                'WITNESS_ME!!!--->warming--->' . $result . PHP_EOL);
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
         error_log(
                 'WITNESS_ME!!!--->$this->redis->getCache($this->server_name . "_trancode_lock")--->' .
