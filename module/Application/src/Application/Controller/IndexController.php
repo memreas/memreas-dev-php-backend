@@ -189,20 +189,14 @@ class IndexController extends AbstractActionController
                     unset($this->dbAdapter);
                     unset($aws_manager);
                     
-                    $keep_processing = true;
-                    while ($keep_processing) {
+                    while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
                         
-                        //
-                        // Transcoding from another process so wait...
-                        //
-                        while (! $this->awsManagerAutoScaler->serverReadyToProcessTask()) {
-                            sleep(10);
-                        }
                         try {
                             
                             //
-                            // Process completed so continue - possible race
-                            // condition??
+                            // Process completed so continue - check against pid
+                            // in autoscaler to (hopefully) ensure single
+                            // process at any time...
                             //
                             $aws_manager = new AWSManagerReceiver(
                                     $this->getServiceLocator());
