@@ -16,6 +16,7 @@ use Application\Model\Media;
 use Application\Model\MediaTable;
 use Application\Model\TranscodeTransaction;
 use Application\Model\TranscodeTransactionTable;
+use Zend\Mvc\Router\Console\Catchall;
 
 class MemreasTranscoder
 {
@@ -261,7 +262,12 @@ class MemreasTranscoder
             // All entries are backlog to start with
             //
             Mlog::addone('$this->media_id', $this->media_id);
-            $row = $this->fetchTranscodeTransactionByMediaId($this->media_id);
+            try {
+                $row = $this->fetchTranscodeTransactionByMediaId(
+                        $this->media_id);
+            } catch (\Exception $e) {
+                // do nothing entry doesn't exist
+            }
             if ($row) {
                 Mlog::addone('$row is not empty so entry exists', '...');
                 error_log("" . print_r($row, true) . PHP_EOL);
@@ -635,8 +641,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
