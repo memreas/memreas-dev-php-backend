@@ -207,15 +207,11 @@ class MemreasTranscoder
                             $message_data['is_video']);
             if (isset($message_data['is_video']) &&
                      ($message_data['is_video'] == 1)) {
-                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::is_video', 
-                        $message_data['is_video']);
                 $message_data['is_image'] = 0;
                 $message_data['is_audio'] = 0;
             } else 
                 if (isset($message_data['is_audio']) &&
                          ($message_data['is_audio'] == 1)) {
-                    Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'is_audio', 
-                            $message_data['is_audio']);
                     $message_data['is_image'] = 0;
                     $message_data['is_video'] = 0;
                 } else { // It's an image just resize and store thumbnails
@@ -225,6 +221,10 @@ class MemreasTranscoder
                     Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'is_image', 
                             $message_data['is_image']);
                 }
+            
+            //
+            // Transcode Transaction data
+            //
             $starttime = date('Y-m-d H:i:s');
             $this->user_id = $message_data['user_id'];
             $this->media_id = $message_data['media_id'];
@@ -233,11 +233,7 @@ class MemreasTranscoder
             $this->s3file_name = $message_data['s3file_name'];
             $this->original_file_name = $message_data['s3file_name'];
             $this->input_message_data_json = json_encode($message_data);
-            if ($message_data['backlog']) {
-                $this->transcode_status = 'backlog';
-            } else {
-                $this->transcode_status = 'pending';
-            }
+            $this->transcode_status = 'backlog';
             $this->s3file_basename_prefix = $message_data['s3file_basename_prefix'];
             $this->s3prefixpath = $this->user_id . '/' . $this->media_id . '/';
             $this->is_video = $message_data['is_video'];
@@ -245,6 +241,10 @@ class MemreasTranscoder
             $this->is_image = $message_data['is_image'];
             $this->json_metadata = json_encode($message_data);
             $this->transcode_start_time = $this->now();
+            
+            //
+            // Media data
+            //
             $this->memreas_media = $this->getMemreasTranscoderTables()
                 ->getMediaTable()
                 ->getMedia($this->media_id);
@@ -260,18 +260,15 @@ class MemreasTranscoder
             //
             // All entries are backlog to start with
             //
-            if ($this->transcode_status == 'backlog') {
-                Mlog::addone('$this->media_id', $this->media_id);
-                $row = $this->fetchTranscodeTransactionByMediaId(
-                        $this->media_id);
-                if ($row) {
-                    Mlog::addone('$row is not empty so entry exists', '...');
-                    error_log("" . print_r($row, true) . PHP_EOL);
-                    $this->transcode_transaction_id = $row->transcode_transaction_id;
-                } else {
-                    Mlog::addone('$message_data[backlog] is empty', '...');
-                    $this->transcode_transaction_id = $this->persistTranscodeTransaction();
-                }
+            Mlog::addone('$this->media_id', $this->media_id);
+            $row = $this->fetchTranscodeTransactionByMediaId($this->media_id);
+            if ($row) {
+                Mlog::addone('$row is not empty so entry exists', '...');
+                error_log("" . print_r($row, true) . PHP_EOL);
+                $this->transcode_transaction_id = $row->transcode_transaction_id;
+            } else {
+                Mlog::addone('$message_data[backlog] is empty', '...');
+                $this->transcode_transaction_id = $this->persistTranscodeTransaction();
             }
             
             return $this->transcode_transaction_id;
@@ -638,7 +635,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 

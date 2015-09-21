@@ -137,8 +137,6 @@ class IndexController extends AbstractActionController
             // single thread ffmpeg
             //
             $message_data = json_decode($json, true);
-            // $message_data['process_task'] =
-            // $this->awsManagerAutoScaler->serverReadyToProcessTask();
             $message_data['backlog'] = 1;
             /*
              * Here if no media_id is set then work on any backlog items...

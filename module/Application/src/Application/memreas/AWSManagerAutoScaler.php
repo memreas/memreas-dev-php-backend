@@ -63,18 +63,19 @@ class AWSManagerAutoScaler
         //
         // Set Server Data
         //
-        $this->setServerData();
-        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '$this->checkServer()', 
-                $this->checkServer());
+        // $this->setServerData();
+        // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ .
+        // '$this->checkServer()',
+        // $this->checkServer());
         
         //
         // $this->fetchTranscodingProcessHandleFromRedis returns 1 for handle 0
         // if locked
         //
-        Mlog::addone(
-                __CLASS__ . __METHOD__ . __LINE__ .
-                         '::$this->fetchTranscodingProcessHandleFromRedis()::', 
-                        $this->fetchTranscodingProcessHandleFromRedis());
+        // Mlog::addone(
+        // __CLASS__ . __METHOD__ . __LINE__ .
+        // '::$this->fetchTranscodingProcessHandleFromRedis()::',
+        // $this->fetchTranscodingProcessHandleFromRedis());
         return $this->fetchTranscodingProcessHandleFromRedis();
     }
 
@@ -84,27 +85,24 @@ class AWSManagerAutoScaler
                 __CLASS__ . __METHOD__ . __LINE__ .
                          '::$this->server_name . "_trancode_lock"::', 
                         $this->server_name . "_trancode_lock");
-        $result = $this->redis->getCache("warming");
-        error_log(
-                'WITNESS_ME!!!--->warming--->' . $result . PHP_EOL);
+        $result = $this->redis->getCache("warming2");
+        error_log('WITNESS_ME!!!--->warming2--->' . $result . PHP_EOL);
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
         error_log(
                 'WITNESS_ME!!!--->$this->redis->getCache($this->server_name . "_trancode_lock")--->' .
                          $result . PHP_EOL);
-        if ($this->redis->getCache($this->server_name . "_trancode_lock") == 0) {
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ .
-                             '::$this->redis->getCache($this->server_name . "_trancode_lock")::', 
-                            0);
-            return 0;
-        } else {
+        if (! $result) {
             $this->redis->setCache($this->server_name . "_trancode_lock", 
                     getmypid());
             Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ .
-                             '::$this->redis->getCache($this->server_name . "_trancode_lock")::', 
-                            getmypid());
+                    __CLASS__ . __METHOD__ . __LINE__ . '::inside if")::', 
+                    getmypid());
             return getmypid();
+        } else {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ . '::insdie else::', 
+                    $result);
+            return $result;
         }
     }
 
