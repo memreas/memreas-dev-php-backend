@@ -205,7 +205,7 @@ class IndexController extends AbstractActionController
                                 Mlog::addone(
                                         __CLASS__ . __METHOD__ .
                                                  '$this->fetchBackLogEntry()', 
-                                                ' returned null - processing complete');
+                                                ' returned null - processing complete!');
                                 exit();
                             } else {
                                 /*
