@@ -63,7 +63,7 @@ class AWSManagerAutoScaler
         //
         // Set Server Data
         //
-        // $this->setServerData();
+        $this->setServerData();
         // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ .
         // '$this->checkServer()',
         // $this->checkServer());
@@ -94,13 +94,11 @@ class AWSManagerAutoScaler
         if (! $result) {
             $this->redis->setCache($this->server_name . "_trancode_lock", 
                     getmypid());
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ . '::inside if")::', 
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::inside if")::', 
                     getmypid());
             return getmypid();
         } else {
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ . '::insdie else::', 
+            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::insdie else::', 
                     $result);
             return $result;
         }

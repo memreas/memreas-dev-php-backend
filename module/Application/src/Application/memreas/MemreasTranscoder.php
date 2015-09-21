@@ -641,7 +641,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1131,13 +1132,16 @@ class MemreasTranscoder
             $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = json_encode(
                     $cmd, JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
+            
+            //
+            // Execute ffmpeg command
+            //
             $op = shell_exec($cmd);
-            // $file = getcwd() . "/ffmpeg_processor.sh ";
-            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, "$file '" .
-            // "$cmd'");
-            // $op = shell_exec("$file '" . "$cmd'");
-            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                    "PAST SHELL_EXEC!!!!");
+            
+            //
+            // Refresh DB Connection in case mysql has gone away
+            //
+            $this->refreshDBConnection();
             
             //
             // Command should be complete check for file...
@@ -1371,6 +1375,32 @@ class MemreasTranscoder
     function now ()
     {
         return date('Y-m-d H:i:s');
+    }
+
+    protected function checkDBConnection ()
+    {
+        //
+        // reset $this->dbAdapter is mysql has gone away
+        //
+        try {
+            
+            $DBC->query("SELECT 1");
+            
+            if (self::DEBUG)
+                $this->setStatus(" ++ EM connection was alive, continuing");
+        } catch (\Exception $e) {
+            
+            if (self::DEBUG)
+                $this->setStatus(" ++ EM connection had died.  Reviving.");
+            
+            $newEM = $this->getServiceLocator()->create(
+                    'doctrine.entitymanager.orm_default');
+            
+            if (self::DEBUG)
+                $this->setStatus(" ++ Created New EM.");
+            
+            $R->setEntityManager($newEM);
+        }
     }
 } //End class
 

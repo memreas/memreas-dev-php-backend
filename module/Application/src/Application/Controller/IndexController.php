@@ -161,11 +161,6 @@ class IndexController extends AbstractActionController
              */
             Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
                     $message_data);
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ .
-                             '::$this->awsManagerAutoScaler->serverReadyToProcessTask()::', 
-                            $this->awsManagerAutoScaler->serverReadyToProcessTask());
-            Mlog::addone(__CLASS__ . __METHOD__ . '::getmypid()::', getmypid());
             if ((! $this->awsManagerAutoScaler->serverReadyToProcessTask()) &&
                      (getmypid() !=
                      $this->awsManagerAutoScaler->serverReadyToProcessTask())) {
@@ -173,6 +168,14 @@ class IndexController extends AbstractActionController
                 // end process here is already a process operating on the
                 // backlog
                 //
+                Mlog::addone(
+                        __CLASS__ . __METHOD__ .
+                         '::pid matches and server is not ready to process task and ', 
+                        'getmypid()::' . getmypid() . '!=' .
+                         $this->awsManagerAutoScaler->serverReadyToProcessTask() .
+                         '::$this->awsManagerAutoScaler->serverReadyToProcessTask()');
+                Mlog::addone(__CLASS__ . __METHOD__ . '::getmypid()::', 
+                        getmypid());
                 exit();
             } else 
                 if ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
