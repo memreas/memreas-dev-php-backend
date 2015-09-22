@@ -173,7 +173,7 @@ class MemreasTranscoder
             $this->homeDir = self::WEBHOME . $this->temp_job_uuid_dir . '/';
             
             $this->service_locator = $service_locator;
-            $this->dbAdapter = $service_locator->get(
+            $this->entityManager = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
         } catch (\Exception $e) {
             throw $e;
@@ -183,14 +183,14 @@ class MemreasTranscoder
     function refreshDBConnection ()
     {
         try {
-            if (! $this->dbAdapter->connect()) {
+            if (! $this->entityManager->getConnection()) {
                 Mlog::addone(__CLASS__ . __METHOD__, 
-                        '$this->dbAdapter->connect() is not valid ... fetching new');
-                $this->dbAdapter = $service_locator->get(
+                        '$this->entityManager->connect() is not valid ... fetching new');
+                $this->entityManager = $service_locator->get(
                         'doctrine.entitymanager.orm_default');
             } else {
                 Mlog::addone(__CLASS__ . __METHOD__, 
-                        '$this->dbAdapter->connect() is valid ... ');
+                        '$this->entityManager->connect() is valid ... ');
             }
         } catch (\Exception $e) {
             Mlog::addone(__CLASS__ . __METHOD__, 
@@ -609,7 +609,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1079,6 +1080,12 @@ class MemreasTranscoder
             $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = json_encode(
                     $cmd, JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
+            
+            //
+            // Refresh DB Connection in case mysql has gone away
+            //
+            // testing function
+            $this->refreshDBConnection();
             
             //
             // Execute ffmpeg command
