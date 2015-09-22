@@ -30,8 +30,6 @@ class AWSManagerAutoScaler
 
     public function __construct ($service_locator)
     {
-        Mlog::addone(__FILE__ . __METHOD__, 
-                'Enter AWSManagerAutoScaler constructor');
         try {
             $this->service_locator = $service_locator;
             $this->dbAdapter = $service_locator->get(
@@ -59,8 +57,6 @@ class AWSManagerAutoScaler
                     __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', 
                     $e->getMessage());
         }
-        Mlog::addone(__FILE__ . __METHOD__, 
-                'Exit AWSManagerAutoScaler constructor');
     }
 
     public function serverReadyToProcessTask ()
@@ -70,12 +66,12 @@ class AWSManagerAutoScaler
 
     function fetchTranscodingProcessHandleFromRedis ()
     {
-        Mlog::addone(
-                __CLASS__ . __METHOD__ . __LINE__ .
-                         '::$this->server_name . "_trancode_lock"::', 
-                        $this->server_name . "_trancode_lock");
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
         if ((! result) || ($result == 0) || (! file_exists("/proc/$result"))) {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ .
+                             '::file_exists(/proc/$result)::', 
+                            file_exists("/proc/$result"));
             //
             // Process sets lock
             //

@@ -73,8 +73,6 @@ class AWSManagerReceiver
             } else {
                 return null;
             }
-            Mlog::addone(__CLASS__ . __METHOD__ . '::backlog::$message_data', 
-                    json_encode($message_data));
             
             return $message_data;
         } catch (Exception $e) {

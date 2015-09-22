@@ -74,7 +74,6 @@ class IndexController extends AbstractActionController
 
     public function indexAction ()
     {
-        Mlog::addone(__CLASS__ . __METHOD__, "enter");
         $actionname = isset($_REQUEST["action"]) ? $_REQUEST["action"] : '';
         
         $this->checkGitPull = new CheckGitPull();
@@ -119,8 +118,6 @@ class IndexController extends AbstractActionController
 
     protected function transcoderAction ()
     {
-        Mlog::addone(__CLASS__ . __METHOD__, 'transcoderAction()');
-        
         // Web Server Handle
         $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : '';
         $json = isset($_REQUEST["json"]) ? $_REQUEST["json"] : '';
@@ -161,29 +158,20 @@ class IndexController extends AbstractActionController
              */
             Mlog::addone(__CLASS__ . __METHOD__ . '::$message_data', 
                     $message_data);
-            if ((! $this->awsManagerAutoScaler->serverReadyToProcessTask()) &&
-                     (getmypid() !=
-                     $this->awsManagerAutoScaler->serverReadyToProcessTask())) {
+            if (! $this->awsManagerAutoScaler->serverReadyToProcessTask()) {
                 //
                 // end process here is already a process operating on the
                 // backlog
                 //
                 Mlog::addone(
-                        __CLASS__ . __METHOD__ .
-                         '::pid matches and server is not ready to process task and ', 
-                        'getmypid()::' . getmypid() . '!=' .
-                         $this->awsManagerAutoScaler->serverReadyToProcessTask() .
-                         '::$this->awsManagerAutoScaler->serverReadyToProcessTask()');
-                Mlog::addone(__CLASS__ . __METHOD__ . '::getmypid()::', 
-                        getmypid());
+                        __CLASS__ . __METHOD__ . '::getmypid()::' . getmypid() .
+                                 ' exiting...');
                 exit();
             } else 
                 if ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
                     /*
                      * Reset and work on backlog
                      */
-                    Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                            'transcoderAction::unset vars');
                     unset($message_data);
                     unset($response);
                     unset($this->dbAdapter);
@@ -194,8 +182,9 @@ class IndexController extends AbstractActionController
                         try {
                             
                             //
-                            // Process completed so continue - check against pid
-                            // in autoscaler to (hopefully) ensure single
+                            // Process completed so continue with fresh vars -
+                            // check against pid
+                            // in autoscaler to ensure single
                             // process at any time...
                             //
                             $aws_manager = new AWSManagerReceiver(

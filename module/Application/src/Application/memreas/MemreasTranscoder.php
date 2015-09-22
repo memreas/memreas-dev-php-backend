@@ -200,10 +200,6 @@ class MemreasTranscoder
             /*
              * setup vars and store transaction
              */
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ .
-                             '::$message_data [is_video]', 
-                            $message_data['is_video']);
             if (isset($message_data['is_video']) &&
                      ($message_data['is_video'] == 1)) {
                 $message_data['is_image'] = 0;
@@ -217,8 +213,6 @@ class MemreasTranscoder
                     $message_data['is_image'] = 1;
                     $message_data['is_video'] = 0;
                     $message_data['is_audio'] = 0;
-                    Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'is_image', 
-                            $message_data['is_image']);
                 }
             
             //
@@ -259,7 +253,6 @@ class MemreasTranscoder
             //
             // All entries are backlog to start with
             //
-            Mlog::addone('$this->media_id', $this->media_id);
             try {
                 $row = $this->fetchTranscodeTransactionByMediaId(
                         $this->media_id);
@@ -271,7 +264,9 @@ class MemreasTranscoder
                 error_log("" . print_r($row, true) . PHP_EOL);
                 $this->transcode_transaction_id = $row->transcode_transaction_id;
             } else {
-                Mlog::addone('$message_data[backlog] is empty', '...');
+                Mlog::addone(
+                        '$message_data[backlog] is empty so this is new entry', 
+                        '...');
                 $this->transcode_transaction_id = $this->persistTranscodeTransaction();
             }
             
@@ -292,34 +287,14 @@ class MemreasTranscoder
             }
             
             if (isset($message_data)) {
-                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                        'message_data is set');
-                Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . '::getcwd()::', 
-                        getcwd());
                 if (getcwd() === '/var/www/memreas-dev-php-backend') {
                     // AWS ffmpeg && ffprobe
                     $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG;
                     $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE;
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ .
-                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFMPEG::', 
-                                    MemreasConstants::MEMREAS_TRANSCODER_FFMPEG);
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ .
-                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFPROBE::', 
-                                    MemreasConstants::MEMREAS_TRANSCODER_FFPROBE);
                 } else {
                     // Local ffmpeg && ffprobe
                     $this->ffmpegcmd = MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL;
                     $this->ffprobecmd = MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL;
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ .
-                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL::', 
-                                    MemreasConstants::MEMREAS_TRANSCODER_FFMPEG_LOCAL);
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ .
-                                     '::MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL::', 
-                                    MemreasConstants::MEMREAS_TRANSCODER_FFPROBE_LOCAL);
                 }
                 
                 // //////////////////////
@@ -331,7 +306,6 @@ class MemreasTranscoder
                     $this->user_id = $message_data['user_id'];
                     $s3file = $message_data['s3path'] .
                              $message_data['s3file_name'];
-                    Mlog::addone('s3path', $message_data['s3path']);
                     
                     /*
                      * Fetch the file to transcode:
@@ -398,14 +372,12 @@ class MemreasTranscoder
                     // PHP SWITCH is similar to IF/ELSE statements
                     // suitable if we want to compare the a variable with many
                     // different values
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ .
-                                     '$this->MediaFileType', 
-                                    $this->MediaFileType);
+                    // Mlog::addone(
+                    // __CLASS__ . __METHOD__ . __LINE__ .
+                    // '$this->MediaFileType',
+                    // $this->MediaFileType);
                     switch (strtolower($this->MediaFileType)) {
                         case 'video/mp4':
-                            Mlog::addone(__CLASS__ . __METHOD__, __LINE__, 
-                                    'video/mp4');
                             break;
                         case 'video/mov':
                             $this->MediaFileType = 'video/quicktime';
@@ -505,9 +477,6 @@ class MemreasTranscoder
                     $this->transcode_start_time = date("Y-m-d H:i:s");
                 }
                 
-                Mlog::addone(__CLASS__ . __METHOD__, 
-                        'fetched file check folder...');
-                
                 /*
                  * update status
                  */
@@ -523,11 +492,7 @@ class MemreasTranscoder
                 $this->persistTranscodeTransaction();
                 
                 if ($this->is_video) {
-                    error_log("video duration is " . $this->duration . PHP_EOL);
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ .
-                                     '::$this->memreas_media_metadata::before::', 
-                                    $this->memreas_media_metadata);
+                    Mlog::addone("video duration is ", $this->duration);
                     /*
                      * Thumbnails
                      */
@@ -1033,13 +998,6 @@ class MemreasTranscoder
             if ($this->type == "hls") {
                 $s3file = $this->s3prefixpath . $this->type . '/' .
                          $this->MediaFileName . '.m3u8';
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . 'MemreasConstants::S3HLSBUCKET', 
-                        MemreasConstants::S3HLSBUCKET);
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ .
-                                 '$this->aws_manager_receiver->pushMediaToS3(...)', 
-                                MemreasConstants::S3HLSBUCKET);
                 $this->aws_manager_receiver->pushMediaToS3($transcoded_file, 
                         $s3file, "application/x-mpegurl", true, 
                         MemreasConstants::S3HLSBUCKET);
@@ -1051,14 +1009,6 @@ class MemreasTranscoder
                     $fsize += filesize($filename);
                     $s3tsfile = $this->s3prefixpath . $this->type . '/' .
                              basename($filename);
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ .
-                                     'MemreasConstants::S3HLSBUCKET', 
-                                    MemreasConstants::S3HLSBUCKET);
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ .
-                                     '$this->aws_manager_receiver->pushMediaToS3(...)', 
-                                    MemreasConstants::S3HLSBUCKET);
                     $this->aws_manager_receiver->pushMediaToS3($filename, 
                             $s3tsfile, "video/mp2t", true, 
                             MemreasConstants::S3HLSBUCKET);
@@ -1109,14 +1059,9 @@ class MemreasTranscoder
                 $this->memreas_media_metadata['S3_files']['thumbnails']['1280x720'] = array_unique(
                         $this->memreas_media_metadata['S3_files']['thumbnails']['1280x720']);
             }
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . '::complete::transcode_status', 
-                    $this->transcode_status);
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ . 'return $this->type::' .
-                             $this->type);
-            // Mlog::addone(__CLASS__ . __METHOD__ . __LINE__ . 'return $arr::',
-            // $arr);
+            Mlog::addone(__CLASS__ . __METHOD__, 
+                    '::complete::transcode_status::' . $this->transcode_status .
+                             '::' . $this->type);
         } catch (\Exception $e) {
             throw $e;
         }
