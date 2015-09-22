@@ -119,6 +119,7 @@ class AWSManagerAutoScaler
     function setServerData ()
     {
         $this->cpu_util = sys_getloadavg();
+        // $this->server_name = $_SERVER['SERVER_NAME'];
         $this->server_name = gethostname();
         Mlog::addone(__CLASS__ . __METHOD__ . '::$this->server_name', 
                 $this->server_name);
@@ -130,7 +131,7 @@ class AWSManagerAutoScaler
                 $this->hostname);
         
         // $memory = $this->get_server_memory_usage();
-        Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
+        // Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
         // if ($server_data['cpu_util'][0] > 75) {
         // Mlog::addone(__CLASS__ . __METHOD__ . '::$server_data[cpu_util]>75',
         // $server_data['cpu_util']);
