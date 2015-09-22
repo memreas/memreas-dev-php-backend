@@ -67,7 +67,7 @@ class AWSManagerAutoScaler
     function fetchTranscodingProcessHandleFromRedis ()
     {
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
-        if ((! result) || ($result == 0) || (! file_exists("/proc/$result"))) {
+        if ((! $result) || ($result == 0) || (! file_exists("/proc/$result"))) {
             Mlog::addone(
                     __CLASS__ . __METHOD__ . __LINE__ .
                              '::file_exists(/proc/$result)::', 
