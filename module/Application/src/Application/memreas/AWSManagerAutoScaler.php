@@ -68,9 +68,10 @@ class AWSManagerAutoScaler
     {
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
         exec("pgrep ffmpeg", $output, $isRunningFFMPEG);
-        if ($isRunningFFMPEG == 0) {
-            echo "Ok, ffmpeg process is running\n";
-        }
+        Mlog::addone(
+                __CLASS__ . __METHOD__ . __LINE__ .
+                         '::Check if ffmpeg is running::', 
+                        '$isRunningFFMPEG::' . $isRunningFFMPEG);
         if ((! $result) || ($result == 0) || (! $isRunningFFMPEG)) {
             //
             // Process sets lock
