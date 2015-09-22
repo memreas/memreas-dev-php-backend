@@ -163,9 +163,8 @@ class IndexController extends AbstractActionController
                 // end process here is already a process operating on the
                 // backlog
                 //
-                Mlog::addone(
-                        __CLASS__ . __METHOD__ . '::getmypid()::' . getmypid() .
-                                 ' exiting...');
+                Mlog::addone(__CLASS__ . __METHOD__, 
+                        '::getmypid()::' . getmypid() . ' exiting...');
                 exit();
             } else 
                 if ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
