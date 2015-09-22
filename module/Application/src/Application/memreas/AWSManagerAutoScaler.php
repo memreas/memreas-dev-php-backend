@@ -67,13 +67,14 @@ class AWSManagerAutoScaler
     function fetchTranscodingProcessHandleFromRedis ()
     {
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
-        exec("pgrep ffmpeg", $output, $isRunningFFMPEG);
-        Mlog::addone(
-                __CLASS__ . __METHOD__ . __LINE__ .
-                         '::Check if ffmpeg is running::', 
-                        '$isRunningFFMPEG::' . $isRunningFFMPEG . '::$result::' .
-                         $result . '::output::' . print_r($output, true));
-        if ((! $result) || ($result == 0) || (! ((int) $isRunningFFMPEG))) {
+        exec("pgrep ffmpeg", $output, $isNotRunningFFMPEG);
+        if ((! $result) || ($result == 0) || ($isNotRunningFFMPEG)) {
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ .
+                             '::Check if ffmpeg is running::', 
+                            '$isRunningFFMPEG::' . $isRunningFFMPEG .
+                             '::$result::' . $result . '::output::' .
+                             print_r($output, true));
             //
             // Process sets lock
             //
