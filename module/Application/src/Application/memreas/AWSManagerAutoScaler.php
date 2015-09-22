@@ -75,7 +75,7 @@ class AWSManagerAutoScaler
                          '::$this->server_name . "_trancode_lock"::', 
                         $this->server_name . "_trancode_lock");
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
-        if ((! result) || ($result == 0)) {
+        if ((! result) || ($result == 0) || (! file_exists("/proc/$result"))) {
             //
             // Process sets lock
             //
