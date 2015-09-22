@@ -71,7 +71,8 @@ class AWSManagerAutoScaler
         Mlog::addone(
                 __CLASS__ . __METHOD__ . __LINE__ .
                          '::Check if ffmpeg is running::', 
-                        '$isRunningFFMPEG::' . $isRunningFFMPEG);
+                        '$isRunningFFMPEG::' . $isRunningFFMPEG . '::$result::' .
+                         $result);
         if ((! $result) || ($result == 0) || (! ((int) $isRunningFFMPEG))) {
             //
             // Process sets lock
