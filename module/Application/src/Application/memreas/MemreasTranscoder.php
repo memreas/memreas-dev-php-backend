@@ -609,7 +609,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1079,12 +1080,6 @@ class MemreasTranscoder
             $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = json_encode(
                     $cmd, JSON_UNESCAPED_SLASHES);
             $this->persistTranscodeTransaction();
-            
-            //
-            // Refresh DB Connection in case mysql has gone away
-            //
-            // testing function
-            $this->refreshDBConnection();
             
             //
             // Execute ffmpeg command
