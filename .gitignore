@@ -8,8 +8,6 @@ nbproject
 .settings
 .log
 composer.lock
-composer.phar
-.elasticbeanstalk/
 data/session/
 data/media/
 vendor/
