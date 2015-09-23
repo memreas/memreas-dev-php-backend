@@ -199,21 +199,16 @@ class IndexController extends AbstractActionController
                             /*
                              * Process backlog messages
                              */
-                            Mlog::addone(
-                                    __CLASS__ . __METHOD__ .
-                                             '$this->fetchBackLogEntry() - message_data', 
-                                            $message_data);
-                            $aws_manager = new AWSManagerReceiver(
-                                    $this->getServiceLocator());
                             $aws_manager->memreasTranscoder->markMediaForTranscoding(
                                     $message_data);
-                            Mlog::addone(
-                                    __CLASS__ . __METHOD__ . '::$message_data', 
-                                    $message_data);
-                            $this->isTranscodingSoWait = true;
+                            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                    '$aws_manager->memreasTranscoder->markMediaForTranscoding' .
+                                             'fetched');
                             $result = $aws_manager->snsProcessMediaSubscribe(
                                     $message_data);
-                            $this->isTranscodingSoWait = false;
+                            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                    '$aws_manager->snsProcessMediaSubscribe' .
+                                             'passed');
                         }
                     } catch (\Exception $e) {
                         // continue processing - email likely sent
@@ -228,6 +223,8 @@ class IndexController extends AbstractActionController
                         unset($this->dbAdapter);
                         unset($aws_manager);
                     }
+                    Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                            'Bottomw of while loop fetch next entry...');
                 } // end while
                       //
                       // If the while finished we release the lock
