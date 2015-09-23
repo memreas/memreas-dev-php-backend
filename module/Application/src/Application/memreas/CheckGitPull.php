@@ -59,7 +59,7 @@ class CheckGitPull
                 // $output .= $this->execOps ( "git pull" );
                 $pulled_latest = true;
                 
-                // putenv("COMPOSER_HOME=" . $this->github_basedir);
+                putenv("COMPOSER_HOME=" . $this->github_basedir);
                 $output .= $this->execOps("php composer.phar self-update");
                 $output .= $this->execOps("php composer.phar update");
                 
