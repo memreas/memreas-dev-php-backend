@@ -183,7 +183,7 @@ class IndexController extends AbstractActionController
                         $aws_manager = new AWSManagerReceiver(
                                 $this->getServiceLocator());
                         Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                                'Fetched $aws_manager' . getmypid());
+                                'Fetched $aws_manager for pid' . getmypid());
                         
                         //
                         // Fetch next backlog entry
