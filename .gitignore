@@ -8,8 +8,9 @@ nbproject
 .settings
 .log
 composer.lock
+composer.phar
 .elasticbeanstalk/
 data/session/
 data/media/
-vendor
+vendor/
 php_errors.log
