@@ -72,7 +72,7 @@ class AWSManagerAutoScaler
             Mlog::addone(
                     __CLASS__ . __METHOD__ . __LINE__ .
                              '::Check if ffmpeg is running::', 
-                            '$isRunningFFMPEG::' . $isRunningFFMPEG .
+                            '$isNotRunningFFMPEG::' . $isNotRunningFFMPEG .
                              '::$result::' . $result . '::output::' .
                              print_r($output, true));
             //

@@ -433,6 +433,8 @@ class MemreasTranscoder
                             break;
                         case 'video/vob':
                             break;
+                        case 'video/vro':
+                            break;
                         // audio
                         case 'audio/caf':
                             break;
@@ -609,8 +611,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 

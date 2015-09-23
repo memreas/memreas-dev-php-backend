@@ -166,80 +166,77 @@ class IndexController extends AbstractActionController
                 Mlog::addone(__CLASS__ . __METHOD__, 
                         '::getmypid()::' . getmypid() . ' exiting...');
                 exit();
-            } else 
-                if ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
-                    /*
-                     * Reset and work on backlog
-                     */
-                    unset($message_data);
-                    unset($response);
-                    unset($this->dbAdapter);
-                    unset($aws_manager);
+            } else
+                while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
+                    //
+                    // Process is running and has lock
+                    //
+                    Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                            'Top of while loop Process has lock pid::' .
+                                     getmypid());
                     
-                    while ($this->awsManagerAutoScaler->serverReadyToProcessTask()) {
+                    try {
                         
-                        try {
-                            
-                            //
-                            // Process completed so continue with fresh vars -
-                            // check against pid
-                            // in autoscaler to ensure single
-                            // process at any time...
-                            //
+                        //
+                        // Fetch $aws_manager
+                        //
+                        $aws_manager = new AWSManagerReceiver(
+                                $this->getServiceLocator());
+                        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                'Fetched $aws_manager' . getmypid());
+                        
+                        //
+                        // Fetch next backlog entry
+                        //
+                        $message_data = $aws_manager->fetchBackLogEntry();
+                        if (empty($message_data)) {
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ .
+                                             '$this->fetchBackLogEntry()', 
+                                            ' returned null - processing complete!');
+                            exit();
+                        } else {
+                            /*
+                             * Process backlog messages
+                             */
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ .
+                                             '$this->fetchBackLogEntry() - message_data', 
+                                            $message_data);
                             $aws_manager = new AWSManagerReceiver(
                                     $this->getServiceLocator());
-                            $message_data = $aws_manager->fetchBackLogEntry();
-                            if (empty($message_data)) {
-                                Mlog::addone(
-                                        __CLASS__ . __METHOD__ .
-                                                 '$this->fetchBackLogEntry()', 
-                                                ' returned null - processing complete!');
-                                exit();
-                            } else {
-                                /*
-                                 * Process backlog messages
-                                 */
-                                Mlog::addone(
-                                        __CLASS__ . __METHOD__ .
-                                                 '$this->fetchBackLogEntry() - message_data', 
-                                                $message_data);
-                                $aws_manager = new AWSManagerReceiver(
-                                        $this->getServiceLocator());
-                                $aws_manager->memreasTranscoder->markMediaForTranscoding(
-                                        $message_data);
-                                Mlog::addone(
-                                        __CLASS__ . __METHOD__ .
-                                                 '::$message_data', 
-                                                $message_data);
-                                $this->isTranscodingSoWait = true;
-                                $result = $aws_manager->snsProcessMediaSubscribe(
-                                        $message_data);
-                                $this->isTranscodingSoWait = false;
-                            }
-                        } catch (\Exception $e) {
-                            // continue processing - email likely sent
-                        } finally {
-                            /*
-                             * Reset and continue work on backlog
-                             */
-                            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                                    'transcoderAction::unset vars');
-                            unset($message_data);
-                            unset($response);
-                            unset($this->dbAdapter);
-                            unset($aws_manager);
+                            $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                                    $message_data);
+                            Mlog::addone(
+                                    __CLASS__ . __METHOD__ . '::$message_data', 
+                                    $message_data);
+                            $this->isTranscodingSoWait = true;
+                            $result = $aws_manager->snsProcessMediaSubscribe(
+                                    $message_data);
+                            $this->isTranscodingSoWait = false;
                         }
-                    } // end while
+                    } catch (\Exception $e) {
+                        // continue processing - email likely sent
+                    } finally {
+                        /*
+                         * Reset and continue work on backlog
+                         */
+                        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                'transcoderAction::unset vars');
+                        unset($message_data);
+                        unset($response);
+                        unset($this->dbAdapter);
+                        unset($aws_manager);
+                    }
+                } // end while
                       //
                       // If the while finished we release the lock
                       //
-                    Mlog::addone(
-                            __CLASS__ . __METHOD__ . __LINE__ .
-                                     '::$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis()::', 
-                                    'lock release for pid::' . getmypid());
-                    $this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis();
-                } // end else if
-                  // ($this->awsManagerAutoScaler->serverReadyToProcessTask())
+            Mlog::addone(
+                    __CLASS__ . __METHOD__ . __LINE__ .
+                             '::$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis()::', 
+                            'lock release for pid::' . getmypid());
+            $this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis();
             
             exit();
             // At this point it's time to exit. The while loop is finished
