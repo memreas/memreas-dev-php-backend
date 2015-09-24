@@ -528,25 +528,20 @@ class MemreasTranscoder
                     /*
                      * High quality mp4 conversion (h.265)
                      */
-                    /*
-                     * Mlog::addone(__CLASS__ . __METHOD__, "starting 1080p
-                     * video");
-                     * $this->type = '1080p';
-                     * $this->transcode(); // set $this->transcode_job_meta
-                     * // in
-                     * // function
-                     * Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p
-                     * video");
-                     * $this->memreas_media_metadata['S3_files']['transcode_progress'][]
-                     * = '1080p_mp4_complete';
-                     * // set status to show 1080p available
-                     * $this->transcode_status = "success_1080p";
-                     * $this->pass = "1";
-                     * // update media metadata and transcode transaction
-                     * metadata
-                     * $this->persistMedia();
-                     * $this->persistTranscodeTransaction();
-                     */
+                    
+                    Mlog::addone(__CLASS__ . __METHOD__, "starting 1080p video");
+                    // set $this->transcode_job_meta in function
+                    $this->type = '1080p';
+                    $this->transcode();
+                    Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p video");
+                    $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
+                    // set status to show 1080p available
+                    $this->transcode_status = "success_1080p";
+                    $this->pass = "1";
+                    // update media metadata and transcode transaction
+                    // metadata
+                    $this->persistMedia();
+                    $this->persistTranscodeTransaction();
                     
                     /*
                      * HLS conversion
@@ -617,8 +612,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
