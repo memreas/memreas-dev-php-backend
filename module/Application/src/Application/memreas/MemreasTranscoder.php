@@ -117,6 +117,8 @@ class MemreasTranscoder
 
     protected $MediaExt;
 
+    protected $error_message = "";
+
     protected $duration = 0;
 
     protected $filesize = 0;
@@ -612,7 +614,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -986,8 +989,6 @@ class MemreasTranscoder
                         }
             
             $this->pass = 0;
-            $output_start_time = date("Y-m-d H:i:s");
-            
             //
             // exec ffmpeg operation
             //
@@ -1073,8 +1074,10 @@ class MemreasTranscoder
         try {
             // Log command
             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, "cmd::$cmd");
-            $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = json_encode(
-                    $cmd, JSON_UNESCAPED_SLASHES);
+            $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = $cmd;
+            $output_start_time = $this->now();
+            $this->transcode_job_meta[$this->type]["output_start_time"] = $output_start_time;
+            
             $this->persistTranscodeTransaction();
             
             //
@@ -1091,8 +1094,7 @@ class MemreasTranscoder
             // Fetch transcode_job_meta in case of GC
             //
             $row = $this->fetchTranscodeTransactionByMediaId($this->media_id);
-            $this->transcode_job_meta = json_decode($row->transcode_job_meta, 
-                    true);
+            $this->transcode_job_meta = json_decode($row->metadata, true);
             
             //
             // Command should be complete check for file...
@@ -1106,8 +1108,10 @@ class MemreasTranscoder
                 $this->pass = 1;
                 // Log pass
                 $this->transcode_job_meta[$this->type]["ffmpeg_cmd_output"] = json_encode(
-                        $op, JSON_UNESCAPED_SLASHES);
-                $this->transcode_job_meta[$this->type]["output_size"] = $fsize;
+                        $op);
+                // file size in bytes...
+                $this->transcode_job_meta[$this->type]["output_size"] = filesize(
+                        $transcoded_file);
                 $this->transcode_job_meta[$this->type]["pass_fail"] = $this->pass;
                 $this->transcode_job_meta[$this->type]["error_message"] = "";
                 $this->transcode_job_meta[$this->type]["output_start_time"] = $output_start_time;
@@ -1120,15 +1124,16 @@ class MemreasTranscoder
             $this->pass = 0;
             error_log("transcoder $this->type failed - op -->" . $op . PHP_EOL);
             // Log pass
-            $this->transcode_job_meta[$this->type]["ffmpeg_cmd"] = $cmd;
             $this->transcode_job_meta[$this->type]["ffmpeg_cmd_output"] = json_encode(
-                    $op, JSON_UNESCAPED_SLASHES);
+                    $op);
             $this->transcode_job_meta[$this->type]["pass_fail"] = $this->pass;
             $this->transcode_job_meta[$this->type]["error_message"] = $e->getMessage();
-            $this->transcode_job_meta[$this->type]["output_start_time"] = $output_start_time;
             $this->transcode_job_meta[$this->type]["output_end_time"] = date(
                     "Y-m-d H:i:s");
+            $this->error_message = $e->getMessage();
             $this->persistTranscodeTransaction();
+            // persist media data also
+            $this->persistMedia();
             throw $e;
         }
         return $op;
@@ -1247,6 +1252,7 @@ class MemreasTranscoder
             $data_array['pass_fail'] = ! empty($this->pass) ? $this->pass : 0;
             $data_array['metadata'] = ! empty($this->transcode_job_meta) ? json_encode(
                     $this->transcode_job_meta) : null;
+            $data_array['error_message'] = ! empty($this->error_message) ? $this->error_message : 0;
             $data_array['transcode_job_duration'] = ! empty(
                     $this->transcode_job_duration) ? $this->transcode_job_duration : 0;
             $data_array['transcode_start_time'] = ! empty(

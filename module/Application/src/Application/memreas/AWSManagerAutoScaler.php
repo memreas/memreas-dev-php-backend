@@ -120,14 +120,8 @@ class AWSManagerAutoScaler
         $this->cpu_util = sys_getloadavg();
         // $this->server_name = $_SERVER['SERVER_NAME'];
         $this->server_name = gethostname();
-        Mlog::addone(__CLASS__ . __METHOD__ . '::$this->server_name', 
-                $this->server_name);
         $this->server_addr = $_SERVER['SERVER_ADDR'];
-        Mlog::addone(__CLASS__ . __METHOD__ . '::$this->server_addr', 
-                $this->server_addr);
         $this->hostname = gethostname();
-        Mlog::addone(__CLASS__ . __METHOD__ . '::$this->hostname', 
-                $this->hostname);
         
         // $memory = $this->get_server_memory_usage();
         // Mlog::addone(__CLASS__ . __METHOD__ . '::misc', $server_data);
