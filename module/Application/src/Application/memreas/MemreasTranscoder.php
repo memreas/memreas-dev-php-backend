@@ -914,8 +914,8 @@ class MemreasTranscoder
                          $this->MediaFileName . $mpeg4ext;
                 $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                 $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd .
-                         ' -i  ' . $this->destRandMediaName . ' ' . $qv . ' ' .
-                         $transcoded_file . ' 2>&1';
+                         ' -nostats -i  ' . $this->destRandMediaName . ' ' . $qv .
+                         ' ' . $transcoded_file . ' 2>&1';
             } else 
                 if ($this->type == '1080p') {
                     
@@ -931,7 +931,7 @@ class MemreasTranscoder
                     $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
                     $cmd = 'nice -' . $this->nice_priority . ' ' .
                              $this->ffmpegcmd .
-                             " -i $this->destRandMediaName $qv $transcoded_file " .
+                             " -nostats -i $this->destRandMediaName $qv $transcoded_file " .
                              '2>&1';
                 } else 
                     if ($this->type == 'hls') {
@@ -957,7 +957,7 @@ class MemreasTranscoder
                                 $transcoded_hls_ts_file);
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
-                                 $this->ffmpegcmd . "  -re -y -i " .
+                                 $this->ffmpegcmd . "  -nostats -re -y -i " .
                                  $this->destRandMediaName . ' -map 0 ' .
                                  '-pix_fmt yuv420p ' . '-c:v libx264 ' .
                                  '-profile:v high -level 4.0 ' .
@@ -1092,6 +1092,13 @@ class MemreasTranscoder
             // Refresh DB Connection in case mysql has gone away
             //
             $this->refreshDBConnection();
+            
+            //
+            // Fetch transcode_job_meta in case of GC
+            //
+            $row = $this->fetchTranscodeTransactionByMediaId($this->media_id);
+            $this->transcode_job_meta = json_decode($row->transcode_job_meta, 
+                    true);
             
             //
             // Command should be complete check for file...
