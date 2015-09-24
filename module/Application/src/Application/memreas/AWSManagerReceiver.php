@@ -31,6 +31,7 @@ class AWSManagerReceiver
     {
         try {
             $this->service_locator = $service_locator;
+            
             $this->dbAdapter = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
             $this->aws = Aws::factory(

@@ -177,6 +177,12 @@ class IndexController extends AbstractActionController
                     
                     try {
                         
+                        if (! $this->getServiceLocator()) {
+                            Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                    'getServiceLocator is empty - try to init');
+                            $this->setServiceLocator(
+                                    new \Zend\ServiceManager\ServiceManager());
+                        }
                         //
                         // Fetch $aws_manager
                         //
@@ -212,6 +218,8 @@ class IndexController extends AbstractActionController
                         }
                     } catch (\Exception $e) {
                         // continue processing - email likely sent
+                        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                                'Error in while loop::' . $e->getMessage());
                     } finally {
                         /*
                          * Reset and continue work on backlog
@@ -222,6 +230,7 @@ class IndexController extends AbstractActionController
                         unset($response);
                         unset($this->dbAdapter);
                         unset($aws_manager);
+                        // $aws_manager->memreasTranscoder->refreshDBConnection();
                     }
                     Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
                             'Bottomw of while loop fetch next entry...');

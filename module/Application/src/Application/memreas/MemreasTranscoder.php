@@ -528,19 +528,25 @@ class MemreasTranscoder
                     /*
                      * High quality mp4 conversion (h.265)
                      */
-                    Mlog::addone(__CLASS__ . __METHOD__, "starting 1080p video");
-                    $this->type = '1080p';
-                    $this->transcode(); // set $this->transcode_job_meta
-                                        // in
-                                        // function
-                    Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p video");
-                    $this->memreas_media_metadata['S3_files']['transcode_progress'][] = '1080p_mp4_complete';
-                    // set status to show 1080p available
-                    $this->transcode_status = "success_1080p";
-                    $this->pass = "1";
-                    // update media metadata and transcode transaction metadata
-                    $this->persistMedia();
-                    $this->persistTranscodeTransaction();
+                    /*
+                     * Mlog::addone(__CLASS__ . __METHOD__, "starting 1080p
+                     * video");
+                     * $this->type = '1080p';
+                     * $this->transcode(); // set $this->transcode_job_meta
+                     * // in
+                     * // function
+                     * Mlog::addone(__CLASS__ . __METHOD__, "finished 1080p
+                     * video");
+                     * $this->memreas_media_metadata['S3_files']['transcode_progress'][]
+                     * = '1080p_mp4_complete';
+                     * // set status to show 1080p available
+                     * $this->transcode_status = "success_1080p";
+                     * $this->pass = "1";
+                     * // update media metadata and transcode transaction
+                     * metadata
+                     * $this->persistMedia();
+                     * $this->persistTranscodeTransaction();
+                     */
                     
                     /*
                      * HLS conversion
@@ -611,7 +617,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1299,22 +1306,22 @@ class MemreasTranscoder
             if ($duration_in_minutes <= 5) {
                 $this->nice_priority = 0;
                 $this->compression_preset_web = self::MEDIUM;
-                $this->compression_preset_1080p = self::SLOW;
+                $this->compression_preset_1080p = self::MEDIUM;
             } else 
                 if ($duration_in_minutes > 5 && $duration_in_minutes <= 10) {
                     $this->nice_priority = 5;
                     $this->compression_preset_web = self::FASTER;
-                    $this->compression_preset_1080p = self::MEDIUM;
+                    $this->compression_preset_1080p = self::FASTER;
                 } else 
                     if ($duration_in_minutes > 10 && $duration_in_minutes <= 30) {
                         $this->nice_priority = 15;
                         $this->compression_preset_web = self::VERYFAST;
-                        $this->compression_preset_1080p = self::FASTER;
+                        $this->compression_preset_1080p = self::VERYFAST;
                     } else 
                         if ($duration_in_minutes > 30) {
                             $this->nice_priority = 20;
                             $this->compression_preset_web = self::ULTRAFAST;
-                            $this->compression_preset_1080p = self::SUPERFAST;
+                            $this->compression_preset_1080p = self::ULTRAFAST;
                         }
         } catch (\Exception $e) {
             throw $e;
