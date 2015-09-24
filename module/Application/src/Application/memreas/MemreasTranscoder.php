@@ -612,8 +612,7 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', 
-                        $this->transcode_status);
+                        $memreas_media_data_array)', $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -1103,6 +1102,7 @@ class MemreasTranscoder
                         'Failed to find $transcoded_file::' . $transcoded_file .
                                  '::op::' . $op);
             } else {
+                // Transcode_Transaction status
                 $this->pass = 1;
                 // Log pass
                 $this->transcode_job_meta[$this->type]["ffmpeg_cmd_output"] = json_encode(
@@ -1115,6 +1115,7 @@ class MemreasTranscoder
                         "Y-m-d H:i:s");
             }
             $this->persistTranscodeTransaction();
+            $this->persistMedia();
         } catch (\Exception $e) {
             $this->pass = 0;
             error_log("transcoder $this->type failed - op -->" . $op . PHP_EOL);

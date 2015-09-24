@@ -58,6 +58,8 @@ class IndexController extends AbstractActionController
 
     protected $checkGitPull;
 
+    protected $aws_manager;
+
     public function fetchXML ($action, $xml)
     {
         error_log("Inside fetchXML this->url $this->url ....");
@@ -138,9 +140,10 @@ class IndexController extends AbstractActionController
             /*
              * Here if no media_id is set then work on any backlog items...
              */
-            $aws_manager = new AWSManagerReceiver($this->getServiceLocator());
+            $this->aws_manager = new AWSManagerReceiver(
+                    $this->getServiceLocator());
             if (! empty($message_data['media_id'])) {
-                $response = $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                $response = $this->aws_manager->memreasTranscoder->markMediaForTranscoding(
                         $message_data);
             } else {
                 throw new \Exception("Transcoder::media_id is empty!");
@@ -184,36 +187,37 @@ class IndexController extends AbstractActionController
                                     new \Zend\ServiceManager\ServiceManager());
                         }
                         //
-                        // Fetch $aws_manager
+                        // Fetch $this->aws_manager
                         //
-                        $aws_manager = new AWSManagerReceiver(
+                        $this->aws_manager = new AWSManagerReceiver(
                                 $this->getServiceLocator());
                         Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                                'Fetched $aws_manager for pid' . getmypid());
+                                'Fetched $this->aws_manager for pid' . getmypid());
                         
                         //
                         // Fetch next backlog entry
                         //
-                        $message_data = $aws_manager->fetchBackLogEntry();
+                        $message_data = $this->aws_manager->fetchBackLogEntry();
                         if (empty($message_data)) {
                             Mlog::addone(
                                     __CLASS__ . __METHOD__ .
                                              '$this->fetchBackLogEntry()', 
                                             ' returned null - processing complete!');
+                            $this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis();
                             exit();
                         } else {
                             /*
                              * Process backlog messages
                              */
-                            $aws_manager->memreasTranscoder->markMediaForTranscoding(
+                            $this->aws_manager->memreasTranscoder->markMediaForTranscoding(
                                     $message_data);
                             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                                    '$aws_manager->memreasTranscoder->markMediaForTranscoding' .
+                                    '$this->aws_manager->memreasTranscoder->markMediaForTranscoding' .
                                              'fetched');
-                            $result = $aws_manager->snsProcessMediaSubscribe(
+                            $result = $this->aws_manager->snsProcessMediaSubscribe(
                                     $message_data);
                             Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
-                                    '$aws_manager->snsProcessMediaSubscribe' .
+                                    '$this->aws_manager->snsProcessMediaSubscribe' .
                                              'passed');
                         }
                     } catch (\Exception $e) {
@@ -229,8 +233,8 @@ class IndexController extends AbstractActionController
                         unset($message_data);
                         unset($response);
                         unset($this->dbAdapter);
-                        unset($aws_manager);
-                        // $aws_manager->memreasTranscoder->refreshDBConnection();
+                        unset($this->aws_manager);
+                        // $this->aws_manager->memreasTranscoder->refreshDBConnection();
                     }
                     Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
                             'Bottomw of while loop fetch next entry...');
