@@ -612,7 +612,8 @@ class MemreasTranscoder
                 // Debugging - log table entry
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . '::$this->persistMedia($this->memreas_media, 
-                        $memreas_media_data_array)', $this->transcode_status);
+                        $memreas_media_data_array)', 
+                        $this->transcode_status);
                 Mlog::addone(
                         __CLASS__ . __METHOD__ . __LINE__ .
                                  '::$this->memreas_media_metadata::after::', 
@@ -896,12 +897,6 @@ class MemreasTranscoder
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
                 
-                // $qv = ' -c:v libx264 ' . ' -threads 1 ' . '-profile:v high '
-                // .
-                // '-level 4.2 ' . '-preset ' .
-                // $this->compression_preset_web . ' -c:a libfdk_aac ' .
-                // '-b:a 128k ';
-                
                 $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' .
                          ' -preset ' . $this->compression_preset_web .
                          ' -c:a aac -strict experimental  ' . '-b:a 128k ';
@@ -958,7 +953,7 @@ class MemreasTranscoder
                         
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . "  -nostats -re -y -i " .
-                                 $this->destRandMediaName . ' -map 0 ' .
+                                 $transcoded_mp4_file . ' -map 0 ' .
                                  '-pix_fmt yuv420p ' . '-c:v libx264 ' .
                                  '-profile:v high -level 4.0 ' .
                                  '-c:a aac -strict experimental ' . '-r 25 ' .
