@@ -177,6 +177,7 @@ class MemreasTranscoder
             $this->service_locator = $service_locator;
             $this->entityManager = $service_locator->get(
                     'doctrine.entitymanager.orm_default');
+            $this->refreshDBConnection();
         } catch (\Exception $e) {
             throw $e;
         }
@@ -185,11 +186,11 @@ class MemreasTranscoder
     function refreshDBConnection ()
     {
         try {
-            if (! $this->entityManager->getConnection()) {
+            if ($this->entityManager->getConnection()->ping() === false) {
+                $this->entityManager->getConnection()->close();
+                $this->entityManager->getConnection()->connect();
                 Mlog::addone(__CLASS__ . __METHOD__, 
                         '$this->entityManager->connect() is not valid ... fetching new');
-                $this->entityManager = $service_locator->get(
-                        'doctrine.entitymanager.orm_default');
             } else {
                 Mlog::addone(__CLASS__ . __METHOD__, 
                         '$this->entityManager->connect() is valid ... ');
