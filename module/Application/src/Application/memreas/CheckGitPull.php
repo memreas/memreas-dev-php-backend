@@ -43,6 +43,12 @@ class CheckGitPull
                 // cd to $github_basedir
                 $output .= $this->execOps("cd $this->github_basedir");
                 
+                // remove composer.phar
+                $output .= $this->execOps("rm composer.phar");
+                
+                // remove vendor
+                $output .= $this->execOps("rm -rf vendor");
+                
                 // git pull
                 $output .= $this->execOps("git pull");
                 
