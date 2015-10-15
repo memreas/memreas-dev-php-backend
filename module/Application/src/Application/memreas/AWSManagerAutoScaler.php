@@ -61,9 +61,8 @@ class AWSManagerAutoScaler
 
     public function serverReadyToProcessTask ()
     {
-        Mlog::addone(
-                __CLASS__ . __METHOD__ . __LINE__ .
-                         'Inside serverReadyToProcessTask ()');
+        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                'Inside serverReadyToProcessTask ()');
         return $this->fetchTranscodingProcessHandleFromRedis();
     }
 
