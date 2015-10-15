@@ -37,7 +37,7 @@ class MemreasConstants
     const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
     
     // Redis section
-    const REDIS_SERVER_ENDPOINT = "54.204.57.197";
+    const REDIS_SERVER_ENDPOINT = "54.225.187.57";
 
     const REDIS_SERVER_USE = true;
 

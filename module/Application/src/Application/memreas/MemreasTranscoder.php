@@ -899,9 +899,18 @@ class MemreasTranscoder
                         $ffprobe_json_array['streams'][0]['height']) &&
                          ! empty($ffprobe_json_array['streams'][0]['height'])) ? $ffprobe_json_array['streams'][0]['height'] : "";
                 
+                // last working 10.10.2015
+                // $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' .
+                // ' -preset ' . $this->compression_preset_web .
+                // ' -c:a aac -strict experimental ' . '-b:a 128k ';
+                
+                // Testing higher quality - likely will
+                
                 $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' .
                          ' -preset ' . $this->compression_preset_web .
-                         ' -c:a aac -strict experimental  ' . '-b:a 128k ';
+                         '  -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' .
+                         ' +faststart ' . ' -c:a aac ' .
+                         ' -strict experimental  ' . '-b:a 128k ';
                 
                 //
                 // apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -953,10 +962,24 @@ class MemreasTranscoder
                                 __CLASS__ . __METHOD__ . '$transcoded_file', 
                                 $transcoded_hls_ts_file);
                         
+                        // last working 10.10.2015
+                        // $cmd = 'nice -' . $this->nice_priority . ' ' .
+                        // $this->ffmpegcmd . " -nostats -re -y -i " .
+                        // $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' .
+                        // '-c:v libx264 ' . '-profile:v high -level 4.0 ' .
+                        // '-c:a aac -strict experimental ' . '-r 25 ' .
+                        // '-b:v 1500k ' . '-maxrate 2000k ' .
+                        // '-force_key_frames 50 ' . '-flags ' .
+                        // '-global_header ' . '-f segment ' .
+                        // '-segment_list_type m3u8 ' . '-segment_list ' .
+                        // $transcoded_file . ' -segment_format mpeg_ts ' .
+                        // $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+                        
                         $cmd = 'nice -' . $this->nice_priority . ' ' .
                                  $this->ffmpegcmd . "  -nostats -re -y -i " .
                                  $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' .
-                                 '-c:v libx264 ' . '-profile:v high -level 4.0 ' .
+                                 '-c:v libx264 ' . '-profile:v high -level 4.2 ' .
+                                 ' -preset medium ' . ' -crf 18 ' .
                                  '-c:a aac -strict experimental ' . '-r 25 ' .
                                  '-b:v 1500k ' . '-maxrate 2000k ' .
                                  '-force_key_frames 50 ' . '-flags ' .

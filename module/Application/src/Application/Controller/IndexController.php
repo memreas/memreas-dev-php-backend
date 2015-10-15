@@ -76,6 +76,7 @@ class IndexController extends AbstractActionController
 
     public function indexAction ()
     {
+        Mlog::addone(__CLASS__ . __METHOD__, '::entered indexAction....');
         $actionname = isset($_REQUEST["action"]) ? $_REQUEST["action"] : '';
         
         $this->checkGitPull = new CheckGitPull();
@@ -98,10 +99,15 @@ class IndexController extends AbstractActionController
                 }
                 exit();
             } else {
+                //
+                // Backend worker...
+                //
+                Mlog::addone(__CLASS__ . __METHOD__, 
+                        '::entered indexAction else -> backend worker...');
                 try {
-                    /*
-                     * Check Instance against AutoScaler
-                     */
+                    //
+                    // Check Instance against AutoScaler
+                    //
                     $this->awsManagerAutoScaler = new AWSManagerAutoScaler(
                             $this->getServiceLocator());
                     
@@ -120,6 +126,7 @@ class IndexController extends AbstractActionController
 
     protected function transcoderAction ()
     {
+        Mlog::addone(__CLASS__ . __METHOD__, '::entered transcoderAction...');
         // Web Server Handle
         $action = isset($_REQUEST["action"]) ? $_REQUEST["action"] : '';
         $json = isset($_REQUEST["json"]) ? $_REQUEST["json"] : '';
@@ -137,9 +144,11 @@ class IndexController extends AbstractActionController
             //
             $message_data = json_decode($json, true);
             $message_data['backlog'] = 1;
-            /*
-             * Here if no media_id is set then work on any backlog items...
-             */
+            //
+            // Here if no media_id is set then work on any backlog items...
+            //
+            Mlog::addone(__CLASS__ . __METHOD__, 
+                    '::about to markMediaForTranscoding...');
             $this->aws_manager = new AWSManagerReceiver(
                     $this->getServiceLocator());
             if (! empty($message_data['media_id'])) {
@@ -149,6 +158,8 @@ class IndexController extends AbstractActionController
                 throw new \Exception("Transcoder::media_id is empty!");
             }
             
+            Mlog::addone(__CLASS__ . __METHOD__, 
+                    '::about to return response...');
             $this->returnResponse($response);
             /**
              * ****** background process starts here *******
@@ -257,6 +268,7 @@ class IndexController extends AbstractActionController
 
     protected function returnResponse ($response)
     {
+        Mlog::addone(__CLASS__ . __METHOD__, '::start');
         // buffer all upcoming output
         ignore_user_abort(true); // keeps php from stopping process
         ob_start();
@@ -276,12 +288,14 @@ class IndexController extends AbstractActionController
         ob_flush();
         flush();
         
+        Mlog::addone(__CLASS__ . __METHOD__, '::flushed');
         // if you're using sessions, this prevents subsequent requests
         // from hanging while the background process executes
         if (session_id()) {
             session_write_close();
         }
         
+        Mlog::addone(__CLASS__ . __METHOD__, '::session closed');
         // check headers
         if (headers_sent()) {
             error_log("Success: response header 200 sucessfully sent");

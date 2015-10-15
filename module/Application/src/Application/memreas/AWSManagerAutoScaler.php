@@ -61,20 +61,28 @@ class AWSManagerAutoScaler
 
     public function serverReadyToProcessTask ()
     {
+        Mlog::addone(
+                __CLASS__ . __METHOD__ . __LINE__ .
+                         'Inside serverReadyToProcessTask ()');
         return $this->fetchTranscodingProcessHandleFromRedis();
     }
 
     function fetchTranscodingProcessHandleFromRedis ()
     {
+        Mlog::addone(
+                __CLASS__ . __METHOD__ . __LINE__ .
+                         'Inside fetchTranscodingProcessHandleFromRedis()');
+        
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
         exec("pgrep ffmpeg", $output, $isNotRunningFFMPEG);
+        Mlog::addone(
+                __CLASS__ . __METHOD__ . __LINE__ .
+                         '::Check if ffmpeg is running::', 
+                        '$isNotRunningFFMPEG::' . $isNotRunningFFMPEG .
+                         '::$result::' . $result . '::output::' .
+                         print_r($output, true));
+        
         if ((! $result) || ($result == 0) || ($isNotRunningFFMPEG)) {
-            Mlog::addone(
-                    __CLASS__ . __METHOD__ . __LINE__ .
-                             '::Check if ffmpeg is running::', 
-                            '$isNotRunningFFMPEG::' . $isNotRunningFFMPEG .
-                             '::$result::' . $result . '::output::' .
-                             print_r($output, true));
             //
             // Process sets lock
             //

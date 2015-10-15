@@ -12,9 +12,9 @@ echo "You entered $comment"
 #cp ./module/Application/src/Application/Model/MemreasConstants.bewQ.php ./module/Application/src/Application/Model/MemreasConstants.php
 
 #Update composer.phar and files
-echo "Updating composer and vendor..."
-php composer.phar self-update
-php composer.phar update
+#echo "Updating composer and vendor..."
+#php composer.phar self-update
+#php composer.phar update
 
 #Push to AWS
 echo "Committing to git..."
@@ -22,7 +22,7 @@ git add --all
 git commit -m "$comment"
 echo "Pushing to github..."
 set -v verbose #echo on
-git push
+git push -f
 
 #cp module/Application/src/Application/Model/MemreasConstants.localhost.php module/Application/src/Application/Model/MemreasConstants.php
 
