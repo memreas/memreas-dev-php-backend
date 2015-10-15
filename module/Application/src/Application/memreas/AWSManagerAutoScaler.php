@@ -68,9 +68,8 @@ class AWSManagerAutoScaler
 
     function fetchTranscodingProcessHandleFromRedis ()
     {
-        Mlog::addone(
-                __CLASS__ . __METHOD__ . __LINE__ .
-                         'Inside fetchTranscodingProcessHandleFromRedis()');
+        Mlog::addone(__CLASS__ . __METHOD__ . __LINE__, 
+                'Inside fetchTranscodingProcessHandleFromRedis()');
         
         $result = $this->redis->getCache($this->server_name . "_trancode_lock");
         exec("pgrep ffmpeg", $output, $isNotRunningFFMPEG);
