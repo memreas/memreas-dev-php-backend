@@ -44,17 +44,13 @@ class CheckGitPull
                 $output .= $this->execOps("cd $this->github_basedir");
                 
                 // remove composer.phar
-                $output .= $this->execOps("rm composer.phar");
-                
-                // remove vendor
-                $output .= $this->execOps("rm -rf vendor");
+                $output .= $this->execOps("git reset --hard HEAD");
                 
                 // git pull
                 $output .= $this->execOps("git pull");
                 
                 // write lock file
                 if (file_exists($this->gitlock)) {
-                    // unlink($this->gitlock);
                     $output .= $this->execOps("rm " . $this->gitlock);
                 }
                 $file = fopen($this->gitlock, "w");
