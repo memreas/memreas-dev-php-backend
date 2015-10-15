@@ -11,4 +11,5 @@ composer.lock
 composer.phar
 data/session/
 data/media/
+vendor/
 php_errors.log
