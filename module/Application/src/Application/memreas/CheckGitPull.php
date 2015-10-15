@@ -30,49 +30,41 @@ class CheckGitPull
             if (! file_exists($this->gitlock) || $pull) {
                 // Setup SSH agent
                 $output = $this->execOps('eval "$(ssh-agent -s)"');
-                echo $output . PHP_EOL;
                 
                 // Add key
-                $output = $this->execOps("ssh-add ~/.ssh/id_rsa");
-                echo $output . PHP_EOL;
+                $output .= $this->execOps("ssh-add ~/.ssh/id_rsa");
                 
                 // check ssh auth sock
-                $output = $this->execOps('echo "$SSH_AUTH_SOCK"');
-                echo $output . PHP_EOL;
+                $output .= $this->execOps('echo "$SSH_AUTH_SOCK"');
                 
                 // check github access
-                $output = $this->execOps('ssh -T git@github.com');
-                echo $output . PHP_EOL;
+                $output .= $this->execOps('ssh -T git@github.com');
                 
                 // cd to $github_basedir
-                $output = $this->execOps("cd $this->github_basedir");
-                echo $output . PHP_EOL;
+                $output .= $this->execOps("cd $this->github_basedir");
                 
                 // remove composer.phar
-                $output = $this->execOps("git reset --hard HEAD");
-                echo $output . PHP_EOL;
+                $output .= $this->execOps("git reset --hard HEAD");
                 
                 // git pull
-                $output = $this->execOps("git pull");
-                echo $output . PHP_EOL;
+                $output .= $this->execOps("git pull");
                 
                 // write lock file
                 if (file_exists($this->gitlock)) {
-                    $output = $this->execOps("rm " . $this->gitlock);
+                    $output .= $this->execOps("rm " . $this->gitlock);
                 }
                 $file = fopen($this->gitlock, "w");
                 echo fwrite($file, $output);
                 fclose($file);
                 
                 // set permissions
-                // $output = $this->execOps ( "git pull" );
+                // $output .= $this->execOps ( "git pull" );
                 $pulled_latest = true;
                 
                 putenv("COMPOSER_HOME=" . $this->github_basedir);
-                $output = $this->execOps("php composer.phar self-update");
-                echo $output . PHP_EOL;
-                $output = $this->execOps("php composer.phar update");
-                echo $output . PHP_EOL;
+                $output .= $this->execOps("php composer.phar self-update");
+                $output .= $this->execOps("php composer.phar update");
+                $output .= "\nCompleted git pull op...";
                 
                 Mlog::addone('output::', $output);
             }
