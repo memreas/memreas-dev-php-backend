@@ -8,6 +8,7 @@ nbproject
 .settings
 .log
 composer.lock
+composer.phar
 data/session/
 data/media/
 php_errors.log
