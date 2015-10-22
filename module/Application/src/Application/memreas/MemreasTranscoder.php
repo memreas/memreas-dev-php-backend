@@ -345,9 +345,6 @@ class MemreasTranscoder {
 							break;
 						case 'video/vro' :
 							break;
-						case 'video/avc' :
-							$this->MediaFileType = 'video/mp4';
-							break;
 						// audio
 						case 'audio/caf' :
 							break;
@@ -421,7 +418,7 @@ class MemreasTranscoder {
 					Mlog::addone ( __CLASS__ . __METHOD__, "starting web video" );
 					$this->type = 'web';
 					$this->transcode (); // set $this->transcode_job_meta in
-					                    // function
+					                     // function
 					Mlog::addone ( __CLASS__ . __METHOD__, "finished web video" );
 					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'web_mp4_complete';
 					// set status to show web available
@@ -455,8 +452,8 @@ class MemreasTranscoder {
 					Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode ( hls )' );
 					$this->type = 'hls';
 					$this->transcode (); // set $this->transcode_job_meta
-					                    // in
-					                    // function
+					                     // in
+					                     // function
 					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'hls_complete';
 					// set status to show all (web,1080p,hls) available
 					$this->transcode_status = "success";
@@ -568,10 +565,10 @@ class MemreasTranscoder {
 				if ($this->duration > 3600) { // greater then 60 minutes
 					$interval = $this->duration / 20;
 				} else if ($this->duration > 300) { // greater than 5
-				                             // minutes
+				                                    // minutes
 					$interval = $this->duration / 10;
 				} else if ($this->duration > 60) { // greater than 1
-				                            // minutes
+				                                   // minutes
 					$interval = $this->duration / 5;
 				} else { // less than a minute
 					$interval = $this->duration / 3;
