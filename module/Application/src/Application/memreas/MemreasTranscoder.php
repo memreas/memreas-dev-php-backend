@@ -538,6 +538,7 @@ class MemreasTranscoder {
 			);
 			// persist
 			$media_id = $this->persistMedia ( $this->memreas_media, $memreas_media_data_array );
+			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__, "entry marked as failure to avoid infinite loop!" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . '::catch throwing error', $this->transcode_status );
 			throw $e;
 		} finally {
