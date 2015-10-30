@@ -513,14 +513,9 @@ class MemreasTranscoder {
 			} // End if(isset($_POST))
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage () );
-			$message_data ['command'] = isset ( $cmd ) ? $cmd : "";
-			$message_data ['error_line'] = $e->getLine ();
-			$message_data ['error_message'] = $e->getMessage ();
-			$message_data ['error_trace'] = $e->getTrace ();
-			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ) );
-			/*
-			 * Log error
-			 */
+			//
+			// Fail transaction
+			//
 			// Transcode_transaction
 			$this->transcode_status = "failure";
 			$this->pass = "0";
@@ -540,6 +535,17 @@ class MemreasTranscoder {
 			$media_id = $this->persistMedia ( $this->memreas_media, $memreas_media_data_array );
 			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__, "entry marked as failure to avoid infinite loop!" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . '::catch throwing error', $this->transcode_status );
+			
+			//
+			// Send email
+			//
+			$message_data ['command'] = isset ( $cmd ) ? ( string ) $cmd : "";
+			$message_data ['error_line'] = ( string ) $e->getLine ();
+			$message_data ['error_message'] = ( string ) $e->getMessage ();
+			// $message_data ['error_trace'] = (string) $e->getTrace ();
+			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__, "email sent..." );
+			
 			throw $e;
 		} finally {
 			//
