@@ -513,7 +513,7 @@ class MemreasTranscoder {
 			} // End if(isset($_POST))
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage () );
-			$message_data ['command'] = $cmd;
+			$message_data ['command'] = isset ( $cmd ) ? $cmd : "";
 			$message_data ['error_line'] = $e->getLine ();
 			$message_data ['error_message'] = $e->getMessage ();
 			$message_data ['error_trace'] = $e->getTrace ();
