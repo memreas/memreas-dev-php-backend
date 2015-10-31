@@ -66,6 +66,8 @@ class MemreasTranscoder {
 	protected $is_video;
 	protected $is_audio;
 	protected $is_image;
+	protected $applyCopyrightOnServer;
+	protected $copyright;
 	protected $session;
 	protected $aws_manager_receiver;
 	protected $memreas_media;
@@ -137,6 +139,10 @@ class MemreasTranscoder {
 			if (isset ( $message_data ['is_video'] ) && ($message_data ['is_video'] == 1)) {
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
+				if (isset ( $message_data ['applyCopyrightOnServer'] ) && ($message_data ['applyCopyrightOnServer'] == 1)) {
+					$applyCopyrightOnServer = 1;
+					$copyright = $message_data ['copyright']; // json_encoded
+				}
 			} else if (isset ( $message_data ['is_audio'] ) && ($message_data ['is_audio'] == 1)) {
 				$message_data ['is_image'] = 0;
 				$message_data ['is_video'] = 0;
@@ -243,29 +249,6 @@ class MemreasTranscoder {
 						$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_error';
 						$this->memreas_media_metadata ['S3_files'] ['error_message'] = 'transcode_error: S3 file fetch and save failed!';
 						throw new \Exception ( "Transcoder: S3 file fetch and save failed!" );
-					}
-					
-					/*
-					 * 10-SEP-2014 - make a copy on S3 as
-					 * application/octet-stream for download
-					 */
-					// Copy an object and add server-side encryption.
-					// error_log("CopySource ---> "."{".
-					// MemreasConstants::S3BUCKET . "}/{" . $s3file . "}"
-					// .PHP_EOL);
-					// $download_file = $this->s3prefixpath . "download/" .
-					// $this->s3file_name;
-					// error_log("download_file->".$download_file .PHP_EOL);
-					// $result = $this->aws_manager_receiver->copyMediaInS3(
-					// MemreasConstants::S3BUCKET, $download_file, $s3file);
-					// $this->memreas_media_metadata ['S3_files'] ['download'] =
-					// $download_file;
-					try {
-						$download_file = $this->s3prefixpath . "download/" . $this->s3file_name;
-						$this->aws_manager_receiver->pushMediaToS3 ( $tmp_file, $download_file, "application/octet-stream" );
-						$this->memreas_media_metadata ['S3_files'] ['download'] = $download_file;
-					} catch ( \Exception $e ) {
-						throw $e;
 					}
 				}
 				
@@ -394,6 +377,7 @@ class MemreasTranscoder {
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@' . $this->now ();
 				$this->memreas_media_metadata ['S3_files'] ['ffprobe_data'] = $ffprobe_json_array;
 				$this->memreas_media_metadata ['S3_files'] ['size'] = $this->filesize;
+				MLog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$ffprobe_json_array', json_encode ( $ffprobe_json_array ) );
 				
 				/*
 				 * update transcode_transaction
@@ -412,13 +396,31 @@ class MemreasTranscoder {
 					$this->persistMedia ();
 					
 					/*
-					 * Web quality mp4 conversion (h.265)
+					 * Create transcode job array...
 					 */
 					$this->transcode_job_meta = array ();
+					
+					/*
+					 * Apply copyright if needed
+					 */
+					if ($applyCopyrightOnServer) {
+						$this->type = 'copyright';
+						$this->transcode (); // set $this->transcode_job_meta in function
+						Mlog::addone ( __CLASS__ . __METHOD__, "finished applying copyright" );
+						$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'copyright inscribed';
+						// set status to show web available
+						$this->transcode_status = "success_copyright";
+						// update media metadata and transcode transaction metadata
+						$this->persistMedia ();
+						$this->persistTranscodeTransaction ();
+					}
+					
+					/*
+					 * Web quality mp4 conversion (h.264)
+					 */
 					Mlog::addone ( __CLASS__ . __METHOD__, "starting web video" );
 					$this->type = 'web';
-					$this->transcode (); // set $this->transcode_job_meta in
-					                     // function
+					$this->transcode (); // set $this->transcode_job_meta in function
 					Mlog::addone ( __CLASS__ . __METHOD__, "finished web video" );
 					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'web_mp4_complete';
 					// set status to show web available
@@ -429,9 +431,20 @@ class MemreasTranscoder {
 					$this->persistTranscodeTransaction ();
 					
 					/*
-					 * High quality mp4 conversion (h.265)
+					 * Create copy of web mp4 for web download
 					 */
+					try {
+						$web_mp4 = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . '.mp4';
+						$download_file = $this->s3prefixpath . "download/" . $this->s3file_name;
+						$this->aws_manager_receiver->pushMediaToS3 ( $web_mp4, $download_file, "application/octet-stream" );
+						$this->memreas_media_metadata ['S3_files'] ['download'] = $download_file;
+					} catch ( \Exception $e ) {
+						throw $e;
+					}
 					
+					/*
+					 * High quality mp4 conversion (h.265) - doesn't play??
+					 */
 					Mlog::addone ( __CLASS__ . __METHOD__, "starting 1080p video" );
 					// set $this->transcode_job_meta in function
 					$this->type = '1080p';
@@ -731,7 +744,19 @@ class MemreasTranscoder {
 			 * $isMP4 = true;
 			 * }
 			 */
-			if ($this->type == 'web') {
+			if ($this->type == 'copyright') {
+				/*
+				 * Add copyright as needed
+				 */
+				$copyright_array = json_decode ( $this->copyright, true );
+				$copyrightMD5 = $copyright_array ['copyright_id_md5'];
+				$copyrightSHA256 = $copyright_array ['copyright_id_sha256'];
+				$mRight = "md5:" . copyrightMD5 + " sha256:" . copyrightSHA256;
+				// Sample command
+				// ffmpeg -i input.mp4 -vf drawtext="fontfile=/usr/share/fonts/TTF/Vera.ttf: \
+				// text='Stack Overflow': fontcolor=white: fontsize=24: box=1: boxcolor=black: \
+				// x=(w-text_w)/2: y=(h-text_h-line_h)/2" -codec:a copy output.flv
+			} else if ($this->type == 'web') {
 				/*
 				 * Test lossless with best compression
 				 */
