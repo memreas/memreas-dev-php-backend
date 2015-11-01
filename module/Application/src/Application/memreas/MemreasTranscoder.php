@@ -403,7 +403,7 @@ class MemreasTranscoder {
 					/*
 					 * Apply copyright if needed
 					 */
-					if ($applyCopyrightOnServer) {
+					if ($this->applyCopyrightOnServer) {
 						$this->type = 'copyright';
 						$this->transcode (); // set $this->transcode_job_meta in function
 						Mlog::addone ( __CLASS__ . __METHOD__, "finished applying copyright" );
