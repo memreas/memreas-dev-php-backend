@@ -557,7 +557,7 @@ class MemreasTranscoder {
 			$message_data ['error_message'] = ( string ) $e->getMessage ();
 			// $message_data ['error_trace'] = (string) $e->getTrace ();
 			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ) );
-			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__, "email sent..." );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "email sent..." );
 			
 			throw $e;
 		} finally {
