@@ -549,8 +549,8 @@ class MemreasTranscoder {
 			);
 			// persist
 			$media_id = $this->persistMedia ( $this->memreas_media, $memreas_media_data_array );
-			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__, "entry marked as failure to avoid infinite loop!" );
-			Mlog::addone ( __CLASS__ . __METHOD__ . LINE__ . '::catch throwing error', $this->transcode_status );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "entry marked as failure to avoid infinite loop!" );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::catch throwing error', $this->transcode_status );
 			
 			//
 			// Send email
@@ -1024,6 +1024,33 @@ class MemreasTranscoder {
 	}
 	function getMemreasTranscoderTables() {
 		return new MemreasTranscoderTables ( $this->service_locator );
+	}
+	public function persistCopyright() {
+		try {
+			/*
+			 * Fetch Copyright entry
+			 */
+			$row = $this->getMemreasTranscoderTables ()->getMediaTable ()->fetchTranscodeTransactionByMediaId ( $this->media_id );
+			
+			/*
+			 * Store media
+			 */
+			$this->json_metadata = json_encode ( $this->memreas_media_metadata );
+			$data_array = [ ];
+			$data_array ['metadata'] = ! empty ( $this->json_metadata ) ? $this->json_metadata : '';
+			$data_array ['transcode_status'] = ! empty ( $this->transcode_status ) ? $this->transcode_status : '';
+			$data_array ['update_date'] = $this->now ();
+			$this->memreas_media->exchangeArray ( $data_array );
+			$media_id = $this->getMemreasTranscoderTables ()->getMediaTable ()->saveMedia ( $this->memreas_media );
+		} catch ( \Exception $e ) {
+			$error_data = [ ];
+			$error_data ['error_line'] = $e->getLine ();
+			$error_data ['error_message'] = $e->getMessage ();
+			$error_data ['error_trace'] = $e->getTrace ();
+			
+			Mlog::addone ( __CLASS__ . __METHOD__ . "::line::" . __LINE__ . '::Caught exception: ', json_encode ( $error_data, JSON_PRETTY_PRINT ) );
+			throw $e;
+		}
 	}
 	public function persistMedia() {
 		try {
