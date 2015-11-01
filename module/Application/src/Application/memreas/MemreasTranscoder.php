@@ -766,10 +766,14 @@ class MemreasTranscoder {
 				$copyrightMD5 = $copyright_array ['copyright_id_md5'];
 				$copyrightSHA256 = $copyright_array ['copyright_id_sha256'];
 				$mRight = "md5:" . $copyrightMD5 + " sha256:" . $copyrightSHA256;
-				$inscribed_file = $this->MediaFileName . '.copy' . $this->MediaExt;
 				$qv = ' -vf "fontfile=' . getcwd () . '/fonts/segoescb.ttf: ' . ' text=' . $mRight . ' fontcolor=blue: ' . ' fontsize=8: x=0 y=0" ' . ' -codec:a copy ';
 				// $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 				// $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
+				$path_parts = pathinfo ( $this->destRandMediaName );
+				$inscribed_file = $path_parts ['dirname'] . '/' . $path_parts ['basename'] . '.copy.' . $path_parts ['extension'];
+				// echo $path_parts['dirname'], "\n";
+				// echo $path_parts['basename'], "\n";
+				// echo $path_parts['extension'], "\n";
 				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$cmd', $cmd );
 				
