@@ -142,6 +142,9 @@ class MemreasTranscoder {
 				if (isset ( $message_data ['applyCopyrightOnServer'] ) && ($message_data ['applyCopyrightOnServer'] == 1)) {
 					$applyCopyrightOnServer = 1;
 					$copyright = $message_data ['copyright']; // json_encoded
+					Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
+				} else {
+					Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is not set" );
 				}
 			} else if (isset ( $message_data ['is_audio'] ) && ($message_data ['is_audio'] == 1)) {
 				$message_data ['is_image'] = 0;
