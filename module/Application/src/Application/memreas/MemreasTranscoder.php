@@ -771,6 +771,7 @@ class MemreasTranscoder {
 				// $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 				$path_parts = pathinfo ( $this->destRandMediaName );
 				$inscribed_file = $path_parts ['dirname'] . '/' . $path_parts ['basename'] . '.copy.' . $path_parts ['extension'];
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$inscribed_file::', $inscribed_file );
 				// echo $path_parts['dirname'], "\n";
 				// echo $path_parts['basename'], "\n";
 				// echo $path_parts['extension'], "\n";
