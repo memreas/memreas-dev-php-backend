@@ -745,17 +745,41 @@ class MemreasTranscoder {
 			 * }
 			 */
 			if ($this->type == 'copyright') {
+				
+				// Sample command
+				// ffmpeg -i input.mp4 -vf drawtext="fontfile=/usr/share/fonts/TTF/Vera.ttf: \
+				// text='Stack Overflow': fontcolor=white: fontsize=24: box=1: boxcolor=black: \
+				// x=(w-text_w)/2: y=(h-text_h-line_h)/2" -codec:a copy output.flv
+				
+				// $this->original_file_name = $message_data ['s3file_name'];
+				// $this->MediaFileName = $this->s3file_basename_prefix;
+				// $this->MediaFileType = $message_data ['content_type'];
+				// $this->MediaExt = pathinfo ( $this->s3file_name, PATHINFO_EXTENSION );
+				
 				/*
 				 * Add copyright as needed
 				 */
 				$copyright_array = json_decode ( $this->copyright, true );
 				$copyrightMD5 = $copyright_array ['copyright_id_md5'];
 				$copyrightSHA256 = $copyright_array ['copyright_id_sha256'];
-				$mRight = "md5:" . copyrightMD5 + " sha256:" . copyrightSHA256;
-				// Sample command
-				// ffmpeg -i input.mp4 -vf drawtext="fontfile=/usr/share/fonts/TTF/Vera.ttf: \
-				// text='Stack Overflow': fontcolor=white: fontsize=24: box=1: boxcolor=black: \
-				// x=(w-text_w)/2: y=(h-text_h-line_h)/2" -codec:a copy output.flv
+				$mRight = "md5:" . $copyrightMD5 + " sha256:" . $copyrightSHA256;
+				$inscribed_file = $this->MediaFileName . '.copy' . $this->MediaExt;
+				$qv = ' -vf "fontfile=' . getcwd () . 'fonts/segoescb.ttf: ' . ' text=' . $mRight . ' fontcolor=blue: ' . ' fontsize=12: x=0 y=0" ' . ' -codec:a copy ';
+				// $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
+				// $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
+				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$cmd', $cmd );
+				
+				//
+				// Delete original and replace with inscribed file
+				//
+				shell_exec ( "rm $this->destRandMediaName" );
+				shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
+				$copyright_array ['fileCheckSumMD5'] = md5_file ( $this->destRandMediaName );
+				$copyright_array ['fileCheckSumSHA1'] = sha1_file ( $this->destRandMediaName );
+				$copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
+				$this->copyright = json_encode ( $copyright_array );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
 			} else if ($this->type == 'web') {
 				/*
 				 * Test lossless with best compression
@@ -770,7 +794,6 @@ class MemreasTranscoder {
 				// ' -c:a aac -strict experimental ' . '-b:a 128k ';
 				
 				// Testing higher quality - likely will
-				
 				$qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . '  -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental  ' . '-b:a 128k ';
 				
 				//
