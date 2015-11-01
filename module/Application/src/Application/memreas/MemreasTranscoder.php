@@ -140,12 +140,15 @@ class MemreasTranscoder {
 			if (isset ( $message_data ['is_video'] ) && ($message_data ['is_video'] == 1)) {
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
-				if (isset ( $message_data ['applyCopyrightOnServer'] ) && ($message_data ['applyCopyrightOnServer'] == 1)) {
-					$this->applyCopyrightOnServer = 1;
+				if (! empty ( $message_data ['copyright'] )) {
 					$copyright = $message_data ['copyright']; // json_encoded
-					Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
-				} else {
-					Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is not set" );
+					$copyright_array = json_decode ( $this->copyright, true );
+					if ($copyright_array ['applyCopyrightOnServer'] == 1) {
+						Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
+						$this->applyCopyrightOnServer = 1;
+					} else {
+						Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::NOTSET' );
+					}
 				}
 			} else if (isset ( $message_data ['is_audio'] ) && ($message_data ['is_audio'] == 1)) {
 				$message_data ['is_image'] = 0;
@@ -763,7 +766,6 @@ class MemreasTranscoder {
 				/*
 				 * Add copyright as needed
 				 */
-				$copyright_array = json_decode ( $this->copyright, true );
 				$copyrightMD5 = $copyright_array ['copyright_id_md5'];
 				$copyrightSHA256 = $copyright_array ['copyright_id_sha256'];
 				$mRight = "md5:" . $copyrightMD5 + " sha256:" . $copyrightSHA256;
