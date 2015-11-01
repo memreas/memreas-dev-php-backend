@@ -140,7 +140,7 @@ class MemreasTranscoder {
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
 				if (isset ( $message_data ['applyCopyrightOnServer'] ) && ($message_data ['applyCopyrightOnServer'] == 1)) {
-					$applyCopyrightOnServer = 1;
+					$this->applyCopyrightOnServer = 1;
 					$copyright = $message_data ['copyright']; // json_encoded
 					Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
 				} else {
