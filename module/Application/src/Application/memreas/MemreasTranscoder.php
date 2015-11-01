@@ -133,6 +133,7 @@ class MemreasTranscoder {
 	}
 	public function markMediaForTranscoding($message_data) {
 		try {
+			Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data as json -> ' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 			/*
 			 * setup vars and store transaction
 			 */
