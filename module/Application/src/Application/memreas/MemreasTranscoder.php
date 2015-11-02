@@ -775,7 +775,7 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_sha256]', $this->copyright_array ['copyright_id_sha256'] );
 				$mRight = "md5:" . $copyrightMD5 . " sha256:" . $copyrightSHA256;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$mRight', $mRight );
-				$qv = ' -vf drawtext="fontfile=' . getcwd () . '/fonts/segoescb.ttf:text=' . "'$mRight'" . ':fontsize=24:fontcolor=white:x=0:y=0" ';
+				$qv = ' -vf drawtext="fontfile=' . getcwd () . 'segoescb.ttf:text=' . "'$mRight'" . ':fontsize=24:fontcolor=white:x=25:y=25" ';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$qv', $qv );
 				// $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 				// $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
@@ -875,17 +875,9 @@ class MemreasTranscoder {
 				//
 				// Delete original and replace with inscribed file
 				//
-				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
-				Mlog::addone ( "transcode copyright--->ls -al this->destRandMediaName::", $result );
 				shell_exec ( "rm $this->destRandMediaName" );
-				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
-				Mlog::addone ( "transcode copyright--->ls -al after rm this->destRandMediaName::", $result );
 				shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
-				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
-				Mlog::addone ( "transcode copyright--->ls -al after mv this->destRandMediaName::", $result );
 				shell_exec ( "rm $inscribed_file" );
-				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
-				Mlog::addone ( "transcode copyright--->ls -al after rm inscribed_file::", $result );
 				
 				//
 				// Change to inscribed file for web input
@@ -895,7 +887,6 @@ class MemreasTranscoder {
 				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
 				$this->copyright = json_encode ( $this->copyright_array );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
-				sleep ( 10 );
 			}
 			
 			// Push to S3
