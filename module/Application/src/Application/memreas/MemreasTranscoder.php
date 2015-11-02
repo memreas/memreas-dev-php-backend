@@ -787,21 +787,6 @@ class MemreasTranscoder {
 				// echo $path_parts['extension'], "\n";
 				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$cmd', $cmd );
-				
-				//
-				// Delete original and replace with inscribed file
-				//
-				shell_exec ( "rm $this->destRandMediaName" );
-				shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
-				shell_exec ( "rm $inscribed_file" );
-				
-				//
-				// Change to inscribed file for web input
-				//
-				$this->copyright_array ['fileCheckSumMD5'] = md5_file ( $this->destRandMediaName );
-				$this->copyright_array ['fileCheckSumSHA1'] = sha1_file ( $this->destRandMediaName );
-				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
-				$this->copyright = json_encode ( $this->copyright_array );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
 			} else if ($this->type == 'web') {
 				/*
@@ -883,6 +868,24 @@ class MemreasTranscoder {
 			// exec ffmpeg operation
 			//
 			$this->execFFMPEG ( $cmd, $transcoded_file );
+			
+			if ($this->type == 'copyright') {
+				//
+				// Delete original and replace with inscribed file
+				//
+				shell_exec ( "rm $this->destRandMediaName" );
+				shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
+				shell_exec ( "rm $inscribed_file" );
+				
+				//
+				// Change to inscribed file for web input
+				//
+				$this->copyright_array ['fileCheckSumMD5'] = md5_file ( $this->destRandMediaName );
+				$this->copyright_array ['fileCheckSumSHA1'] = sha1_file ( $this->destRandMediaName );
+				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
+				$this->copyright = json_encode ( $this->copyright_array );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
+			}
 			
 			// Push to S3
 			$s3file = $this->s3prefixpath . $this->type . '/' . $transcoded_file_name;
