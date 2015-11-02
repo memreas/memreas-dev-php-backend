@@ -68,7 +68,7 @@ class MemreasTranscoder {
 	protected $is_image;
 	protected $applyCopyrightOnServer;
 	protected $copyright;
-	protected $copyright_array
+	protected $copyright_array;
 	protected $session;
 	protected $aws_manager_receiver;
 	protected $memreas_media;
@@ -77,8 +77,7 @@ class MemreasTranscoder {
 	protected $ffprobecmd;
 	protected $MediaFileType;
 	protected $MediaExt;
-	protected 
-$error_message = "";
+	protected $error_message = "";
 	protected $duration = 0;
 	protected $filesize = 0;
 	protected $pass = 0;
