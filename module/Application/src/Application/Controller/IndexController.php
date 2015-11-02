@@ -118,6 +118,7 @@ class IndexController extends AbstractActionController {
 			//
 			$message_data = json_decode ( $json, true );
 			$message_data ['backlog'] = 1;
+			Mlog::addone ( __CLASS__ . __METHOD__ . '$message_data as json', $json );
 			//
 			// Here if no media_id is set then work on any backlog items...
 			//
