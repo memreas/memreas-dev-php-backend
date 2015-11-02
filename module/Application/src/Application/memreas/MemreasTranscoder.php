@@ -401,9 +401,11 @@ class MemreasTranscoder {
 					/*
 					 * Apply copyright if needed
 					 */
+					Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [copyright]::' . $message_data ['copyright'] );
+					Mlog::addone ( __CLASS__ . __METHOD__, '::$this->copyright_array [applyCopyrightOnServer]::' . $this->copyright_array ['applyCopyrightOnServer'] );
 					if (! empty ( $message_data ['copyright'] )) {
-						$this->copyright = $message_data ['copyright']; // json_encoded
-						$this->copyright_array = json_decode ( $this->copyright, true );
+						$this->copyright_array = $this->copyright;
+						$this->copyright = json_encode ( $message_data ['copyright'] ); // json_encoded
 						if ($this->copyright_array ['applyCopyrightOnServer'] == 1) {
 							Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
 							$this->applyCopyrightOnServer = 1;
