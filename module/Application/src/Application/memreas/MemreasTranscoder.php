@@ -894,6 +894,7 @@ class MemreasTranscoder {
 				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
 				$this->copyright = json_encode ( $this->copyright_array );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
+				sleep ( 10 );
 			}
 			
 			// Push to S3
