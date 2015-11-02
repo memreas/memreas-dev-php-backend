@@ -141,16 +141,6 @@ class MemreasTranscoder {
 			if (isset ( $message_data ['is_video'] ) && ($message_data ['is_video'] == 1)) {
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
-				if (! empty ( $message_data ['copyright'] )) {
-					$this->copyright = $message_data ['copyright']; // json_encoded
-					$this->copyright_array = json_decode ( $this->copyright, true );
-					if ($this->copyright_array ['applyCopyrightOnServer'] == 1) {
-						Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
-						$this->applyCopyrightOnServer = 1;
-					} else {
-						Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::NOTSET' );
-					}
-				}
 			} else if (isset ( $message_data ['is_audio'] ) && ($message_data ['is_audio'] == 1)) {
 				$message_data ['is_image'] = 0;
 				$message_data ['is_video'] = 0;
@@ -411,16 +401,24 @@ class MemreasTranscoder {
 					/*
 					 * Apply copyright if needed
 					 */
-					if ($this->applyCopyrightOnServer) {
-						$this->type = 'copyright';
-						$this->transcode (); // set $this->transcode_job_meta in function
-						Mlog::addone ( __CLASS__ . __METHOD__, "finished applying copyright" );
-						$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'copyright inscribed';
-						// set status to show web available
-						$this->transcode_status = "success_copyright";
-						// update media metadata and transcode transaction metadata
-						$this->persistMedia ();
-						$this->persistTranscodeTransaction ();
+					if (! empty ( $message_data ['copyright'] )) {
+						$this->copyright = $message_data ['copyright']; // json_encoded
+						$this->copyright_array = json_decode ( $this->copyright, true );
+						if ($this->copyright_array ['applyCopyrightOnServer'] == 1) {
+							Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
+							$this->applyCopyrightOnServer = 1;
+							$this->type = 'copyright';
+							$this->transcode (); // set $this->transcode_job_meta in function
+							Mlog::addone ( __CLASS__ . __METHOD__, "finished applying copyright" );
+							$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'copyright inscribed';
+							// set status to show web available
+							$this->transcode_status = "success_copyright";
+							// update media metadata and transcode transaction metadata
+							$this->persistMedia ();
+							$this->persistTranscodeTransaction ();
+						} else {
+							Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::NOTSET' );
+						}
 					}
 					
 					/*
