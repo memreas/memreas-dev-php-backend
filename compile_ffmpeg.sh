@@ -1,5 +1,5 @@
-#switch to root
-sudo su
+#switch to root - must be done from command line
+#sudo su
 #switch to root home
 cd
 
