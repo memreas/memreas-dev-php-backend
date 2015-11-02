@@ -134,7 +134,7 @@ class MemreasTranscoder {
 	}
 	public function markMediaForTranscoding($message_data) {
 		try {
-			Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data as json -> ' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+			Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data inside as json -> ' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 			/*
 			 * setup vars and store transaction
 			 */
@@ -205,6 +205,7 @@ class MemreasTranscoder {
 	}
 	public function exec($message_data, $isUpload = false) {
 		try {
+			Mlog::addone ( __CLASS__ . __METHOD__ . 'exec($message_data, $isUpload = false) $message_data  before as json' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 			/*
 			 * Processing for current entry if set
 			 */
