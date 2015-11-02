@@ -789,6 +789,7 @@ class MemreasTranscoder {
 				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$cmd', $cmd );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
+				$transcoded_file = $this->destRandMediaName;
 			} else if ($this->type == 'web') {
 				/*
 				 * Test lossless with best compression
