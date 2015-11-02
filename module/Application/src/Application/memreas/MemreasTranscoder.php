@@ -68,6 +68,7 @@ class MemreasTranscoder {
 	protected $is_image;
 	protected $applyCopyrightOnServer;
 	protected $copyright;
+	protected $copyright_array
 	protected $session;
 	protected $aws_manager_receiver;
 	protected $memreas_media;
@@ -76,7 +77,8 @@ class MemreasTranscoder {
 	protected $ffprobecmd;
 	protected $MediaFileType;
 	protected $MediaExt;
-	protected $error_message = "";
+	protected 
+$error_message = "";
 	protected $duration = 0;
 	protected $filesize = 0;
 	protected $pass = 0;
@@ -141,9 +143,9 @@ class MemreasTranscoder {
 				$message_data ['is_image'] = 0;
 				$message_data ['is_audio'] = 0;
 				if (! empty ( $message_data ['copyright'] )) {
-					$copyright = $message_data ['copyright']; // json_encoded
-					$copyright_array = json_decode ( $this->copyright, true );
-					if ($copyright_array ['applyCopyrightOnServer'] == 1) {
+					$this->copyright = $message_data ['copyright']; // json_encoded
+					$this->copyright_array = json_decode ( $this->copyright, true );
+					if ($this->copyright_array ['applyCopyrightOnServer'] == 1) {
 						Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
 						$this->applyCopyrightOnServer = 1;
 					} else {
@@ -766,8 +768,8 @@ class MemreasTranscoder {
 				/*
 				 * Add copyright as needed
 				 */
-				$copyrightMD5 = $copyright_array ['copyright_id_md5'];
-				$copyrightSHA256 = $copyright_array ['copyright_id_sha256'];
+				$copyrightMD5 = $this->copyright_array ['copyright_id_md5'];
+				$copyrightSHA256 = $this->copyright_array ['copyright_id_sha256'];
 				$mRight = "md5:" . $copyrightMD5 + " sha256:" . $copyrightSHA256;
 				$qv = ' -vf "fontfile=' . getcwd () . '/fonts/segoescb.ttf: ' . ' text=' . $mRight . ' fontcolor=blue: ' . ' fontsize=8: x=0 y=0" ' . ' -codec:a copy ';
 				// $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
@@ -786,10 +788,10 @@ class MemreasTranscoder {
 				//
 				shell_exec ( "rm $this->destRandMediaName" );
 				shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
-				$copyright_array ['fileCheckSumMD5'] = md5_file ( $this->destRandMediaName );
-				$copyright_array ['fileCheckSumSHA1'] = sha1_file ( $this->destRandMediaName );
-				$copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
-				$this->copyright = json_encode ( $copyright_array );
+				$this->copyright_array ['fileCheckSumMD5'] = md5_file ( $this->destRandMediaName );
+				$this->copyright_array ['fileCheckSumSHA1'] = sha1_file ( $this->destRandMediaName );
+				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
+				$this->copyright = json_encode ( $this->copyright_array );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
 			} else if ($this->type == 'web') {
 				/*
