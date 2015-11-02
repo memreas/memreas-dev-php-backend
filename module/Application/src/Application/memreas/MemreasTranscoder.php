@@ -773,7 +773,7 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_md5]', $this->copyright_array ['copyright_id_md5'] );
 				$copyrightSHA256 = $this->copyright_array ['copyright_id_sha256'];
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_sha256]', $this->copyright_array ['copyright_id_sha256'] );
-				$mRight = "md5:" . $copyrightMD5 + " sha256:" . $copyrightSHA256;
+				$mRight = "md5:" . $copyrightMD5 . " sha256:" . $copyrightSHA256;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$mRight', $mRight );
 				$qv = ' -vf "fontfile=' . getcwd () . '/fonts/segoescb.ttf: ' . ' text=' . $mRight . ' fontcolor=blue: ' . ' fontsize=8: x=0 y=0" ' . ' -codec:a copy ';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$qv', $qv );
@@ -791,8 +791,12 @@ class MemreasTranscoder {
 				//
 				// Delete original and replace with inscribed file
 				//
-				shell_exec ( "rm $this->destRandMediaName" );
-				shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
+				// shell_exec ( "rm $this->destRandMediaName" );
+				// shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
+				//
+				// Change to inscribed file for web input
+				//
+				$this->destRandMediaName = $inscribed_file;
 				$this->copyright_array ['fileCheckSumMD5'] = md5_file ( $this->destRandMediaName );
 				$this->copyright_array ['fileCheckSumSHA1'] = sha1_file ( $this->destRandMediaName );
 				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
