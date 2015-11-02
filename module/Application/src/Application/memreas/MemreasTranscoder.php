@@ -785,7 +785,8 @@ class MemreasTranscoder {
 				// echo $path_parts['dirname'], "\n";
 				// echo $path_parts['basename'], "\n";
 				// echo $path_parts['extension'], "\n";
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
+				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
+				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$cmd', $cmd );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
 			} else if ($this->type == 'web') {
@@ -873,9 +874,17 @@ class MemreasTranscoder {
 				//
 				// Delete original and replace with inscribed file
 				//
+				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
+				Mlog::addone ( "transcode copyright--->ls -al this->destRandMediaName::", $result );
 				shell_exec ( "rm $this->destRandMediaName" );
+				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
+				Mlog::addone ( "transcode copyright--->ls -al after rm this->destRandMediaName::", $result );
 				shell_exec ( "mv $inscribed_file $this->destRandMediaName" );
+				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
+				Mlog::addone ( "transcode copyright--->ls -al after mv this->destRandMediaName::", $result );
 				shell_exec ( "rm $inscribed_file" );
+				$result = shell_exec ( "ls -al" . $path_parts ['dirname'] . '/' );
+				Mlog::addone ( "transcode copyright--->ls -al after rm inscribed_file::", $result );
 				
 				//
 				// Change to inscribed file for web input
