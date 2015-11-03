@@ -408,7 +408,7 @@ class MemreasTranscoder {
 						$this->copyright = $message_data ['copyright']; // json_encoded
 						$this->copyright_array = json_decode ( $message_data ['copyright'], true );
 						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->copyright_array [applyCopyrightOnServer]::' . $this->copyright_array ['applyCopyrightOnServer'] );
-						if ($this->copyright_array ['applyCopyrightOnServer'] == 1) {
+						if (($this->copyright_array ['applyCopyrightOnServer'] == 1) && (empty ( $this->copyright_array ['copyright_inscribed'] ))) {
 							Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [applyCopyrightOnServer]::' . $message_data ['applyCopyrightOnServer'] . " is set" );
 							$this->applyCopyrightOnServer = 1;
 							$this->type = 'copyright';
@@ -872,7 +872,8 @@ class MemreasTranscoder {
 			//
 			$this->execFFMPEG ( $cmd, $transcoded_file );
 			
-			if ($this->type == 'copyright') {
+			if ($this->type == 'copyright')
+				)  && (empty() ) {
 				//
 				// Delete original and replace with inscribed file
 				//
@@ -886,6 +887,7 @@ class MemreasTranscoder {
 				$this->copyright_array ['fileCheckSumMD5'] = md5_file ( $this->destRandMediaName );
 				$this->copyright_array ['fileCheckSumSHA1'] = sha1_file ( $this->destRandMediaName );
 				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
+				$this->copyright_array ['copyright_inscribed'] = 1;
 				$this->copyright = json_encode ( $this->copyright_array );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
 			}
