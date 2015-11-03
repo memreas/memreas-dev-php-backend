@@ -775,8 +775,9 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_sha256]', $this->copyright_array ['copyright_id_sha256'] );
 				$mRight = "md5:" . $copyrightMD5 . " sha256:" . $copyrightSHA256;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$mRight', $mRight );
-				$qv = ' -vf drawtext="fontfile=' . getcwd () . '/usr/share/font/segoescb.ttf:text=' . "'$mRight'" . ':fontsize=24:fontcolor=white:x=25:y=25" ';
+				$qv = ' -vf drawtext="fontfile=' . getcwd () . 'segoescb.ttf:text=' . "'$mRight'" . ':fontsize=24:fontcolor=blue:x=100:y=100" ';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$qv', $qv );
+				sleep ( 10 );
 				// $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 				// $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 				$path_parts = pathinfo ( $this->destRandMediaName );
