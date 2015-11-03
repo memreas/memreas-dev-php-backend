@@ -773,7 +773,7 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_md5]', $this->copyright_array ['copyright_id_md5'] );
 				$copyrightSHA256 = $this->copyright_array ['copyright_id_sha256'];
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_sha256]', $this->copyright_array ['copyright_id_sha256'] );
-				$mRight = "md5:" . $copyrightMD5 . " sha256:" . $copyrightSHA256;
+				$mRight = "md5_" . $copyrightMD5 . " sha256_" . $copyrightSHA256;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$mRight', $mRight );
 				$qv = ' -vf drawtext="fontfile=' . getcwd () . 'segoescb.ttf:text=' . "'$mRight'" . ':fontsize=24:fontcolor=blue:x=100:y=100" ';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$qv', $qv );
