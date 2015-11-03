@@ -786,7 +786,6 @@ class MemreasTranscoder {
 				// echo $path_parts['dirname'], "\n";
 				// echo $path_parts['basename'], "\n";
 				// echo $path_parts['extension'], "\n";
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
 				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$cmd', $cmd );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
@@ -873,6 +872,7 @@ class MemreasTranscoder {
 			$this->execFFMPEG ( $cmd, $transcoded_file );
 			
 			if ($this->type == 'copyright')
+				)
 				)  && (empty() ) {
 				//
 				// Delete original and replace with inscribed file
