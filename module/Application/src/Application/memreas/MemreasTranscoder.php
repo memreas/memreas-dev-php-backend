@@ -871,9 +871,7 @@ class MemreasTranscoder {
 			//
 			$this->execFFMPEG ( $cmd, $transcoded_file );
 			
-			if ($this->type == 'copyright')
-				)
-				)  && (empty() ) {
+			if ($this->type == 'copyright') {
 				//
 				// Delete original and replace with inscribed file
 				//
