@@ -404,7 +404,7 @@ class MemreasTranscoder {
 					 */
 					Mlog::addone ( __CLASS__ . __METHOD__, "checking applyCopyrightOnServer for video" );
 					Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data [copyright]::' . $message_data ['copyright'] );
-					if (! empty ( $message_data ['copyright'] )) {
+					if ((isset ( $message_data ['copyright'] )) & (! empty ( $message_data ['copyright'] ))) {
 						$this->copyright = $message_data ['copyright']; // json_encoded
 						$this->copyright_array = json_decode ( $message_data ['copyright'], true );
 						Mlog::addone ( __CLASS__ . __METHOD__, '::$this->copyright_array [applyCopyrightOnServer]::' . $this->copyright_array ['applyCopyrightOnServer'] );
