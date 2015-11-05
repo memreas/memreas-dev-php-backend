@@ -191,7 +191,7 @@ class MemreasTranscoder {
 			}
 			if ($row) {
 				Mlog::addone ( '$row is not empty so entry exists', '...' );
-				error_log ( "" . print_r ( $row, true ) . PHP_EOL );
+				// error_log ( "" . print_r ( $row, true ) . PHP_EOL );
 				$this->transcode_transaction_id = $row->transcode_transaction_id;
 			} else {
 				Mlog::addone ( '$message_data[backlog] is empty so this is new entry', '...' );
@@ -205,7 +205,7 @@ class MemreasTranscoder {
 	}
 	public function exec($message_data, $isUpload = false) {
 		try {
-			Mlog::addone ( __CLASS__ . __METHOD__ . 'exec($message_data, $isUpload = false) $message_data  before as json' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+			Mlog::addone ( __CLASS__ . __METHOD__ . '::exec($message_data, $isUpload = false) $message_data  before as json::', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 			/*
 			 * Processing for current entry if set
 			 */
