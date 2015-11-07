@@ -807,7 +807,7 @@ class MemreasTranscoder {
 				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
 				
 				// Testing -tune grain
-				$qv = ' -c:v libx264 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -tune film ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
+				$qv = ' -c:v libx264 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
 				
 				// below doesn't play on iphone ugh
 				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -c:a aac -strict experimental ' . '-b:a 128k ';
