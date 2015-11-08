@@ -1149,11 +1149,11 @@ class MemreasTranscoder {
 			// duration stored in db in seconds
 			$duration_in_minutes = $this->duration / 60;
 			if ($duration_in_minutes <= 5) {
-				$this->nice_priority = 0;
+				$this->nice_priority = 5;
 				$this->compression_preset_web = self::MEDIUM;
 				$this->compression_preset_1080p = self::MEDIUM;
 			} else if ($duration_in_minutes > 5 && $duration_in_minutes <= 10) {
-				$this->nice_priority = 5;
+				$this->nice_priority = 10;
 				$this->compression_preset_web = self::FASTER;
 				$this->compression_preset_1080p = self::FASTER;
 			} else if ($duration_in_minutes > 10 && $duration_in_minutes <= 30) {
