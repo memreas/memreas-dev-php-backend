@@ -851,7 +851,7 @@ class MemreasTranscoder {
 				// how to add:: hls_ts_options -movflags +faststart
 				
 				// Testing multiple ts with -movflags +faststart
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_list_size 0 -hls_time 2 -hls_allow_cache 0 -profile:v high -level 4.0 -movflags +faststart -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -profile:v high -level 4.0-pix_fmt yuv420p  -movflags  +faststart -hls_list_size 0 -hls_time 2 -hls_allow_cache 0 -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
 				// 11.29.2015 testing single file - slow start
 				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_flags single_file ' . $transcoded_file;
