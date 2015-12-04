@@ -177,12 +177,12 @@ class IndexController extends AbstractActionController {
 							$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis ();
 							exit ();
 						} else {
-								/*
+							/*
 							 * Process backlog messages
 							 */
-							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  before as json' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  before as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 							$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
-							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  after as json' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  after as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->aws_manager->memreasTranscoder->markMediaForTranscoding' . 'fetched' );
 							$result = $this->aws_manager->snsProcessMediaSubscribe ( $message_data );
 							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->aws_manager->snsProcessMediaSubscribe' . 'passed' );
