@@ -853,6 +853,10 @@ class MemreasTranscoder {
 				// 30-NOV-2015 Testing multiple ts with -movflags +faststart
 				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
+				// 3-DEC-2015
+				
+				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -global_header -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				
 				// 11.29.2015 testing single file - slow start
 				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_flags single_file ' . $transcoded_file;
 				
