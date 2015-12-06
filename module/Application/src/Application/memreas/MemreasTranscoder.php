@@ -809,7 +809,7 @@ class MemreasTranscoder {
 				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -c:a aac -strict experimental ' . '-b:a 128k ';
 				
 				// 6-DEC-2015 - baseline mp4 cmd
-				$qv = ' -c:v libx264 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
+				$qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
 				
 				//
 				// apple doesn't support h.265 playback as of 9-SEP-2015 so we
