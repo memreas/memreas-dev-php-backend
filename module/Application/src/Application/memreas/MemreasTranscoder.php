@@ -794,7 +794,6 @@ class MemreasTranscoder {
 				/*
 				 * Test lossless with best compression
 				 */
-				
 				$this->memreas_media_metadata ['S3_files'] ['type'] ['video'] ['width'] = (isset ( $ffprobe_json_array ['streams'] [0] ['width'] ) && ! empty ( $ffprobe_json_array ['streams'] [0] ['width'] )) ? $ffprobe_json_array ['streams'] [0] ['width'] : "";
 				$this->memreas_media_metadata ['S3_files'] ['type'] ['video'] ['height'] = (isset ( $ffprobe_json_array ['streams'] [0] ['height'] ) && ! empty ( $ffprobe_json_array ['streams'] [0] ['height'] )) ? $ffprobe_json_array ['streams'] [0] ['height'] : "";
 				
@@ -806,11 +805,11 @@ class MemreasTranscoder {
 				// Testing higher quality - works 11.5.15
 				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
 				
-				// Testing -tune grain
-				$qv = ' -c:v libx264 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
-				
 				// below doesn't play on iphone ugh
 				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -c:a aac -strict experimental ' . '-b:a 128k ';
+				
+				// 6-DEC-2015 - baseline mp4 cmd
+				$qv = ' -c:v libx264 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
 				
 				//
 				// apple doesn't support h.265 playback as of 9-SEP-2015 so we
@@ -856,8 +855,11 @@ class MemreasTranscoder {
 				// 30-NOV-2015 Testing multiple ts with -movflags +faststart
 				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
-				// 4-DEC-2015
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				// 4-DEC-2015 - puppies sample doesn't play on nexus
+				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				
+				// 6-DEC-2015
+				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
 				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
 				// *not working on iphone so us* -> pulled from 9/21 git //$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $this->destRandMediaName . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
@@ -1001,6 +1003,7 @@ class MemreasTranscoder {
 			$this->pass = 0;
 			error_log ( "transcoder $this->type failed - op -->" . $op . PHP_EOL );
 			// Log pass
+			$this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $cmd;
 			$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
 			$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
 			$this->transcode_job_meta [$this->type] ["error_message"] = $e->getMessage ();
