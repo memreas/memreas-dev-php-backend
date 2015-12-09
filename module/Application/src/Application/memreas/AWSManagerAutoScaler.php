@@ -34,9 +34,7 @@ class AWSManagerAutoScaler {
 			//
 			// Fetch Redis Handle
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "About to call Redis!!" );
 			$this->redis = new AWSMemreasRedisCache ();
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "About to call Redis!!" );
 			
 			//
 			// Set Server Data
