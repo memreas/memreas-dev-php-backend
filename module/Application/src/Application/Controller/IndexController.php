@@ -21,7 +21,7 @@ use Zend\Http\PhpEnvironment\Response;
 use Application\Model;
 use Application\Model\UserTable;
 use Application\Form;
-use Guzzle\Http\Client;
+use GuzzleHttp\Client;
 use Application\Model\MemreasConstants;
 use Application\memreas\AWSManagerReceiver;
 use Application\memreas\MemreasTranscoder;
@@ -46,15 +46,16 @@ class IndexController extends AbstractActionController {
 	protected $checkGitPull;
 	protected $aws_manager;
 	public function fetchXML($action, $xml) {
-		error_log ( "Inside fetchXML this->url $this->url ...." );
-		$guzzle = new Client ();
-		$request = $guzzle->post ( $this->url, null, array (
-				'action' => $action,
-				'xml' => $xml 
-		) );
-		$response = $request->send ();
-		error_log ( "Inside fetchXML response $response ...." );
-		return $data = $response->getBody ( true );
+		$guzzle = new \GuzzleHttp\Client ();
+		$response = $guzzle->post ( $this->url, [ 
+				'form_params' => [ 
+						'action' => $action,
+						'cache_me' => true,
+						'xml' => $xml 
+				] 
+		] );
+		
+		return $response->getBody ();
 	}
 	public function indexAction() {
 		Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
