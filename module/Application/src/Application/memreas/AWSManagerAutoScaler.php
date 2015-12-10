@@ -22,13 +22,11 @@ class AWSManagerAutoScaler {
 		try {
 			$this->service_locator = $service_locator;
 			$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-			$this->aws = Aws::factory ( array (
-					'key' => MemreasConstants::AWS_APPKEY,
-					'secret' => MemreasConstants::AWS_APPSEC,
-					'region' => MemreasConstants::AWS_APPREG 
-			) );
+			// Fetch aws handle
+			$this->aws = MemreasConstants::fetchAWS ();
+			
 			// Fetch the AutoScaling class
-			$this->autoscaler = $this->aws->get ( 'AutoScaling' );
+			$this->autoscaler = $this->aws->createAutoScaling ();
 			
 			//
 			// Fetch Redis Handle
