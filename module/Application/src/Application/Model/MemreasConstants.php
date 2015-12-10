@@ -41,6 +41,4 @@ class MemreasConstants {
 	const FOLDER_VIDEO = "uploadVideo";
 	const VIDEO = "/data/media/uploadVideo";
 	const AUDIO = "/data/media/upload_audio";
-	const CLOUDFRONT_STREAMING_HOST = 'http://s1iq2cbtodqqky.cloudfront.net/';
-	const CLOUDFRONT_DOWNLOAD_HOST = 'http://d1ckv7o9k6o3x9.cloudfront.net/';
 }
