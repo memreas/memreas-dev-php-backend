@@ -41,4 +41,16 @@ class MemreasConstants {
 	const FOLDER_VIDEO = "uploadVideo";
 	const VIDEO = "/data/media/uploadVideo";
 	const AUDIO = "/data/media/upload_audio";
+	public static function fetchAWS() {
+		$sharedConfig = [ 
+				'region' => self::AWS_APPREG,
+				'version' => 'latest',
+				'credentials' => [ 
+						'key' => self::AWS_APPKEY,
+						'secret' => self::AWS_APPSEC 
+				] 
+		];
+		
+		return new \Aws\Sdk ( $sharedConfig );
+	}
 }

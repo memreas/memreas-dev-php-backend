@@ -2,12 +2,8 @@
 
 namespace Application\memreas;
 
-use Guzzle\Http\Client;
-use Guzzle\Http\EntityBody;
-use Aws\Common\Aws;
-use Aws\Common\Enum\Size;
-use Aws\Common\Exception\MultipartUploadException;
-use Aws\S3\Model\MultipartUpload\UploadBuilder;
+use Aws\S3\MultipartUploader;
+use Aws\Exception\MultipartUploadException;
 use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 use Application\memreas\Mlog;
@@ -25,17 +21,16 @@ class AWSManagerReceiver {
 			$this->service_locator = $service_locator;
 			
 			$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-			$this->aws = Aws::factory ( array (
-					'key' => MemreasConstants::AWS_APPKEY,
-					'secret' => MemreasConstants::AWS_APPSEC,
-					'region' => MemreasConstants::AWS_APPREG 
-			) );
+			
+			// Fetch aws handle
+			$this->aws = MemreasConstants::fetchAWS ();
 			
 			// Fetch the S3 class
-			$this->s3 = $this->aws->get ( 's3' );
+			$this->s3 = $this->aws->createS3 ();
 			
-			// Fetch the SES class
-			$this->ses = $this->aws->get ( 'Ses' );
+			// Fetch the Ses class
+			$this->ses = $this->aws->createSes ();
+			
 			$this->memreasTranscoder = new MemreasTranscoder ( $this, $this->service_locator );
 		} catch ( Exception $e ) {
 			Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
@@ -176,6 +171,24 @@ class AWSManagerReceiver {
 			/*
 			 * Upload images - section
 			 */
+			
+			$uploader = new MultipartUploader ( $this->s3, $file, [ 
+					'bucket' => $bucket,
+					'key' => $s3file,
+					'Content-Type' => $content_type,
+					'CacheControl' => 'max-age=3600',
+					'ServerSideEncryption' => 'AES256',
+					'x-amz-storage-class' => 'REDUCED_REDUNDANCY' 
+			] );
+			
+			try {
+				$result = $uploader->upload ();
+				// echo "Upload complete: {$result['ObjectURL'}\n";
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
+			} catch ( MultipartUploadException $e ) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
+			}
+			
 			$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( $bucket )->setHeaders ( array (
 					'Content-Type' => $content_type 
 			) )->setOption ( 'CacheControl', 'max-age=3600' )->setOption ( 'ServerSideEncryption', 'AES256' )->setOption ( 'x-amz-storage-class', 'REDUCED_REDUNDANCY' )->setKey ( $s3file )->build ();
@@ -185,17 +198,18 @@ class AWSManagerReceiver {
 			 * something
 			 * goes wrong
 			 */
-			try {
-				$result = $uploader->upload ();
-			} catch ( MultipartUploadException $e ) {
-				$uploader->abort ();
-				Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
-				throw $e;
-			} catch ( \Exception $e ) {
-				$uploader->abort ();
-				Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
-				throw $e;
-			}
+			// try {
+			// $result = $uploader->upload ();
+			// } catch ( MultipartUploadException $e ) {
+			// $uploader->abort ();
+			// Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
+			// throw $e;
+			// } catch ( \Exception $e ) {
+			// $uploader->abort ();
+			// Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
+			// throw $e;
+			// }
+			
 			return $result;
 		} catch ( Exception $e ) {
 			throw $e;

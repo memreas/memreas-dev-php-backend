@@ -7,7 +7,6 @@ use Application\memreas\MUUID;
 use Application\memreas\Mlog;
 use Application\Entity\ServerMonitor;
 use Application\memreas\AWSMemreasRedisCache;
-use Aws\Common\Aws;
 
 class AWSManagerAutoScaler {
 	protected $aws = null;
