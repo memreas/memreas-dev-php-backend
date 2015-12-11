@@ -166,7 +166,7 @@ class AWSManagerReceiver {
 	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false, $bucket = MemreasConstants::S3BUCKET) {
 		try {
 			// Use default bucket
-			$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
+			// $body = EntityBody::factory ( fopen ( $file, 'r+' ) );
 			
 			/*
 			 * Upload images - section

@@ -3,9 +3,8 @@
 namespace Application\memreas;
 
 use Zend\Session\Container;
+use Zend\Mvc\Router\Console\Catchall;
 use PHPImageWorkshop\ImageWorkshop;
-use Aws;
-use Aws\Enum\Size;
 use Aws\Exception\MultipartUploadException;
 use Aws\S3\Model\MultipartUpload\UploadBuilder;
 // memreas custom
@@ -18,7 +17,6 @@ use Application\Model\Media;
 use Application\Model\MediaTable;
 use Application\Model\TranscodeTransaction;
 use Application\Model\TranscodeTransactionTable;
-use Zend\Mvc\Router\Console\Catchall;
 
 class MemreasTranscoder {
 	
