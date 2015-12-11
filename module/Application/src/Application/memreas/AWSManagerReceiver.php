@@ -189,9 +189,9 @@ class AWSManagerReceiver {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
 			}
 			
-			$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( $bucket )->setHeaders ( array (
-					'Content-Type' => $content_type 
-			) )->setOption ( 'CacheControl', 'max-age=3600' )->setOption ( 'ServerSideEncryption', 'AES256' )->setOption ( 'x-amz-storage-class', 'REDUCED_REDUNDANCY' )->setKey ( $s3file )->build ();
+			// $uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( $bucket )->setHeaders ( array (
+			// 'Content-Type' => $content_type
+			// ) )->setOption ( 'CacheControl', 'max-age=3600' )->setOption ( 'ServerSideEncryption', 'AES256' )->setOption ( 'x-amz-storage-class', 'REDUCED_REDUNDANCY' )->setKey ( $s3file )->build ();
 			
 			/*
 			 * Modified - Perform the upload to S3. Abort the upload if
