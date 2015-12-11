@@ -189,27 +189,6 @@ class AWSManagerReceiver {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
 			}
 			
-			// $uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( $bucket )->setHeaders ( array (
-			// 'Content-Type' => $content_type
-			// ) )->setOption ( 'CacheControl', 'max-age=3600' )->setOption ( 'ServerSideEncryption', 'AES256' )->setOption ( 'x-amz-storage-class', 'REDUCED_REDUNDANCY' )->setKey ( $s3file )->build ();
-			
-			/*
-			 * Modified - Perform the upload to S3. Abort the upload if
-			 * something
-			 * goes wrong
-			 */
-			// try {
-			// $result = $uploader->upload ();
-			// } catch ( MultipartUploadException $e ) {
-			// $uploader->abort ();
-			// Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
-			// throw $e;
-			// } catch ( \Exception $e ) {
-			// $uploader->abort ();
-			// Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
-			// throw $e;
-			// }
-			
 			return $result;
 		} catch ( Exception $e ) {
 			throw $e;
