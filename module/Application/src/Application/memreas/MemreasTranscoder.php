@@ -907,14 +907,16 @@ class MemreasTranscoder {
 			$s3file = $this->s3prefixpath . $this->type . '/' . $transcoded_file_name;
 			if ($this->type == "hls") {
 				$s3file = $this->s3prefixpath . $this->type . '/' . $this->MediaFileName . '.m3u8';
-				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET );
+				// $this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET );
+				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3BUCKET );
 				// Push all .ts files
 				$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 				$fsize = 0;
 				foreach ( glob ( $pat ) as $filename ) {
 					$fsize += filesize ( $filename );
 					$s3tsfile = $this->s3prefixpath . $this->type . '/' . basename ( $filename );
-					$this->aws_manager_receiver->pushMediaToS3 ( $filename, $s3tsfile, "video/mp2t", true, MemreasConstants::S3HLSBUCKET );
+					// $this->aws_manager_receiver->pushMediaToS3 ( $filename, $s3tsfile, "video/mp2t", true, MemreasConstants::S3HLSBUCKET );
+					$this->aws_manager_receiver->pushMediaToS3 ( $filename, $s3tsfile, "video/mp2t", true, MemreasConstants::S3BUCKET );
 				}
 			} else if ($this->is_audio) {
 				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "audio/m4a", true );
