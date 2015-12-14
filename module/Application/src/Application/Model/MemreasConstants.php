@@ -15,6 +15,7 @@ class MemreasConstants {
 	const MEMREAS_TRANSCODER_FFPROBE_LOCAL = '/usr/local/bin/ffprobe';
 	const SIGNURLS = false;
 	const EXPIRES = 3600;
+	const SIZE_5MB = 5000000;
 	// 1 hour should be enough to transcode
 	const MEMREASDB = 'memreasintdb';
 	const MEMREASBEDB = 'memreasbackenddb';

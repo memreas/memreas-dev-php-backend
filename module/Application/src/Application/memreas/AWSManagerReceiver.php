@@ -166,27 +166,40 @@ class AWSManagerReceiver {
 	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false, $bucket = MemreasConstants::S3BUCKET) {
 		try {
 			// Use default bucket
-			// $body = EntityBody::factory ( fopen ( $file, 'r+' ) );
-			
 			/*
-			 * Upload images - section
+			 * Uploader - section
 			 */
-			
-			$uploader = new MultipartUploader ( $this->s3, $file, [ 
-					'bucket' => $bucket,
-					'key' => $s3file,
-					'Content-Type' => $content_type,
-					'CacheControl' => 'max-age=3600',
-					'ServerSideEncryption' => 'AES256',
-					'x-amz-storage-class' => 'REDUCED_REDUNDANCY' 
-			] );
-			
-			try {
-				$result = $uploader->upload ();
-				// echo "Upload complete: {$result['ObjectURL'}\n";
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
-			} catch ( MultipartUploadException $e ) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
+			$result = 0;
+			$file_size = filesize ( $file );
+			if ($file_size < MemreasConstants::SIZE_5MB) {
+				// Upload a file.
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
+				$result = $this->s3->putObject ( array (
+						'Bucket' => $bucket,
+						'Key' => $s3file,
+						'SourceFile' => $file,
+						'ContentType' => $content_type,
+						// 'ACL' => 'public-read',
+						'ServerSideEncryption' => 'AES256',
+						'StorageClass' => 'REDUCED_REDUNDANCY' 
+				) );
+			} else {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize > 5MB ::", $file_size );
+				$uploader = new MultipartUploader ( $this->s3, $file, [ 
+						'bucket' => $bucket,
+						'key' => $s3file,
+						'Content-Type' => $content_type,
+						'ServerSideEncryption' => 'AES256',
+						'StorageClass' => 'REDUCED_REDUNDANCY' 
+				] );
+				
+				try {
+					$result = $uploader->upload ();
+					// echo "Upload complete: {$result['ObjectURL'}\n";
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
+				} catch ( MultipartUploadException $e ) {
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
+				}
 			}
 			
 			return $result;
@@ -248,23 +261,55 @@ class AWSManagerReceiver {
 			$layer->save ( $job_sub_dir, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
 			$file = $job_sub_dir . $thumbnail_name;
 			
-			$body = EntityBody::factory ( fopen ( $file, 'r+' ) );
-			/*
-			 * Upload images - section
-			 */
-			$uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( MemreasConstants::S3BUCKET )->setMinPartSize ( 10 * Size::MB )->setOption ( 'ContentType', $content_type )->setOption ( 'ServerSideEncryption', 'AES256' )->setOption ( 'x-amz-storage-class', 'REDUCED_REDUNDANCY' )->setKey ( $thumbnail_file )->build ();
-			
-			/*
-			 * Modified - Perform the upload to S3. Abort the upload if
-			 * something
-			 * goes wrong
-			 */
-			try {
-				$uploader->upload ();
-			} catch ( MultipartUploadException $e ) {
-				$uploader->abort ();
-				Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
+			$result = 0;
+			$file_size = filesize ( $file );
+			if ($file_size < MemreasConstants::SIZE_5MB) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
+				// Upload a file.
+				$result = $this->s3->putObject ( array (
+						'Bucket' => MemreasConstants::S3BUCKET,
+						'Key' => $thumbnail_file,
+						'SourceFile' => $file,
+						'ContentType' => $content_type,
+						'ServerSideEncryption' => 'AES256',
+						'StorageClass' => 'REDUCED_REDUNDANCY' 
+				) );
+			} else {
+				$uploader = new MultipartUploader ( $this->s3, $file, [ 
+						'Bucket' => MemreasConstants::S3BUCKET,
+						'Key' => $thumbnail_file,
+						'SourceFile' => $file,
+						'ContentType' => $content_type,
+						'ServerSideEncryption' => 'AES256',
+						'StorageClass' => 'REDUCED_REDUNDANCY' 
+				] );
+				
+				try {
+					$result = $uploader->upload ();
+					// echo "Upload complete: {$result['ObjectURL'}\n";
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
+				} catch ( MultipartUploadException $e ) {
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
+				}
 			}
+			
+			// $body = EntityBody::factory ( fopen ( $file, 'r+' ) );
+			// /*
+			// * Upload images - section
+			// */
+			// $uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( MemreasConstants::S3BUCKET )->setMinPartSize ( 10 * Size::MB )->setOption ( 'ContentType', $content_type )->setOption ( 'ServerSideEncryption', 'AES256' )->setOption ( 'x-amz-storage-class', 'REDUCED_REDUNDANCY' )->setKey ( $thumbnail_file )->build ();
+			
+			// /*
+			// * Modified - Perform the upload to S3. Abort the upload if
+			// * something
+			// * goes wrong
+			// */
+			// try {
+			// $uploader->upload ();
+			// } catch ( MultipartUploadException $e ) {
+			// $uploader->abort ();
+			// Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
+			// }
 			
 			return $thumbnail_file;
 		} catch ( Exception $e ) {
