@@ -759,11 +759,6 @@ class MemreasTranscoder {
 				// text='Stack Overflow': fontcolor=white: fontsize=24: box=1: boxcolor=black: \
 				// x=(w-text_w)/2: y=(h-text_h-line_h)/2" -codec:a copy output.flv
 				
-				// $this->original_file_name = $message_data ['s3file_name'];
-				// $this->MediaFileName = $this->s3file_basename_prefix;
-				// $this->MediaFileType = $message_data ['content_type'];
-				// $this->MediaExt = pathinfo ( $this->s3file_name, PATHINFO_EXTENSION );
-				
 				/*
 				 * Add copyright as needed
 				 */
@@ -817,7 +812,9 @@ class MemreasTranscoder {
 				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
 			} else if ($this->type == '1080p') {
-				
+				/*
+				 * Not in use... players don't playback hevc
+				 */
 				// $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
 				// $this->compression_preset_1080p .
 				// ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
@@ -856,9 +853,20 @@ class MemreasTranscoder {
 				// 4-DEC-2015 - puppies sample doesn't play on nexus
 				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
-				// 6-DEC-2015 - testing different cmds
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				//
+				// Create file for segment encryption
+				//
+				$base_url = $this->homeDir . self::CONVDIR . self::HLSDIR;
+				$cmd = getcwd () . "/keygen.sh " . $base_url;
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $cmd----->', $cmd );
+				shell_exec ( $cmd );
+				$keyInfoFile = $base_url . "file.keyinfo";
+				// -hls_key_info_file file.keyinfo
+				
+				// 16-DEC-2015 - last working for fast start of 4k but still choppy
+				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $cmd----->', $cmd );
+				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_key_info_file $keyInfoFile" . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
 				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
 				// *not working on iphone so us* -> pulled from 9/21 git //$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $this->destRandMediaName . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
