@@ -140,7 +140,7 @@ class AWSManagerReceiver {
 					// 'params' => array('ACL' => 'public-read'),
 					'concurrency' => 20,
 					'ServerSideEncryption' => 'AES256',
-					'x-amz-storage-class' => 'REDUCED_REDUNDANCY' 
+					'StorageClass' => 'REDUCED_REDUNDANCY' 
 			);
 			
 			$result = $this->s3->uploadDirectory ( $dir, MemreasConstants::S3BUCKET, $keyPrefix, $options );
@@ -156,7 +156,7 @@ class AWSManagerReceiver {
 					// 'CopySource' => "{".$bucket."}/{".$source."}",
 					'CopySource' => $bucket . '/' . $source,
 					'ServerSideEncryption' => 'AES256',
-					'x-amz-storage-class' => 'REDUCED_REDUNDANCY' 
+					'StorageClass' => 'REDUCED_REDUNDANCY' 
 			) );
 			return $result;
 		} catch ( Exception $e ) {
@@ -292,24 +292,6 @@ class AWSManagerReceiver {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
 				}
 			}
-			
-			// $body = EntityBody::factory ( fopen ( $file, 'r+' ) );
-			// /*
-			// * Upload images - section
-			// */
-			// $uploader = UploadBuilder::newInstance ()->setClient ( $this->s3 )->setSource ( $body )->setBucket ( MemreasConstants::S3BUCKET )->setMinPartSize ( 10 * Size::MB )->setOption ( 'ContentType', $content_type )->setOption ( 'ServerSideEncryption', 'AES256' )->setOption ( 'x-amz-storage-class', 'REDUCED_REDUNDANCY' )->setKey ( $thumbnail_file )->build ();
-			
-			// /*
-			// * Modified - Perform the upload to S3. Abort the upload if
-			// * something
-			// * goes wrong
-			// */
-			// try {
-			// $uploader->upload ();
-			// } catch ( MultipartUploadException $e ) {
-			// $uploader->abort ();
-			// Mlog::addone ( __FILE__ . __METHOD__ . 'Caught exception: ', $e->getMessage () );
-			// }
 			
 			return $thumbnail_file;
 		} catch ( Exception $e ) {
