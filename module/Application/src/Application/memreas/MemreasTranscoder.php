@@ -857,10 +857,12 @@ class MemreasTranscoder {
 				//
 				// Create file for segment encryption
 				//
-				$base_url = $this->homeDir . self::CONVDIR . self::HLSDIR;
-				$this->cmd = getcwd () . "/keygen.sh " . $base_url;
+				$base_path = $this->homeDir . self::CONVDIR . self::HLSDIR;
+				$base_url = $this->s3prefixpath . $this->type . '/';
+				$this->cmd = getcwd () . "/keygen.sh $base_url $base_url";
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
 				shell_exec ( $this->cmd );
+				$fileKeyInfo = $base_url . "file.keyinfo";
 				$result = shell_exec ( "ls -al " . $base_url . "file.keyinfo" );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $result----->', $result );
 				$result = shell_exec ( "cat " . $base_url . "file.keyinfo" );
@@ -918,9 +920,11 @@ class MemreasTranscoder {
 			
 			// Push to S3
 			$s3file = $this->s3prefixpath . $this->type . '/' . $transcoded_file_name;
+			$s3FileKeyInfoPath = $this->s3prefixpath . $this->type . '/file.keyinfo';
 			if ($this->type == "hls") {
 				$s3file = $this->s3prefixpath . $this->type . '/' . $this->MediaFileName . '.m3u8';
 				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET );
+				$this->aws_manager_receiver->pushMediaToS3 ( $fileKeyInfo, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
 				// Push all .ts files
 				$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 				$fsize = 0;
