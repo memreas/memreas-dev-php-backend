@@ -870,6 +870,7 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh cat $result----->', $result );
 				$keyInfoFile = $base_url . "file.keyinfo";
 				// -hls_key_info_file file.keyinfo
+				chdir ( __DIR__ );
 				
 				// 16-DEC-2015 - last working for fast start of 4k but still choppy
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;

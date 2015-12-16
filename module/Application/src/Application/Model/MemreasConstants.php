@@ -22,6 +22,7 @@ class MemreasConstants {
 	const S3BUCKET = "memreasdevsec";
 	const S3HLSBUCKET = "memreasdevhlssec";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
+	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
 	
 	// Redis section
 	const REDIS_SERVER_ENDPOINT = "54.225.187.57";
