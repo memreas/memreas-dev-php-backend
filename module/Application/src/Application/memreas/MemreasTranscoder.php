@@ -861,8 +861,10 @@ class MemreasTranscoder {
 				$this->cmd = getcwd () . "/keygen.sh " . $base_url;
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
 				shell_exec ( $this->cmd );
-				$result = shell_exec ( "ls -al " .$base_url . "file.keyinfo");
+				$result = shell_exec ( "ls -al " . $base_url . "file.keyinfo" );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $result----->', $result );
+				$result = shell_exec ( "cat " . $base_url . "file.keyinfo" );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh cat $result----->', $result );
 				$keyInfoFile = $base_url . "file.keyinfo";
 				// -hls_key_info_file file.keyinfo
 				
@@ -893,7 +895,7 @@ class MemreasTranscoder {
 			//
 			// exec ffmpeg operation
 			//
-			$this->execFFMPEG ( $this->cmd, $transcoded_file );
+			$this->execFFMPEG ( $transcoded_file );
 			
 			if ($this->type == 'copyright') {
 				//
@@ -964,71 +966,68 @@ class MemreasTranscoder {
 		}
 	}
 	// End transcode
-	private function execFFMPEG($this->cmd, $transcoded_file) 
-
-
-{
-	try {
-		// Log command
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "cmd::$this->cmd" );
-		$this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $this->cmd;
-		$output_start_time = $this->now ();
-		$this->transcode_job_meta [$this->type] ["output_start_time"] = $output_start_time;
-		
-		$this->persistTranscodeTransaction ();
-		
-		//
-		// Execute ffmpeg command
-		//
-		$op = shell_exec ( $this->cmd );
-		
-		//
-		// Refresh DB Connection in case mysql has gone away
-		//
-		$this->refreshDBConnection ();
-		
-		//
-		// Fetch transcode_job_meta in case of GC
-		//
-		$row = $this->fetchTranscodeTransactionByMediaId ( $this->media_id );
-		$this->transcode_job_meta = json_decode ( $row->metadata, true );
-		
-		//
-		// Command should be complete check for file...
-		//
-		if (! file_exists ( $transcoded_file )) {
-			throw new \Exception ( 'Failed to find $transcoded_file::' . $transcoded_file . '::op::' . $op );
-		} else {
-			// Transcode_Transaction status
-			$this->pass = 1;
-			// Log pass
-			$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
-			// file size in bytes...
-			$this->transcode_job_meta [$this->type] ["output_size"] = filesize ( $transcoded_file );
-			$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
-			$this->transcode_job_meta [$this->type] ["error_message"] = "";
+	private function execFFMPEG($transcoded_file) {
+		try {
+			// Log command
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "cmd::$this->cmd" );
+			$this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $this->cmd;
+			$output_start_time = $this->now ();
 			$this->transcode_job_meta [$this->type] ["output_start_time"] = $output_start_time;
+			
+			$this->persistTranscodeTransaction ();
+			
+			//
+			// Execute ffmpeg command
+			//
+			$op = shell_exec ( $this->cmd );
+			
+			//
+			// Refresh DB Connection in case mysql has gone away
+			//
+			$this->refreshDBConnection ();
+			
+			//
+			// Fetch transcode_job_meta in case of GC
+			//
+			$row = $this->fetchTranscodeTransactionByMediaId ( $this->media_id );
+			$this->transcode_job_meta = json_decode ( $row->metadata, true );
+			
+			//
+			// Command should be complete check for file...
+			//
+			if (! file_exists ( $transcoded_file )) {
+				throw new \Exception ( 'Failed to find $transcoded_file::' . $transcoded_file . '::op::' . $op );
+			} else {
+				// Transcode_Transaction status
+				$this->pass = 1;
+				// Log pass
+				$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
+				// file size in bytes...
+				$this->transcode_job_meta [$this->type] ["output_size"] = filesize ( $transcoded_file );
+				$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
+				$this->transcode_job_meta [$this->type] ["error_message"] = "";
+				$this->transcode_job_meta [$this->type] ["output_start_time"] = $output_start_time;
+				$this->transcode_job_meta [$this->type] ["output_end_time"] = date ( "Y-m-d H:i:s" );
+			}
+			$this->persistTranscodeTransaction ();
+			$this->persistMedia ();
+		} catch ( \Exception $e ) {
+			$this->pass = 0;
+			error_log ( "transcoder $this->type failed - op -->" . $op . PHP_EOL );
+			// Log pass
+			// $this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $this->cmd; //set above prior to call...
+			$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
+			$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
+			$this->transcode_job_meta [$this->type] ["error_message"] = $e->getMessage ();
 			$this->transcode_job_meta [$this->type] ["output_end_time"] = date ( "Y-m-d H:i:s" );
+			$this->error_message = $e->getMessage ();
+			$this->persistTranscodeTransaction ();
+			// persist media data also
+			$this->persistMedia ();
+			throw $e;
 		}
-		$this->persistTranscodeTransaction ();
-		$this->persistMedia ();
-	} catch ( \Exception $e ) {
-		$this->pass = 0;
-		error_log ( "transcoder $this->type failed - op -->" . $op . PHP_EOL );
-		// Log pass
-		// $this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $this->cmd; //set above prior to call...
-		$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
-		$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
-		$this->transcode_job_meta [$this->type] ["error_message"] = $e->getMessage ();
-		$this->transcode_job_meta [$this->type] ["output_end_time"] = date ( "Y-m-d H:i:s" );
-		$this->error_message = $e->getMessage ();
-		$this->persistTranscodeTransaction ();
-		// persist media data also
-		$this->persistMedia ();
-		throw $e;
+		return $op;
 	}
-	return $op;
-}
 	private function rmWorkDir($dir) {
 		try {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'rmWorkDir ($dir)', $dir );
