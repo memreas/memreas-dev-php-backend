@@ -98,6 +98,7 @@ class MemreasTranscoder {
 	protected $compression_preset_1080p;
 	protected $transcode_job_meta;
 	protected $exception;
+	protected $cmd;
 	
 	/*
 	 * Thumbnail settings $tnWidth = 448; $tnHeight = 306; $tnfreqency = 60; //
@@ -348,17 +349,17 @@ class MemreasTranscoder {
 				 */
 				if ($this->is_video || $this->is_audio) {
 					// Calc media vars
-					$cmd = $this->ffprobecmd . ' -v error -print_format json -show_format -show_streams ' . $this->destRandMediaName;
+					$this->cmd = $this->ffprobecmd . ' -v error -print_format json -show_format -show_streams ' . $this->destRandMediaName;
 					try {
-						$ffprobe_json = shell_exec ( $cmd );
+						$ffprobe_json = shell_exec ( $this->cmd );
 						$ffprobe_json_array = json_decode ( $ffprobe_json, true );
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::_FFPROBE_::' . $cmd, $ffprobe_json );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::_FFPROBE_::' . $this->cmd, $ffprobe_json );
 						
 						$this->duration = $ffprobe_json_array ['format'] ['duration'];
 						$this->setNicePriorityAndCompression ();
 						$this->filesize = $ffprobe_json_array ['format'] ['size'];
 					} catch ( \Exception $e ) {
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::ffprobe cmd:: $cmd \n exception:: $e->getMessage()" );
+						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "::ffprobe cmd:: $this->cmd \n exception:: $e->getMessage()" );
 					}
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
 				} else {
@@ -560,7 +561,7 @@ class MemreasTranscoder {
 			//
 			// Send email
 			//
-			$message_data ['command'] = isset ( $cmd ) ? ( string ) $cmd : "";
+			$message_data ['command'] = isset ( $this->cmd ) ? ( string ) $this->cmd : "";
 			$message_data ['error_line'] = ( string ) $e->getLine ();
 			$message_data ['error_message'] = ( string ) $e->getMessage ();
 			// $message_data ['error_trace'] = (string) $e->getTrace ();
@@ -620,9 +621,9 @@ class MemreasTranscoder {
 						'2>&1' 
 				);
 				
-				$cmd = join ( " ", $command );
-				$cmd = $this->ffmpegcmd . " " . $cmd;
-				$op = shell_exec ( $cmd );
+				$this->cmd = join ( " ", $command );
+				$this->cmd = $this->ffmpegcmd . " " . $this->cmd;
+				$op = shell_exec ( $this->cmd );
 				$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
 				$result = shell_exec ( "ls -al " . $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE );
 				Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', $result );
@@ -779,8 +780,8 @@ class MemreasTranscoder {
 				// echo $path_parts['dirname'], "\n";
 				// echo $path_parts['basename'], "\n";
 				// echo $path_parts['extension'], "\n";
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$cmd', $cmd );
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->cmd', $this->cmd );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
 				$transcoded_file = $this->destRandMediaName;
 			} else if ($this->type == 'web') {
@@ -810,7 +811,7 @@ class MemreasTranscoder {
 				//
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
 			} else if ($this->type == '1080p') {
 				/*
 				 * Not in use... players don't playback hevc
@@ -821,7 +822,7 @@ class MemreasTranscoder {
 				$qv = ' -c:v libx265 ' . '-pix_fmt yuv420p ' . '-preset ' . $this->compression_preset_1080p . ' -x265-params crf=28 ' . '-c:a aac -strict experimental  ' . '-b:a 128k ';
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
 				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
 			} else if ($this->type == 'hls') {
 				Mlog::addone ( __CLASS__ . __METHOD__, "else if ($this->type == 'hls')" );
 				
@@ -836,42 +837,44 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_hls_ts_file );
 				
 				// last working 10.10.2015
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
 				
 				// Testing hls command with profile and pic_fmt
 				
 				// Testing remove bit rate and profile... - likely produced only two files - performance poor 11.28.2015
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_list_size 10 -hls_time 2 -hls_allow_cache 0 -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_list_size 10 -hls_time 2 -hls_allow_cache 0 -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				// how to add:: hls_ts_options -movflags +faststart
 				
 				// 29-NOV-2015 testing single file - slow start
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_flags single_file ' . $transcoded_file;
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_flags single_file ' . $transcoded_file;
 				
 				// 30-NOV-2015 Testing multiple ts with -movflags +faststart
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
 				// 4-DEC-2015 - puppies sample doesn't play on nexus
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
 				//
 				// Create file for segment encryption
 				//
-				$base_url = $this->s3prefixpath . $this->type . '/';
-				$cmd = getcwd () . "/keygen.sh " . $base_url;
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $cmd----->', $cmd );
-				shell_exec ( $cmd );
+				$base_url = $this->homeDir . self::CONVDIR . self::HLSDIR;
+				$this->cmd = getcwd () . "/keygen.sh " . $base_url;
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
+				shell_exec ( $this->cmd );
+				$result = shell_exec ( "ls -al " .$base_url . "file.keyinfo");
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $result----->', $result );
 				$keyInfoFile = $base_url . "file.keyinfo";
 				// -hls_key_info_file file.keyinfo
 				
 				// 16-DEC-2015 - last working for fast start of 4k but still choppy
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $cmd----->', $cmd );
-				$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags  -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags  -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				// *not working on iphone so us* -> pulled from 9/21 git //$cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $this->destRandMediaName . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				// $cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				Mlog::addone ( __CLASS__ . __METHOD__ . '$cmd', $cmd );
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+				// *not working on iphone so us* -> pulled from 9/21 git //$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $this->destRandMediaName . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+				Mlog::addone ( __CLASS__ . __METHOD__ . '$this->cmd', $this->cmd );
 			} else if ($this->type == 'audio') {
 				/*
 				 * TODO: add audio cmd
@@ -881,7 +884,7 @@ class MemreasTranscoder {
 				$qv = ' -c:a libfdk_aac -movflags +faststart ';
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::AUDIODIR . $this->MediaFileName . $aacext;
 				$transcoded_file_name = $this->MediaFileName . $aacext;
-				$cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
+				$this->cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
 			} else {
 				throw new \Exception ( "MemreasTranscoder $this->type not found." );
 			}
@@ -890,7 +893,7 @@ class MemreasTranscoder {
 			//
 			// exec ffmpeg operation
 			//
-			$this->execFFMPEG ( $cmd, $transcoded_file );
+			$this->execFFMPEG ( $this->cmd, $transcoded_file );
 			
 			if ($this->type == 'copyright') {
 				//
@@ -961,68 +964,71 @@ class MemreasTranscoder {
 		}
 	}
 	// End transcode
-	private function execFFMPEG($cmd, $transcoded_file) {
-		try {
-			// Log command
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "cmd::$cmd" );
-			$this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $cmd;
-			$output_start_time = $this->now ();
-			$this->transcode_job_meta [$this->type] ["output_start_time"] = $output_start_time;
-			
-			$this->persistTranscodeTransaction ();
-			
-			//
-			// Execute ffmpeg command
-			//
-			$op = shell_exec ( $cmd );
-			
-			//
-			// Refresh DB Connection in case mysql has gone away
-			//
-			$this->refreshDBConnection ();
-			
-			//
-			// Fetch transcode_job_meta in case of GC
-			//
-			$row = $this->fetchTranscodeTransactionByMediaId ( $this->media_id );
-			$this->transcode_job_meta = json_decode ( $row->metadata, true );
-			
-			//
-			// Command should be complete check for file...
-			//
-			if (! file_exists ( $transcoded_file )) {
-				throw new \Exception ( 'Failed to find $transcoded_file::' . $transcoded_file . '::op::' . $op );
-			} else {
-				// Transcode_Transaction status
-				$this->pass = 1;
-				// Log pass
-				$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
-				// file size in bytes...
-				$this->transcode_job_meta [$this->type] ["output_size"] = filesize ( $transcoded_file );
-				$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
-				$this->transcode_job_meta [$this->type] ["error_message"] = "";
-				$this->transcode_job_meta [$this->type] ["output_start_time"] = $output_start_time;
-				$this->transcode_job_meta [$this->type] ["output_end_time"] = date ( "Y-m-d H:i:s" );
-			}
-			$this->persistTranscodeTransaction ();
-			$this->persistMedia ();
-		} catch ( \Exception $e ) {
-			$this->pass = 0;
-			error_log ( "transcoder $this->type failed - op -->" . $op . PHP_EOL );
+	private function execFFMPEG($this->cmd, $transcoded_file) 
+
+
+{
+	try {
+		// Log command
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "cmd::$this->cmd" );
+		$this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $this->cmd;
+		$output_start_time = $this->now ();
+		$this->transcode_job_meta [$this->type] ["output_start_time"] = $output_start_time;
+		
+		$this->persistTranscodeTransaction ();
+		
+		//
+		// Execute ffmpeg command
+		//
+		$op = shell_exec ( $this->cmd );
+		
+		//
+		// Refresh DB Connection in case mysql has gone away
+		//
+		$this->refreshDBConnection ();
+		
+		//
+		// Fetch transcode_job_meta in case of GC
+		//
+		$row = $this->fetchTranscodeTransactionByMediaId ( $this->media_id );
+		$this->transcode_job_meta = json_decode ( $row->metadata, true );
+		
+		//
+		// Command should be complete check for file...
+		//
+		if (! file_exists ( $transcoded_file )) {
+			throw new \Exception ( 'Failed to find $transcoded_file::' . $transcoded_file . '::op::' . $op );
+		} else {
+			// Transcode_Transaction status
+			$this->pass = 1;
 			// Log pass
-			// $this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $cmd; //set above prior to call...
 			$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
+			// file size in bytes...
+			$this->transcode_job_meta [$this->type] ["output_size"] = filesize ( $transcoded_file );
 			$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
-			$this->transcode_job_meta [$this->type] ["error_message"] = $e->getMessage ();
+			$this->transcode_job_meta [$this->type] ["error_message"] = "";
+			$this->transcode_job_meta [$this->type] ["output_start_time"] = $output_start_time;
 			$this->transcode_job_meta [$this->type] ["output_end_time"] = date ( "Y-m-d H:i:s" );
-			$this->error_message = $e->getMessage ();
-			$this->persistTranscodeTransaction ();
-			// persist media data also
-			$this->persistMedia ();
-			throw $e;
 		}
-		return $op;
+		$this->persistTranscodeTransaction ();
+		$this->persistMedia ();
+	} catch ( \Exception $e ) {
+		$this->pass = 0;
+		error_log ( "transcoder $this->type failed - op -->" . $op . PHP_EOL );
+		// Log pass
+		// $this->transcode_job_meta [$this->type] ["ffmpeg_cmd"] = $this->cmd; //set above prior to call...
+		$this->transcode_job_meta [$this->type] ["ffmpeg_cmd_output"] = json_encode ( $op );
+		$this->transcode_job_meta [$this->type] ["pass_fail"] = $this->pass;
+		$this->transcode_job_meta [$this->type] ["error_message"] = $e->getMessage ();
+		$this->transcode_job_meta [$this->type] ["output_end_time"] = date ( "Y-m-d H:i:s" );
+		$this->error_message = $e->getMessage ();
+		$this->persistTranscodeTransaction ();
+		// persist media data also
+		$this->persistMedia ();
+		throw $e;
 	}
+	return $op;
+}
 	private function rmWorkDir($dir) {
 		try {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . 'rmWorkDir ($dir)', $dir );
@@ -1198,7 +1204,7 @@ class MemreasTranscoder {
 
 
 // new h265 command - doesn't work
-// $cmd = 'nice -' . $this->nice_priority . ' ' .
+// $this->cmd = 'nice -' . $this->nice_priority . ' ' .
 // $this->ffmpegcmd . " -i " .
 // $this->destRandMediaName .
 // ' -vcodec libx265 -acodec libfdk_aac -hls_flags
@@ -1207,7 +1213,7 @@ class MemreasTranscoder {
 
 // h264 with single ts file - too long to download and
 // play
-// $cmd = 'nice -' . $this->nice_priority . ' ' .
+// $this->cmd = 'nice -' . $this->nice_priority . ' ' .
 // $this->ffmpegcmd . " -i " .
 // $this->destRandMediaName .
 // ' -hls_flags single_file ' . $transcoded_file .
