@@ -20,7 +20,7 @@ class MemreasConstants {
 	const MEMREASDB = 'memreasintdb';
 	const MEMREASBEDB = 'memreasbackenddb';
 	const S3BUCKET = "memreasdevsec";
-	const S3HLSBUCKET = "memreasdevsechls";
+	const S3HLSBUCKET = "memreasdevhlssec";
 	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
 	
 	// Redis section
