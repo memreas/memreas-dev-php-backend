@@ -882,6 +882,7 @@ class MemreasTranscoder {
 				// file.key creation
 				//
 				$keyFile = $base_path . "file.key";
+				$s3KeyFilePath = $base_url . "file.key";
 				$keyHandle = fopen ( $keyFile, "w" );
 				$bytes = openssl_random_pseudo_bytes ( 16 );
 				fwrite ( $keyHandle, $bytes );
@@ -895,10 +896,13 @@ class MemreasTranscoder {
 				$keyInfoHandle = fopen ( $keyInfoFile, "w" );
 				$fileKey = openssl_random_pseudo_bytes ( 16 );
 				fwrite ( $keyInfoHandle, $s3FileKeyInfoPath . "\n" );
-				fwrite ( $keyInfoHandle, $keyFile . "\n" );
+				// fwrite ( $keyInfoHandle, $keyFile . "\n" );
+				fwrite ( $keyInfoHandle, $s3KeyFilePath . "\n" );
 				$fileHexKey = bin2hex ( $fileKey );
 				fwrite ( $keyInfoHandle, $fileHexKey );
 				fclose ( $keyInfoHandle );
+				$this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
+				$this->aws_manager_receiver->pushMediaToS3 ( $keyFile, $s3KeyFilePath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
 				
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
@@ -909,7 +913,7 @@ class MemreasTranscoder {
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				Mlog::addone ( __CLASS__ . __METHOD__ . '$this->cmd', $this->cmd );
-				//die ();
+				// die ();
 			} else if ($this->type == 'audio') {
 				/*
 				 * TODO: add audio cmd
@@ -955,7 +959,6 @@ class MemreasTranscoder {
 			if ($this->type == "hls") {
 				$s3file = $this->s3prefixpath . $this->type . '/' . $this->MediaFileName . '.m3u8';
 				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET );
-				$this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
 				// Push all .ts files
 				$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 				$fsize = 0;
