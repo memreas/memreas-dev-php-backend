@@ -894,7 +894,7 @@ class MemreasTranscoder {
 				$s3FileKeyInfoPath = $base_url . "file.keyinfo";
 				$keyInfoHandle = fopen ( $keyInfoFile, "w" );
 				$fileKey = openssl_random_pseudo_bytes ( 16 );
-				fwrite ( $keyInfoHandle, $base_url . "file.key\n" );
+				fwrite ( $keyInfoHandle, $s3FileKeyInfoPath . "\n" );
 				fwrite ( $keyInfoHandle, $keyFile . "\n" );
 				$fileHexKey = bin2hex ( $fileKey );
 				fwrite ( $keyInfoHandle, $fileHexKey );
