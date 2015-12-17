@@ -865,17 +865,26 @@ class MemreasTranscoder {
 				$base_path = $this->homeDir . self::CONVDIR . self::HLSDIR;
 				// chdir ( $base_path );
 				$base_url = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $this->s3prefixpath . $this->type . '/';
-				$this->cmd = getcwd () . "/keygen.sh $base_path $base_url";
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
-				shell_exec ( $this->cmd );
-				$result = shell_exec ( "ls -al " . $base_path . "file.keyinfo" );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $result----->', $result );
-				$result = shell_exec ( "cat " . $base_path . "file.keyinfo" );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh cat $result----->', $result );
+				
+				// $this->cmd = getcwd () . "/keygen.sh $base_path $base_url";
 				$keyInfoFile = $base_path . "file.keyinfo";
-				// s3 location for file.keyinfo
 				$s3FileKeyInfoPath = $base_url . "file.keyinfo";
+				$keyInfoHandle = fopen ( $keyInfoFile, "w" );
+				$fileKey = openssl_random_pseudo_bytes ( 16 );
+				fwrite ( $keyInfoHandle, $baseurl . "file.key\n" );
+				fwrite ( $keyInfoHandle, "file.key\n" );
+				$fileHexKey = bin2hex ( $fileKey );
+				fwrite ( $keyInfoHandle, $fileHexKey );
+				fclose ( $keyInfoHandle );
+				
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
+				// shell_exec ( $this->cmd );
+				// $result = shell_exec ( "ls -al " . $base_path . "file.keyinfo" );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $result----->', $result );
+				// $result = shell_exec ( "cat " . $base_path . "file.keyinfo" );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh cat $result----->', $result );
+				// s3 location for file.keyinfo
 				// -hls_key_info_file file.keyinfo
 				// chdir ( __DIR__ );
 				
@@ -933,7 +942,7 @@ class MemreasTranscoder {
 			if ($this->type == "hls") {
 				$s3file = $this->s3prefixpath . $this->type . '/' . $this->MediaFileName . '.m3u8';
 				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET );
-				$this->aws_manager_receiver->pushMediaToS3 ( $fileKeyInfo, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
+				$this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
 				// Push all .ts files
 				$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 				$fsize = 0;
