@@ -896,9 +896,8 @@ class MemreasTranscoder {
 				// 16-DEC-2015 - last working for fast start of 4k but still choppy
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-				die ();
-				
 				Mlog::addone ( __CLASS__ . __METHOD__ . '$this->cmd', $this->cmd );
+				die ();
 			} else if ($this->type == 'audio') {
 				/*
 				 * TODO: add audio cmd
