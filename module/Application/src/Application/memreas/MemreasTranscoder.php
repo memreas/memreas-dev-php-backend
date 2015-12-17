@@ -861,6 +861,7 @@ class MemreasTranscoder {
 				// chdir ( $base_path );
 				$base_url = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $this->s3prefixpath . $this->type . '/';
 				$this->cmd = getcwd () . "/keygen.sh $base_path $base_url";
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
 				shell_exec ( $this->cmd );
 				$result = shell_exec ( "ls -al " . $base_path . "file.keyinfo" );
