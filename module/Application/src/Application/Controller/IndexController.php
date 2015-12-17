@@ -1,17 +1,10 @@
 <?php
 
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
+ * Copyright (C) 2015 memreas llc. - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
  */
-
-// ///////////////////////////////
-// Author: John Meah
-// Copyright memreas llc 2013
-// ///////////////////////////////
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
