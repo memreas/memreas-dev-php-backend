@@ -901,7 +901,11 @@ class MemreasTranscoder {
 				$fileHexKey = bin2hex ( $fileKey );
 				fwrite ( $keyInfoHandle, $fileHexKey );
 				fclose ( $keyInfoHandle );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $keyInfoFile----->', $keyInfoFile );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $s3FileKeyInfoPath----->', $s3FileKeyInfoPath );
 				$this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $keyFile----->', $keyFile );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $s3KeyFilePath----->', $s3KeyFilePath );
 				$this->aws_manager_receiver->pushMediaToS3 ( $keyFile, $s3KeyFilePath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
 				
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
