@@ -878,12 +878,24 @@ class MemreasTranscoder {
 				// -hls_key_info_file file.keyinfo
 				// chdir ( __DIR__ );
 				
+				//
+				// file.key creation
+				//
+				$keyFile = $base_path . "file.key";
+				$keyHandle = fopen ( $keyFile, "w" );
+				$bytes = openssl_random_pseudo_bytes ( 16 );
+				fwrite ( $keyHandle, $bytes );
+				fclose ( $keyHandle );
+				
+				//
+				// file.keyinfo creation
+				//
 				$keyInfoFile = $base_path . "file.keyinfo";
 				$s3FileKeyInfoPath = $base_url . "file.keyinfo";
 				$keyInfoHandle = fopen ( $keyInfoFile, "w" );
 				$fileKey = openssl_random_pseudo_bytes ( 16 );
 				fwrite ( $keyInfoHandle, $base_url . "file.key\n" );
-				fwrite ( $keyInfoHandle, "file.key\n" );
+				fwrite ( $keyInfoHandle, $keyFile . "\n" );
 				$fileHexKey = bin2hex ( $fileKey );
 				fwrite ( $keyInfoHandle, $fileHexKey );
 				fclose ( $keyInfoHandle );
