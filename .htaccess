@@ -1,3 +1,8 @@
+<IfModule mod_authz_host.c>
+Allow from memreas.com
+Allow from github.com
+</IfModule>
+
 <IfModule mod_php5.c>
 php_value session.auto_start 0
 #Limits for file processing
