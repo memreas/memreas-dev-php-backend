@@ -841,72 +841,38 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_file );
 				Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_hls_ts_file );
 				
-				// last working 10.10.2015
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				
-				// Testing hls command with profile and pic_fmt
-				
-				// Testing remove bit rate and profile... - likely produced only two files - performance poor 11.28.2015
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_list_size 10 -hls_time 2 -hls_allow_cache 0 -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-				// how to add:: hls_ts_options -movflags +faststart
-				
-				// 29-NOV-2015 testing single file - slow start
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_flags single_file ' . $transcoded_file;
-				
-				// 30-NOV-2015 Testing multiple ts with -movflags +faststart
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-				
-				// 4-DEC-2015 - puppies sample doesn't play on nexus
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-				
 				//
-				// Create file for segment encryption
+				// TODO: Encryption for .ts files not working - m3u8 protected by url signing
 				//
-				$base_path = $this->homeDir . self::CONVDIR . self::HLSDIR;
-				// chdir ( $base_path );
-				$base_url = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $this->s3prefixpath . $this->type . '/';
+				// //
+				// // Create file for segment encryption
+				// //
+				// $base_path = $this->homeDir . self::CONVDIR . self::HLSDIR;
+				// $base_url = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $this->s3prefixpath . $this->type . '/';
 				
-				// $this->cmd = getcwd () . "/keygen.sh $base_path $base_url";
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $this->cmd----->', $this->cmd );
-				// shell_exec ( $this->cmd );
-				// $result = shell_exec ( "ls -al " . $base_path . "file.keyinfo" );
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh $result----->', $result );
-				// $result = shell_exec ( "cat " . $base_path . "file.keyinfo" );
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::keygen.sh cat $result----->', $result );
-				// s3 location for file.keyinfo
-				// -hls_key_info_file file.keyinfo
-				// chdir ( __DIR__ );
+				// //
+				// // file.key creation
+				// //
+				// $keyFile = $base_path . "file.key";
+				// $s3KeyFilePath = $base_url . "file.key";
+				// $keyHandle = fopen ( $keyFile, "w" );
+				// $bytes = openssl_random_pseudo_bytes ( 16 );
+				// fwrite ( $keyHandle, $bytes );
+				// fclose ( $keyHandle );
 				
-				//
-				// file.key creation
-				//
-				$keyFile = $base_path . "file.key";
-				$s3KeyFilePath = $base_url . "file.key";
-				$keyHandle = fopen ( $keyFile, "w" );
-				$bytes = openssl_random_pseudo_bytes ( 16 );
-				fwrite ( $keyHandle, $bytes );
-				fclose ( $keyHandle );
-				
-				//
-				// file.keyinfo creation
-				//
-				$keyInfoFile = $base_path . "file.keyinfo";
-				$s3FileKeyInfoPath = $base_url . "file.keyinfo";
-				$keyInfoHandle = fopen ( $keyInfoFile, "w" );
-				$fileKey = openssl_random_pseudo_bytes ( 16 );
-				fwrite ( $keyInfoHandle, $s3FileKeyInfoPath . "\n" );
+				// //
+				// // file.keyinfo creation
+				// //
+				// $keyInfoFile = $base_path . "file.keyinfo";
+				// $s3FileKeyInfoPath = $base_url . "file.keyinfo";
+				// $keyInfoHandle = fopen ( $keyInfoFile, "w" );
+				// $fileKey = openssl_random_pseudo_bytes ( 16 );
+				// fwrite ( $keyInfoHandle, $s3FileKeyInfoPath . "\n" );
 				// fwrite ( $keyInfoHandle, $keyFile . "\n" );
-				fwrite ( $keyInfoHandle, $s3KeyFilePath . "\n" );
-				$fileHexKey = bin2hex ( $fileKey );
-				fwrite ( $keyInfoHandle, $fileHexKey );
-				fclose ( $keyInfoHandle );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $keyInfoFile----->', $keyInfoFile );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $s3FileKeyInfoPath----->', $s3FileKeyInfoPath );
-				$this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $keyFile----->', $keyFile );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Pushing to S3 $s3KeyFilePath----->', $s3KeyFilePath );
-				$this->aws_manager_receiver->pushMediaToS3 ( $keyFile, $s3KeyFilePath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
+				// $fileHexKey = bin2hex ( $fileKey );
+				// fwrite ( $keyInfoHandle, $fileHexKey );
+				// fclose ( $keyInfoHandle );
+				// $this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET );
 				
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
@@ -914,10 +880,12 @@ class MemreasTranscoder {
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
 				
 				// 16-DEC-2015 - last working for fast start of 4k but still choppy
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-				Mlog::addone ( __CLASS__ . __METHOD__ . '$this->cmd', $this->cmd );
-				// die ();
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				
+				//
+				// 17-DEC-2015 - cmd to add encyption for .ts files (not working)
+				//
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 			} else if ($this->type == 'audio') {
 				/*
 				 * TODO: add audio cmd
@@ -1259,4 +1227,22 @@ class MemreasTranscoder {
 // $this->destRandMediaName .
 // ' -hls_flags single_file ' . $transcoded_file .
 // ' 2>&1';
+
+// last working 10.10.2015
+// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
+
+// Testing hls command with profile and pic_fmt
+
+// Testing remove bit rate and profile... - likely produced only two files - performance poor 11.28.2015
+// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_list_size 10 -hls_time 2 -hls_allow_cache 0 -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+// how to add:: hls_ts_options -movflags +faststart
+
+// 29-NOV-2015 testing single file - slow start
+// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_flags single_file ' . $transcoded_file;
+
+// 30-NOV-2015 Testing multiple ts with -movflags +faststart
+// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+
+// 4-DEC-2015 - puppies sample doesn't play on nexus
+// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 
