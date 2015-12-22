@@ -841,37 +841,37 @@ class MemreasTranscoder {
 				Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_file );
 				Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_hls_ts_file );
 				
-				// //
-				// // TODO: Encryption for .ts files not working - m3u8 protected by url signing
-				// //
-				// //
-				// // Create file for segment encryption
-				// //
-				// $base_path = $this->homeDir . self::CONVDIR . self::HLSDIR;
-				// $base_url = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $this->s3prefixpath . $this->type . '/';
+				//
+				// TODO: Encryption for .ts files not working - m3u8 protected by url signing
+				//
+				//
+				// Create file for segment encryption
+				//
+				$base_path = $this->homeDir . self::CONVDIR . self::HLSDIR;
+				$base_url = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $this->s3prefixpath . $this->type . '/';
 				
-				// //
-				// // file.key creation
-				// //
-				// $keyFile = $base_path . "file.key";
-				// $s3KeyFilePath = $base_url . "file.key";
-				// $keyHandle = fopen ( $keyFile, "w" );
-				// $bytes = openssl_random_pseudo_bytes ( 16 );
-				// fwrite ( $keyHandle, $bytes );
-				// fclose ( $keyHandle );
+				//
+				// file.key creation
+				//
+				$keyFile = $base_path . "file.key";
+				$s3KeyFilePath = $base_url . "file.key";
+				$keyHandle = fopen ( $keyFile, "w" );
+				$bytes = openssl_random_pseudo_bytes ( 16 );
+				fwrite ( $keyHandle, $bytes );
+				fclose ( $keyHandle );
 				
-				// //
-				// // file.keyinfo creation
-				// //
-				// $keyInfoFile = $base_path . "file.keyinfo";
-				// $s3FileKeyInfoPath = $base_url . "file.keyinfo";
-				// $keyInfoHandle = fopen ( $keyInfoFile, "w" );
-				// $fileKey = openssl_random_pseudo_bytes ( 16 );
-				// fwrite ( $keyInfoHandle, $s3FileKeyInfoPath . "\n" );
-				// fwrite ( $keyInfoHandle, $keyFile . "\n" );
-				// $fileHexKey = bin2hex ( $fileKey );
-				// fwrite ( $keyInfoHandle, $fileHexKey );
-				// fclose ( $keyInfoHandle );
+				//
+				// file.keyinfo creation
+				//
+				$keyInfoFile = $base_path . "file.keyinfo";
+				$s3FileKeyInfoPath = $base_url . "file.keyinfo";
+				$keyInfoHandle = fopen ( $keyInfoFile, "w" );
+				$fileKey = openssl_random_pseudo_bytes ( 16 );
+				fwrite ( $keyInfoHandle, $s3FileKeyInfoPath . "\n" );
+				fwrite ( $keyInfoHandle, $keyFile . "\n" );
+				$fileHexKey = bin2hex ( $fileKey );
+				fwrite ( $keyInfoHandle, $fileHexKey );
+				fclose ( $keyInfoHandle );
 				
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
@@ -879,12 +879,12 @@ class MemreasTranscoder {
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
 				
 				// 16-DEC-2015 - last working for fast start of 4k but still choppy
-				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 				
 				//
 				// 17-DEC-2015 - cmd to add encyption for .ts files (testing... still not working)
 				//
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 			} else if ($this->type == 'audio') {
 				/*
 				 * TODO: add audio cmd
