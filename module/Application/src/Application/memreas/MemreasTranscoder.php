@@ -931,7 +931,7 @@ class MemreasTranscoder {
 				$s3file = $this->s3prefixpath . $this->type . '/' . $this->MediaFileName . '.m3u8';
 				// encryption keyfile
 				// $this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET, false );
-				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET, false );
+				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET, true );
 				// Push all .ts files
 				$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 				$fsize = 0;
