@@ -14,15 +14,15 @@ use Application\Entity\ServerMonitor;
 use Application\memreas\AWSMemreasRedisCache;
 
 class AWSManagerAutoScaler {
-	protected $aws = null;
-	protected $service_locator = null;
-	protected $dbAdapter = null;
-	protected $autoscaler = null;
-	protected $redis;
-	protected $cpu_util;
-	protected $server_name;
-	protected $server_addr;
-	protected $hostname;
+	public $aws = null;
+	public $service_locator = null;
+	public $dbAdapter = null;
+	public $autoscaler = null;
+	public $redis;
+	public $cpu_util;
+	public $server_name;
+	public $server_addr;
+	public $hostname;
 	public function __construct($service_locator) {
 		try {
 			$this->service_locator = $service_locator;

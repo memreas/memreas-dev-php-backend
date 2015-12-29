@@ -14,12 +14,12 @@ use Application\Model\MemreasConstants;
 use Application\memreas\Mlog;
 
 class AWSManagerReceiver {
-	protected $aws = null;
+	public $aws = null;
 	public $s3 = null;
-	protected $ses = null;
-	protected $service_locator = null;
-	protected $dbAdapter = null;
-	protected $temp_job_uuid = null;
+	public $ses = null;
+	public $service_locator = null;
+	public $dbAdapter = null;
+	public $temp_job_uuid = null;
 	public $memreasTranscoder = null;
 	public function __construct($service_locator) {
 		try {
