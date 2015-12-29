@@ -54,7 +54,7 @@ class AWSManagerReceiver {
 			" Application\Entity\TranscodeTransaction tt " . 
 			" where tt.transcode_status='backlog' " . 
 			" and tt.priority='high' " . 
-			" and tt.server_name is null " . 
+			" and tt.server_lock is null " . 
 			" order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
@@ -82,7 +82,7 @@ class AWSManagerReceiver {
 			" Application\Entity\TranscodeTransaction tt " . 
 			" where tt.transcode_status='backlog' " . 
 			" and tt.priority='medium' " . 
-			" and tt.server_name is null " . 
+			" and tt.server_lock is null " . 
 			" order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
@@ -110,7 +110,7 @@ class AWSManagerReceiver {
 					" Application\Entity\TranscodeTransaction tt " .
 					" where tt.transcode_status='backlog' " .
 					" and tt.priority='low' " .
-					" and tt.server_name is null " .
+					" and tt.server_lock is null " .
 					" order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
