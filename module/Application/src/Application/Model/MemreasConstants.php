@@ -18,6 +18,7 @@ class MemreasConstants {
 	const SIGNURLS = false;
 	const EXPIRES = 3600;
 	const SIZE_5MB = 5000000;
+	const SIZE_10MB = 10000000;
 	const SIZE_100MB = 100000000;
 	// 1 hour should be enough to transcode
 	const MEMREASDB = 'memreasintdb';

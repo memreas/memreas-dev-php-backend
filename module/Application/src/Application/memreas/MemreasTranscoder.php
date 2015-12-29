@@ -152,7 +152,6 @@ class MemreasTranscoder {
 				$message_data ['is_video'] = 0;
 			} else { // It's an image just resize and store thumbnails
 				$message_data ['is_image'] = 1;
-				$message_data ['priority'] = 'high';
 				$message_data ['is_video'] = 0;
 				$message_data ['is_audio'] = 0;
 			}
@@ -174,8 +173,10 @@ class MemreasTranscoder {
 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, 'object filesize is::'.$video_size);
 			if ($video_size > MemreasConstants::SIZE_100MB) {
 				$message_data ['priority'] = 'low';
-			} else {
+			} else if ($video_size > MemreasConstants::SIZE_10MB) {
 				$message_data ['priority'] = 'medium';
+			} else {
+				$message_data ['priority'] = 'high';
 			}
 				
 			//
