@@ -152,7 +152,7 @@ class MemreasTranscoder {
 				$message_data ['is_video'] = 0;
 			} else { // It's an image just resize and store thumbnails
 				$message_data ['is_image'] = 1;
-				$message_date ['priority'] = 'high';
+				$message_data ['priority'] = 'high';
 				$message_data ['is_video'] = 0;
 				$message_data ['is_audio'] = 0;
 			}
@@ -173,9 +173,9 @@ class MemreasTranscoder {
 			//$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, 'object filesize is::'.$video_size);
 			if ($video_size > MemreasConstants::SIZE_100MB) {
-				$message_date ['priority'] = 'low';
+				$message_data ['priority'] = 'low';
 			} else {
-				$message_date ['priority'] = 'medium';
+				$message_data ['priority'] = 'medium';
 			}
 				
 			//
