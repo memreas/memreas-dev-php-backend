@@ -122,7 +122,20 @@ class TranscodeTransaction {
 	 *      nullable=true)
 	 */
 	public $transcode_job_duration;
-	// `transcode_job_duration` int(11) DEFAULT NULL,
+	
+	/**
+	 *
+	 * @var string @ORM\Column(name="server_lock", type="string", length=255,
+	 *      nullable=true)
+	 */
+	public $server_lock;
+	
+	/**
+	 *
+	 * @var string @ORM\Column(name="priority", type="string", length=10,
+	 *      nullable=true)
+	 */
+	public $priority;
 	
 	/**
 	 *
@@ -130,7 +143,6 @@ class TranscodeTransaction {
 	 *      nullable=false)
 	 */
 	public $transcode_start_time;
-	// `transcode_start_time` datetime NOT NULL,
 	
 	/**
 	 *
@@ -138,7 +150,7 @@ class TranscodeTransaction {
 	 *      nullable=true)
 	 */
 	public $transcode_end_time;
-	// `transcode_end_time` datetime DEFAULT NULL,
+
 	public function __set($name, $value) {
 		$this->$name = $value;
 	}
