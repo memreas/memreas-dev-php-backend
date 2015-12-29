@@ -67,7 +67,12 @@ class AWSManagerReceiver {
 					$message_data ['backlog'] = 1;
 					break;
 				}
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: high query message_data::", $message_data);
+				sleep(5);
 				return $message_data;
+			} else{
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: else high query message_data::", $message_data);
+				sleep(5);
 			}
 			
 			//
@@ -90,7 +95,12 @@ class AWSManagerReceiver {
 					$message_data ['backlog'] = 1;
 					break;
 				}
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: medium query message_data::", $message_data);
+				sleep(5);
 				return $message_data;
+			} else{
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: else medium query message_data::", $message_data);
+				sleep(5);
 			}
 			
 			//
@@ -113,7 +123,12 @@ class AWSManagerReceiver {
 					$message_data ['backlog'] = 1;
 					break;
 				}
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: low query message_data::", $message_data);
+				sleep(5);
 				return $message_data;
+			} else{
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: low medium query message_data::", $message_data);
+				sleep(5);
 			}
 			
 			//

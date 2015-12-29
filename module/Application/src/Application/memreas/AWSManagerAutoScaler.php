@@ -78,7 +78,7 @@ class AWSManagerAutoScaler {
 			return 0;
 		}
 	}
-	function releaseTranscodeingProcessHandleFromRedis() {
+	function releaseTranscodingProcessHandleFromRedis() {
 		$this->redis->setCache ( $this->server_name . "_trancode_lock", 0 );
 	}
 	function setServerData() {

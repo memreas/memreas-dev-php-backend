@@ -170,7 +170,7 @@ class IndexController extends AbstractActionController {
 						$message_data = $this->aws_manager->fetchBackLogEntry ($this->awsManagerAutoScaler->server_name);
 						if (empty ( $message_data )) {
 							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete!' );
-							$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis ();
+							$this->awsManagerAutoScaler->releaseTranscodingProcessHandleFromRedis ();
 							exit ();
 						} else {
 							/*
@@ -197,7 +197,7 @@ class IndexController extends AbstractActionController {
 						unset ( $this->aws_manager );
 						// $this->aws_manager->memreasTranscoder->refreshDBConnection();
 					}
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Bottomw of while loop fetch next entry...' );
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Bottom of while loop fetch next entry...' );
 				} // end while
 					  //
 					  // If the while finished we release the lock
