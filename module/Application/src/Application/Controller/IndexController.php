@@ -126,6 +126,8 @@ class IndexController extends AbstractActionController {
 			
 			Mlog::addone ( __CLASS__ . __METHOD__, '::about to return response...' );
 			$this->returnResponse ( $response );
+			
+			
 			/**
 			 * ****** background process starts here *******
 			 * ** process task if cpu < 75% usage
@@ -165,7 +167,7 @@ class IndexController extends AbstractActionController {
 						//
 						// Fetch next backlog entry
 						//
-						$message_data = $this->aws_manager->fetchBackLogEntry ();
+						$message_data = $this->aws_manager->fetchBackLogEntry ($this->awsManagerAutoScaler->server_name);
 						if (empty ( $message_data )) {
 							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete!' );
 							$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis ();

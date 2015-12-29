@@ -42,9 +42,20 @@ class AWSManagerReceiver {
 			throw $e;
 		}
 	}
-	function fetchBackLogEntry() {
+	function fetchBackLogEntry($server_name) {
+		//
+		// Method fetches next 
+		//
 		try {
-			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " order by tt.transcode_start_time asc";
+			//
+			// Check high priority first
+			//
+			$query_string = "SELECT tt FROM " . 
+			" Application\Entity\TranscodeTransaction tt " . 
+			" where tt.transcode_status='backlog' " . 
+			" and tt.priority='high' " . 
+			" and tt.server_name is null " . 
+			" order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
 			if ($result) {
@@ -52,13 +63,65 @@ class AWSManagerReceiver {
 					$message_data = json_decode ( $entry ['message_data'], true );
 					$message_data ['transcode_transaction_id'] = $entry ['transcode_transaction_id'];
 					$message_data ['backlog'] = 1;
+					$message_data ['server_lock'] = $server_name;
+					$message_data ['backlog'] = 1;
 					break;
 				}
-			} else {
-				return null;
+				return $message_data;
 			}
 			
-			return $message_data;
+			//
+			// Check medium priority next
+			//
+			$query_string = "SELECT tt FROM " . 
+			" Application\Entity\TranscodeTransaction tt " . 
+			" where tt.transcode_status='backlog' " . 
+			" and tt.priority='medium' " . 
+			" and tt.server_name is null " . 
+			" order by tt.transcode_start_time asc";
+			$query = $this->dbAdapter->createQuery ( $query_string );
+			$result = $query->getArrayResult ();
+			if ($result) {
+				foreach ( $result as $entry ) {
+					$message_data = json_decode ( $entry ['message_data'], true );
+					$message_data ['transcode_transaction_id'] = $entry ['transcode_transaction_id'];
+					$message_data ['backlog'] = 1;
+					$message_data ['server_lock'] = $server_name;
+					$message_data ['backlog'] = 1;
+					break;
+				}
+				return $message_data;
+			}
+			
+			//
+			// Check low priority last
+			//
+			$query_string = "SELECT tt FROM " .
+					" Application\Entity\TranscodeTransaction tt " .
+					" where tt.transcode_status='backlog' " .
+					" and tt.priority='low' " .
+					" and tt.server_name is null " .
+					" order by tt.transcode_start_time asc";
+			$query = $this->dbAdapter->createQuery ( $query_string );
+			$result = $query->getArrayResult ();
+			if ($result) {
+				foreach ( $result as $entry ) {
+					$message_data = json_decode ( $entry ['message_data'], true );
+					$message_data ['transcode_transaction_id'] = $entry ['transcode_transaction_id'];
+					$message_data ['backlog'] = 1;
+					$message_data ['server_lock'] = $server_name;
+					$message_data ['backlog'] = 1;
+					break;
+				}
+				return $message_data;
+			}
+			
+			//
+			// If nothing found retur null ... slow day :)
+			//
+			return null;
+				
+			
 		} catch ( Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::Caught exception', $e->getMessage () );
 			throw $e;

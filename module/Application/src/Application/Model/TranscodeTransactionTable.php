@@ -53,8 +53,10 @@ class TranscodeTransactionTable {
 				'transcode_status' => $transcode_transaction->transcode_status,
 				'pass_fail' => $transcode_transaction->pass_fail,
 				'metadata' => $transcode_transaction->metadata,
-				'error_message' => $transcode_transaction->error_message,
+				'error_message' => $transcode_transaction->error_message,			
 				'transcode_job_duration' => $transcode_transaction->transcode_job_duration,
+				'server_lock' => $transcode_transaction->server_lock,
+				'priority' => $transcode_transaction->priority,				
 				'transcode_start_time' => $transcode_transaction->transcode_start_time,
 				'transcode_end_time' => $transcode_transaction->transcode_end_time 
 		);

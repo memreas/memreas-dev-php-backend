@@ -89,6 +89,8 @@ class MemreasTranscoder {
 	protected $json_metadata;
 	protected $transcode_transaction_id;
 	protected $transcode_job_duration;
+	protected $server_name;
+	protected $priority;
 	protected $transcode_start_time;
 	protected $transcode_end_time;
 	protected $service_locator;
@@ -150,10 +152,24 @@ class MemreasTranscoder {
 				$message_data ['is_video'] = 0;
 			} else { // It's an image just resize and store thumbnails
 				$message_data ['is_image'] = 1;
+				$message_date ['priority'] = 'high';
 				$message_data ['is_video'] = 0;
 				$message_data ['is_audio'] = 0;
 			}
 			
+			//
+			// for video check size to set priority
+			// low priority are large video files over 100MB
+			// medium priority are video files < 100 MB
+			// high priority are all else (e.g. images, audio, etc).
+			//
+			$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
+			if ($video_size > MemreasConstants::SIZE_100MB) {
+				$message_date ['priority'] = 'low';
+			} else {
+				$message_date ['priority'] = 'medium';
+			}
+				
 			//
 			// Transcode Transaction data
 			//
@@ -1155,6 +1171,8 @@ class MemreasTranscoder {
 			$data_array ['pass_fail'] = ! empty ( $this->pass ) ? $this->pass : 0;
 			$data_array ['metadata'] = ! empty ( $this->transcode_job_meta ) ? json_encode ( $this->transcode_job_meta ) : null;
 			$data_array ['error_message'] = ! empty ( $this->error_message ) ? $this->error_message : 0;
+			$data_array ['server_name'] = ! empty ( $this->server_name ) ? $this->server_name : null;
+			$data_array ['priority'] = ! empty ( $this->priority ) ? $this->priority : 'low';
 			$data_array ['transcode_job_duration'] = ! empty ( $this->transcode_job_duration ) ? $this->transcode_job_duration : 0;
 			$data_array ['transcode_start_time'] = ! empty ( $this->transcode_start_time ) ? $this->transcode_start_time : date ( 'Y-m-d H:i:s' );
 			$data_array ['transcode_end_time'] = ! empty ( $this->transcode_end_time ) ? $this->transcode_end_time : null;
