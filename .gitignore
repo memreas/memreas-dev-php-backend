@@ -7,7 +7,6 @@ nbproject
 .project
 .settings
 .log
-composer.lock
 data/session/
 data/media/
 php_errors.log
