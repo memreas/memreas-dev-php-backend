@@ -243,7 +243,7 @@ class AWSManagerReceiver {
 			throw $e;
 		}
 	}
-	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false, $bucket = MemreasConstants::S3BUCKET, $encyption = true) {
+	function pushMediaToS3($file, $s3file, $content_type, $isVideo = false, $bucket = MemreasConstants::S3BUCKET, $encryption = true) {
 		try {
 			// Use default bucket
 			/*
@@ -276,7 +276,7 @@ class AWSManagerReceiver {
 				}
 			} else {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize > 5MB ::", $file_size );
-				if ($encyption) {
+				if ($encryption) {
 					$uploader = new MultipartUploader ( $this->s3, $file, [ 
 							'bucket' => $bucket,
 							'key' => $s3file,
