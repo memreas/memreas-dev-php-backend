@@ -163,7 +163,9 @@ class MemreasTranscoder {
 			// medium priority are video files < 100 MB
 			// high priority are all else (e.g. images, audio, etc).
 			//
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, 'about to get object filesize...');
 			$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, 'object filesize is::'.$video_size);
 			if ($video_size > MemreasConstants::SIZE_100MB) {
 				$message_date ['priority'] = 'low';
 			} else {
