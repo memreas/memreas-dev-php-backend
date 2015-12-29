@@ -41,7 +41,7 @@ class TranscodeTransaction {
 		$this->metadata = (isset ( $data ['metadata'] )) ? $data ['metadata'] : $this->metadata;
 		$this->error_message = (isset ( $data ['error_message'] )) ? $data ['error_message'] : $this->error_message;
 		$this->server_lock = (isset ( $data ['server_lock'] )) ? $data ['server_lock'] : $this->server_lock;
-		$this->priority = (isset ( $data ['priority'] )) ? $data ['priority'] : $this->server_lock;
+		$this->priority = (isset ( $data ['priority'] )) ? $data ['priority'] : $this->priority;
 		$this->transcode_job_duration = (isset ( $data ['transcode_job_duration'] )) ? $data ['transcode_job_duration'] : $this->transcode_job_duration;
 		$this->transcode_start_time = (isset ( $data ['transcode_start_time'] )) ? $data ['transcode_start_time'] : $this->transcode_start_time;
 		$this->transcode_end_time = (isset ( $data ['transcode_end_time'] )) ? $data ['transcode_end_time'] : $this->transcode_end_time;
