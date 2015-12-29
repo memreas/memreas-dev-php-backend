@@ -64,7 +64,6 @@ class AWSManagerReceiver {
 					$message_data ['transcode_transaction_id'] = $entry ['transcode_transaction_id'];
 					$message_data ['backlog'] = 1;
 					$message_data ['server_lock'] = $server_name;
-					$message_data ['backlog'] = 1;
 					break;
 				}
 				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: high query message_data::", $message_data);
@@ -92,7 +91,6 @@ class AWSManagerReceiver {
 					$message_data ['transcode_transaction_id'] = $entry ['transcode_transaction_id'];
 					$message_data ['backlog'] = 1;
 					$message_data ['server_lock'] = $server_name;
-					$message_data ['backlog'] = 1;
 					break;
 				}
 				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: medium query message_data::", $message_data);
@@ -120,7 +118,6 @@ class AWSManagerReceiver {
 					$message_data ['transcode_transaction_id'] = $entry ['transcode_transaction_id'];
 					$message_data ['backlog'] = 1;
 					$message_data ['server_lock'] = $server_name;
-					$message_data ['backlog'] = 1;
 					break;
 				}
 				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: low query message_data::", $message_data);

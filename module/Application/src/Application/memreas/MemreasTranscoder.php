@@ -89,7 +89,7 @@ class MemreasTranscoder {
 	protected $json_metadata;
 	protected $transcode_transaction_id;
 	protected $transcode_job_duration;
-	protected $server_name;
+	protected $server_lock;
 	protected $priority;
 	protected $transcode_start_time;
 	protected $transcode_end_time;
@@ -1180,7 +1180,7 @@ class MemreasTranscoder {
 			$data_array ['pass_fail'] = ! empty ( $this->pass ) ? $this->pass : 0;
 			$data_array ['metadata'] = ! empty ( $this->transcode_job_meta ) ? json_encode ( $this->transcode_job_meta ) : null;
 			$data_array ['error_message'] = ! empty ( $this->error_message ) ? $this->error_message : 0;
-			$data_array ['server_name'] = ! empty ( $this->server_name ) ? $this->server_name : null;
+			$data_array ['server_lock'] = ! empty ( $this->server_lock ) ? $this->server_lock : null;
 			$data_array ['priority'] = ! empty ( $this->priority ) ? $this->priority : 'low';
 			$data_array ['transcode_job_duration'] = ! empty ( $this->transcode_job_duration ) ? $this->transcode_job_duration : 0;
 			$data_array ['transcode_start_time'] = ! empty ( $this->transcode_start_time ) ? $this->transcode_start_time : date ( 'Y-m-d H:i:s' );
