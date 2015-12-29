@@ -196,6 +196,8 @@ class MemreasTranscoder {
 			$this->is_video = $message_data ['is_video'];
 			$this->is_audio = $message_data ['is_audio'];
 			$this->is_image = $message_data ['is_image'];
+			$this->server_lock = $message_data ['server_lock'];
+			$this->priority = $message_data ['priority'];
 			$this->json_metadata = json_encode ( $message_data );
 			$this->transcode_start_time = $this->now ();
 			
