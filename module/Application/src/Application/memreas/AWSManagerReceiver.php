@@ -15,7 +15,7 @@ use Application\memreas\Mlog;
 
 class AWSManagerReceiver {
 	protected $aws = null;
-	protected $s3 = null;
+	public $s3 = null;
 	protected $ses = null;
 	protected $service_locator = null;
 	protected $dbAdapter = null;
