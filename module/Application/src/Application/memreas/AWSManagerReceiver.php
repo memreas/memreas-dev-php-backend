@@ -66,12 +66,7 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: high query message_data::", $message_data);
-				sleep(5);
 				return $message_data;
-			} else{
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: else high query message_data::", $message_data);
-				sleep(5);
 			}
 			
 			//
@@ -93,12 +88,7 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: medium query message_data::", $message_data);
-				sleep(5);
 				return $message_data;
-			} else{
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: else medium query message_data::", $message_data);
-				sleep(5);
 			}
 			
 			//
@@ -120,12 +110,7 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: low query message_data::", $message_data);
-				sleep(5);
 				return $message_data;
-			} else{
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__.":: low medium query message_data::", $message_data);
-				sleep(5);
 			}
 			
 			//
@@ -153,7 +138,7 @@ class AWSManagerReceiver {
 			throw $e;
 		}
 	}
-	function sesEmailErrorToAdmin($msg) {
+	public function sesEmailErrorToAdmin($msg) {
 		// Mlog::addone ( __CLASS__ . __METHOD__ . '::About to send email::',
 		// $msg );
 		try {
@@ -207,7 +192,7 @@ class AWSManagerReceiver {
 					'SaveAs' => $file 
 			) );
 			$lsal = shell_exec ( 'ls -al ' . $file );
-			Mlog::addone ( __FILE__ . __METHOD__ . '::finished pullMediaFromS3', $lsal );
+			//Mlog::addone ( __FILE__ . __METHOD__ . '::finished pullMediaFromS3', $lsal );
 			return true;
 		} catch ( Exception $e ) {
 			throw $e;
@@ -253,7 +238,7 @@ class AWSManagerReceiver {
 			$file_size = filesize ( $file );
 			if ($file_size < MemreasConstants::SIZE_5MB) {
 				// Upload a file.
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
 				if ($encryption) {
 					$result = $this->s3->putObject ( array (
 							'Bucket' => $bucket,
@@ -275,7 +260,7 @@ class AWSManagerReceiver {
 					) );
 				}
 			} else {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize > 5MB ::", $file_size );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize > 5MB ::", $file_size );
 				if ($encryption) {
 					$uploader = new MultipartUploader ( $this->s3, $file, [ 
 							'bucket' => $bucket,
@@ -296,7 +281,7 @@ class AWSManagerReceiver {
 				try {
 					$result = $uploader->upload ();
 					// echo "Upload complete: {$result['ObjectURL'}\n";
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
+					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
 				} catch ( MultipartUploadException $e ) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
 				}
@@ -364,7 +349,7 @@ class AWSManagerReceiver {
 			$result = 0;
 			$file_size = filesize ( $file );
 			if ($file_size < MemreasConstants::SIZE_5MB) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
 				// Upload a file.
 				$result = $this->s3->putObject ( array (
 						'Bucket' => MemreasConstants::S3BUCKET,
@@ -387,7 +372,7 @@ class AWSManagerReceiver {
 				try {
 					$result = $uploader->upload ();
 					// echo "Upload complete: {$result['ObjectURL'}\n";
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
+					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
 				} catch ( MultipartUploadException $e ) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
 				}

@@ -51,12 +51,13 @@ class IndexController extends AbstractActionController {
 		return $response->getBody ();
 	}
 	public function indexAction() {
-		Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
+		//Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
 		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		
 		$this->checkGitPull = new CheckGitPull ();
 		$this->checkGitPull->exec ();
 		if ($actionname == "gitpull") {
+			Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
 			$gitpull = true;
 			echo $this->checkGitPull->exec ( $gitpull );
 			exit ();
@@ -75,7 +76,7 @@ class IndexController extends AbstractActionController {
 			//
 			// Backend worker...
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction else -> backend worker...' );
+			Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction backend worker processing' );
 			try {
 				//
 				// Check Instance against AutoScaler
@@ -94,7 +95,7 @@ class IndexController extends AbstractActionController {
 		exit ();
 	}
 	protected function transcoderAction() {
-		Mlog::addone ( __CLASS__ . __METHOD__, '::entered transcoderAction...' );
+		//Mlog::addone ( __CLASS__ . __METHOD__, '::entered transcoderAction...' );
 		// Web Server Handle
 		$action = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		$json = isset ( $_REQUEST ["json"] ) ? $_REQUEST ["json"] : '';
@@ -116,24 +117,21 @@ class IndexController extends AbstractActionController {
 			//
 			// Here if no media_id is set then work on any backlog items...
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__, '::about to markMediaForTranscoding...' );
 			$this->aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
 			if (! empty ( $message_data ['media_id'] )) {
 				$response = $this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
 			} else {
 				throw new \Exception ( "Transcoder::media_id is empty!" );
 			}
-			
-			Mlog::addone ( __CLASS__ . __METHOD__, '::about to return response...' );
 			$this->returnResponse ( $response );
 			
 			
-			/**
+			/*-
 			 * ****** background process starts here *******
 			 * ** process task if cpu < 75% usage
 			 * ** after completing task fetch another
 			 */
-			/*
+			/*-
 			 * Process initial message - no longer necessary all messages
 			 * backlog
 			 */
@@ -176,16 +174,16 @@ class IndexController extends AbstractActionController {
 							/*
 							 * Process backlog messages
 							 */
-							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  before as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  before as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 							$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
-							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  after as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->aws_manager->memreasTranscoder->markMediaForTranscoding' . 'fetched' );
+							//Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  after as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 							$result = $this->aws_manager->snsProcessMediaSubscribe ( $message_data );
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '$this->aws_manager->snsProcessMediaSubscribe' . 'passed' );
 						}
 					} catch ( \Exception $e ) {
 						// continue processing - email likely sent
 						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
+						$this->aws_manager->sesEmailErrorToAdmin(__CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage ());
+						exit();
 					} finally {
 						/*
 						 * Reset and continue work on backlog
