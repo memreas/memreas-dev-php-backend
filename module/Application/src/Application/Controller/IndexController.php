@@ -74,6 +74,7 @@ class IndexController extends AbstractActionController {
 			exit ();
 		} else if ($actionname == "wakeup") {
 			try {
+				Mlog::addone ( __CLASS__ . __METHOD__, "wakeup called" );
 				//
 				// Return response
 				//
