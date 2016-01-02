@@ -20,19 +20,20 @@ while [  $WAIT == true ]; do
 
 	if ps ax | grep -v grep | grep $SERVICE > /dev/null
 	then
-	    echo "$(timestamp) $SERVICE service running, everything is fine\n" >> $OUTPUTFILE
-	    echo "calling $CLEARURL"
+	    echo -e "$(timestamp) $SERVICE service running, everything is fine\n" >> $OUTPUTFILE
+	    echo -e "calling $CLEARURL \n" >> $OUTPUTFILE
 	    curl $CLEARURL >> $OUTPUTFILE
-	    echo "calling $GITPULLURL"
+	    echo -e "calling $GITPULLURL \n" >> $OUTPUTFILE
 		curl $GITPULLURL	>> $OUTPUTFILE
-	    echo "calling $WAKEUPURL"
+	    echo -e "calling $WAKEUPURL \n" >> $OUTPUTFILE
 		curl $WAKEUPURL	>> $OUTPUTFILE
+	    echo -e "\n" >> $OUTPUTFILE
  	    break; 
 	else
-	    echo "$(timestamp) $SERVICE is not running will sleep until started..." >> $OUTPUTFILE
+	    echo -e "$(timestamp) $SERVICE is not running will sleep until started...\n" >> $OUTPUTFILE
 	    sleep 5
 	fi
 
 done
-echo "$(timestamp) startup_worker.sh complete" >> $OUTPUTFILE 
+echo -e "$(timestamp) startup_worker.sh complete!\n" >> $OUTPUTFILE 
 
