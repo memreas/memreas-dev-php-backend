@@ -22,11 +22,13 @@ while [  $WAIT == true ]; do
 	then
 	    echo -e "$(timestamp) $SERVICE service running, everything is fine\n" >> $OUTPUTFILE
 	    echo -e "calling $CLEARURL \n" >> $OUTPUTFILE
-	    echo curl $CLEARURL >> $OUTPUTFILE
+	    curl $CLEARURL >> $OUTPUTFILE
+	    echo -e "\n" >> $OUTPUTFILE
 	    echo -e "calling $GITPULLURL \n" >> $OUTPUTFILE
-		echo curl $GITPULLURL	>> $OUTPUTFILE
+		curl $GITPULLURL	>> $OUTPUTFILE
+	    echo -e "\n" >> $OUTPUTFILE
 	    echo -e "calling $WAKEUPURL \n" >> $OUTPUTFILE
-		echo curl $WAKEUPURL	>> $OUTPUTFILE
+		curl $WAKEUPURL	>> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
  	    break; 
 	else
