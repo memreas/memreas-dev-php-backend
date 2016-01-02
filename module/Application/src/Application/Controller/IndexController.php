@@ -51,12 +51,12 @@ class IndexController extends AbstractActionController {
 		return $response->getBody ();
 	}
 	public function indexAction() {
-		//Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
+		// Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
 		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		
-		$this->checkGitPull = new CheckGitPull ();
-		$this->checkGitPull->exec ();
 		if ($actionname == "gitpull") {
+			$this->checkGitPull = new CheckGitPull ();
+			$this->checkGitPull->exec ();
 			Mlog::addone ( __CLASS__ . __METHOD__, '::entered gitpull processing' );
 			$gitpull = true;
 			echo $this->checkGitPull->exec ( $gitpull );
@@ -72,9 +72,28 @@ class IndexController extends AbstractActionController {
 				echo 'Caught exception: ', $e->getMessage (), "\n";
 			}
 			exit ();
+		} else if ($actionname == "wakeup") {
+			try {
+				//
+				// Return response
+				//
+				$this->returnResponse ( "processing" );
+				
+				//
+				// Check Instance against AutoScaler
+				//
+				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator () );
+				
+				//
+				// Start processing backlog - wakeup call...
+				//
+				$this->processBacklog ();
+			} catch ( Exception $e ) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . '::Caught exception', $e->getMessage () );
+			}
 		} else {
 			//
-			// Backend worker...
+			// Backend worker - base call user initiated upload
 			//
 			Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction backend worker processing' );
 			try {
@@ -95,7 +114,7 @@ class IndexController extends AbstractActionController {
 		exit ();
 	}
 	protected function transcoderAction() {
-		//Mlog::addone ( __CLASS__ . __METHOD__, '::entered transcoderAction...' );
+		// Mlog::addone ( __CLASS__ . __METHOD__, '::entered transcoderAction...' );
 		// Web Server Handle
 		$action = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		$json = isset ( $_REQUEST ["json"] ) ? $_REQUEST ["json"] : '';
@@ -125,13 +144,14 @@ class IndexController extends AbstractActionController {
 			}
 			$this->returnResponse ( $response );
 			
-			
-			/*-
+			/*
+			 * -
 			 * ****** background process starts here *******
 			 * ** process task if cpu < 75% usage
 			 * ** after completing task fetch another
 			 */
-			/*-
+			/*
+			 * -
 			 * Process initial message - no longer necessary all messages
 			 * backlog
 			 */
@@ -143,63 +163,13 @@ class IndexController extends AbstractActionController {
 				//
 				Mlog::addone ( __CLASS__ . __METHOD__, '::getmypid()::' . getmypid () . ' exiting...' );
 				exit ();
-			} else
-				while ( $this->awsManagerAutoScaler->serverReadyToProcessTask () ) {
-					//
-					// Process is running and has lock
-					//
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Top of while loop Process has lock pid::' . getmypid () );
-					
-					try {
-						
-						if (! $this->getServiceLocator ()) {
-							Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'getServiceLocator is empty - try to init' );
-							$this->setServiceLocator ( new \Zend\ServiceManager\ServiceManager () );
-						}
-						//
-						// Fetch $this->aws_manager
-						//
-						$this->aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Fetched $this->aws_manager for pid' . getmypid () );
-						
-						//
-						// Fetch next backlog entry
-						//
-						$message_data = $this->aws_manager->fetchBackLogEntry ($this->awsManagerAutoScaler->server_name);
-						if (empty ( $message_data )) {
-							Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete!' );
-							$this->awsManagerAutoScaler->releaseTranscodingProcessHandleFromRedis ();
-							exit ();
-						} else {
-							/*
-							 * Process backlog messages
-							 */
-							//Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  before as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
-							$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
-							//Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data  after as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
-							$result = $this->aws_manager->snsProcessMediaSubscribe ( $message_data );
-						}
-					} catch ( \Exception $e ) {
-						// continue processing - email likely sent
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
-						$this->aws_manager->sesEmailErrorToAdmin(__CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage ());
-						exit();
-					} finally {
-						/*
-						 * Reset and continue work on backlog
-						 */
-						Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
-						unset ( $message_data );
-						unset ( $response );
-						unset ( $this->dbAdapter );
-						unset ( $this->aws_manager );
-						// $this->aws_manager->memreasTranscoder->refreshDBConnection();
-					}
-					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Bottom of while loop fetch next entry...' );
-				} // end while
-					  //
-					  // If the while finished we release the lock
-					  //
+			} else {
+				$this->processBacklog ();
+			}
+			
+			//
+			// If the while finished we release the lock
+			//
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis()::', 'lock release for pid::' . getmypid () );
 			$this->awsManagerAutoScaler->releaseTranscodeingProcessHandleFromRedis ();
 			
@@ -208,6 +178,61 @@ class IndexController extends AbstractActionController {
 			// and/or the pid doesn't match.
 			//
 		}
+	}
+	protected function processBacklog() {
+		while ( $this->awsManagerAutoScaler->serverReadyToProcessTask () ) {
+			//
+			// Process is running and has lock
+			//
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Top of while loop Process has lock pid::' . getmypid () );
+			
+			try {
+				
+				if (! $this->getServiceLocator ()) {
+					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'getServiceLocator is empty - try to init' );
+					$this->setServiceLocator ( new \Zend\ServiceManager\ServiceManager () );
+				}
+				//
+				// Fetch $this->aws_manager
+				//
+				$this->aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Fetched $this->aws_manager for pid' . getmypid () );
+				
+				//
+				// Fetch next backlog entry
+				//
+				$message_data = $this->aws_manager->fetchBackLogEntry ( $this->awsManagerAutoScaler->server_name );
+				if (empty ( $message_data )) {
+					Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete!' );
+					$this->awsManagerAutoScaler->releaseTranscodingProcessHandleFromRedis ();
+					exit ();
+				} else {
+					/*
+					 * Process backlog messages
+					 */
+					// Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data before as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+					$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . '$this->aws_manager->memreasTranscoder->markMediaForTranscoding ( $message_data ) $message_data after as json', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+					$result = $this->aws_manager->snsProcessMediaSubscribe ( $message_data );
+				}
+			} catch ( \Exception $e ) {
+				// continue processing - email likely sent
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
+				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
+				exit ();
+			} finally {
+				/*
+				 * Reset and continue work on backlog
+				 */
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
+				unset ( $message_data );
+				unset ( $response );
+				unset ( $this->dbAdapter );
+				unset ( $this->aws_manager );
+				// $this->aws_manager->memreasTranscoder->refreshDBConnection();
+			}
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Bottom of while loop fetch next entry...' );
+		} // end while
 	}
 	protected function returnResponse($response) {
 		Mlog::addone ( __CLASS__ . __METHOD__, '::start' );
