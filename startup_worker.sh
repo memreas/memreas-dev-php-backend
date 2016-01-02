@@ -21,13 +21,13 @@ while [  $WAIT == true ]; do
 	if ps ax | grep -v grep | grep $SERVICE > /dev/null
 	then
 	    echo -e "$(timestamp) $SERVICE service running, everything is fine\n" >> $OUTPUTFILE
-	    echo -e "calling $CLEARURL \n" >> $OUTPUTFILE
+	    echo -e "$(timestamp) calling $CLEARURL \n" >> $OUTPUTFILE
 	    curl $CLEARURL >> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
-	    echo -e "calling $GITPULLURL \n" >> $OUTPUTFILE
+	    echo -e "$(timestamp)  calling $GITPULLURL \n" >> $OUTPUTFILE
 		curl $GITPULLURL >> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
-	    echo -e "calling $WAKEUPURL \n" >> $OUTPUTFILE
+	    echo -e "$(timestamp)  calling $WAKEUPURL \n" >> $OUTPUTFILE
 		curl $WAKEUPURL	>> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
  	    break; 
