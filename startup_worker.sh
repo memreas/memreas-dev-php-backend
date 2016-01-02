@@ -10,19 +10,22 @@ timestamp() {
 
 SERVICE=httpd
 WAIT=true
+OUTPUTFILE=/var/www/memreas-dev-php-backend/wakeup.log
 
 while [  $WAIT == true ]; do
 
 	if ps ax | grep -v grep | grep $SERVICE > /dev/null
 	then
-	    echo timestamp + " $SERVICE service running, everything is fine\n" >> /var/www/memreas-dev-php-backend/wakeup.log
- 	    echo curl https://memreasdev-backend.memreas.com/?action=wakeup >> /var/www/memreas-dev-php-backend/wakeup.log
+	    echo timestamp + " $SERVICE service running, everything is fine\n" >> $OUTPUTFILE
+	    curl https://memreasdev-backend.memreas.com/?action=clearlog >> $OUTPUTFILE
+		curl https://memreasdev-backend.memreas.com/?action=gitpull	>> $OUTPUTFILE
+ 	    curl https://memreasdev-backend.memreas.com/?action=wakeup >> $OUTPUTFILE
  	    break; 
 	else
-	    echo timestamp + " $SERVICE is not running will sleep until started..." >> /var/www/memreas-dev-php-backend/wakeup.log
+	    echo timestamp + " $SERVICE is not running will sleep until started..." >> $OUTPUTFILE
 	    sleep 5
 	fi
 
 done
-echo timestamp + " startup_worker.sh complete" >> /var/www/memreas-dev-php-backend/wakeup.log 
+echo timestamp + " startup_worker.sh complete" >> $OUTPUTFILE 
 
