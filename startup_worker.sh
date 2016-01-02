@@ -25,7 +25,7 @@ while [  $WAIT == true ]; do
 	    curl $CLEARURL >> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
 	    echo -e "calling $GITPULLURL \n" >> $OUTPUTFILE
-		curl $GITPULLURL	>> $OUTPUTFILE
+		curl $GITPULLURL >> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
 	    echo -e "calling $WAKEUPURL \n" >> $OUTPUTFILE
 		curl $WAKEUPURL	>> $OUTPUTFILE
