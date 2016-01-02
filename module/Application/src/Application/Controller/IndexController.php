@@ -87,6 +87,11 @@ class IndexController extends AbstractActionController {
 				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator () );
 				
 				//
+				// Fetch AWS Manager
+				//
+				$this->aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
+				
+				//
 				// Send email notification
 				//
 				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__, "wakeup called for " . $this->awsManagerAutoScaler->server_name );
