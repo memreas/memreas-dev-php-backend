@@ -75,6 +75,7 @@ class IndexController extends AbstractActionController {
 		} else if ($actionname == "wakeup") {
 			try {
 				Mlog::addone ( __CLASS__ . __METHOD__, "wakeup called" );
+				
 				//
 				// Return response
 				//
@@ -84,6 +85,11 @@ class IndexController extends AbstractActionController {
 				// Check Instance against AutoScaler
 				//
 				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator () );
+				
+				//
+				// Send email notification
+				//
+				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__, "wakeup called for " . $this->awsManagerAutoScaler->server_name );
 				
 				//
 				// Start processing backlog - wakeup call...

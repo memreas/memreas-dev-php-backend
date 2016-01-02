@@ -10,11 +10,13 @@ while [  $WAIT == true ]; do
 
 	if ps ax | grep -v grep | grep $SERVICE > /dev/null
 	then
-	    echo "$SERVICE service running, everything is fine"
+	    echo date +"%T $SERVICE service running, everything is fine\n" >> /var/www/memreas-dev-php-backend/wakeup.log
+ 	    echo curl https://memreasdev-backend.memreas.com/?action=wakeup >> /var/www/memreas-dev-php-backend/wakeup.log 
 	else
-	    echo "$SERVICE is not running"
-	    echo "$SERVICE is not running!" | mail -s "$SERVICE down" root
+	    echo date +"%T $SERVICE is not running will sleep until started..." >> /var/www/memreas-dev-php-backend/wakeup.log
+	    sleep 5
 	fi
 
 done
+echo date +"%T startup_worker.sh complete" >> /var/www/memreas-dev-php-backend/wakeup.log 
 
