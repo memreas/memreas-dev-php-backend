@@ -94,7 +94,7 @@ class IndexController extends AbstractActionController {
 				//
 				// Send email notification
 				//
-				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__, "wakeup called for " . $this->awsManagerAutoScaler->server_name );
+				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . "::wakeup called for " . $this->awsManagerAutoScaler->server_name );
 				
 				//
 				// Start processing backlog - wakeup call...
@@ -230,7 +230,7 @@ class IndexController extends AbstractActionController {
 			} catch ( \Exception $e ) {
 				// continue processing - email likely sent
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
-				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
+				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . '::Error in while loop::' . $e->getMessage () );
 				exit ();
 			} finally {
 				/*
