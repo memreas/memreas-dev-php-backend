@@ -17,7 +17,6 @@ class AWSManagerAutoScaler {
 	public $aws = null;
 	public $service_locator = null;
 	public $dbAdapter = null;
-	public $autoscaler = null;
 	public $redis;
 	public $cpu_util;
 	public $server_name;
@@ -25,22 +24,27 @@ class AWSManagerAutoScaler {
 	public $hostname;
 	public function __construct($service_locator) {
 		try {
-			$this->service_locator = $service_locator;
-			$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
-			// Fetch aws handle
-			$this->aws = MemreasConstants::fetchAWS ();
 			
-			// Fetch the AutoScaling class
-			$this->autoscaler = $this->aws->createAutoScaling ();
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->service_locator' );
+			$this->service_locator = $service_locator;
+
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->dbAdapter' );
+			$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
+
+			// Fetch aws handle
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch fetchAWS()' );
+			$this->aws = MemreasConstants::fetchAWS ();
 			
 			//
 			// Fetch Redis Handle
 			//
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->redis' );
 			$this->redis = new AWSMemreasRedisCache ();
 			
 			//
 			// Set Server Data
 			//
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->setServerData ()' );
 			$this->setServerData ();
 		} catch ( Exception $e ) {
 			Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
