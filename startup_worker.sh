@@ -11,9 +11,9 @@ timestamp() {
 SERVICE=httpd
 WAIT=true
 OUTPUTFILE=/var/www/memreas-dev-php-backend/wakeup.log
-CLEARURL=https://memreasdev-backend.memreas.com/?action=clearlog
-GITPULLURL=https://memreasdev-backend.memreas.com/?action=gitpull
-WAKEUPURL=https://memreasdev-backend.memreas.com/?action=wakeup
+CLEARURL=http://127.0.0.1/?action=clearlog
+GITPULLURL=http://127.0.0.1/?action=gitpull
+WAKEUPURL=http://127.0.0.1/?action=wakeup
 
 rm $OUTPUTFILE
 while [  $WAIT == true ]; do
