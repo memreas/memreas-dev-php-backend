@@ -1,6 +1,6 @@
 #!/bin/bash
 #Purpose = tail php_errors.log file
-#Created on 30-DEC-2015-2015
+#Created on 30-DEC-2015
 
 # Define a timestamp function
 timestamp() {
