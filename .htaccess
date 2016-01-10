@@ -1,6 +1,7 @@
 <IfModule mod_authz_host.c>
 Allow from memreas.com
 Allow from github.com
+Allow from 10.179.214.247
 </IfModule>
 
 <IfModule mod_php5.c>
