@@ -16,6 +16,9 @@ echo "You entered $comment"
 #php composer.phar self-update
 #php composer.phar update
 
+#zero out php_errors.log
+rm php_errors.log
+
 #Push to AWS
 echo "Committing to git..."
 git add .
