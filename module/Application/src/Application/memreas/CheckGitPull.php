@@ -42,8 +42,8 @@ class CheckGitPull {
 			// cd to $github_basedir
 			$output .= $this->execOps ( "cd $this->github_basedir" );
 			
-			// remove composer.phar
-			$output .= $this->execOps ( "git reset --hard HEAD" );
+			// remove composer.phar 10-JAN-2015 - pushing entire folder to avoid merge conflicts
+			// $output .= $this->execOps ( "git reset --hard HEAD" );
 			
 			// git pull
 			$output .= $this->execOps ( "git pull" );
@@ -60,9 +60,9 @@ class CheckGitPull {
 			// $output .= $this->execOps ( "git pull" );
 			$pulled_latest = true;
 			
-			putenv ( "COMPOSER_HOME=" . $this->github_basedir );
-			$output .= $this->execOps ( "php composer.phar self-update" );
-			$output .= $this->execOps ( "php composer.phar update" );
+			//putenv ( "COMPOSER_HOME=" . $this->github_basedir );
+			//$output .= $this->execOps ( "php composer.phar self-update" );
+			//$output .= $this->execOps ( "php composer.phar update" );
 			$output .= "\nCompleted git pull op...";
 			
 			Mlog::addone ( 'output::', $output );
