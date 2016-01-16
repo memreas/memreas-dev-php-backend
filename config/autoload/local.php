@@ -27,12 +27,12 @@ return array (
 						'memreasintdb' => array (
 								'dsn' => 'mysql:dbname=memreasintdb;host=memreasdevdb.co0fw2snbu92.us-east-1.rds.amazonaws.com',
 								'username' => 'memreasdbuser',
-								'password' => '4ma_2016' 
+								'password' => '4ma___2016' 
 						),
 						'memreasbackenddb' => array (
 								'dsn' => 'mysql:dbname=memreasbackenddb;host=memreasdevdb.co0fw2snbu92.us-east-1.rds.amazonaws.com',
 								'username' => 'memreasdbuser',
-								'password' => '4ma_2016' 
+								'password' => '4ma___2016' 
 						) 
 				) 
 		),
@@ -51,7 +51,7 @@ return array (
 										'port' => '3306',
 										'dbname' => 'memreasbackenddb',
 										'user' => 'memreasdbuser',
-										'password' => '4ma_2016' 
+										'password' => '4ma___2016' 
 								) 
 						) 
 				) 
