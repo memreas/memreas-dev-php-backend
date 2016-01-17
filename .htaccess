@@ -2,6 +2,7 @@
 Allow from memreas.com
 Allow from github.com
 Allow from 10.179.214.247
+Allow from 10.158.154.171
 </IfModule>
 
 <IfModule mod_php5.c>
