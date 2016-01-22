@@ -502,7 +502,8 @@ class MemreasTranscoder {
 					// Audio section
 					// Create web quality mp3
 					$this->transcode_job_meta = array ();
-					$this->transcode ( 'audio' );
+					$this->type = 'audio';
+					$this->transcode ();
 					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'audio_complete';
 					// update media metadata and transcode transaction
 					// metadata
