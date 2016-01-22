@@ -748,6 +748,7 @@ class MemreasTranscoder {
 		try {
 			
 			// var setup
+			$cm = __CLASS__.__METHOD__;
 			$mpeg4ext = '.mp4';
 			$tsext = '.ts';
 			$aacext = '.m4a';
@@ -889,12 +890,14 @@ class MemreasTranscoder {
 				/*
 				 * TODO: add audio cmd
 				 */
+				Mlog::addone($cm,'::Inside audio section');
 				// error_log("Inside transcode type=audio
 				// ...".PHP_EOL);
 				$qv = ' -c:a libfdk_aac -movflags +faststart ';
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::AUDIODIR . $this->MediaFileName . $aacext;
 				$transcoded_file_name = $this->MediaFileName . $aacext;
 				$this->cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
+				Mlog::addone($cm,'::$this->cmd---->'.$this->cmd);
 			} else {
 				throw new \Exception ( "MemreasTranscoder $this->type not found." );
 			}
