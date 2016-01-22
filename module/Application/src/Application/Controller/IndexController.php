@@ -82,14 +82,14 @@ class IndexController extends AbstractActionController {
 				$this->returnResponse ( "processing" );
 				
 				//
-				// Check Instance against AutoScaler
-				//
-				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator () );
-				
-				//
 				// Fetch AWS Manager
 				//
 				$this->aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
+				
+				//
+				// Check Instance against AutoScaler
+				//
+				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator (),  $this->aws_manager);
 				
 				//
 				// Send email notification
@@ -112,7 +112,7 @@ class IndexController extends AbstractActionController {
 				//
 				// Check Instance against AutoScaler
 				//
-				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator () );
+				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator (),  $this->aws_manager );
 				
 				/*
 				 * If need server launch, guzzle to start,

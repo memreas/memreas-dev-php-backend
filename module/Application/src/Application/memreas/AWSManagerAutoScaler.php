@@ -15,6 +15,7 @@ use Application\memreas\AWSMemreasRedisCache;
 
 class AWSManagerAutoScaler {
 	public $aws = null;
+	public $ses = null;
 	public $service_locator = null;
 	public $dbAdapter = null;
 	public $redis;
@@ -22,19 +23,23 @@ class AWSManagerAutoScaler {
 	public $server_name;
 	public $server_addr;
 	public $hostname;
-	public function __construct($service_locator) {
+	public function __construct($service_locator, $aws_manager) {
 		try {
 			
+			// Fetch aws handle
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'setting aws' );
+			$this->aws = $aws_manager;
+			
+			// Fetch the Ses class
+			$this->ses = $this->aws->createSes ();
+			
+			// Setup service locator and db
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->service_locator' );
 			$this->service_locator = $service_locator;
 
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->dbAdapter' );
 			$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 
-			// Fetch aws handle
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch fetchAWS()' );
-			$this->aws = MemreasConstants::fetchAWS ();
-			
 			//
 			// Fetch Redis Handle
 			//
@@ -48,6 +53,8 @@ class AWSManagerAutoScaler {
 			$this->setServerData ();
 		} catch ( Exception $e ) {
 			Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
+				$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: " . $e->getMessage () );
+			
 		}
 	}
 	public function serverReadyToProcessTask() {
