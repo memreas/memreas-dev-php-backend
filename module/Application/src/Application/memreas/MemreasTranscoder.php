@@ -377,7 +377,8 @@ class MemreasTranscoder {
 				/*
 				 * ffprobe here...
 				 */
-				if ($this->is_video || $this->is_audio) {
+				//if ($this->is_video || $this->is_audio) {
+				if ($this->is_video) {
 					// Calc media vars
 					$this->cmd = $this->ffprobecmd . ' -v error -print_format json -show_format -show_streams ' . $this->destRandMediaName;
 					try {
