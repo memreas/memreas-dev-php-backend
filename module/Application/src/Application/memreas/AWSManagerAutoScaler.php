@@ -30,9 +30,6 @@ class AWSManagerAutoScaler {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'setting aws' );
 			$this->aws = $aws_manager;
 			
-			// Fetch the Ses class
-			$this->ses = $this->aws->createSes ();
-			
 			// Setup service locator and db
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->service_locator' );
 			$this->service_locator = $service_locator;
