@@ -288,20 +288,14 @@ class MemreasTranscoder {
 				$this->MediaExt = pathinfo ( $this->s3file_name, PATHINFO_EXTENSION );
 				$this->filesize = filesize ( $this->destRandMediaName );
 				
-				if ($this->is_video) {
+				if ($this->is_video || $this->is_audio) {
 					/*
 					 * Video Section
 					 */
 					// Let's use $this->MediaFileType variable to check wheather
 					// uploaded file is supported.
 					// We use PHP SWITCH statement to check valid video format,
-					// PHP SWITCH is similar to IF/ELSE statements
-					// suitable if we want to compare the a variable with many
-					// different values
-					// Mlog::addone(
-					// __CLASS__ . __METHOD__ . __LINE__ .
-					// '$this->MediaFileType',
-					// $this->MediaFileType);
+					Mlog::addone($cm . __LINE__ , '::$this->MediaFileType-->' . $this->MediaFileType);
 					switch (strtolower ( $this->MediaFileType )) {
 						case 'video/mp4' :
 							break;
@@ -377,10 +371,11 @@ class MemreasTranscoder {
 				/*
 				 * ffprobe here...
 				 */
-				//if ($this->is_video || $this->is_audio) {
-				if ($this->is_video) {
+				if ($this->is_video || $this->is_audio) {
 					// Calc media vars
 					$this->cmd = $this->ffprobecmd . ' -v error -print_format json -show_format -show_streams ' . $this->destRandMediaName;
+					Mlog::addone($cm,'::$this->cmd---->'.$this->cmd);
+						
 					try {
 						$ffprobe_json = shell_exec ( $this->cmd );
 						$ffprobe_json_array = json_decode ( $ffprobe_json, true );
@@ -394,6 +389,7 @@ class MemreasTranscoder {
 					}
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
 				} else {
+					//image
 					$ffprobe_json_array = [ ];
 					$this->duration = 0; // image
 					$this->filesize = filesize ( $this->destRandMediaName );
@@ -406,7 +402,6 @@ class MemreasTranscoder {
 				$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'transcode_start@' . $this->now ();
 				$this->memreas_media_metadata ['S3_files'] ['ffprobe_data'] = $ffprobe_json_array;
 				$this->memreas_media_metadata ['S3_files'] ['size'] = $this->filesize;
-				MLog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$ffprobe_json_array', json_encode ( $ffprobe_json_array ) );
 				
 				/*
 				 * update transcode_transaction
@@ -780,25 +775,25 @@ class MemreasTranscoder {
 				 * Add copyright as needed
 				 */
 				$copyrightMD5 = $this->copyright_array ['copyright_id_md5'];
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_md5]', $this->copyright_array ['copyright_id_md5'] );
+				Mlog::addone ( $cm . __LINE__ . '$this->copyright_array [copyright_id_md5]', $this->copyright_array ['copyright_id_md5'] );
 				$copyrightSHA256 = $this->copyright_array ['copyright_id_sha256'];
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->copyright_array [copyright_id_sha256]', $this->copyright_array ['copyright_id_sha256'] );
+				Mlog::addone ( $cm . __LINE__ . '$this->copyright_array [copyright_id_sha256]', $this->copyright_array ['copyright_id_sha256'] );
 				$mRight = "md5_" . $copyrightMD5 . " sha256_" . $copyrightSHA256;
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$mRight', $mRight );
+				Mlog::addone ( $cm . __LINE__ . '$mRight', $mRight );
 				$qv = ' -vf drawtext="fontfile=' . getcwd () . '/usr/share/fonts/memreas/segoescb.ttf:text=' . "'$mRight'" . ':fontsize=24:fontcolor=blue:x=0:y=0" ';
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$qv', $qv );
+				Mlog::addone ( $cm . __LINE__ . '$qv', $qv );
 				sleep ( 10 );
 				// $transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 				// $transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 				$path_parts = pathinfo ( $this->destRandMediaName );
 				$inscribed_file = $path_parts ['dirname'] . '/' . $path_parts ['basename'] . '.copy.' . $path_parts ['extension'];
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$inscribed_file::', $inscribed_file );
+				Mlog::addone ( $cm . __LINE__ . '::$inscribed_file::', $inscribed_file );
 				// echo $path_parts['dirname'], "\n";
 				// echo $path_parts['basename'], "\n";
 				// echo $path_parts['extension'], "\n";
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '$this->cmd', $this->cmd );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
+				Mlog::addone ( $cm . __LINE__ . '$this->cmd', $this->cmd );
+				Mlog::addone ( $cm . __LINE__ . '::$copyright::', $this->copyright );
 				$transcoded_file = $this->destRandMediaName;
 			} else if ($this->type == 'web') {
 				/*
@@ -829,7 +824,7 @@ class MemreasTranscoder {
 				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
 			} else if ($this->type == 'hls') {
-				Mlog::addone ( __CLASS__ . __METHOD__, "else if ($this->type == 'hls')" );
+				Mlog::addone ( $cm, "else if ($this->type == 'hls')" );
 				
 				// Note: this section uses the transcoded web file
 				// above
@@ -838,8 +833,8 @@ class MemreasTranscoder {
 				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . '.m3u8';
 				$transcoded_hls_ts_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName;
-				Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_file );
-				Mlog::addone ( __CLASS__ . __METHOD__ . '$transcoded_file', $transcoded_hls_ts_file );
+				Mlog::addone ( $cm . '$transcoded_file', $transcoded_file );
+				Mlog::addone ( $cm . '$transcoded_file', $transcoded_hls_ts_file );
 				
 				// //
 				// // TODO: Encryption for .ts files not working - m3u8 protected by url signing
@@ -874,7 +869,7 @@ class MemreasTranscoder {
 				// fwrite ( $keyInfoHandle, $fileHexKey );
 				// fclose ( $keyInfoHandle );
 				
-				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
+				// Mlog::addone ( $cm . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
 				// *not working on iphone so us* -> pulled from 9/21 git //$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $this->destRandMediaName . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
@@ -906,6 +901,7 @@ class MemreasTranscoder {
 			//
 			// exec ffmpeg operation
 			//
+			Mlog::addone($cm . __LINE__, '$this->cmd-->'.$this->cmd);
 			$this->execFFMPEG ( $transcoded_file );
 			
 			if ($this->type == 'copyright') {
@@ -924,7 +920,7 @@ class MemreasTranscoder {
 				$this->copyright_array ['fileCheckSumSHA256'] = hash_file ( 'sha256', $this->destRandMediaName );
 				$this->copyright_array ['copyright_inscribed'] = 1;
 				$this->copyright = json_encode ( $this->copyright_array );
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$copyright::', $this->copyright );
+				Mlog::addone ( $cm . __LINE__ . '::$copyright::', $this->copyright );
 			}
 			
 			// Push to S3
@@ -975,7 +971,7 @@ class MemreasTranscoder {
 			if (! empty ( $this->memreas_media_metadata ['S3_files'] ['thumbnails'] ['1280x720'] )) {
 				$this->memreas_media_metadata ['S3_files'] ['thumbnails'] ['1280x720'] = array_unique ( $this->memreas_media_metadata ['S3_files'] ['thumbnails'] ['1280x720'] );
 			}
-			Mlog::addone ( __CLASS__ . __METHOD__, '::complete::transcode_status::' . $this->transcode_status . '::' . $this->type );
+			Mlog::addone ( $cm, '::complete::transcode_status::' . $this->transcode_status . '::' . $this->type );
 		} catch ( \Exception $e ) {
 			throw $e;
 		}
