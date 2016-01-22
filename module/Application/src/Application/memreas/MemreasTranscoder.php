@@ -45,7 +45,6 @@ class MemreasTranscoder {
 	const DESTDIR = 'media/';
 	const IMAGEDIR = 'image/';
 	const CONVDIR = 'media/';
-	const _1080PDIR = '1080p/';
 	const THUMBNAILSDIR = 'thumbnails/';
 	const AUDIODIR = 'audio/';
 	const HLSDIR = 'hls/';
@@ -102,7 +101,6 @@ class MemreasTranscoder {
 	protected $MediaFileName;
 	protected $nice_priority = 0;
 	protected $compression_preset_web;
-	protected $compression_preset_1080p;
 	protected $transcode_job_meta;
 	protected $exception;
 	protected $cmd;
@@ -484,23 +482,6 @@ class MemreasTranscoder {
 					}
 					
 					/*
-					 * High quality mp4 conversion (h.265) - doesn't play??
-					 */
-					// Mlog::addone ( __CLASS__ . __METHOD__, "starting 1080p video" );
-					// // set $this->transcode_job_meta in function
-					// $this->type = '1080p';
-					// $this->transcode ();
-					// Mlog::addone ( __CLASS__ . __METHOD__, "finished 1080p video" );
-					// $this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = '1080p_mp4_complete';
-					// // set status to show 1080p available
-					// $this->transcode_status = "success_1080p";
-					// $this->pass = "1";
-					// // update media metadata and transcode transaction
-					// // metadata
-					// $this->persistMedia ();
-					// $this->persistTranscodeTransaction ();
-					
-					/*
 					 * HLS conversion
 					 */
 					Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode ( hls )' );
@@ -509,9 +490,11 @@ class MemreasTranscoder {
 					                     // in
 					                     // function
 					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'hls_complete';
-					// set status to show all (web,1080p,hls) available
+					
+					// set status to show all (web,hls) available
 					$this->transcode_status = "success";
 					$this->pass = "1";
+					
 					// update media metadata and transcode transaction metadata
 					$this->persistMedia ();
 					$this->persistTranscodeTransaction ();
@@ -743,7 +726,6 @@ class MemreasTranscoder {
 					$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_1280x720, // data/temp_job_uuid_dir/media/thumbnails/1280x720/
 					$this->homeDir . self::DESTDIR . self::WEBDIR, // data/temp_job_uuid_dir/media/web/
 					$this->homeDir . self::DESTDIR . self::AUDIODIR, // data/temp_job_uuid_dir/media/webm/
-					$this->homeDir . self::DESTDIR . self::_1080PDIR, // data/temp_job_uuid_dir/media/p1080/
 					$this->homeDir . self::DESTDIR . self::TSDIR, // data/temp_job_uuid_dir/media/hls/
 					$this->homeDir . self::DESTDIR . self::HLSDIR 
 			); // data/temp_job_uuid_dir/media/hls/
@@ -844,21 +826,10 @@ class MemreasTranscoder {
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -i  ' . $this->destRandMediaName . ' ' . $qv . ' ' . $transcoded_file . ' 2>&1';
-			} else if ($this->type == '1080p') {
-				/*
-				 * Not in use... players don't playback hevc
-				 */
-				// $qv = ' -threads 0 ' . ' -c:v libx265 -preset ' .
-				// $this->compression_preset_1080p .
-				// ' -x265-params crf=28 -c:a aac -strict -2 -vbr 4 ';
-				$qv = ' -c:v libx265 ' . '-pix_fmt yuv420p ' . '-preset ' . $this->compression_preset_1080p . ' -x265-params crf=28 ' . '-c:a aac -strict experimental  ' . '-b:a 128k ';
-				$transcoded_file = $this->homeDir . self::CONVDIR . self::_1080PDIR . $this->MediaFileName . $mpeg4ext;
-				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
-				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
 			} else if ($this->type == 'hls') {
 				Mlog::addone ( __CLASS__ . __METHOD__, "else if ($this->type == 'hls')" );
 				
-				// Note: this section uses the transcoded 1080p file
+				// Note: this section uses the transcoded web file
 				// above
 				$input_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
 				$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . $mpeg4ext;
@@ -870,6 +841,7 @@ class MemreasTranscoder {
 				
 				// //
 				// // TODO: Encryption for .ts files not working - m3u8 protected by url signing
+				// // *.ts files protected by aws encryption...
 				// //
 				// //
 				// // Create file for segment encryption
@@ -1219,19 +1191,15 @@ class MemreasTranscoder {
 			if ($duration_in_minutes <= 5) {
 				$this->nice_priority = 5;
 				$this->compression_preset_web = self::MEDIUM;
-				$this->compression_preset_1080p = self::MEDIUM;
 			} else if ($duration_in_minutes > 5 && $duration_in_minutes <= 10) {
 				$this->nice_priority = 10;
 				$this->compression_preset_web = self::FASTER;
-				$this->compression_preset_1080p = self::FASTER;
 			} else if ($duration_in_minutes > 10 && $duration_in_minutes <= 30) {
 				$this->nice_priority = 15;
 				$this->compression_preset_web = self::VERYFAST;
-				$this->compression_preset_1080p = self::VERYFAST;
 			} else if ($duration_in_minutes > 30) {
 				$this->nice_priority = 20;
 				$this->compression_preset_web = self::ULTRAFAST;
-				$this->compression_preset_1080p = self::ULTRAFAST;
 			}
 		} catch ( \Exception $e ) {
 			throw $e;
