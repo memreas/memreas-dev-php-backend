@@ -497,6 +497,8 @@ class MemreasTranscoder {
 					
 					// End if ($is_video)
 				} else if ($this->is_audio) {
+					Mlog::addone($cm,'::Inside $this->is_audio cmd--->'.$this->cmd);
+						
 					// Audio section
 					// Create web quality mp3
 					$this->transcode_job_meta = array ();
@@ -764,6 +766,8 @@ class MemreasTranscoder {
 			 * $isMP4 = true;
 			 * }
 			 */
+			Mlog::addone($cm.__LINE__,'::Inside transcode $this->type --->'.$this->type);
+				
 			if ($this->type == 'copyright') {
 				
 				// Sample command
@@ -882,12 +886,12 @@ class MemreasTranscoder {
 				//
 				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 			} else if ($this->type == 'audio') {
+				Mlog::addone ( $cm, "else if ($this->type == 'hls')" );
+				
 				/*
 				 * TODO: add audio cmd
 				 */
 				Mlog::addone($cm,'::Inside audio section');
-				// error_log("Inside transcode type=audio
-				// ...".PHP_EOL);
 				$qv = ' -c:a libfdk_aac -movflags +faststart ';
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::AUDIODIR . $this->MediaFileName . $aacext;
 				$transcoded_file_name = $this->MediaFileName . $aacext;
