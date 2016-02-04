@@ -39,7 +39,7 @@ class AWSManagerAutoScaler {
 				$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 			} catch ( Exception $e ) {
 				Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
-				$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: failed to obtain database handle " . $e->getMessage () );
+				$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: failed to obtain database handle " . $e->getMessage (), "error retrieveing database handle" );
 				throw $e;
 			}
 			
@@ -51,7 +51,7 @@ class AWSManagerAutoScaler {
 				$this->redis = new AWSMemreasRedisCache ();
 			} catch ( Exception $e ) {
 				Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
-				$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: failed to obtain redis handle " . $e->getMessage () );
+				$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: failed to obtain redis handle " . $e->getMessage (), "error retrieveing redis handle" );
 				throw $e;
 			}
 			
@@ -62,7 +62,7 @@ class AWSManagerAutoScaler {
 			$this->setServerData ();
 		} catch ( Exception $e ) {
 			Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
-			$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: " . $e->getMessage () );
+			$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: " . $e->getMessage (), __CLASS__.'::error in __construct($service_locator, $aws_manager)' );
 		}
 	}
 	public function serverReadyToProcessTask() {

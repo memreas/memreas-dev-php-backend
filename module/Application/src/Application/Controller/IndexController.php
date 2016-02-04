@@ -51,8 +51,8 @@ class IndexController extends AbstractActionController {
 		return $response->getBody ();
 	}
 	public function indexAction() {
-		Mlog::addone(__CLASS__.__METHOD__.'::$_SERVER-->', $_SERVER);
-			// Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
+		Mlog::addone ( __CLASS__ . __METHOD__ . '::$_SERVER-->', $_SERVER );
+		// Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
 		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		
 		if ($actionname == "gitpull") {
@@ -90,12 +90,12 @@ class IndexController extends AbstractActionController {
 				//
 				// Check Instance against AutoScaler
 				//
-				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator (),  $this->aws_manager);
+				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator (), $this->aws_manager );
 				
 				//
 				// Send email notification
 				//
-				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . "::wakeup called for " . $this->awsManagerAutoScaler->server_name );
+				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . "::wakeup called for " . $this->awsManagerAutoScaler->server_name, "new server added::" . $this->awsManagerAutoScaler->server_name );
 				
 				//
 				// Start processing backlog - wakeup call...
@@ -113,7 +113,7 @@ class IndexController extends AbstractActionController {
 				//
 				// Check Instance against AutoScaler
 				//
-				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator (),  $this->aws_manager );
+				$this->awsManagerAutoScaler = new AWSManagerAutoScaler ( $this->getServiceLocator (), $this->aws_manager );
 				
 				/*
 				 * If need server launch, guzzle to start,
@@ -193,7 +193,12 @@ class IndexController extends AbstractActionController {
 		}
 	}
 	protected function processBacklog() {
-		while ( $this->awsManagerAutoScaler->serverReadyToProcessTask () ) {
+		//
+		// Fetch $this->aws_manager
+		//
+		$this->aws_manager = new AWSManagerReceiver ( $this->getServiceLocator () );
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Fetched $this->aws_manager for pid' . getmypid () );
+		while ( $this->awsManagerAutoScaler->serverReadyToProcessTask () || $this->aws_manager->checkForHighPriorityEntry () ) {
 			//
 			// Process is running and has lock
 			//
@@ -231,7 +236,7 @@ class IndexController extends AbstractActionController {
 			} catch ( \Exception $e ) {
 				// continue processing - email likely sent
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
-				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . '::Error in while loop::' . $e->getMessage () );
+				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . '::Error in while loop::' . $e->getMessage (), "error in while loop" );
 				exit ();
 			} finally {
 				/*

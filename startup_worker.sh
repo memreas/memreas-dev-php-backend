@@ -28,8 +28,18 @@ while [  $WAIT == true ]; do
 		curl $GITPULLURL  2>&1 >> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
 	    echo -e "$(timestamp)  calling $WAKEUPURL \n" >> $OUTPUTFILE
+	    #trying multiple wakeup calls since servers seem to go to zero
 		curl $WAKEUPURL	 2>&1 >> $OUTPUTFILE
 	    echo -e "\n" >> $OUTPUTFILE
+		curl $WAKEUPURL	 2>&1 >> $OUTPUTFILE
+	    echo -e "\n" >> $OUTPUTFILE
+	    sleep 5
+		curl $WAKEUPURL	 2>&1 >> $OUTPUTFILE
+	    echo -e "\n" >> $OUTPUTFILE
+	    sleep 5
+	    curl $WAKEUPURL	 2>&1 >> $OUTPUTFILE
+	    echo -e "\n" >> $OUTPUTFILE
+
  	    break; 
 	else
 	    echo -e "$(timestamp) $SERVICE is not running will sleep until started...\n" >> $OUTPUTFILE

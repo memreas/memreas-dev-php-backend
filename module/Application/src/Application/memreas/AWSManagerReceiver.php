@@ -42,20 +42,35 @@ class AWSManagerReceiver {
 			throw $e;
 		}
 	}
-	function fetchBackLogEntry($server_name) {
+	function checkForHighPriorityEntry() {
 		//
-		// Method fetches next 
+		// Method fetches next
 		//
 		try {
 			//
 			// Check high priority first
 			//
-			$query_string = "SELECT tt FROM " . 
-			" Application\Entity\TranscodeTransaction tt " . 
-			" where tt.transcode_status='backlog' " . 
-			" and tt.priority='high' " . 
-			" and tt.server_lock is null " . 
-			" order by tt.transcode_start_time asc";
+			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='high' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
+			$query = $this->dbAdapter->createQuery ( $query_string );
+			$result = $query->getArrayResult ();
+			if (count($result) > 0) {
+				return true;
+			}
+			return false;
+		} catch ( Exception $e ) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . '::Caught exception', $e->getMessage () );
+			throw $e;
+		}
+	}
+	function fetchBackLogEntry($server_name) {
+		//
+		// Method fetches next
+		//
+		try {
+			//
+			// Check high priority first
+			//
+			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='high' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
 			if ($result) {
@@ -72,12 +87,7 @@ class AWSManagerReceiver {
 			//
 			// Check medium priority next
 			//
-			$query_string = "SELECT tt FROM " . 
-			" Application\Entity\TranscodeTransaction tt " . 
-			" where tt.transcode_status='backlog' " . 
-			" and tt.priority='medium' " . 
-			" and tt.server_lock is null " . 
-			" order by tt.transcode_start_time asc";
+			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='medium' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
 			if ($result) {
@@ -94,12 +104,7 @@ class AWSManagerReceiver {
 			//
 			// Check low priority last
 			//
-			$query_string = "SELECT tt FROM " .
-					" Application\Entity\TranscodeTransaction tt " .
-					" where tt.transcode_status='backlog' " .
-					" and tt.priority='low' " .
-					" and tt.server_lock is null " .
-					" order by tt.transcode_start_time asc";
+			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='low' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
 			if ($result) {
@@ -117,8 +122,6 @@ class AWSManagerReceiver {
 			// If nothing found retur null ... slow day :)
 			//
 			return null;
-				
-			
 		} catch ( Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::Caught exception', $e->getMessage () );
 			throw $e;
@@ -138,7 +141,7 @@ class AWSManagerReceiver {
 			throw $e;
 		}
 	}
-	public function sesEmailErrorToAdmin($msg) {
+	public function sesEmailErrorToAdmin($msg, $subject = '') {
 		// Mlog::addone ( __CLASS__ . __METHOD__ . '::About to send email::',
 		// $msg );
 		try {
@@ -156,7 +159,7 @@ class AWSManagerReceiver {
 							// Subject is required
 							'Subject' => array (
 									// Data is required
-									'Data' => 'memreasdev-bew error',
+									'Data' => "memreasdev-bew::" . $subject,
 									'Charset' => 'UTF-8' 
 							),
 							// Body is required
@@ -192,7 +195,7 @@ class AWSManagerReceiver {
 					'SaveAs' => $file 
 			) );
 			$lsal = shell_exec ( 'ls -al ' . $file );
-			//Mlog::addone ( __FILE__ . __METHOD__ . '::finished pullMediaFromS3', $lsal );
+			// Mlog::addone ( __FILE__ . __METHOD__ . '::finished pullMediaFromS3', $lsal );
 			return true;
 		} catch ( Exception $e ) {
 			throw $e;
@@ -205,8 +208,9 @@ class AWSManagerReceiver {
 					// 'params' => array('ACL' => 'public-read'),
 					'concurrency' => 20,
 					'ServerSideEncryption' => 'AES256' 
-					//'StorageClass' => 'REDUCED_REDUNDANCY' 
-			);
+			)
+			// 'StorageClass' => 'REDUCED_REDUNDANCY'
+			;
 			
 			$result = $this->s3->uploadDirectory ( $dir, MemreasConstants::S3BUCKET, $keyPrefix, $options );
 		} catch ( Exception $e ) {
@@ -221,8 +225,9 @@ class AWSManagerReceiver {
 					// 'CopySource' => "{".$bucket."}/{".$source."}",
 					'CopySource' => $bucket . '/' . $source,
 					'ServerSideEncryption' => 'AES256' 
-					//'StorageClass' => 'REDUCED_REDUNDANCY' 
-			) );
+			)
+			// 'StorageClass' => 'REDUCED_REDUNDANCY'
+			 );
 			return $result;
 		} catch ( Exception $e ) {
 			throw $e;
@@ -238,7 +243,7 @@ class AWSManagerReceiver {
 			$file_size = filesize ( $file );
 			if ($file_size < MemreasConstants::SIZE_5MB) {
 				// Upload a file.
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
 				if ($encryption) {
 					$result = $this->s3->putObject ( array (
 							'Bucket' => $bucket,
@@ -246,42 +251,46 @@ class AWSManagerReceiver {
 							'SourceFile' => $file,
 							'ContentType' => $content_type,
 							// 'ACL' => 'public-read',
-							'ServerSideEncryption' => 'AES256'
-							//'StorageClass' => 'REDUCED_REDUNDANCY' 
-					) );
+							'ServerSideEncryption' => 'AES256' 
+					)
+					// 'StorageClass' => 'REDUCED_REDUNDANCY'
+					 );
 				} else {
 					$result = $this->s3->putObject ( array (
 							'Bucket' => $bucket,
 							'Key' => $s3file,
 							'SourceFile' => $file,
-							'ContentType' => $content_type
-							// 'ACL' => 'public-read',
-							//'StorageClass' => 'REDUCED_REDUNDANCY' 
-					) );
+							'ContentType' => $content_type 
+					)
+					// 'ACL' => 'public-read',
+					// 'StorageClass' => 'REDUCED_REDUNDANCY'
+					 );
 				}
 			} else {
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize > 5MB ::", $file_size );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize > 5MB ::", $file_size );
 				if ($encryption) {
 					$uploader = new MultipartUploader ( $this->s3, $file, [ 
 							'bucket' => $bucket,
 							'key' => $s3file,
 							'Content-Type' => $content_type,
-							'ServerSideEncryption' => 'AES256'
-							//'StorageClass' => 'REDUCED_REDUNDANCY' 
-					] );
+							'ServerSideEncryption' => 'AES256' 
+					]
+					// 'StorageClass' => 'REDUCED_REDUNDANCY'
+					 );
 				} else {
 					$uploader = new MultipartUploader ( $this->s3, $file, [ 
 							'bucket' => $bucket,
 							'key' => $s3file,
-							'Content-Type' => $content_type
-							//'StorageClass' => 'REDUCED_REDUNDANCY' 
-					] );
+							'Content-Type' => $content_type 
+					]
+					// 'StorageClass' => 'REDUCED_REDUNDANCY'
+					 );
 				}
 				
 				try {
 					$result = $uploader->upload ();
 					// echo "Upload complete: {$result['ObjectURL'}\n";
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
 				} catch ( MultipartUploadException $e ) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
 				}
@@ -349,30 +358,32 @@ class AWSManagerReceiver {
 			$result = 0;
 			$file_size = filesize ( $file );
 			if ($file_size < MemreasConstants::SIZE_5MB) {
-				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize < 5MB ::", $file_size );
 				// Upload a file.
 				$result = $this->s3->putObject ( array (
 						'Bucket' => MemreasConstants::S3BUCKET,
 						'Key' => $thumbnail_file,
 						'SourceFile' => $file,
 						'ContentType' => $content_type,
-						'ServerSideEncryption' => 'AES256'
-						//'StorageClass' => 'REDUCED_REDUNDANCY' 
-				) );
+						'ServerSideEncryption' => 'AES256' 
+				)
+				// 'StorageClass' => 'REDUCED_REDUNDANCY'
+				 );
 			} else {
 				$uploader = new MultipartUploader ( $this->s3, $file, [ 
 						'Bucket' => MemreasConstants::S3BUCKET,
 						'Key' => $thumbnail_file,
 						'SourceFile' => $file,
 						'ContentType' => $content_type,
-						'ServerSideEncryption' => 'AES256'
-						//'StorageClass' => 'REDUCED_REDUNDANCY' 
-				] );
+						'ServerSideEncryption' => 'AES256' 
+				]
+				// 'StorageClass' => 'REDUCED_REDUNDANCY'
+				 );
 				
 				try {
 					$result = $uploader->upload ();
 					// echo "Upload complete: {$result['ObjectURL'}\n";
-					//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
+					// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUpload worked::", $result );
 				} catch ( MultipartUploadException $e ) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::MultiPartUploadException::", $e->getMessage () );
 				}
