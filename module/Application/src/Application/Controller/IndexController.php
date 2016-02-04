@@ -52,7 +52,7 @@ class IndexController extends AbstractActionController {
 	}
 	public function indexAction() {
 		Mlog::addone(__CLASS__.__METHOD__.'::$_SERVER-->', $_SERVER);
-		// Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
+			// Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
 		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		
 		if ($actionname == "gitpull") {

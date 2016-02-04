@@ -204,8 +204,8 @@ class AWSManagerReceiver {
 			$options = array (
 					// 'params' => array('ACL' => 'public-read'),
 					'concurrency' => 20,
-					'ServerSideEncryption' => 'AES256',
-					'StorageClass' => 'REDUCED_REDUNDANCY' 
+					'ServerSideEncryption' => 'AES256' 
+					//'StorageClass' => 'REDUCED_REDUNDANCY' 
 			);
 			
 			$result = $this->s3->uploadDirectory ( $dir, MemreasConstants::S3BUCKET, $keyPrefix, $options );
@@ -220,8 +220,8 @@ class AWSManagerReceiver {
 					'Key' => $target,
 					// 'CopySource' => "{".$bucket."}/{".$source."}",
 					'CopySource' => $bucket . '/' . $source,
-					'ServerSideEncryption' => 'AES256',
-					'StorageClass' => 'REDUCED_REDUNDANCY' 
+					'ServerSideEncryption' => 'AES256' 
+					//'StorageClass' => 'REDUCED_REDUNDANCY' 
 			) );
 			return $result;
 		} catch ( Exception $e ) {
@@ -246,17 +246,17 @@ class AWSManagerReceiver {
 							'SourceFile' => $file,
 							'ContentType' => $content_type,
 							// 'ACL' => 'public-read',
-							'ServerSideEncryption' => 'AES256',
-							'StorageClass' => 'REDUCED_REDUNDANCY' 
+							'ServerSideEncryption' => 'AES256'
+							//'StorageClass' => 'REDUCED_REDUNDANCY' 
 					) );
 				} else {
 					$result = $this->s3->putObject ( array (
 							'Bucket' => $bucket,
 							'Key' => $s3file,
 							'SourceFile' => $file,
-							'ContentType' => $content_type,
+							'ContentType' => $content_type
 							// 'ACL' => 'public-read',
-							'StorageClass' => 'REDUCED_REDUNDANCY' 
+							//'StorageClass' => 'REDUCED_REDUNDANCY' 
 					) );
 				}
 			} else {
@@ -266,15 +266,15 @@ class AWSManagerReceiver {
 							'bucket' => $bucket,
 							'key' => $s3file,
 							'Content-Type' => $content_type,
-							'ServerSideEncryption' => 'AES256',
-							'StorageClass' => 'REDUCED_REDUNDANCY' 
+							'ServerSideEncryption' => 'AES256'
+							//'StorageClass' => 'REDUCED_REDUNDANCY' 
 					] );
 				} else {
 					$uploader = new MultipartUploader ( $this->s3, $file, [ 
 							'bucket' => $bucket,
 							'key' => $s3file,
-							'Content-Type' => $content_type,
-							'StorageClass' => 'REDUCED_REDUNDANCY' 
+							'Content-Type' => $content_type
+							//'StorageClass' => 'REDUCED_REDUNDANCY' 
 					] );
 				}
 				
@@ -356,8 +356,8 @@ class AWSManagerReceiver {
 						'Key' => $thumbnail_file,
 						'SourceFile' => $file,
 						'ContentType' => $content_type,
-						'ServerSideEncryption' => 'AES256',
-						'StorageClass' => 'REDUCED_REDUNDANCY' 
+						'ServerSideEncryption' => 'AES256'
+						//'StorageClass' => 'REDUCED_REDUNDANCY' 
 				) );
 			} else {
 				$uploader = new MultipartUploader ( $this->s3, $file, [ 
@@ -365,8 +365,8 @@ class AWSManagerReceiver {
 						'Key' => $thumbnail_file,
 						'SourceFile' => $file,
 						'ContentType' => $content_type,
-						'ServerSideEncryption' => 'AES256',
-						'StorageClass' => 'REDUCED_REDUNDANCY' 
+						'ServerSideEncryption' => 'AES256'
+						//'StorageClass' => 'REDUCED_REDUNDANCY' 
 				] );
 				
 				try {
