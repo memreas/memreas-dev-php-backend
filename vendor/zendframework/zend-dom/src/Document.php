@@ -46,19 +46,22 @@ class Document
      * Error list generated from transformation of document to DOMDocument
      * @var array
      */
-    protected $errors = array();
+    protected $errors = [];
 
     /**
      * XPath namespaces
      * @var array
      */
-    protected $xpathNamespaces = array();
+    protected $xpathNamespaces = [];
 
     /**
      * XPath PHP Functions
      * @var mixed
      */
     protected $xpathPhpFunctions;
+
+    /** @var null|string */
+    protected $encoding;
 
     /**
      * Constructor
@@ -112,7 +115,7 @@ class Document
 
         $this->setType($forcedType ?: (!empty($document) ? $type : null));
         $this->setEncoding($forcedEncoding);
-        $this->setErrors(array());
+        $this->setErrors([]);
 
         return $this;
     }
@@ -164,6 +167,7 @@ class Document
      *
      * @param  DOMDocument $domDocument
      * @return self
+     * @deprecated
      */
     protected function setDomDocument(DOMDocument $domDocument)
     {
@@ -192,7 +196,7 @@ class Document
     {
         $this->encoding = $encoding;
 
-        return $this->encoding;
+        return $this;
     }
 
     /**

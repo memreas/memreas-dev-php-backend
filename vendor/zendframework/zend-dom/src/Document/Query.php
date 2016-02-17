@@ -30,9 +30,10 @@ class Query
      * @param  string    $expression CSS selector or XPath query
      * @param  Document  $document   Document to query
      * @param  string    $type       The type of $expression
+     * @param  \DOMNode  $contextNode
      * @return NodeList
      */
-    public static function execute($expression, Document $document, $type = self::TYPE_XPATH)
+    public static function execute($expression, Document $document, $type = self::TYPE_XPATH, \DOMNode $contextNode = null)
     {
         // Expression check
         if ($type === static::TYPE_CSS) {
@@ -50,7 +51,7 @@ class Query
             ($xpathPhpfunctions === true) ? $xpath->registerPHPFunctions() : $xpath->registerPHPFunctions($xpathPhpfunctions);
         }
 
-        $nodeList = $xpath->queryWithErrorException($expression);
+        $nodeList = $xpath->queryWithErrorException($expression, $contextNode);
         return new NodeList($nodeList);
     }
 
@@ -65,7 +66,7 @@ class Query
         $path = (string) $path;
         if (strstr($path, ',')) {
             $paths       = explode(',', $path);
-            $expressions = array();
+            $expressions = [];
             foreach ($paths as $path) {
                 $xpath = static::cssToXpath(trim($path));
                 if (is_string($xpath)) {
@@ -77,7 +78,7 @@ class Query
             return implode('|', $expressions);
         }
 
-        $paths    = array('//');
+        $paths    = ['//'];
         $path     = preg_replace('|\s+>\s+|', '>', $path);
         $segments = preg_split('/\s+/', $path);
         foreach ($segments as $key => $segment) {

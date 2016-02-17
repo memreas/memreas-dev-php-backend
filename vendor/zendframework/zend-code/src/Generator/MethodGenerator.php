@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -34,7 +34,8 @@ class MethodGenerator extends AbstractMemberGenerator
      */
     public static function fromReflection(MethodReflection $reflectionMethod)
     {
-        $method = new static();
+        $method         = new static();
+        $declaringClass = $reflectionMethod->getDeclaringClass();
 
         $method->setSourceContent($reflectionMethod->getContents(false));
         $method->setSourceDirty(false);
@@ -53,6 +54,7 @@ class MethodGenerator extends AbstractMemberGenerator
             $method->setVisibility(self::VISIBILITY_PUBLIC);
         }
 
+        $method->setInterface($declaringClass->isInterface());
         $method->setStatic($reflectionMethod->isStatic());
 
         $method->setName($reflectionMethod->getName());
@@ -142,6 +144,9 @@ class MethodGenerator extends AbstractMemberGenerator
                     break;
                 case 'final':
                     $method->setFinal($value);
+                    break;
+                case 'interface':
+                    $method->setInterface($value);
                     break;
                 case 'static':
                     $method->setStatic($value);
@@ -291,6 +296,10 @@ class MethodGenerator extends AbstractMemberGenerator
         $output .= ')';
 
         if ($this->isAbstract()) {
+            return $output . ';';
+        }
+
+        if ($this->isInterface()) {
             return $output . ';';
         }
 

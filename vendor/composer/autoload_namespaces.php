@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'phpDocumentor' => array($vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'ZendXml\\' => array($vendorDir . '/zendframework/zendxml/library'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'PHPImageWorkshop' => array($vendorDir . '/sybio/image-workshop/src'),
     'Doctrine\\ORM\\' => array($vendorDir . '/doctrine/orm/lib'),

@@ -43,9 +43,6 @@ class AWSManagerReceiver {
 		}
 	}
 	function checkForHighPriorityEntry() {
-		//
-		// Method fetches next
-		//
 		try {
 			//
 			// Check high priority first
