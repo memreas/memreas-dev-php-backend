@@ -7,21 +7,12 @@
  */
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ViewModel;
-use Zend\Session\Container;
-use Zend\Http\PhpEnvironment\Response;
-use Application\Model;
-use Application\Model\UserTable;
-use Application\Form;
-use GuzzleHttp\Client;
-use Application\Model\MemreasConstants;
-use Application\memreas\AWSManagerReceiver;
-use Application\memreas\MemreasTranscoder;
-use Application\memreas\MemreasTranscoderTables;
-use Application\memreas\Mlog;
 use Application\memreas\AWSManagerAutoScaler;
+use Application\memreas\AWSManagerReceiver;
 use Application\memreas\CheckGitPull;
+use Application\memreas\Mlog;
+use GuzzleHttp\Client;
+use Zend\Mvc\Controller\AbstractActionController;
 
 class IndexController extends AbstractActionController {
 	protected $dbAdapter = null;
