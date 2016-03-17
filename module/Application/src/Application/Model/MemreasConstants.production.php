@@ -8,8 +8,6 @@
 namespace Application\Model;
 
 class MemreasConstants {
-	const AWS_APPKEY = 'AKIAIXDH3Q23AP4KPZRA';
-	const AWS_APPSEC = 'TM+p8s9hlJwnKECCEKSVVhEOBjVhTWDG4ijIhJdk';
 	const AWS_APPKEY = 'AKIAISDIQFVJMWFYXCIA';
 	const AWS_APPSEC = 'eM5HG4MbYhkW1Jz1RWIdMapo2s+DbB+KnkhzTt91';
 	const AWS_APPREG = 'us-east-1';

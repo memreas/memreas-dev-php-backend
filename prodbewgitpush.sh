@@ -9,7 +9,7 @@ echo "You entered $comment"
 #set -v verbose #echo on
 
 #copy fe settings to push to git...
-#cp ./module/Application/src/Application/Model/MemreasConstants.bewQ.php ./module/Application/src/Application/Model/MemreasConstants.php
+cp ./module/Application/src/Application/Model/MemreasConstants.bewQ.php ./module/Application/src/Application/Model/MemreasConstants.php
 
 #Update composer.phar and files
 #echo "Updating composer and vendor..."
