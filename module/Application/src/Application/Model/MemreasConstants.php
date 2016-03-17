@@ -8,8 +8,8 @@
 namespace Application\Model;
 
 class MemreasConstants {
-	const AWS_APPKEY = 'AKIAIXDH3Q23AP4KPZRA';
-	const AWS_APPSEC = 'TM+p8s9hlJwnKECCEKSVVhEOBjVhTWDG4ijIhJdk';
+	const AWS_APPKEY = 'AKIAISDIQFVJMWFYXCIA';
+	const AWS_APPSEC = 'eM5HG4MbYhkW1Jz1RWIdMapo2s+DbB+KnkhzTt91';
 	const AWS_APPREG = 'us-east-1';
 	const MEMREAS_TRANSCODER_FFMPEG = '/var/www/memreas_ffmpeg_install/bin/ffmpeg';
 	const MEMREAS_TRANSCODER_FFPROBE = '/var/www/memreas_ffmpeg_install/bin/ffprobe';
@@ -23,14 +23,12 @@ class MemreasConstants {
 	// 1 hour should be enough to transcode
 	const MEMREASDB = 'memreasintdb';
 	const MEMREASBEDB = 'memreasbackenddb';
-	const S3BUCKET = "memreasdevsec";
-	const S3HLSBUCKET = "memreasdevhlssec";
-	const QUEUEURL = 'https://sqs.us-east-1.amazonaws.com/004184890641/memreasdev-bewq';
-	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d2cbahrg0944o.cloudfront.net/';
-	
+	const S3BUCKET = "memreasprodsec";
+	const S3HLSBUCKET = "memreasprodhlssec";
+	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d1fhgtf97i7jlq.cloudfront.net/';
+
 	// Redis section
-	//const REDIS_SERVER_ENDPOINT = "54.225.187.57";
-	const REDIS_SERVER_ENDPOINT = "10.179.214.247";
+	const REDIS_SERVER_ENDPOINT = "10.178.192.105";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = true;
 	const REDIS_SERVER_PORT = "6379";
