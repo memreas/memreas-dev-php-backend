@@ -11,3 +11,7 @@ composer.phar
 composer.lock
 data/session/
 data/media/
+
+#ignore MemreasConstants given shell overwrite
+module/Application/src/Application/Model/MemreasConstants.php
+
