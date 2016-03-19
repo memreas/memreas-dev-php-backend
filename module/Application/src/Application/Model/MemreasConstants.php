@@ -28,7 +28,7 @@ class MemreasConstants {
 	const CLOUDFRONT_HLSSTREAMING_HOST = 'https://d1fhgtf97i7jlq.cloudfront.net/';
 
 	// Redis section
-	const REDIS_SERVER_ENDPOINT = "10.178.192.105";
+	const REDIS_SERVER_ENDPOINT = "10.154.58.83";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = true;
 	const REDIS_SERVER_PORT = "6379";
