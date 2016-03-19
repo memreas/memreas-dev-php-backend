@@ -118,7 +118,7 @@ class IndexController extends AbstractActionController {
 		exit ();
 	}
 	protected function transcoderAction() {
-		// Mlog::addone ( __CLASS__ . __METHOD__, '::entered transcoderAction...' );
+		Mlog::addone ( __CLASS__ . __METHOD__, '::entered transcoderAction...' );
 		// Web Server Handle
 		$action = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		$json = isset ( $_REQUEST ["json"] ) ? $_REQUEST ["json"] : '';
