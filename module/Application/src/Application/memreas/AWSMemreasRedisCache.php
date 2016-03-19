@@ -16,6 +16,8 @@ class AWSMemreasRedisCache {
 	private $client = "";
 	private $isCacheEnable = MemreasConstants::REDIS_SERVER_USE;
 	public function __construct() {
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'::', '__construct' );
+		
 		if (! $this->isCacheEnable) {
 			return;
 		}
@@ -26,8 +28,8 @@ class AWSMemreasRedisCache {
 					'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
 					'port' => 6379 
 			] );
-		} catch ( \Predis\Connection\ConnectionException $ex ) {
-			error_log ( "exception ---> " . print_r ( $ex, true ) . PHP_EOL );
+		//} catch ( \Predis\Connection\ConnectionException $ex ) {
+		//	error_log ( "exception ---> " . print_r ( $ex, true ) . PHP_EOL );
 		} catch ( \Exception $ex ) {
 			error_log ( "predis connection exception ---> " . print_r ( $ex, true ) . PHP_EOL );
 		}
