@@ -16,6 +16,18 @@ class AWSMemreasRedisCache {
 	private $client = "";
 	private $isCacheEnable = MemreasConstants::REDIS_SERVER_USE;
 	public function __construct() {
+		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'::', '__construct' );
+		
+		$fp = fsockopen(MemreasConstants::REDIS_SERVER_ENDPOINT, 6379, $errno, $errstr, 5);
+		if (!$fp) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'::', 'PORT 6379 IS CLOSED' );
+			// port is closed or blocked
+		} else {
+			// port is open and available
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'::', 'PORT 6379 IS OPEN' );
+			fclose($fp);
+		}		
+		
 		if (! $this->isCacheEnable) {
 			return;
 		}
