@@ -8,8 +8,8 @@
 namespace Application\Model;
 
 class MemreasConstants {
-	const AWS_APPKEY = 'AKIAIXDH3Q23AP4KPZRA';
-	const AWS_APPSEC = 'TM+p8s9hlJwnKECCEKSVVhEOBjVhTWDG4ijIhJdk';
+	const AWS_APPKEY = 'AKIAJZE2O2WDMXLGR27A';
+	const AWS_APPSEC = 'FI09T7vRXcWx+QBE/n5ysEtZxx/DOAxkks/o2rzG';
 	const AWS_APPREG = 'us-east-1';
 	const MEMREAS_TRANSCODER_FFMPEG = '/var/www/memreas_ffmpeg_install/bin/ffmpeg';
 	const MEMREAS_TRANSCODER_FFPROBE = '/var/www/memreas_ffmpeg_install/bin/ffprobe';
