@@ -13,38 +13,40 @@
         }
     },
     "require": {
-        "php": ">=5.3.23",
-        "zendframework/zend-stdlib": "~2.5"
+        "php": "^5.5 || ^7.0",
+        "zendframework/zend-stdlib": "^2.7 || ^3.0"
     },
     "require-dev": {
-        "zendframework/zend-config": "~2.5",
-        "zendframework/zend-console": "~2.5",
-        "zendframework/zend-http": "~2.5",
-        "zendframework/zend-i18n": "~2.5",
-        "zendframework/zend-log": "~2.5",
-        "zendframework/zend-modulemanager": "~2.5",
-        "zendframework/zend-mvc": "~2.5",
-        "zendframework/zend-permissions-acl": "~2.5",
-        "zendframework/zend-serializer": "~2.5",
-        "zendframework/zend-servicemanager": "~2.5",
-        "zendframework/zend-uri": "~2.5",
-        "zendframework/zend-view": "~2.5",
+        "zendframework/zend-config": "^2.6",
+        "zendframework/zend-console": "^2.6",
+        "zendframework/zend-http": "^2.5.4",
+        "zendframework/zend-i18n": "^2.6",
+        "zendframework/zend-log": "^2.7.1",
+        "zendframework/zend-mvc": "^2.7",
+        "zendframework/zend-permissions-acl": "^2.6",
+        "zendframework/zend-servicemanager": "^2.7.5 || ^3.0.3",
+        "zendframework/zend-uri": "^2.5",
+        "zendframework/zend-view": "^2.6.5",
         "fabpot/php-cs-fixer": "1.7.*",
-        "phpunit/PHPUnit": "~4.0"
+        "phpunit/phpunit": "^4.5"
     },
     "suggest": {
         "zendframework/zend-config": "Zend\\Config component",
-        "zendframework/zend-mvc": "Zend\\Mvc component",
-        "zendframework/zend-permissions-acl": "Zend\\Permissions\\Acl component",
-        "zendframework/zend-servicemanager": "Zend\\ServiceManager component",
-        "zendframework/zend-view": "Zend\\View component"
+        "zendframework/zend-mvc": "Zend\\Mvc component, to provide dynamic routing capabilities for navigation pages",
+        "zendframework/zend-permissions-acl": "Zend\\Permissions\\Acl component, to allow restricting access to navigation pages",
+        "zendframework/zend-servicemanager": "Zend\\ServiceManager component, to use the navigation factories",
+        "zendframework/zend-view": "Zend\\View component, to use the navigation view helpers"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "2.5-dev",
-            "dev-develop": "2.6-dev"
+            "dev-master": "2.7-dev",
+            "dev-develop": "2.8-dev"
+        },
+        "zf": {
+            "component": "Zend\\Navigation",
+            "config-provider": "Zend\\Navigation\\ConfigProvider"
         }
     },
     "autoload-dev": {

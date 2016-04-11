@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.6.1 - 2016-03-02
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#21](https://github.com/zendframework/zend-file/pull/21) updates the codebase
+  to re-enable tests against zend-progressbar, and fixes static calls inside
+  `Zend\File\Transfer\Adapter\Http::getProgress` for testing APC and/or
+  uploadprogress availability to ensure they work correctly.
+
 ## 2.6.0 - 2016-02-17
 
 ### Added
