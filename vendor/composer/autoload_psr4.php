@@ -20,6 +20,7 @@ return array(
     'Zend\\ServiceManager\\' => array($vendorDir . '/zendframework/zend-servicemanager/src'),
     'Zend\\Server\\' => array($vendorDir . '/zendframework/zend-server/src'),
     'Zend\\Serializer\\' => array($vendorDir . '/zendframework/zend-serializer/src'),
+    'Zend\\Psr7Bridge\\' => array($vendorDir . '/zendframework/zend-psr7bridge/src'),
     'Zend\\ProgressBar\\' => array($vendorDir . '/zendframework/zend-progressbar/src'),
     'Zend\\Permissions\\Rbac\\' => array($vendorDir . '/zendframework/zend-permissions-rbac/src'),
     'Zend\\Permissions\\Acl\\' => array($vendorDir . '/zendframework/zend-permissions-acl/src'),
@@ -45,6 +46,7 @@ return array(
     'Zend\\EventManager\\' => array($vendorDir . '/zendframework/zend-eventmanager/src'),
     'Zend\\Escaper\\' => array($vendorDir . '/zendframework/zend-escaper/src'),
     'Zend\\Dom\\' => array($vendorDir . '/zendframework/zend-dom/src'),
+    'Zend\\Diactoros\\' => array($vendorDir . '/zendframework/zend-diactoros/src'),
     'Zend\\Di\\' => array($vendorDir . '/zendframework/zend-di/src'),
     'Zend\\Debug\\' => array($vendorDir . '/zendframework/zend-debug/src'),
     'Zend\\Db\\' => array($vendorDir . '/zendframework/zend-db/src'),
@@ -69,5 +71,7 @@ return array(
     'GuzzleHttp\\' => array($vendorDir . '/guzzlehttp/guzzle/src'),
     'Doctrine\\Instantiator\\' => array($vendorDir . '/doctrine/instantiator/src/Doctrine/Instantiator'),
     'Doctrine\\Common\\Cache\\' => array($vendorDir . '/doctrine/cache/lib/Doctrine/Common/Cache'),
+    'Doctrine\\Common\\' => array($vendorDir . '/doctrine/common/lib/Doctrine/Common'),
+    'DeepCopy\\' => array($vendorDir . '/myclabs/deep-copy/src/DeepCopy'),
     'Aws\\' => array($vendorDir . '/aws/aws-sdk-php/src'),
 );
