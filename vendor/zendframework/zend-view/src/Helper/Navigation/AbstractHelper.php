@@ -11,14 +11,18 @@ namespace Zend\View\Helper\Navigation;
 
 use Interop\Container\ContainerInterface;
 use RecursiveIteratorIterator;
+use ReflectionClass;
+use ReflectionProperty;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
+use Zend\EventManager\SharedEventManager;
 use Zend\I18n\Translator\TranslatorInterface as Translator;
 use Zend\I18n\Translator\TranslatorAwareInterface;
 use Zend\Navigation;
 use Zend\Navigation\Page\AbstractPage;
 use Zend\Permissions\Acl;
+use Zend\ServiceManager\AbstractPluginManager;
 use Zend\View;
 use Zend\View\Exception;
 
@@ -338,7 +342,8 @@ abstract class AbstractHelper extends View\Helper\AbstractHtmlElement implements
      */
     protected function isAllowed($params)
     {
-        $results = $this->getEventManager()->trigger(__FUNCTION__, $this, $params);
+        $events = $this->getEventManager() ?: $this->createEventManager();
+        $results = $events->trigger(__FUNCTION__, $this, $params);
         return $results->last();
     }
 
@@ -509,22 +514,23 @@ abstract class AbstractHelper extends View\Helper\AbstractHtmlElement implements
 
         $this->events = $events;
 
-        $this->setDefaultListeners();
+        if ($events->getSharedManager()) {
+            $this->setDefaultListeners();
+        }
 
         return $this;
     }
 
     /**
-     * Get the event manager.
+     * Get the event manager, if present.
      *
-     * @return  EventManagerInterface
+     * Internally, the helper will lazy-load an EM instance the first time it
+     * requires one, but ideally it should be injected during instantiation.
+     *
+     * @return  null|EventManagerInterface
      */
     public function getEventManager()
     {
-        if (null === $this->events) {
-            $this->setEventManager(new EventManager());
-        }
-
         return $this->events;
     }
 
@@ -753,6 +759,26 @@ abstract class AbstractHelper extends View\Helper\AbstractHtmlElement implements
      */
     public function setServiceLocator(ContainerInterface $serviceLocator)
     {
+        // If we are provided a plugin manager, we should pull the parent
+        // context from it.
+        // @todo We should update tests and code to ensure that this situation
+        //       doesn't happen in the future.
+        if ($serviceLocator instanceof AbstractPluginManager
+            && ! method_exists($serviceLocator, 'configure')
+            && $serviceLocator->getServiceLocator()
+        ) {
+            $serviceLocator = $serviceLocator->getServiceLocator();
+        }
+
+        // v3 variant; likely won't be needed.
+        if ($serviceLocator instanceof AbstractPluginManager
+            && method_exists($serviceLocator, 'configure')
+        ) {
+            $r = new ReflectionProperty($serviceLocator, 'creationContext');
+            $r->setAccessible(true);
+            $serviceLocator = $r->getValue($serviceLocator);
+        }
+
         $this->serviceLocator = $serviceLocator;
         return $this;
     }
@@ -932,10 +958,38 @@ abstract class AbstractHelper extends View\Helper\AbstractHtmlElement implements
             return;
         }
 
-        $this->getEventManager()->getSharedManager()->attach(
+        $events = $this->getEventManager() ?: $this->createEventManager();
+
+        if (! $events->getSharedManager()) {
+            return;
+        }
+
+        $events->getSharedManager()->attach(
             'Zend\View\Helper\Navigation\AbstractHelper',
             'isAllowed',
             ['Zend\View\Helper\Navigation\Listener\AclListener', 'accept']
         );
+    }
+
+    /**
+     * Create and return an event manager instance.
+     *
+     * Ensures that the returned event manager has a shared manager
+     * composed.
+     *
+     * @return EventManager
+     */
+    private function createEventManager()
+    {
+        $r = new ReflectionClass(EventManager::class);
+        if ($r->hasMethod('setSharedManager')) {
+            $events = new EventManager();
+            $events->setSharedManager(new SharedEventManager());
+        } else {
+            $events = new EventManager(new SharedEventManager());
+        }
+
+        $this->setEventManager($events);
+        return $events;
     }
 }

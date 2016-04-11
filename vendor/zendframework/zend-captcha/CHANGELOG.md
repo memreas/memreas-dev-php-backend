@@ -2,6 +2,44 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.5.4 - 2016-02-23
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#18](https://github.com/zendframework/zend-captcha/pull/18) updates
+  dependencies to known-stable, forwards-compatible versions.
+
+## 2.5.3 - 2016-02-22
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#6](https://github.com/zendframework/zend-captcha/pull/6) ensures that `null`
+  values may be passed for options.
+
 ## 2.5.2 - 2015-11-23
 
 ### Added
