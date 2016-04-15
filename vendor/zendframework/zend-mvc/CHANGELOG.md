@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.7 - 2016-04-12
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#122](https://github.com/zendframework/zend-mvc/pull/122) fixes the
+  `FormAnnotationBuilderFactory` to use the container's `get()` method instead
+  of `build()` to retrieve the event manager instance.
+
 ## 2.7.6 - 2016-04-06
 
 ### Added

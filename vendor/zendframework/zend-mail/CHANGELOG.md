@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.0 - 2016-04-11
+
+### Added
+
+- [#41](https://github.com/zendframework/zend-mail/pull/41) adds support for
+  IMAP delimiters in the IMAP storage adapter.
+- [#80](https://github.com/zendframework/zend-mail/pull/80) adds:
+  - `Zend\Mail\Protocol\SmtpPluginManagerFactory`, for creating and returning an
+    `SmtpPluginManagerFactory` instance.
+  - `Zend\Mail\ConfigProvider`, which maps the `SmtpPluginManager` to the above
+    factory.
+  - `Zend\Mail\Module`, which does the same, for zend-mvc contexts.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
+## 2.6.2 - 2016-04-11
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#44](https://github.com/zendframework/zend-mail/pull/44) fixes an issue with
+  decoding of addresses where the full name contains a comma (e.g., "Lastname,
+  Firstname").
+- [#45](https://github.com/zendframework/zend-mail/pull/45) ensures that the
+  message parser allows deserializing message bodies containing multiple EOL
+  sequences.
+- [#78](https://github.com/zendframework/zend-mail/pull/78) fixes the logic of
+  `HeaderWrap::canBeEncoded()` to ensure it returns correctly for header lines
+  containing at least one multibyte character, and particularly when that
+  character falls at specific locations (per a
+  [reported bug at php.net](https://bugs.php.net/bug.php?id=53891)).
+
 ## 2.6.1 - 2016-02-24
 
 ### Added

@@ -4,13 +4,11 @@ Zend Framework comes with a standard set of storage classes which are ready for 
 handlers is the intermediary between when the session starts and when the session writes and closes.
 The default session storage is `Zend\Session\Storage\SessionArrayStorage`.
 
-orphan  
-
 ## Array Storage
 
 `Zend\Session\Storage\ArrayStorage` provides a facility to store all information in an ArrayObject.
 This storage method is likely incompatible with 3rd party libraries and all properties will be
-inaccessible through the $\_SESSION property. Additionally ArrayStorage will not automatically
+inaccessible through the `$_SESSION` property. Additionally ArrayStorage will not automatically
 repopulate the storage container in the case of each new request and would have to manually be
 re-populated.
 
@@ -28,13 +26,11 @@ $manager         = new SessionManager();
 $manager->setStorage($storage);
 ```
 
-orphan  
-
 ## Session Storage
 
-`Zend\Session\Storage\SessionStorage` replaces $\_SESSION providing a facility to store all
+`Zend\Session\Storage\SessionStorage` replaces `$_SESSION` providing a facility to store all
 information in an ArrayObject. This means that it may not be compatible with 3rd party libraries.
-Although information stored in the $\_SESSION superglobal should be available in other scopes.
+Although information stored in the `$_SESSION` superglobal should be available in other scopes.
 
 ### Basic Usage
 
@@ -48,13 +44,11 @@ $manager = new SessionManager();
 $manager->setStorage(new SessionStorage());
 ```
 
-orphan  
-
 ## Session Array Storage
 
 `Zend\Session\Storage\SessionArrayStorage` provides a facility to store all information directly in
-the $\_SESSION superglobal. This storage class provides the most compatibility with 3rd party
-libraries and allows for directly storing information into $\_SESSION.
+the `$_SESSION` superglobal. This storage class provides the most compatibility with 3rd party
+libraries and allows for directly storing information into `$_SESSION`.
 
 ### Basic Usage
 

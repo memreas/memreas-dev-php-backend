@@ -4,8 +4,6 @@ Zend Framework comes with a standard set of save handler classes which are ready
 Save Handlers themselves are decoupled from PHP's save handler functions and are *only* implemented
 as a PHP save handler when utilized in conjunction with `Zend\Session\SessionManager`.
 
-orphan  
-
 ## Cache
 
 `Zend\Session\SaveHandler\Cache` allows you to provide an instance of `Zend\Cache` to be utilized as
@@ -34,8 +32,6 @@ $manager = new SessionManager();
 $manager->setSaveHandler($saveHandler);
 ```
 
-orphan  
-
 ## DbTableGateway
 
 `Zend\Session\SaveHandler\DbTableGateway` allows you to utilize `Zend\Db` as a session save handler.
@@ -46,7 +42,7 @@ you need.
 
 ### Creating the database table
 
-```php
+```sql
 CREATE TABLE `session` (
     `id` char(32),
     `name` char(32),
@@ -73,30 +69,29 @@ $manager      = new SessionManager();
 $manager->setSaveHandler($saveHandler);
 ```
 
-orphan  
-
 ## MongoDB
 
 `Zend\Session\SaveHandler\MongoDB` allows you to provide a MongoDB instance to be utilized as a
 session save handler. You provide the options in the `Zend\Session\SaveHandler\MongoDBOptions`
-class.
+class. You must install the [mongodb PHP extensions](http://php.net/manual/en/set.mongodb.php) and the 
+[MongoDB PHP library](https://github.com/mongodb/mongo-php-library).
 
 ### Basic Usage
 
 A basic example is one like the following:
 
 ```php
-use Mongo;
+use MongoDB\Client;
 use Zend\Session\SaveHandler\MongoDB;
 use Zend\Session\SaveHandler\MongoDBOptions;
 use Zend\Session\SessionManager;
 
-$mongo = new Mongo();
+$mongoClient = new Client();
 $options = new MongoDBOptions(array(
     'database'   => 'myapp',
     'collection' => 'sessions',
 ));
-$saveHandler = new MongoDB($mongo, $options);
+$saveHandler = new MongoDB($mongoClient, $options);
 $manager     = new SessionManager();
 $manager->setSaveHandler($saveHandler);
 ```
