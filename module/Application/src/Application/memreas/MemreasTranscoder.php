@@ -233,6 +233,7 @@ class MemreasTranscoder {
 		}
 	}
 	public function exec($message_data, $isUpload = false) {
+		$cm = __CLASS__.__METHOD__;
 		try {
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::exec($message_data, $isUpload = false) $message_data  before as json::', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 			/*
