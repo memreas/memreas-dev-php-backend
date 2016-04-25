@@ -8,6 +8,7 @@
 namespace Application\Model;
 
 class MemreasConstants {
+	const MEMREAS_ENV = "memreasdev-bew";
 	const AWS_APPKEY = 'AKIAJZE2O2WDMXLGR27A';
 	const AWS_APPSEC = 'FI09T7vRXcWx+QBE/n5ysEtZxx/DOAxkks/o2rzG';
 	const AWS_APPREG = 'us-east-1';

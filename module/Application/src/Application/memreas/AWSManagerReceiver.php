@@ -156,7 +156,7 @@ class AWSManagerReceiver {
 							// Subject is required
 							'Subject' => array (
 									// Data is required
-									'Data' => "memreasdev-bew::" . $subject,
+									'Data' => MemreasConstants::MEMREAS_ENV . "::" . $subject,
 									'Charset' => 'UTF-8' 
 							),
 							// Body is required
