@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.1 - 2016-02-27
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#31](https://github.com/zendframework/zend-modulemanager/pull/31) updates the
+  `ServiceListener:onLoadModulesPost()` workflow to override existing services
+  on a given service/plugin manager instance when configuring it. Since the
+  listener operates as part of bootstrapping, this is a requirement.
+
+## 2.7.0 - 2016-02-25
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#13](https://github.com/zendframework/zend-modulemanager/pull/13) and
+  [#28](https://github.com/zendframework/zend-modulemanager/pull/28) update the
+  component to be forwards-compatible with zend-servicemanager v3. This
+  primarily affects how configuration is aggregated within the
+  `ServiceListener` (as v3 has a dedicated method in the
+  `Zend\ServiceManager\ConfigInterface` for retrieving it).
+
+- [#12](https://github.com/zendframework/zend-modulemanager/pull/12),
+  [#28](https://github.com/zendframework/zend-modulemanager/pull/28), and
+  [#29](https://github.com/zendframework/zend-modulemanager/pull/29) update the
+  component to be forwards-compatible with zend-eventmanager v3. Primarily, this
+  involves:
+  - Changing trigger calls to `triggerEvent()` and/or `triggerEventUntil()`, and
+    ensuring the event instance is injected with the new event name prior.
+  - Ensuring aggregates are attached using the `$aggregate->attach($events)`
+    signature instead of the `$events->attachAggregate($aggregate)` signature.
+  - Using zend-eventmanager's `EventListenerIntrospectionTrait` to test that
+    listeners are attached at expected priorities.
+
 ## 2.6.1 - 2015-09-22
 
 ### Added

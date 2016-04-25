@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -85,12 +85,12 @@ class EventFeature extends AbstractFeature implements
     public function preInitialize()
     {
         if (get_class($this->tableGateway) != 'Zend\Db\TableGateway\TableGateway') {
-            $this->eventManager->addIdentifiers(get_class($this->tableGateway));
+            $this->eventManager->addIdentifiers([get_class($this->tableGateway)]);
         }
 
         $this->event->setTarget($this->tableGateway);
         $this->event->setName(static::EVENT_PRE_INITIALIZE);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -101,7 +101,7 @@ class EventFeature extends AbstractFeature implements
     public function postInitialize()
     {
         $this->event->setName(static::EVENT_POST_INITIALIZE);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -117,7 +117,7 @@ class EventFeature extends AbstractFeature implements
     {
         $this->event->setName(static::EVENT_PRE_SELECT);
         $this->event->setParams(['select' => $select]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -141,7 +141,7 @@ class EventFeature extends AbstractFeature implements
             'result' => $result,
             'result_set' => $resultSet
         ]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -157,7 +157,7 @@ class EventFeature extends AbstractFeature implements
     {
         $this->event->setName(static::EVENT_PRE_INSERT);
         $this->event->setParams(['insert' => $insert]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -178,7 +178,7 @@ class EventFeature extends AbstractFeature implements
             'statement' => $statement,
             'result' => $result,
         ]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -194,7 +194,7 @@ class EventFeature extends AbstractFeature implements
     {
         $this->event->setName(static::EVENT_PRE_UPDATE);
         $this->event->setParams(['update' => $update]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -215,7 +215,7 @@ class EventFeature extends AbstractFeature implements
             'statement' => $statement,
             'result' => $result,
         ]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -231,7 +231,7 @@ class EventFeature extends AbstractFeature implements
     {
         $this->event->setName(static::EVENT_PRE_DELETE);
         $this->event->setParams(['delete' => $delete]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 
     /**
@@ -252,6 +252,6 @@ class EventFeature extends AbstractFeature implements
             'statement' => $statement,
             'result' => $result,
         ]);
-        $this->eventManager->trigger($this->event);
+        $this->eventManager->triggerEvent($this->event);
     }
 }

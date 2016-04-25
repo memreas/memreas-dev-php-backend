@@ -47,7 +47,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
     /**
      * {@inheritDoc}
      */
-    public function attach(EventManagerInterface $events)
+    public function attach(EventManagerInterface $events, $priority = 1)
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleRouteNotFoundError']);
     }
@@ -244,7 +244,8 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
 
                 // We prepend the usage by the module name (printed in red), so that each module is
                 // clearly visible by the user
-                $moduleName = sprintf("%s\n%s\n%s\n",
+                $moduleName = sprintf(
+                    "%s\n%s\n%s\n",
                     str_repeat('-', $console->getWidth()),
                     $name,
                     str_repeat('-', $console->getWidth())
@@ -450,7 +451,7 @@ class RouteNotFoundStrategy extends AbstractListenerAggregate
             return '';
         }
 
-        $reason    = (isset($this->reason) && !empty($this->reason)) ? $this->reason : 'unknown';
+        $reason    = (!empty($this->reason)) ? $this->reason : 'unknown';
         $reasons   = [
             Application::ERROR_CONTROLLER_NOT_FOUND => 'Could not match to a controller',
             Application::ERROR_CONTROLLER_INVALID   => 'Invalid controller specified',

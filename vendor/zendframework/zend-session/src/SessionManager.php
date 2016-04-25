@@ -9,6 +9,7 @@
 
 namespace Zend\Session;
 
+use Zend\EventManager\Event;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Stdlib\ArrayUtils;
 
@@ -29,6 +30,20 @@ class SessionManager extends AbstractManager
     ];
 
     /**
+     * @var array Default session manager options
+     */
+    protected $defaultOptions = [
+        'attach_default_validators' => true,
+    ];
+
+    /**
+     * @var array Default validators
+     */
+    protected $defaultValidators = [
+        Validator\Id::class,
+    ];
+
+    /**
      * @var string value returned by session_name()
      */
     protected $name;
@@ -45,14 +60,21 @@ class SessionManager extends AbstractManager
      * @param  Storage\StorageInterface|null         $storage
      * @param  SaveHandler\SaveHandlerInterface|null $saveHandler
      * @param  array                                 $validators
+     * @param  array                                 $options
      * @throws Exception\RuntimeException
      */
     public function __construct(
         Config\ConfigInterface $config = null,
         Storage\StorageInterface $storage = null,
         SaveHandler\SaveHandlerInterface $saveHandler = null,
-        array $validators = []
+        array $validators = [],
+        array $options = []
     ) {
+        $options = array_merge($this->defaultOptions, $options);
+        if ($options['attach_default_validators']) {
+            $validators = array_merge($this->defaultValidators, $validators);
+        }
+
         parent::__construct($config, $storage, $saveHandler, $validators);
         register_shutdown_function([$this, 'writeClose']);
     }
@@ -372,13 +394,23 @@ class SessionManager extends AbstractManager
     public function isValid()
     {
         $validator = $this->getValidatorChain();
-        $responses = $validator->trigger('session.validate', $this, [$this], function ($test) {
+
+        $event = new Event();
+        $event->setName('session.validate');
+        $event->setTarget($this);
+        $event->setParams($this);
+
+        $falseResult = function ($test) {
             return false === $test;
-        });
+        };
+
+        $responses = $validator->triggerEventUntil($falseResult, $event);
+
         if ($responses->stopped()) {
             // If execution was halted, validation failed
             return false;
         }
+
         // Otherwise, we're good to go
         return true;
     }

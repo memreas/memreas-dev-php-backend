@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -116,7 +116,21 @@ abstract class HeaderWrap
      */
     public static function canBeEncoded($value)
     {
-        $encoded = iconv_mime_encode('x-test', $value, ['scheme' => 'Q']);
+        // avoid any wrapping by specifying line length long enough
+        // "test" -> 4
+        // "x-test: =?ISO-8859-1?B?dGVzdA==?=" -> 33
+        //  8       +2          +3         +3  -> 16
+        $charset = 'UTF-8';
+        $lineLength = strlen($value) * 4 + strlen($charset) + 16;
+
+        $preferences = [
+            'scheme' => 'Q',
+            'input-charset' => $charset,
+            'output-charset' => $charset,
+            'line-length' => $lineLength,
+        ];
+
+        $encoded = iconv_mime_encode('x-test', $value, $preferences);
 
         return (false !== $encoded);
     }
