@@ -2,6 +2,76 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.6.5 - 2016-03-21
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#55](https://github.com/zendframework/zend-view/pull/55) fixes a circular
+  dependency issue in the navigation helpers with regards to event manager
+  resolution.
+
+## 2.6.4 - 2016-03-02
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#52](https://github.com/zendframework/zend-view/pull/52) fixes several issues
+  detected after re-enabling tests skipped when executed against
+  zend-servicemanager/zend-eventmanager v3:
+  - `HelperPluginManager` now implements an `EventManagerAware` initializer.
+  - `Zend\View\Helper\Navigation\AbstractHelper` now contains logic to ensure
+    that when an `EventManager` instance is lazy-loaded, it composes a
+    `SharedEventManager`.
+  - The `FlashMessenger` factory now correctly pulls the `config` service, not
+    the `Config` service (former is both backwards- and forwards compatible).
+
+## 2.6.3 - 2016-02-22
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#50](https://github.com/zendframework/zend-view/pull/50) fixes
+  the initializer defined and registered in
+  `Navigation\PluginManager::__construct()` to ensure it properly pulls and
+  injects the application container into navigation helpers, under both
+  zend-servicemanager v2 and v3. Additionally, when lazy-instantiating the
+  `Navigation\PluginManager`, the `Navigation` helper now passes the composed
+  service manager instance to its constructor.
+
 ## 2.6.2 - 2016-02-18
 
 ### Added

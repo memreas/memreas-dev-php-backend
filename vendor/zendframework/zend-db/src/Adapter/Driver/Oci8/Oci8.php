@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -269,12 +269,12 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
         if ($context && ($rowCounter = $this->getFeature('RowCounter')) && oci_num_fields($resource) > 0) {
             $rowCount = $rowCounter->getRowCountClosure($context);
         }
-        $result->initialize($resource, $rowCount);
+        $result->initialize($resource, null, $rowCount);
         return $result;
     }
 
     /**
-     * @return array
+     * @return string
      */
     public function getPrepareType()
     {

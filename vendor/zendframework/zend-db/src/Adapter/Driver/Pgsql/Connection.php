@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -123,7 +123,9 @@ class Connection extends AbstractConnection
         $connection = $this->getConnectionString();
         set_error_handler(function ($number, $string) {
             throw new Exception\RuntimeException(
-                __METHOD__ . ': Unable to connect to database', null, new Exception\ErrorException($string, $number)
+                __METHOD__ . ': Unable to connect to database',
+                null,
+                new Exception\ErrorException($string, $number)
             );
         });
         $this->resource = pg_connect($connection);
@@ -134,6 +136,18 @@ class Connection extends AbstractConnection
                 '%s: Unable to connect to database',
                 __METHOD__
             ));
+        }
+
+        $p = $this->connectionParameters;
+
+        if (!empty($p['charset'])) {
+            if (-1 === pg_set_client_encoding($this->resource, $p['charset'])) {
+                throw new Exception\RuntimeException(sprintf(
+                    "%s: Unable to set client encoding '%s'",
+                    __METHOD__,
+                    $p['charset']
+                ));
+            }
         }
 
         return $this;

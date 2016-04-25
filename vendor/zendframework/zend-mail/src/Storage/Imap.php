@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -28,6 +28,12 @@ class Imap extends AbstractStorage implements Folder\FolderInterface, Writable\W
      * @var string
      */
     protected $currentFolder = '';
+
+    /**
+     * IMAP folder delimiter character
+     * @var null|string
+     */
+    protected $delimiter;
 
     /**
      * IMAP flags to constants translation
@@ -331,6 +337,7 @@ class Imap extends AbstractStorage implements Folder\FolderInterface, Writable\W
                     $parentFolder->$localName = $folder;
                     array_push($folderStack, $parentFolder);
                     $parentFolder = $folder;
+                    $this->delimiter = $data['delim'];
                     break;
                 } elseif ($stack) {
                     $parent = array_pop($stack);
@@ -503,5 +510,18 @@ class Imap extends AbstractStorage implements Folder\FolderInterface, Writable\W
         if (!$this->protocol->store($flags, $id)) {
             throw new Exception\RuntimeException('cannot set flags, have you tried to set the recent flag or special chars?');
         }
+    }
+
+    /**
+     * get IMAP delimiter
+     *
+     * @return string|null
+     */
+    public function delimiter()
+    {
+        if (!isset($this->delimiter)) {
+            $this->getFolders();
+        }
+        return $this->delimiter;
     }
 }

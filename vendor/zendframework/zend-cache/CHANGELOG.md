@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.7.0 - 2016-04-12
+
+### Added
+
+- [#59](https://github.com/zendframework/zend-cache/pull/59)
+  XCache >= 3.1.0 works in CLI mode
+- [#23](https://github.com/zendframework/zend-cache/issues/23)
+  [#47](https://github.com/zendframework/zend-cache/issues/47)
+  Added an Apcu storage adapter as future replacement for Apc
+- [#63](https://github.com/zendframework/zend-cache/pull/63)
+  Implemented ClearByNamespaceInterface in Stoage\Adapter\Redis
+- [#94](https://github.com/zendframework/zend-cache/pull/94) adds factories for
+  each of the `PatternPluginManager`, `AdapterPluginManager`, and storage
+  `PluginManager`.
+- [#94](https://github.com/zendframework/zend-cache/pull/94) exposes the package
+  as a standalone config-provider / ZF component, by adding:
+  - `Zend\Cache\ConfigProvider`, which enables the
+    `StorageCacheAbstractServiceFactory`, and maps factories for all plugin
+    managers.
+  - `Zend\Cache\Module`, which does the same, for zend-mvc contexts.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#44](https://github.com/zendframework/zend-cache/issues/44)
+  Filesystem: fixed race condition in method clearByTags
+- [#59](https://github.com/zendframework/zend-cache/pull/59)
+  XCache: fixed broken internalSetItem() with empty namespace
+- [#58](https://github.com/zendframework/zend-cache/issues/58)
+  XCache: Fatal error storing objects
+- [#94](https://github.com/zendframework/zend-cache/pull/94) updates the
+  `PatternPluginManager` to accept `$options` to `get()` and `build()`, cast
+  them to a `PatternOptions` instance, and inject them into the generated plugin
+  instance. This change allows better standalone usage of the plugin manager.
+- [#94](https://github.com/zendframework/zend-cache/pull/94) updates the
+  `StorageCacheFactory` and `StorageCacheAbstractServiceFactory` to seed the
+  `StorageFactory` with the storage plugin manager and/or adapter plugin manager
+  as pulled from the provided container, if present. This change enables re-use
+  of pre-configured plugin managers (e.g., those seeded with custom plugins
+  and/or adapters).
+
 ## 2.6.1 - 2016-02-12
 
 ### Added

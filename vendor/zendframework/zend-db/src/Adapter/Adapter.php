@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -308,10 +308,10 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
     }
 
     /**
-     * @param Driver\DriverInterface $driver
+     * @param array $parameters
      * @return Platform\PlatformInterface
      */
-    protected function createPlatform($parameters)
+    protected function createPlatform(array $parameters)
     {
         if (isset($parameters['platform'])) {
             $platformName = $parameters['platform'];
@@ -350,6 +350,12 @@ class Adapter implements AdapterInterface, Profiler\ProfilerAwareInterface
         }
     }
 
+    /**
+     *
+     * @param array $parameters
+     * @return Profiler\ProfilerInterface
+     * @throws Exception\InvalidArgumentException
+     */
     protected function createProfiler($parameters)
     {
         if ($parameters['profiler'] instanceof Profiler\ProfilerInterface) {

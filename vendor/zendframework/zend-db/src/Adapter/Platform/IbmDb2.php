@@ -3,7 +3,7 @@
  * Zend Framework (http://framework.zend.com/)
  *
  * @link      http://github.com/zendframework/zf2 for the canonical source repository
- * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
@@ -39,6 +39,35 @@ class IbmDb2 extends AbstractPlatform
     public function getName()
     {
         return 'IBM DB2';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function quoteIdentifierInFragment($identifier, array $safeWords = [])
+    {
+        if (! $this->quoteIdentifiers) {
+            return $identifier;
+        }
+        $safeWordsInt = ['*' => true, ' ' => true, '.' => true, 'as' => true];
+        foreach ($safeWords as $sWord) {
+            $safeWordsInt[strtolower($sWord)] = true;
+        }
+        $parts = preg_split(
+            '/([^0-9,a-z,A-Z$#_:])/i',
+            $identifier,
+            -1,
+            PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+        );
+        $identifier = '';
+        foreach ($parts as $part) {
+            $identifier .= isset($safeWordsInt[strtolower($part)])
+                ? $part
+                : $this->quoteIdentifier[0]
+                    . str_replace($this->quoteIdentifier[0], $this->quoteIdentifierTo, $part)
+                    . $this->quoteIdentifier[1];
+        }
+        return $identifier;
     }
 
     /**
