@@ -148,9 +148,10 @@ class AWSMemreasRedisCache {
 	}
 	public function invalidateCache($key) {
 		if (! $this->isCacheEnable) {
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "invalidateCache failure for key $key");
 			return false;
 		}
-		
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__, "invalidateCache success for key $key");
 		$result = $this->cache->del ( $key );
 	}
 	public function invalidateCacheMulti($keys) {
