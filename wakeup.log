@@ -1,0 +1,40 @@
+21:18:43 httpd service running, everything is fine
+
+21:18:43 calling http://127.0.0.1/?action=clearlog 
+
+success
+
+21:18:55  calling http://127.0.0.1/?action=gitpull 
+
+424Agent pid 735
+
+Could not open a connection to your authentication agent.
+
+
+
+Hi memreas! You've successfully authenticated, but GitHub does not provide shell access.
+
+
+From github.com:memreas/memreas-dev-php-backend
+   f34858c..e72bdb2  dev        -> origin/dev
+Updating f34858c..e72bdb2
+Fast-forward
+ module/Application/src/Application/memreas/MemreasTranscoder.php | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+
+
+Completed git pull op...
+
+21:19:07  calling http://127.0.0.1/?action=wakeup 
+
+"processing"
+
+"processing"
+
+"processing"
+
+"processing"
+
+21:19:18 startup_worker.sh complete!
+
