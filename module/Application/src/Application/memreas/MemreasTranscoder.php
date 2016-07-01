@@ -548,6 +548,18 @@ class MemreasTranscoder {
                         $memreas_media_data_array)', $this->transcode_status );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->memreas_media_metadata::after::', $this->memreas_media_metadata );
 			} // End if(isset($_POST))
+				
+			//
+			// Clear Redis Cache for user
+			//
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'AWSMemreasRedisCache::getHandle() - invalidate start' );
+			$redis = AWSMemreasRedisCache::getHandle ();
+			$redis->invalidateCache ( "listallmedia_" . $this->user_id );
+			$redis->invalidateCache ( "listnotification_" . $this->user_id );
+			$redis->invalidateCache ( "viewevents_is_my_event_" . $this->user_id );
+			$redis->invalidateCache ( "viewevents_is_friend_event_" . $this->user_id );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'AWSMemreasRedisCache::getHandle() - invalidate end' );
+				
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage () );
 			//
@@ -582,16 +594,6 @@ class MemreasTranscoder {
 			// $message_data ['error_trace'] = (string) $e->getTrace ();
 			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ), __CLASS__."::error occurred during transcode" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "email sent..." );
-			
-			//
-			// Clear Redis Cache for user
-			//
-			//$this->user_id
-			$redis = AWSMemreasRedisCache::getHandle ();
-			$redis->invalidateCache ( "listallmedia_" . $user_id );
-			$redis->invalidateCache ( "listnotification_" . $user_id );
-			$redis->invalidateCache ( "viewevents_is_my_event_" . $user_id );
-			$redis->invalidateCache ( "viewevents_is_friend_event_" . $user_id );
 			
 			throw $e;
 		} finally {
