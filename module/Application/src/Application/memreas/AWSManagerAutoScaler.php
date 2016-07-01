@@ -7,11 +7,10 @@
  */
 namespace Application\memreas;
 
-use Application\Model\MemreasConstants;
-use Application\memreas\MUUID;
-use Application\memreas\Mlog;
 use Application\Entity\ServerMonitor;
 use Application\memreas\AWSMemreasRedisCache;
+use Application\memreas\Mlog;
+use Application\memreas\MUUID;
 
 class AWSManagerAutoScaler {
 	public $aws = null;
