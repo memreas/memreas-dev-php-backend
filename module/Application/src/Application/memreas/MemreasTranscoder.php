@@ -552,12 +552,13 @@ class MemreasTranscoder {
 			//
 			// Clear Redis Cache for user
 			//
-			//$this->user_id
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'AWSMemreasRedisCache::getHandle() - invalidate start' );
 			$redis = AWSMemreasRedisCache::getHandle ();
 			$redis->invalidateCache ( "listallmedia_" . $this->user_id );
 			$redis->invalidateCache ( "listnotification_" . $this->user_id );
 			$redis->invalidateCache ( "viewevents_is_my_event_" . $this->user_id );
 			$redis->invalidateCache ( "viewevents_is_friend_event_" . $this->user_id );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'AWSMemreasRedisCache::getHandle() - invalidate end' );
 				
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage () );
