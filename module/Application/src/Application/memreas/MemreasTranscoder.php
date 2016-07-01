@@ -583,6 +583,16 @@ class MemreasTranscoder {
 			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ), __CLASS__."::error occurred during transcode" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "email sent..." );
 			
+			//
+			// Clear Redis Cache for user
+			//
+			//$this->user_id
+			$redis = AWSMemreasRedisCache::getHandle ();
+			$redis->invalidateCache ( "listallmedia_" . $user_id );
+			$redis->invalidateCache ( "listnotification_" . $user_id );
+			$redis->invalidateCache ( "viewevents_is_my_event_" . $user_id );
+			$redis->invalidateCache ( "viewevents_is_friend_event_" . $user_id );
+			
 			throw $e;
 		} finally {
 			//
