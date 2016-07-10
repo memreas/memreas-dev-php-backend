@@ -299,6 +299,8 @@ class MemreasTranscoder {
 							break;
 						case 'video/quicktime' :
 							break;
+						case 'model/vnd.mts' :
+							break;
 						case 'video/avi' :
 							break;
 						case 'video/msvideo' :
