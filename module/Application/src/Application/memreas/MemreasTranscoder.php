@@ -132,6 +132,11 @@ class MemreasTranscoder {
 	public function markMediaForTranscoding($message_data) {
 		try {
 			Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data inside as json -> ' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
+
+			// Register the stream wrapper from a client object
+			$this->aws_manager_receiver->s3->registerStreamWrapper ();
+				
+			
 			/*
 			 * setup vars and store transaction
 			 */
@@ -148,23 +153,21 @@ class MemreasTranscoder {
 			}
 			
 			//
-			// for video check size to set priority
-			// low priority are large video files over 100MB
-			// medium priority are video files < 100 MB
-			// high priority are all else (e.g. images, audio, etc).
+			// Get the size of an object
+			// - for video check size to set priority
+			// - low priority are large video files over 100MB
+			// - medium priority are video files < 100 MB
+			// - high priority are all else (e.g. images, audio, etc).
 			//
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'about to get object filesize...' );
-			// Register the stream wrapper from a client object
-			$this->aws_manager_receiver->s3->registerStreamWrapper ();
-			// Get the size of an object
 			$bucket = MemreasConstants::S3BUCKET;
 			$key = $message_data ['s3path'];
-			$video_size = filesize ( "s3://{$bucket}/{$key}" );
+			$file_size = filesize ( "s3://{$bucket}/{$key}" );
 			// $video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'object filesize is::' . $video_size );
-			if ($video_size > MemreasConstants::SIZE_100MB) {
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
+			if ($file_size > MemreasConstants::SIZE_100MB) {
 				$message_data ['priority'] = 'low';
-			} else if ($video_size > MemreasConstants::SIZE_10MB) {
+			} else if ($file_size > MemreasConstants::SIZE_10MB) {
 				$message_data ['priority'] = 'medium';
 			} else {
 				$message_data ['priority'] = 'high';
@@ -851,13 +854,13 @@ class MemreasTranscoder {
 				// 19-JUL-2016 - HLS working better streaming...
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 1 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%05d.ts " . $transcoded_file;
 			} else if ($this->type == 'webm') {
-				Mlog::addone ( $cm, "else if ($this->type == 'webm')" );
+				Mlog::addone ( $cm, 'else if ($this->type == webm)' );
 				
 				// Note: this section uses the transcoded web file above
 				$input_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
-				$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . $mpeg4ext;
-				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
+				//$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . $mpeg4ext;
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . '.webm';
+				$transcoded_file_name = $this->MediaFileName . '.webm';
 				Mlog::addone ( $cm . '$transcoded_file', $transcoded_file );
 				
 				// 19-JUL-2016 - VP9 encoding for webm
