@@ -45,7 +45,6 @@ class MemreasTranscoder {
 	const TSDIR = 'ts/';
 	const WEBDIR = 'web/';
 	const WEBMDIR = 'webm/';
-	const FLVDIR = 'flv/';
 	const FULLSIZE = 'fullsize/';
 	const _79X80 = '79x80/';
 	const _448X306 = '448x306/';
@@ -451,7 +450,6 @@ class MemreasTranscoder {
 					Mlog::addone ( __CLASS__ . __METHOD__, "starting web video" );
 					$this->type = 'web';
 					$this->transcode (); // set $this->transcode_job_meta in function
-					Mlog::addone ( __CLASS__ . __METHOD__, "finished web video" );
 					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'web_mp4_complete';
 					// set status to show web available
 					$this->transcode_status = "success_web";
@@ -477,18 +475,26 @@ class MemreasTranscoder {
 					 */
 					Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode ( hls )' );
 					$this->type = 'hls';
-					$this->transcode (); // set $this->transcode_job_meta
-					                     // in
-					                     // function
-					$this->memreas_media_metadata ['S3_files'] ['transcode_progress'] [] = 'hls_complete';
+					// set $this->transcode_job_meta in transcode function
+					$this->transcode (); 
 					
-					// set status to show all (web,hls) available
+					/*
+					 * WEBM conversion
+					 */
+					Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode ( webm )' );
+					$this->type = 'webm';
+					// set $this->transcode_job_meta in transcode function
+					$this->transcode (); 
+
+					// set status to show all (web,hls, webm) available
 					$this->transcode_status = "success";
 					$this->pass = "1";
-					
+						
 					// update media metadata and transcode transaction metadata
 					$this->persistMedia ();
 					$this->persistTranscodeTransaction ();
+						
+						
 					
 					// End if ($is_video)
 				} else if ($this->is_audio) {
@@ -731,17 +737,19 @@ class MemreasTranscoder {
 					$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_98X78, // data/temp_job_uuid_dir/media/thumbnails/98x78/
 					$this->homeDir . self::DESTDIR . self::THUMBNAILSDIR . self::_1280x720, // data/temp_job_uuid_dir/media/thumbnails/1280x720/
 					$this->homeDir . self::DESTDIR . self::WEBDIR, // data/temp_job_uuid_dir/media/web/
-					$this->homeDir . self::DESTDIR . self::AUDIODIR, // data/temp_job_uuid_dir/media/webm/
-					$this->homeDir . self::DESTDIR . self::TSDIR, // data/temp_job_uuid_dir/media/hls/
-					$this->homeDir . self::DESTDIR . self::HLSDIR 
-			); // data/temp_job_uuid_dir/media/hls/
+					$this->homeDir . self::DESTDIR . self::AUDIODIR, // data/temp_job_uuid_dir/media/audio/
+					$this->homeDir . self::DESTDIR . self::TSDIR, // data/temp_job_uuid_dir/media/ts/
+					$this->homeDir . self::DESTDIR . self::HLSDIR, // data/temp_job_uuid_dir/media/hls/
+					$this->homeDir . self::DESTDIR . self::WEBMDIR // data/temp_job_uuid_dir/media/webm/
+			); 
 			
 			$permissions = 0777;
 			foreach ( $toCreate as $dir ) {
 				// mkdir($dir, $permissions, TRUE);
 				$save = umask ( 0 );
-				if (mkdir ( $dir ))
+				if (mkdir ( $dir )) {
 					chmod ( $dir, $permissions );
+				}
 				umask ( $save );
 				// error_log ( "created dir ---> $dir" . PHP_EOL );
 			}
@@ -800,9 +808,9 @@ class MemreasTranscoder {
 				$path_parts = pathinfo ( $this->destRandMediaName );
 				$inscribed_file = $path_parts ['dirname'] . '/' . $path_parts ['basename'] . '.copy.' . $path_parts ['extension'];
 				Mlog::addone ( $cm . __LINE__ . '::$inscribed_file::', $inscribed_file );
-				// echo $path_parts['dirname'], "\n";
-				// echo $path_parts['basename'], "\n";
-				// echo $path_parts['extension'], "\n";
+				// Mlog::addone ( $cm . __LINE__ ,$path_parts['dirname']);
+				// Mlog::addone ( $cm . __LINE__ ,$path_parts['basename']);
+				// Mlog::addone ( $cm . __LINE__ ,$path_parts['extension']);
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i  ' . $this->destRandMediaName . $qv . $inscribed_file . ' 2>&1';
 				Mlog::addone ( $cm . __LINE__ . '$this->cmd', $this->cmd );
 				Mlog::addone ( $cm . __LINE__ . '::$copyright::', $this->copyright );
@@ -813,17 +821,6 @@ class MemreasTranscoder {
 				 */
 				$this->memreas_media_metadata ['S3_files'] ['type'] ['video'] ['width'] = (isset ( $ffprobe_json_array ['streams'] [0] ['width'] ) && ! empty ( $ffprobe_json_array ['streams'] [0] ['width'] )) ? $ffprobe_json_array ['streams'] [0] ['width'] : "";
 				$this->memreas_media_metadata ['S3_files'] ['type'] ['video'] ['height'] = (isset ( $ffprobe_json_array ['streams'] [0] ['height'] ) && ! empty ( $ffprobe_json_array ['streams'] [0] ['height'] )) ? $ffprobe_json_array ['streams'] [0] ['height'] : "";
-				
-				// last working 10.10.2015
-				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' .
-				// ' -preset ' . $this->compression_preset_web .
-				// ' -c:a aac -strict experimental ' . '-b:a 128k ';
-				
-				// Testing higher quality - works 11.5.15
-				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
-				
-				// below doesn't play on iphone ugh
-				// $qv = ' -c:v libx264 ' . ' -profile:v high -level 4.2 ' . ' -preset ' . $this->compression_preset_web . ' -c:a aac -strict experimental ' . '-b:a 128k ';
 				
 				// 6-DEC-2015 - baseline mp4 cmd
 				$qv = ' -c:v libx264 ' . ' -profile:v high -level 4.0 ' . ' -preset ' . $this->compression_preset_web . ' -crf 18 ' . ' -pix_fmt yuv420p ' . ' -movflags ' . ' +faststart ' . ' -c:a aac ' . ' -strict experimental ' . '-b:a 128k ';
@@ -849,57 +846,29 @@ class MemreasTranscoder {
 				Mlog::addone ( $cm . '$transcoded_file', $transcoded_hls_ts_file );
 				
 				// //
-				// // TODO: Encryption for .ts files not working - m3u8 protected by url signing
+				// // TODO: Encryption for .ts files not working - m3u8 protected by url signing and encyption
 				// // *.ts files protected by aws encryption...
-				// //
-				// //
 				// // Create file for segment encryption
-				// //
-				// $base_path = $this->homeDir . self::CONVDIR . self::HLSDIR;
-				// $base_url = MemreasConstants::CLOUDFRONT_HLSSTREAMING_HOST . $this->s3prefixpath . $this->type . '/';
-				
-				// //
-				// // file.key creation
-				// //
-				// $keyFile = $base_path . "file.key";
-				// $s3KeyFilePath = $base_url . "file.key";
-				// $keyHandle = fopen ( $keyFile, "w" );
-				// $bytes = openssl_random_pseudo_bytes ( 16 );
-				// fwrite ( $keyHandle, $bytes );
-				// fclose ( $keyHandle );
-				
-				// //
-				// // file.keyinfo creation
-				// //
-				// $keyInfoFile = $base_path . "file.keyinfo";
-				// $s3FileKeyInfoPath = $base_url . "file.keyinfo";
-				// $keyInfoHandle = fopen ( $keyInfoFile, "w" );
-				// $fileKey = openssl_random_pseudo_bytes ( 16 );
-				// fwrite ( $keyInfoHandle, $s3FileKeyInfoPath . "\n" );
-				// fwrite ( $keyInfoHandle, $keyFile . "\n" );
-				// $fileHexKey = bin2hex ( $fileKey );
-				// fwrite ( $keyInfoHandle, $fileHexKey );
-				// fclose ( $keyInfoHandle );
-				
-				// Mlog::addone ( $cm . __LINE__ . '::Before executing command HLS with encryption! $this->cmd----->', $this->cmd );
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.2 ' . ' -preset medium ' . ' -crf 18 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				// *not working on iphone so us* -> pulled from 9/21 git //$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $this->destRandMediaName . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -re -y -i " . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-				
-				
-				//6-MAR-2016 - not working
-				//$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_allow_cache 1 ' . ' -hls_flags single_file ' . $transcoded_file;
 				// 16-DEC-2015 - last working for fast start of 4k but still choppy
+				// 19-JUL-2016 - HLS working better streaming...
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 1 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%05d.ts " . $transcoded_file;
 				
+			} else if ($this->type == 'webm') {
+				Mlog::addone ( $cm, "else if ($this->type == 'webm')" );
 				
-				//
-				// 17-DEC-2015 - cmd to add encyption for .ts files (testing... still not working)
-				//
-				// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 0 ' . " -hls_flags delete_segments -hls_key_info_file $keyInfoFile " . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
+				// Note: this section uses the transcoded web file above
+				$input_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
+				$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . $mpeg4ext;
+				$transcoded_file_name = $this->MediaFileName . $mpeg4ext;
+				$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . '.webm';
+				Mlog::addone ( $cm . '$transcoded_file', $transcoded_file );
+				
+				// 19-JUL-2016 - VP9 encoding for webm
+				// ffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 10 -b:v 0 -c:a libvorbis output.webm
+				Mlog::addone ( $cm .__LINE__, '$this->cmd::' . $this->cmd );
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i ' . $input_file . ' -c:v libvpx-vp9 -crf 10 -b:v 0 -c:a libvorbis ' . $transcoded_file;
+				
 			} else if ($this->type == 'audio') {
-				Mlog::addone ( $cm, "else if ($this->type == 'hls')" );
-				
 				/*
 				 * TODO: add audio cmd
 				 */
@@ -939,14 +908,17 @@ class MemreasTranscoder {
 				Mlog::addone ( $cm . __LINE__ . '::$copyright::', $this->copyright );
 			}
 			
+			//
 			// Push to S3
+			//
 			$s3file = $this->s3prefixpath . $this->type . '/' . $transcoded_file_name;
 			$s3FileKeyInfoPath = $this->s3prefixpath . $this->type . '/file.keyinfo';
 			if ($this->type == "hls") {
+				
+				//Push m3u8 file
 				$s3file = $this->s3prefixpath . $this->type . '/' . $this->MediaFileName . '.m3u8';
-				// encryption keyfile
-				// $this->aws_manager_receiver->pushMediaToS3 ( $keyInfoFile, $s3FileKeyInfoPath, "text/plain", true, MemreasConstants::S3HLSBUCKET, false );
 				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET, true );
+
 				// Push all .ts files
 				$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 				$fsize = 0;
@@ -956,6 +928,9 @@ class MemreasTranscoder {
 					$s3tsfile = $this->s3prefixpath . $this->type . '/' . basename ( $filename );
 					$this->aws_manager_receiver->pushMediaToS3 ( $filename, $s3tsfile, "video/mp2t", true, MemreasConstants::S3HLSBUCKET, true );
 				}
+			} else if ($this->type == "webm") {
+				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "video/webm", true );
+				$fsize = filesize ( $transcoded_file );
 			} else if ($this->is_audio) {
 				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "audio/m4a", true );
 				$fsize = filesize ( $transcoded_file );
@@ -1226,38 +1201,4 @@ class MemreasTranscoder {
 	}
 } //End class
 
-
-// new h265 command - doesn't work
-// $this->cmd = 'nice -' . $this->nice_priority . ' ' .
-// $this->ffmpegcmd . " -i " .
-// $this->destRandMediaName .
-// ' -vcodec libx265 -acodec libfdk_aac -hls_flags
-// single_file ' .
-// $transcoded_file;
-
-// h264 with single ts file - too long to download and
-// play
-// $this->cmd = 'nice -' . $this->nice_priority . ' ' .
-// $this->ffmpegcmd . " -i " .
-// $this->destRandMediaName .
-// ' -hls_flags single_file ' . $transcoded_file .
-// ' 2>&1';
-
-// last working 10.10.2015
-// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -map 0 ' . '-pix_fmt yuv420p ' . '-c:v libx264 ' . '-profile:v high -level 4.0 ' . '-c:a aac -strict experimental ' . '-r 25 ' . '-b:v 1500k ' . '-maxrate 2000k ' . '-force_key_frames 50 ' . '-flags ' . '-global_header ' . '-f segment ' . '-segment_list_type m3u8 ' . '-segment_list ' . $transcoded_file . ' -segment_format mpeg_ts ' . $transcoded_hls_ts_file . "%05d.ts" . ' 2>&1';
-
-// Testing hls command with profile and pic_fmt
-
-// Testing remove bit rate and profile... - likely produced only two files - performance poor 11.28.2015
-// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_list_size 10 -hls_time 2 -hls_allow_cache 0 -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-// how to add:: hls_ts_options -movflags +faststart
-
-// 29-NOV-2015 testing single file - slow start
-// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -re -y -i " . $input_file . ' -hls_flags single_file ' . $transcoded_file;
-
-// 30-NOV-2015 Testing multiple ts with -movflags +faststart
-// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -hls_list_size 0 -hls_time 2 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
-
-// 4-DEC-2015 - puppies sample doesn't play on nexus
-// $this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . " -nostats -i " . $input_file . ' -pix_fmt yuv420p -profile:v high -level 4.0 -movflags +faststart -r 25 -force_key_frames 50 -flags -global_header -hls_list_size 0 -hls_time 1 -hls_allow_cache 1 -hls_flags delete_segments -hls_segment_filename ' . $transcoded_hls_ts_file . "%03d.ts " . $transcoded_file;
 
