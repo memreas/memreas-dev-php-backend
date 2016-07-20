@@ -153,15 +153,15 @@ class MemreasTranscoder {
 			// medium priority are video files < 100 MB
 			// high priority are all else (e.g. images, audio, etc).
 			//
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__, 'about to get object filesize...');
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'about to get object filesize...' );
 			// Register the stream wrapper from a client object
-			$this->aws_manager_receiver->s3->registerStreamWrapper();
+			$this->aws_manager_receiver->s3->registerStreamWrapper ();
 			// Get the size of an object
 			$bucket = MemreasConstants::S3BUCKET;
 			$key = $message_data ['s3path'];
-			$video_size = filesize("s3://{$bucket}/{$key}");
-			//$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__, 'object filesize is::'.$video_size);
+			$video_size = filesize ( "s3://{$bucket}/{$key}" );
+			// $video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'object filesize is::' . $video_size );
 			if ($video_size > MemreasConstants::SIZE_100MB) {
 				$message_data ['priority'] = 'low';
 			} else if ($video_size > MemreasConstants::SIZE_10MB) {
@@ -169,7 +169,7 @@ class MemreasTranscoder {
 			} else {
 				$message_data ['priority'] = 'high';
 			}
-				
+			
 			//
 			// Transcode Transaction data
 			//
@@ -226,7 +226,7 @@ class MemreasTranscoder {
 		}
 	}
 	public function exec($message_data, $isUpload = false) {
-		$cm = __CLASS__.__METHOD__;
+		$cm = __CLASS__ . __METHOD__;
 		try {
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::exec($message_data, $isUpload = false) $message_data  before as json::', json_encode ( $message_data, JSON_PRETTY_PRINT ) );
 			/*
@@ -289,7 +289,7 @@ class MemreasTranscoder {
 					// Let's use $this->MediaFileType variable to check wheather
 					// uploaded file is supported.
 					// We use PHP SWITCH statement to check valid video format,
-					Mlog::addone($cm . __LINE__ , '::$this->MediaFileType-->' . $this->MediaFileType);
+					Mlog::addone ( $cm . __LINE__, '::$this->MediaFileType-->' . $this->MediaFileType );
 					switch (strtolower ( $this->MediaFileType )) {
 						case 'video/mp4' :
 							break;
@@ -368,8 +368,8 @@ class MemreasTranscoder {
 				if ($this->is_video || $this->is_audio) {
 					// Calc media vars
 					$this->cmd = $this->ffprobecmd . ' -v error -print_format json -show_format -show_streams ' . $this->destRandMediaName;
-					Mlog::addone($cm,'::$this->cmd---->'.$this->cmd);
-						
+					Mlog::addone ( $cm, '::$this->cmd---->' . $this->cmd );
+					
 					try {
 						$ffprobe_json = shell_exec ( $this->cmd );
 						$ffprobe_json_array = json_decode ( $ffprobe_json, true );
@@ -383,7 +383,7 @@ class MemreasTranscoder {
 					}
 					$this->transcode_start_time = date ( "Y-m-d H:i:s" );
 				} else {
-					//image
+					// image
 					$ffprobe_json_array = [ ];
 					$this->duration = 0; // image
 					$this->filesize = filesize ( $this->destRandMediaName );
@@ -476,7 +476,7 @@ class MemreasTranscoder {
 					Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode ( hls )' );
 					$this->type = 'hls';
 					// set $this->transcode_job_meta in transcode function
-					$this->transcode (); 
+					$this->transcode ();
 					
 					/*
 					 * WEBM conversion
@@ -484,22 +484,20 @@ class MemreasTranscoder {
 					Mlog::addone ( __CLASS__ . __METHOD__, '$this->transcode ( webm )' );
 					$this->type = 'webm';
 					// set $this->transcode_job_meta in transcode function
-					$this->transcode (); 
-
+					$this->transcode ();
+					
 					// set status to show all (web,hls, webm) available
 					$this->transcode_status = "success";
 					$this->pass = "1";
-						
+					
 					// update media metadata and transcode transaction metadata
 					$this->persistMedia ();
 					$this->persistTranscodeTransaction ();
-						
-						
 					
 					// End if ($is_video)
 				} else if ($this->is_audio) {
-					Mlog::addone($cm,'::Inside $this->is_audio cmd--->'.$this->cmd);
-						
+					Mlog::addone ( $cm, '::Inside $this->is_audio cmd--->' . $this->cmd );
+					
 					// Audio section
 					// Create web quality mp3
 					$this->transcode_job_meta = array ();
@@ -548,10 +546,10 @@ class MemreasTranscoder {
                         $memreas_media_data_array)', $this->transcode_status );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::$this->memreas_media_metadata::after::', $this->memreas_media_metadata );
 			} // End if(isset($_POST))
-				
+			  
 			//
-			// Clear Redis Cache for user
-			//
+			  // Clear Redis Cache for user
+			  //
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'AWSMemreasRedisCache::getHandle() - invalidate start' );
 			$redis = AWSMemreasRedisCache::getHandle ();
 			$redis->invalidateCache ( "listallmedia_" . $this->user_id );
@@ -559,7 +557,6 @@ class MemreasTranscoder {
 			$redis->invalidateCache ( "viewevents_is_my_event_" . $this->user_id );
 			$redis->invalidateCache ( "viewevents_is_friend_event_" . $this->user_id );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'AWSMemreasRedisCache::getHandle() - invalidate end' );
-				
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::Caught exception: ', $e->getMessage () );
 			//
@@ -592,7 +589,7 @@ class MemreasTranscoder {
 			$message_data ['error_line'] = ( string ) $e->getLine ();
 			$message_data ['error_message'] = ( string ) $e->getMessage ();
 			// $message_data ['error_trace'] = (string) $e->getTrace ();
-			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ), __CLASS__."::error occurred during transcode" );
+			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ), __CLASS__ . "::error occurred during transcode" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "email sent..." );
 			
 			throw $e;
@@ -740,8 +737,9 @@ class MemreasTranscoder {
 					$this->homeDir . self::DESTDIR . self::AUDIODIR, // data/temp_job_uuid_dir/media/audio/
 					$this->homeDir . self::DESTDIR . self::TSDIR, // data/temp_job_uuid_dir/media/ts/
 					$this->homeDir . self::DESTDIR . self::HLSDIR, // data/temp_job_uuid_dir/media/hls/
-					$this->homeDir . self::DESTDIR . self::WEBMDIR // data/temp_job_uuid_dir/media/webm/
-			); 
+					$this->homeDir . self::DESTDIR . self::WEBMDIR 
+			) // data/temp_job_uuid_dir/media/webm/
+;
 			
 			$permissions = 0777;
 			foreach ( $toCreate as $dir ) {
@@ -761,7 +759,7 @@ class MemreasTranscoder {
 		try {
 			
 			// var setup
-			$cm = __CLASS__.__METHOD__;
+			$cm = __CLASS__ . __METHOD__;
 			$mpeg4ext = '.mp4';
 			$tsext = '.ts';
 			$aacext = '.m4a';
@@ -782,8 +780,8 @@ class MemreasTranscoder {
 			 * $isMP4 = true;
 			 * }
 			 */
-			Mlog::addone($cm.__LINE__,'::Inside transcode $this->type --->'.$this->type);
-				
+			Mlog::addone ( $cm . __LINE__, '::Inside transcode $this->type --->' . $this->type );
+			
 			if ($this->type == 'copyright') {
 				
 				// Sample command
@@ -852,7 +850,6 @@ class MemreasTranscoder {
 				// 16-DEC-2015 - last working for fast start of 4k but still choppy
 				// 19-JUL-2016 - HLS working better streaming...
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -nostats -re -y -i ' . $input_file . ' -pix_fmt yuv420p ' . ' -profile:v high -level 4.0 ' . ' -hls_list_size 0 ' . ' -hls_time 2 ' . ' -hls_allow_cache 1 ' . ' -hls_segment_filename ' . $transcoded_hls_ts_file . "%05d.ts " . $transcoded_file;
-				
 			} else if ($this->type == 'webm') {
 				Mlog::addone ( $cm, "else if ($this->type == 'webm')" );
 				
@@ -865,19 +862,19 @@ class MemreasTranscoder {
 				
 				// 19-JUL-2016 - VP9 encoding for webm
 				// ffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 10 -b:v 0 -c:a libvorbis output.webm
-				Mlog::addone ( $cm .__LINE__, '$this->cmd::' . $this->cmd );
+				Mlog::addone ( $cm . __LINE__, '$this->cmd::' . $this->cmd );
 				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i ' . $input_file . ' -c:v libvpx-vp9 -crf 10 -b:v 0 -c:a libvorbis -strict -2 ' . $transcoded_file;
-				
 			} else if ($this->type == 'audio') {
 				/*
 				 * TODO: add audio cmd
 				 */
-				Mlog::addone($cm,'::Inside audio section');
+				// Mlog::addone($cm,'::Inside audio section');
 				$qv = ' -c:a libfdk_aac -movflags +faststart ';
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::AUDIODIR . $this->MediaFileName . $aacext;
 				$transcoded_file_name = $this->MediaFileName . $aacext;
 				$this->cmd = 'nice ' . $this->ffmpegcmd . " -i $this->destRandMediaName $qv $transcoded_file " . '2>&1';
-				Mlog::addone($cm,'::$this->cmd---->'.$this->cmd);
+				Mlog::addone ( $cm, '::$this->cmd---->' . $this->cmd );
+				Mlog::addone ( $cm . '$transcoded_file', $transcoded_file );
 			} else {
 				throw new \Exception ( "MemreasTranscoder $this->type not found." );
 			}
@@ -886,7 +883,7 @@ class MemreasTranscoder {
 			//
 			// exec ffmpeg operation
 			//
-			Mlog::addone($cm . __LINE__, '$this->cmd-->'.$this->cmd);
+			Mlog::addone ( $cm . __LINE__, '$this->cmd-->' . $this->cmd );
 			$this->execFFMPEG ( $transcoded_file );
 			
 			if ($this->type == 'copyright') {
@@ -915,10 +912,10 @@ class MemreasTranscoder {
 			$s3FileKeyInfoPath = $this->s3prefixpath . $this->type . '/file.keyinfo';
 			if ($this->type == "hls") {
 				
-				//Push m3u8 file
+				// Push m3u8 file
 				$s3file = $this->s3prefixpath . $this->type . '/' . $this->MediaFileName . '.m3u8';
 				$this->aws_manager_receiver->pushMediaToS3 ( $transcoded_file, $s3file, "application/x-mpegurl", true, MemreasConstants::S3HLSBUCKET, true );
-
+				
 				// Push all .ts files
 				$pat = $this->homeDir . self::CONVDIR . self::HLSDIR . $this->MediaFileName . "*.ts";
 				$fsize = 0;
