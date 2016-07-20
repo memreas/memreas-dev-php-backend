@@ -866,7 +866,7 @@ class MemreasTranscoder {
 				// 19-JUL-2016 - VP9 encoding for webm
 				// ffmpeg -i input.mp4 -c:v libvpx-vp9 -crf 10 -b:v 0 -c:a libvorbis output.webm
 				Mlog::addone ( $cm .__LINE__, '$this->cmd::' . $this->cmd );
-				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i ' . $input_file . ' -c:v libvpx-vp9 -crf 10 -b:v 0 -c:a libvorbis ' . $transcoded_file;
+				$this->cmd = 'nice -' . $this->nice_priority . ' ' . $this->ffmpegcmd . ' -i ' . $input_file . ' -c:v libvpx-vp9 -crf 10 -b:v 0 -c:a libvorbis -strict -2 ' . $transcoded_file;
 				
 			} else if ($this->type == 'audio') {
 				/*
