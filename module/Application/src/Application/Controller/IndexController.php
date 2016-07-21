@@ -162,8 +162,7 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::$message_data', $message_data );
 			if (! $this->awsManagerAutoScaler->serverReadyToProcessTask ()) {
 				//
-				// end process here is already a process operating on the
-				// backlog
+				// end process there is already a process operating from backlog
 				//
 				Mlog::addone ( __CLASS__ . __METHOD__, '::getmypid()::' . getmypid () . ' exiting...' );
 				exit ();
