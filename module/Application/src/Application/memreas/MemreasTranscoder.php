@@ -912,7 +912,6 @@ class MemreasTranscoder {
 			// Push to S3
 			//
 			$s3file = $this->s3prefixpath . $this->type . '/' . $transcoded_file_name;
-			$s3FileKeyInfoPath = $this->s3prefixpath . $this->type . '/file.keyinfo';
 			if ($this->type == "hls") {
 				
 				// Push m3u8 file
