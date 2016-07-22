@@ -224,15 +224,19 @@ class IndexController extends AbstractActionController {
 					$result = $this->aws_manager->snsProcessMediaSubscribe ( $message_data );
 				}
 			} catch ( \Exception $e ) {
+				//
 				// continue processing - email likely sent
+				//
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
 				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . '::Error in while loop::' . $e->getMessage (), "error in while loop" );
-				exit ();
+				
+				//exit ();
 			} finally {
 				/*
 				 * Reset and continue work on backlog
 				 */
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
+				$this->dbAdapter->getConnection ()->close ();
 				unset ( $message_data );
 				unset ( $response );
 				unset ( $this->dbAdapter );

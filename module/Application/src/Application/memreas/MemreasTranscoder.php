@@ -119,7 +119,7 @@ class MemreasTranscoder {
 		try {
 			if ($this->entityManager->getConnection ()->ping () === false) {
 				$this->entityManager->getConnection ()->close ();
-				$this->entityManager->getConnection ()->connect ();
+				//$this->entityManager->getConnection ()->connect ();
 				Mlog::addone ( __CLASS__ . __METHOD__, '$this->entityManager->connect() is not valid ... fetching new' );
 			} else {
 				Mlog::addone ( __CLASS__ . __METHOD__, '$this->entityManager->connect() is valid ... ' );
