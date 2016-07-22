@@ -236,10 +236,8 @@ class IndexController extends AbstractActionController {
 				 * Reset and continue work on backlog
 				 */
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
-				$this->dbAdapter->getConnection ()->close ();
 				unset ( $message_data );
 				unset ( $response );
-				unset ( $this->dbAdapter );
 				unset ( $this->aws_manager );
 				// $this->aws_manager->memreasTranscoder->refreshDBConnection();
 			}
