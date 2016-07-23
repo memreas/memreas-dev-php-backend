@@ -115,11 +115,19 @@ class MemreasTranscoder {
 			throw $e;
 		}
 	}
+	function closeDBConnection() {
+		try {
+			$this->entityManager->getConnection ()->close ();
+		} catch ( \Exception $e ) {
+			Mlog::addone ( __CLASS__ . __METHOD__, 'Caught Exception::' . $e->getMessage );
+			throw $e;
+		}
+	}
 	function refreshDBConnection() {
 		try {
 			if ($this->entityManager->getConnection ()->ping () === false) {
 				$this->entityManager->getConnection ()->close ();
-				//$this->entityManager->getConnection ()->connect ();
+				// $this->entityManager->getConnection ()->connect ();
 				Mlog::addone ( __CLASS__ . __METHOD__, '$this->entityManager->connect() is not valid ... fetching new' );
 			} else {
 				Mlog::addone ( __CLASS__ . __METHOD__, '$this->entityManager->connect() is valid ... ' );
@@ -132,10 +140,9 @@ class MemreasTranscoder {
 	public function markMediaForTranscoding($message_data) {
 		try {
 			Mlog::addone ( __CLASS__ . __METHOD__, '::$message_data inside as json -> ' . json_encode ( $message_data, JSON_PRETTY_PRINT ) );
-
+			
 			// Register the stream wrapper from a client object
 			$this->aws_manager_receiver->s3->registerStreamWrapper ();
-				
 			
 			/*
 			 * setup vars and store transaction
@@ -580,7 +587,9 @@ class MemreasTranscoder {
 					// 'transcode_status' => 'failure',
 					'update_date' => $this->now () 
 			);
+			//
 			// persist
+			//
 			$media_id = $this->persistMedia ( $this->memreas_media, $memreas_media_data_array );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "entry marked as failure to avoid infinite loop!" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::catch throwing error', $this->transcode_status );
@@ -594,6 +603,11 @@ class MemreasTranscoder {
 			// $message_data ['error_trace'] = (string) $e->getTrace ();
 			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ), __CLASS__ . "::error occurred during transcode" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "email sent..." );
+			
+			//
+			// Close db connection - avoid too many connections
+			//
+			$this->closeDBConnection();
 			
 			throw $e;
 		} finally {
@@ -741,8 +755,8 @@ class MemreasTranscoder {
 					$this->homeDir . self::DESTDIR . self::TSDIR, // data/temp_job_uuid_dir/media/ts/
 					$this->homeDir . self::DESTDIR . self::HLSDIR, // data/temp_job_uuid_dir/media/hls/
 					$this->homeDir . self::DESTDIR . self::WEBMDIR 
-			) // data/temp_job_uuid_dir/media/webm/
-;
+			); // data/temp_job_uuid_dir/media/webm/
+
 			
 			$permissions = 0777;
 			foreach ( $toCreate as $dir ) {
@@ -858,7 +872,7 @@ class MemreasTranscoder {
 				
 				// Note: this section uses the transcoded web file above
 				$input_file = $this->homeDir . self::CONVDIR . self::WEBDIR . $this->MediaFileName . $mpeg4ext;
-				//$transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . $mpeg4ext;
+				// $transcoded_mp4_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . $mpeg4ext;
 				$transcoded_file = $this->homeDir . self::CONVDIR . self::WEBMDIR . $this->MediaFileName . '.webm';
 				$transcoded_file_name = $this->MediaFileName . '.webm';
 				Mlog::addone ( $cm . '$transcoded_file', $transcoded_file );
