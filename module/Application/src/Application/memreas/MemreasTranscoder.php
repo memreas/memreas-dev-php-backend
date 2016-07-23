@@ -604,11 +604,6 @@ class MemreasTranscoder {
 			$this->aws_manager_receiver->sesEmailErrorToAdmin ( json_encode ( $message_data, JSON_PRETTY_PRINT ), __CLASS__ . "::error occurred during transcode" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "email sent..." );
 			
-			//
-			// Close db connection - avoid too many connections
-			//
-			$this->closeDBConnection();
-			
 			throw $e;
 		} finally {
 			//
@@ -616,6 +611,12 @@ class MemreasTranscoder {
 			//
 			$result = $this->rmWorkDir ( $this->homeDir );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::removed directory::', $this->homeDir );
+			
+			//
+			// Close db connection - avoid too many connections
+			//
+			$this->closeDBConnection();
+			
 		}
 		
 		return $this->pass;
