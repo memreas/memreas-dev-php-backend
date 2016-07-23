@@ -210,6 +210,7 @@ class IndexController extends AbstractActionController {
 				// Fetch next backlog entry
 				//
 				$message_data = $this->aws_manager->fetchBackLogEntry ( $this->awsManagerAutoScaler->server_name );
+				Mlog::addone ( __CLASS__ . __METHOD__ . '$message_data = $this->aws_manager->fetchBackLogEntry ( $this->awsManagerAutoScaler->server_name )', ' returned null - processing complete!', $message_data );
 				if (empty ( $message_data )) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete!' );
 					$this->awsManagerAutoScaler->releaseTranscodingProcessHandleFromRedis ();
