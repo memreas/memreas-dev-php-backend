@@ -210,6 +210,7 @@ class IndexController extends AbstractActionController {
 				// Fetch next backlog entry
 				//
 				$message_data = $this->aws_manager->fetchBackLogEntry ( $this->awsManagerAutoScaler->server_name );
+				Mlog::addone ( __CLASS__ . __METHOD__ . '$message_data = $this->aws_manager->fetchBackLogEntry ( $this->awsManagerAutoScaler->server_name )', ' returned null - processing complete!', $message_data );
 				if (empty ( $message_data )) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete!' );
 					$this->awsManagerAutoScaler->releaseTranscodingProcessHandleFromRedis ();
@@ -230,7 +231,7 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
 				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . '::Error in while loop::' . $e->getMessage (), "error in while loop" );
 				
-				//exit ();
+				exit ();
 			} finally {
 				/*
 				 * Reset and continue work on backlog
