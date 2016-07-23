@@ -230,7 +230,7 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
 				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . '::Error in while loop::' . $e->getMessage (), "error in while loop" );
 				
-				//exit ();
+				exit ();
 			} finally {
 				/*
 				 * Reset and continue work on backlog
