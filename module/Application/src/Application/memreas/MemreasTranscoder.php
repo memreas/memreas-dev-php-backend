@@ -117,6 +117,7 @@ class MemreasTranscoder {
 	}
 	function closeDBConnection() {
 		try {
+			$this->entityManager->flush ();
 			$this->entityManager->getConnection ()->close ();
 		} catch ( \Exception $e ) {
 			Mlog::addone ( __CLASS__ . __METHOD__, 'Caught Exception::' . $e->getMessage );
@@ -126,8 +127,8 @@ class MemreasTranscoder {
 	function refreshDBConnection() {
 		try {
 			if ($this->entityManager->getConnection ()->ping () === false) {
-				$this->entityManager->getConnection ()->close ();
-				// $this->entityManager->getConnection ()->connect ();
+				$this->closeDBConnection();
+				$this->entityManager->getConnection ()->connect ();
 				Mlog::addone ( __CLASS__ . __METHOD__, '$this->entityManager->connect() is not valid ... fetching new' );
 			} else {
 				Mlog::addone ( __CLASS__ . __METHOD__, '$this->entityManager->connect() is valid ... ' );
