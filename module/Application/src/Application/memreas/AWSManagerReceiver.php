@@ -86,6 +86,7 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::returning high priority $message_date-->', $message_data );
 				return $message_data;
 			}
 			
@@ -107,6 +108,7 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::returning medium priority $message_date-->', $message_data );
 				return $message_data;
 			}
 			
@@ -128,6 +130,7 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::returning low priority $message_date-->', $message_data );
 				return $message_data;
 			}
 			
