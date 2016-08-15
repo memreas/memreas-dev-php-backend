@@ -11,4 +11,4 @@ composer.phar
 composer.lock
 data/session/
 data/media/
-
+wakeup.log
