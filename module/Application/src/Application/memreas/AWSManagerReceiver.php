@@ -47,10 +47,14 @@ class AWSManagerReceiver {
 			//
 			// Check high priority first
 			//
-			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='high' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
+			$query_string = "SELECT tt FROM Application\Entity\TranscodeTransaction tt 
+								where tt.transcode_status='backlog'
+								and tt.priority='high' 
+								and tt.server_lock is null
+								order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
-			if (count($result) > 0) {
+			if (count ( $result ) > 0) {
 				return true;
 			}
 			return false;
@@ -67,7 +71,11 @@ class AWSManagerReceiver {
 			//
 			// Check high priority first
 			//
-			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='high' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
+			$query_string = "SELECT tt FROM Application\Entity\TranscodeTransaction tt 
+								where tt.transcode_status='backlog' 
+								and tt.priority='high' 
+								and tt.server_lock is null 
+								order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
 			if ($result) {
@@ -78,13 +86,18 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::returning high priority $message_date-->', $message_data );
 				return $message_data;
 			}
 			
 			//
 			// Check medium priority next
 			//
-			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='medium' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
+			$query_string = "SELECT tt FROM Application\Entity\TranscodeTransaction tt 
+								where tt.transcode_status='backlog' 
+								and tt.priority='medium' 
+								and tt.server_lock is null 
+								order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
 			if ($result) {
@@ -95,13 +108,18 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::returning medium priority $message_date-->', $message_data );
 				return $message_data;
 			}
 			
 			//
 			// Check low priority last
 			//
-			$query_string = "SELECT tt FROM " . " Application\Entity\TranscodeTransaction tt " . " where tt.transcode_status='backlog' " . " and tt.priority='low' " . " and tt.server_lock is null " . " order by tt.transcode_start_time asc";
+			$query_string = "SELECT tt FROM Application\Entity\TranscodeTransaction tt 
+								where tt.transcode_status='backlog' 
+								and tt.priority='low' 
+								and tt.server_lock is null 
+								order by tt.transcode_start_time asc";
 			$query = $this->dbAdapter->createQuery ( $query_string );
 			$result = $query->getArrayResult ();
 			if ($result) {
@@ -112,11 +130,12 @@ class AWSManagerReceiver {
 					$message_data ['server_lock'] = $server_name;
 					break;
 				}
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . '::returning low priority $message_date-->', $message_data );
 				return $message_data;
 			}
 			
 			//
-			// If nothing found retur null ... slow day :)
+			// If nothing found return null ... slow day :)
 			//
 			return null;
 		} catch ( Exception $e ) {
@@ -205,9 +224,8 @@ class AWSManagerReceiver {
 					// 'params' => array('ACL' => 'public-read'),
 					'concurrency' => 20,
 					'ServerSideEncryption' => 'AES256' 
-			)
+			);
 			// 'StorageClass' => 'REDUCED_REDUNDANCY'
-			;
 			
 			$result = $this->s3->uploadDirectory ( $dir, MemreasConstants::S3BUCKET, $keyPrefix, $options );
 		} catch ( Exception $e ) {
@@ -222,9 +240,9 @@ class AWSManagerReceiver {
 					// 'CopySource' => "{".$bucket."}/{".$source."}",
 					'CopySource' => $bucket . '/' . $source,
 					'ServerSideEncryption' => 'AES256' 
-			)
+			) );
 			// 'StorageClass' => 'REDUCED_REDUNDANCY'
-			 );
+			
 			return $result;
 		} catch ( Exception $e ) {
 			throw $e;
@@ -247,21 +265,19 @@ class AWSManagerReceiver {
 							'Key' => $s3file,
 							'SourceFile' => $file,
 							'ContentType' => $content_type,
-							// 'ACL' => 'public-read',
 							'ServerSideEncryption' => 'AES256' 
-					)
+					) );
+					// 'ACL' => 'public-read',
 					// 'StorageClass' => 'REDUCED_REDUNDANCY'
-					 );
 				} else {
 					$result = $this->s3->putObject ( array (
 							'Bucket' => $bucket,
 							'Key' => $s3file,
 							'SourceFile' => $file,
 							'ContentType' => $content_type 
-					)
+					) );
 					// 'ACL' => 'public-read',
 					// 'StorageClass' => 'REDUCED_REDUNDANCY'
-					 );
 				}
 			} else {
 				// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__ . "::pushMediaToS3 filesize > 5MB ::", $file_size );
@@ -271,17 +287,15 @@ class AWSManagerReceiver {
 							'key' => $s3file,
 							'Content-Type' => $content_type,
 							'ServerSideEncryption' => 'AES256' 
-					]
+					] );
 					// 'StorageClass' => 'REDUCED_REDUNDANCY'
-					 );
 				} else {
 					$uploader = new MultipartUploader ( $this->s3, $file, [ 
 							'bucket' => $bucket,
 							'key' => $s3file,
 							'Content-Type' => $content_type 
-					]
+					] );
 					// 'StorageClass' => 'REDUCED_REDUNDANCY'
-					 );
 				}
 				
 				try {
@@ -363,9 +377,8 @@ class AWSManagerReceiver {
 						'SourceFile' => $file,
 						'ContentType' => $content_type,
 						'ServerSideEncryption' => 'AES256' 
-				)
+				) );
 				// 'StorageClass' => 'REDUCED_REDUNDANCY'
-				 );
 			} else {
 				$uploader = new MultipartUploader ( $this->s3, $file, [ 
 						'Bucket' => MemreasConstants::S3BUCKET,
@@ -373,9 +386,8 @@ class AWSManagerReceiver {
 						'SourceFile' => $file,
 						'ContentType' => $content_type,
 						'ServerSideEncryption' => 'AES256' 
-				]
+				] );
 				// 'StorageClass' => 'REDUCED_REDUNDANCY'
-				 );
 				
 				try {
 					$result = $uploader->upload ();

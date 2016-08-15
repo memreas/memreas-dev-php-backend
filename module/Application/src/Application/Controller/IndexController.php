@@ -162,8 +162,7 @@ class IndexController extends AbstractActionController {
 			Mlog::addone ( __CLASS__ . __METHOD__ . '::$message_data', $message_data );
 			if (! $this->awsManagerAutoScaler->serverReadyToProcessTask ()) {
 				//
-				// end process here is already a process operating on the
-				// backlog
+				// end process there is already a process operating from backlog
 				//
 				Mlog::addone ( __CLASS__ . __METHOD__, '::getmypid()::' . getmypid () . ' exiting...' );
 				exit ();
@@ -211,6 +210,7 @@ class IndexController extends AbstractActionController {
 				// Fetch next backlog entry
 				//
 				$message_data = $this->aws_manager->fetchBackLogEntry ( $this->awsManagerAutoScaler->server_name );
+				Mlog::addone ( __CLASS__ . __METHOD__ . '$message_data = $this->aws_manager->fetchBackLogEntry ( $this->awsManagerAutoScaler->server_name )', ' returned null - processing complete!', $message_data );
 				if (empty ( $message_data )) {
 					Mlog::addone ( __CLASS__ . __METHOD__ . '$this->fetchBackLogEntry()', ' returned null - processing complete!' );
 					$this->awsManagerAutoScaler->releaseTranscodingProcessHandleFromRedis ();
@@ -225,10 +225,13 @@ class IndexController extends AbstractActionController {
 					$result = $this->aws_manager->snsProcessMediaSubscribe ( $message_data );
 				}
 			} catch ( \Exception $e ) {
+				//
 				// continue processing - email likely sent
+				//
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Error in while loop::' . $e->getMessage () );
 				$this->aws_manager->sesEmailErrorToAdmin ( __CLASS__ . __METHOD__ . __LINE__ . '::Error in while loop::' . $e->getMessage (), "error in while loop" );
-				exit ();
+				
+				//exit ();
 			} finally {
 				/*
 				 * Reset and continue work on backlog
@@ -236,7 +239,6 @@ class IndexController extends AbstractActionController {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'transcoderAction::unset vars' );
 				unset ( $message_data );
 				unset ( $response );
-				unset ( $this->dbAdapter );
 				unset ( $this->aws_manager );
 				// $this->aws_manager->memreasTranscoder->refreshDBConnection();
 			}

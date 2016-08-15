@@ -15,6 +15,8 @@ class AWSMemreasRedisCache {
 	public $cache = "";
 	private $client = "";
 	private $isCacheEnable = MemreasConstants::REDIS_SERVER_USE;
+	private static $handle;
+	private static $isInitialized;
 	public function __construct() {
 		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'::', '__construct' );
 		
@@ -38,6 +40,8 @@ class AWSMemreasRedisCache {
 					'host' => MemreasConstants::REDIS_SERVER_ENDPOINT,
 					'port' => 6379 
 			] );
+			self::$isInitialized = true;
+			self::$handle = $this;
 		//} catch ( \Predis\Connection\ConnectionException $ex ) {
 		//	error_log ( "exception ---> " . print_r ( $ex, true ) . PHP_EOL );
 		} catch ( \Exception $ex ) {
@@ -46,6 +50,11 @@ class AWSMemreasRedisCache {
 		$this->cache->set('foo', 'bar');
 		error_log("Fetching from REDIS! ---> " . $this->cache->get('foo') . " for host --->" . gethostname () . PHP_EOL);
 		$this->cache->del ( 'foo' );
+	}
+	public static function getHandle() {
+		if (! empty ( self::$isInitialized )) {
+			return self::$handle;
+		}
 	}
 	public function setCache($key, $value, $ttl = MemreasConstants::REDIS_CACHE_TTL) {
 		if (! $this->isCacheEnable) {
@@ -139,9 +148,10 @@ class AWSMemreasRedisCache {
 	}
 	public function invalidateCache($key) {
 		if (! $this->isCacheEnable) {
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "invalidateCache failure for key $key");
 			return false;
 		}
-		
+		Mlog::addone(__CLASS__.__METHOD__.__LINE__, "invalidateCache success for key $key");
 		$result = $this->cache->del ( $key );
 	}
 	public function invalidateCacheMulti($keys) {
