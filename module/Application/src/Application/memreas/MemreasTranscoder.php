@@ -7,13 +7,8 @@
  */
 namespace Application\memreas;
 
-use PHPImageWorkshop\ImageWorkshop;
-// memreas custom
-use Application\memreas\MemreasTranscoderTables;
-use Application\memreas\Mlog;
-use Application\memreas\MUUID;
-// memreas models
 use Application\Model\Media;
+use PHPImageWorkshop\ImageWorkshop;
 use Application\Model\MemreasConstants;
 use Application\Model\TranscodeTransaction;
 
@@ -177,8 +172,10 @@ class MemreasTranscoder {
 				$message_data ['priority'] = 'low';
 			} else if ($file_size > MemreasConstants::SIZE_10MB) {
 				$message_data ['priority'] = 'medium';
-			} else {
+			} else if ($file_size < MemreasConstants::SIZE_10MB) {
 				$message_data ['priority'] = 'high';
+			} else {
+				$message_data ['priority'] = 'low';
 			}
 			
 			//

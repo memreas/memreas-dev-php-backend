@@ -26,18 +26,18 @@ class AWSManagerAutoScaler {
 		try {
 			
 			// Fetch aws handle
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'setting aws' );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'setting aws' );
 			$this->aws = $aws_manager;
 			
 			// Setup service locator and db
 			try {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->service_locator' );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->service_locator' );
 				$this->service_locator = $service_locator;
 				
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->dbAdapter' );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->dbAdapter' );
 				$this->dbAdapter = $service_locator->get ( 'doctrine.entitymanager.orm_default' );
 			} catch ( Exception $e ) {
-				Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
+				//Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
 				$this->aws_manager->sesEmailErrorToAdmin ( "memreas backend worker error:: failed to obtain database handle " . $e->getMessage (), "error retrieveing database handle" );
 				throw $e;
 			}
@@ -46,7 +46,7 @@ class AWSManagerAutoScaler {
 			// Fetch Redis Handle
 			//
 			try {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->redis' );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->redis' );
 				$this->redis = new AWSMemreasRedisCache ();
 			} catch ( Exception $e ) {
 				Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
@@ -57,7 +57,7 @@ class AWSManagerAutoScaler {
 			//
 			// Set Server Data
 			//
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->setServerData ()' );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'fetch this->setServerData ()' );
 			$this->setServerData ();
 		} catch ( Exception $e ) {
 			Mlog::addone ( __FILE__ . __METHOD__ . __LINE__ . 'Caught exception: ', $e->getMessage () );
@@ -65,7 +65,7 @@ class AWSManagerAutoScaler {
 		}
 	}
 	public function serverReadyToProcessTask() {
-		Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Inside serverReadyToProcessTask ()' );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'Inside serverReadyToProcessTask ()' );
 		return $this->fetchTranscodingProcessHandleFromRedis ();
 	}
 	function fetchTranscodingProcessHandleFromRedis() {
