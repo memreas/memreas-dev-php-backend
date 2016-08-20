@@ -163,6 +163,8 @@ class MemreasTranscoder {
 			// - high priority are all else (e.g. images, audio, etc).
 			//
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'about to get object filesize...' );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$message_data--->', $message_data );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize of ' ."s3://{$bucket}/{$key}" . ' is::' . $file_size );
 			$bucket = MemreasConstants::S3BUCKET;
 			$key = $message_data ['s3path'];
 			$file_size = filesize ( "s3://{$bucket}/{$key}" );
