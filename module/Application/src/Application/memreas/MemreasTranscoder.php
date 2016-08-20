@@ -167,6 +167,12 @@ class MemreasTranscoder {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize of ' ."s3://{$bucket}/{$key}" . ' is::' . $file_size );
 			$bucket = MemreasConstants::S3BUCKET;
 			$key = $message_data ['s3path'];
+			$path = "s3://{$bucket}/{$key}";
+			if (is_file($path)) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::if (is_file($path)) ---> YES' );
+			} else {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::if (is_file($path)) ---> NO' );
+			}
 			$file_size = filesize ( "s3://{$bucket}/{$key}" );
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
 			//	$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
