@@ -165,26 +165,27 @@ class MemreasTranscoder {
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'about to get object filesize...' );
 			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$message_data--->', $message_data );
 			$bucket = MemreasConstants::S3BUCKET;
-			//"s3path": "3f68e4a4-74bc-4c2d-bf5c-09f8fd501b7d\/b9d3ce83-2981-4b03-8d0c-d5b3cf44a6fd\/",
-			//"s3file_name": "IMG_1570.JPG",
 			$path = "s3://$bucket/" . $message_data ['s3path'] . $message_data ['s3file_name'];
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize of ' ."path" . ' is::' . $path );
-			if (is_file($path)) {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::if (is_file($path)) ---> YES' );
-			} else {
-				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::if (is_file($path)) ---> NO' );
-			}
 			$file_size = filesize ( $path );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
-			$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object video_size is::' . $video_size );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
+			//$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object video_size is::' . $video_size );
 			if ($file_size > MemreasConstants::SIZE_100MB) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->low' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::greater than MemreasConstants::SIZE_100MB--->' . MemreasConstants::SIZE_100MB );
 				$message_data ['priority'] = 'low';
 			} else if ($file_size > MemreasConstants::SIZE_10MB) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->medium' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::greater than MemreasConstants::SIZE_10MB--->' . MemreasConstants::SIZE_10MB );
 				$message_data ['priority'] = 'medium';
 			} else if ($file_size < MemreasConstants::SIZE_10MB) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->high' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::less than MemreasConstants::SIZE_10MB--->' . MemreasConstants::SIZE_10MB );
 				$message_data ['priority'] = 'high';
 			} else {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->low' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::MemreasConstants::SIZE_UNDEFINED' );
 				$message_data ['priority'] = 'low';
 			}
 			
