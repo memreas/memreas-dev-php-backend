@@ -163,18 +163,29 @@ class MemreasTranscoder {
 			// - high priority are all else (e.g. images, audio, etc).
 			//
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'about to get object filesize...' );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$message_data--->', $message_data );
 			$bucket = MemreasConstants::S3BUCKET;
-			$key = $message_data ['s3path'];
-			$file_size = filesize ( "s3://{$bucket}/{$key}" );
-			// $video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
+			$path = "s3://$bucket/" . $message_data ['s3path'] . $message_data ['s3file_name'];
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize of ' ."path" . ' is::' . $path );
+			$file_size = filesize ( $path );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
+			//$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
+			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object video_size is::' . $video_size );
 			if ($file_size > MemreasConstants::SIZE_100MB) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->low' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::greater than MemreasConstants::SIZE_100MB--->' . MemreasConstants::SIZE_100MB );
 				$message_data ['priority'] = 'low';
 			} else if ($file_size > MemreasConstants::SIZE_10MB) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->medium' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::greater than MemreasConstants::SIZE_10MB--->' . MemreasConstants::SIZE_10MB );
 				$message_data ['priority'] = 'medium';
 			} else if ($file_size < MemreasConstants::SIZE_10MB) {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->high' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::less than MemreasConstants::SIZE_10MB--->' . MemreasConstants::SIZE_10MB );
 				$message_data ['priority'] = 'high';
 			} else {
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->low' );
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::MemreasConstants::SIZE_UNDEFINED' );
 				$message_data ['priority'] = 'low';
 			}
 			
