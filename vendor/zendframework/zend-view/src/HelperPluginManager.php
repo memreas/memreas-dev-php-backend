@@ -13,6 +13,7 @@ use Interop\Container\ContainerInterface;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\SharedEventManagerInterface;
 use Zend\I18n\Translator\TranslatorAwareInterface;
+use Zend\I18n\Translator\TranslatorInterface;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\Exception\InvalidServiceException;
 use Zend\ServiceManager\Factory\InvokableFactory;
@@ -135,8 +136,6 @@ class HelperPluginManager extends AbstractPluginManager
         'viewModel'           => Helper\ViewModel::class,
         'ViewModel'           => Helper\ViewModel::class,
     ];
-
-    protected $instanceOf = Helper\HelperInterface::class;
 
     /**
      * Default factories
@@ -288,6 +287,10 @@ class HelperPluginManager extends AbstractPluginManager
             ? $second
             : $first;
 
+        if (! $helper instanceof Helper\HelperInterface) {
+            return;
+        }
+
         $renderer = $this->getRenderer();
         if (null === $renderer) {
             return;
@@ -316,7 +319,10 @@ class HelperPluginManager extends AbstractPluginManager
             $helper = $first;
         }
 
-        if (! $helper instanceof TranslatorAwareInterface) {
+        // Allow either direct implementation or duck-typing.
+        if (! $helper instanceof TranslatorAwareInterface
+            && ! method_exists($helper, 'setTranslator')
+        ) {
             return;
         }
 
@@ -332,8 +338,8 @@ class HelperPluginManager extends AbstractPluginManager
             return;
         }
 
-        if ($container->has('Zend\I18n\Translator\TranslatorInterface')) {
-            $helper->setTranslator($container->get('Zend\I18n\Translator\TranslatorInterface'));
+        if ($container->has(TranslatorInterface::class)) {
+            $helper->setTranslator($container->get(TranslatorInterface::class));
             return;
         }
 
@@ -389,19 +395,19 @@ class HelperPluginManager extends AbstractPluginManager
     /**
      * Validate the plugin is of the expected type (v3).
      *
-     * Validates against `$instanceOf`.
+     * Validates against callables and HelperInterface implementations.
      *
      * @param mixed $instance
      * @throws InvalidServiceException
      */
     public function validate($instance)
     {
-        if (!$instance instanceof $this->instanceOf) {
+        if (! is_callable($instance) && ! $instance instanceof Helper\HelperInterface) {
             throw new InvalidServiceException(
                 sprintf(
-                    '%s can only create instances of %s; %s is invalid',
+                    '%s can only create instances of %s and/or callables; %s is invalid',
                     get_class($this),
-                    $this->instanceOf,
+                    Helper\HelperInterface::class,
                     (is_object($instance) ? get_class($instance) : gettype($instance))
                 )
             );

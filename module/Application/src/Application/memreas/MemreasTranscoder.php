@@ -1076,18 +1076,38 @@ class MemreasTranscoder {
 	}
 	public function resizeImage($dirPath, $file, $thumbnail_name, $height, $width) {
 		try {
-			$layer = ImageWorkshop::initFromPath ( $file );
-			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
-			// //Maintains
-			// image
-			$layer->resizeInPixel ( $height, $width );
 			$createFolders = true;
-			$backgroundColor = null; // transparent, only for PNG (otherwise it
+			$layer = ImageWorkshop::initFromPath ( $file );
+			
+			// old code
+			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
+			// //Maintains image
+			//$layer->resizeInPixel ( $height, $width );
+			//$backgroundColor = null; // transparent, only for PNG (otherwise it
 			                         // will
 			                         // be white if set null)
-			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+			//$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
 			                    // to
 			                    // 100%)
+			// end old code
+					
+			//3 - Get a portrait (or landscape) format not in a box:
+			//http://phpimageworkshop.com/tutorial/2/creating-thumbnails.html
+			$expectedWidth = $width;
+			$expectedHeight = $height;
+			
+			// Determine the largest expected side automatically
+			($expectedWidth > $expectedHeight) ? $largestSide = $expectedWidth : $largestSide = $expectedHeight;
+			
+			// Get a squared layer
+			$layer->cropMaximumInPixel(0, 0, "MM");
+			
+			// Resize the squared layer with the largest side of the expected thumb
+			$layer->resizeInPixel($largestSide, $largestSide);
+			
+			// Crop the layer to get the expected dimensions
+			$layer->cropInPixel($expectedWidth, $expectedHeight, 0, 0, 'MM');
+			
 			$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
 			$file = $dirPath . $thumbnail_name;
 			

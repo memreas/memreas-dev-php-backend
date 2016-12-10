@@ -14,11 +14,11 @@
         "zendframework/zendframework": "2.*",
         "ext-curl": "*",
         "ext-json": "*",
-		"ramsey/uuid": "2.8.0",
+	"ramsey/uuid": "2.8.0",
         "aws/aws-sdk-php": "3.12.*",
-		"sybio/image-workshop": "2.*",
-		"predis/predis": "1.*",
-		"doctrine/doctrine-orm-module": "0.*"
+	"sybio/image-workshop": "2.*",
+	"predis/predis": "1.*",
+	"doctrine/doctrine-orm-module": "0.*"
     },
     "config": {
 		"github-oauth": {

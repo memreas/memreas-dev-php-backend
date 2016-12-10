@@ -1,5 +1,7 @@
 <?php
 /**
+ * Zend Framework (http://framework.zend.com/)
+ *
  * @link      http://github.com/zendframework/zend-log for the canonical source repository
  * @copyright Copyright (c) 2005-2016 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
@@ -24,11 +26,12 @@ class Module
     /**
      * Register specifications for all zend-log plugin managers with the ServiceListener.
      *
-     * @param \Zend\ModuleManager\ModuleEvent
+     * @param \Zend\ModuleManager\ModuleManager $moduleManager
      * @return void
      */
-    public function init($event)
+    public function init($moduleManager)
     {
+        $event = $moduleManager->getEvent();
         $container = $event->getParam('ServiceManager');
         $serviceListener = $container->get('ServiceListener');
 
