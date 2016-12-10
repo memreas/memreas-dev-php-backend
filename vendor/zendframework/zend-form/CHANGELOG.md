@@ -2,6 +2,180 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.9.2 - 2016-09-22
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#122](https://github.com/zendframework/zend-form/pull/122) fixes collection
+  binding following successful validation. The fix introduced in #106, while it
+  corrected the behavior around binding a collection that was not re-submitted,
+  broke behavior around binding submitted collections. #122 corrects the issue,
+  retaining the fix from #106.
+
+## 2.9.1 - 2016-09-14
+
+### Added
+
+- [#85](https://github.com/zendframework/zend-form/pull/85) adds support for the
+  zend-code 3.0 series (retaining support for the 2.* series).
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#119](https://github.com/zendframework/zend-form/pull/119) fixes the order in
+  which the default initializers are injected into the `FormElementManager`,
+  ensuring that the initializer injecting a factory into a `FormFactoryAware`
+  instance is triggered before the initializer that calls `init()`, and also
+  that the initializer calling `init()` is always triggered last.
+- [#106](https://github.com/zendframework/zend-form/pull/106) updates behavior
+  around binding collection values to a fieldset or form such that if the
+  collection is not part of the current validation group, its value will not be
+  overwritten with an empty set.
+
+## 2.9.0 - 2016-06-07
+
+### Added
+
+- [#57](https://github.com/zendframework/zend-form/pull/57) adds new elements,
+  `FormSearch` and `FormTel`, which map to the `FormSearch` and `FormTel` view
+  helpers.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Updates the composer suggestions list to remove those that were redundant, and
+  to add explicit constraints and reasons for each listed (e.g., zend-code is
+  required for annotations support).
+
+## 2.8.4 - 2016-06-07
+
+### Added
+
+- [#74](https://github.com/zendframework/zend-form/pull/74) adds an 
+  alias for the `FormTextarea` view helper that is referenced in the
+  documentation.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#77](https://github.com/zendframework/zend-form/pull/77) updates
+  `Zend\Form\View\HelperConfig` to improve performance when running under
+  zend-servicemanager v3.
+- [#19](https://github.com/zendframework/zend-form/pull/19) provides a thorough
+  fix for an issue when removing all items in a collection associated with a
+  form. Prior to this release, values that existed in the collection persisted
+  when a form submission intended to remove them.
+
+## 2.8.3 - 2016-05-03
+
+### Added
+
+- [#70](https://github.com/zendframework/zend-form/pull/70) adds and publishes
+  the documentation to https://zendframework.github.io/zend-form/
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#69](https://github.com/zendframework/zend-form/pull/69) fixes aliases in the
+  `FormElementManager` polyfill for zend-servicemanager v2 to ensure they are
+  canonicalized correctly.
+
+## 2.8.2 - 2016-05-01
+
+### Added
+
+- [#60](https://github.com/zendframework/zend-form/pull/60) adds an alias from
+  `Zend\Form\FormElementManager` to `FormElementManager` in the `ConfigProvider`.
+- [#67](https://github.com/zendframework/zend-form/pull/67) adds polyfills for
+  the `FormElementManager` to vary its definitions based on the major version of
+  zend-servicemanager in use. `FormElementManagerFactory` was updated to return
+  the specific polyfill version, and an autoload rule was added to alias the
+  class to the correct polyfill version. The polyfills were necessary to ensure
+  that invokable classes are mapped to the new `ElementFactory` introduced in
+  the 2.7 series, thus ensuring instantiation is performed correctly.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#65](https://github.com/zendframework/zend-form/pull/65) fixes instantiation
+  of `Zend\Form\FormElementManager` to ensure that the default initializers,
+  `injectFactory()` and `callElementInit()` are registered as the first and last
+  initializers, respectively, during construction, restoring the pre-2.7
+  behavior.
+- [#67](https://github.com/zendframework/zend-form/pull/67) fixes the behavior
+  of `Factory::create()` to the pre-2.7.1 behavior of *not* passing creation
+  options when retrieving an instance from the `FormElementManager`. This
+  ensures that options are not passed to Element/Fieldset/Form instances
+  until after they are fully initialized, ensuring that all dependencies are
+  present.
+
+## 2.8.1 - 2016-04-18
+
+### Added
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#59](https://github.com/zendframework/zend-form/pull/59) fixes the
+  `Module::init()` method to properly receive a `ModuleManager` instance, and
+  not expect a `ModuleEvent`.
+
 ## 2.8.0 - 2016-04-07
 
 ### Added
