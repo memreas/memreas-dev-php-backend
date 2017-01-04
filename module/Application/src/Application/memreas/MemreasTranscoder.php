@@ -677,8 +677,8 @@ class MemreasTranscoder {
 				$op = shell_exec ( $this->cmd );
 				$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
 				$result = shell_exec ( "ls -al " . $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE );
-				Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', $result );
-				Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr', json_encode ( $media_thumb_arr ) );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', $result );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr', json_encode ( $media_thumb_arr ) );
 			} else {
 				/*
 				 * Thumbnails for images
@@ -1080,17 +1080,21 @@ class MemreasTranscoder {
 			$layer = ImageWorkshop::initFromPath ( $file );
 			
 			// old code
-			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
-			// //Maintains image
-			//$layer->resizeInPixel ( $height, $width );
-			//$backgroundColor = null; // transparent, only for PNG (otherwise it
+			//$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
+			$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
+			//Maintains image
+			$layer->resizeInPixel($width, $height );
+			//$layer->resizeInPixel( $height, $width );
+			$backgroundColor = null; // transparent, only for PNG (otherwise it
 			                         // will
 			                         // be white if set null)
-			//$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
 			                    // to
 			                    // 100%)
 			// end old code
-					
+			
+			/*
+			//new method - odd output
 			//3 - Get a portrait (or landscape) format not in a box:
 			//http://phpimageworkshop.com/tutorial/2/creating-thumbnails.html
 			$expectedWidth = $width;
@@ -1107,6 +1111,8 @@ class MemreasTranscoder {
 			
 			// Crop the layer to get the expected dimensions
 			$layer->cropInPixel($expectedWidth, $expectedHeight, 0, 0, 'MM');
+			*/
+			
 			
 			$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
 			$file = $dirPath . $thumbnail_name;
