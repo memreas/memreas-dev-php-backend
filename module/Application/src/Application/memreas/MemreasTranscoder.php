@@ -677,8 +677,8 @@ class MemreasTranscoder {
 				$op = shell_exec ( $this->cmd );
 				$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
 				$result = shell_exec ( "ls -al " . $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE );
-				Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', $result );
-				Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr', json_encode ( $media_thumb_arr ) );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', $result );
+				//Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr', json_encode ( $media_thumb_arr ) );
 			} else {
 				/*
 				 * Thumbnails for images
@@ -1079,6 +1079,9 @@ class MemreasTranscoder {
 			$createFolders = true;
 			$layer = ImageWorkshop::initFromPath ( $file );
 			
+			// Resize to get the thumbnail
+			$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
+			/*
 			// old code
 			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
 			// //Maintains image
@@ -1090,7 +1093,8 @@ class MemreasTranscoder {
 			                    // to
 			                    // 100%)
 			// end old code
-					
+			
+			//new method - odd output
 			//3 - Get a portrait (or landscape) format not in a box:
 			//http://phpimageworkshop.com/tutorial/2/creating-thumbnails.html
 			$expectedWidth = $width;
@@ -1107,6 +1111,8 @@ class MemreasTranscoder {
 			
 			// Crop the layer to get the expected dimensions
 			$layer->cropInPixel($expectedWidth, $expectedHeight, 0, 0, 'MM');
+			*/
+			
 			
 			$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
 			$file = $dirPath . $thumbnail_name;
