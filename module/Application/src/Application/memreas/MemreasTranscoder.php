@@ -1079,21 +1079,21 @@ class MemreasTranscoder {
 			$createFolders = true;
 			$layer = ImageWorkshop::initFromPath ( $file );
 			
-			// Resize to get the thumbnail
-			$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
-			/*
 			// old code
-			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
-			// //Maintains image
-			//$layer->resizeInPixel ( $height, $width );
-			//$backgroundColor = null; // transparent, only for PNG (otherwise it
+			//$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
+			$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
+			//Maintains image
+			$layer->resizeInPixel($width, $height );
+			//$layer->resizeInPixel( $height, $width );
+			$backgroundColor = null; // transparent, only for PNG (otherwise it
 			                         // will
 			                         // be white if set null)
-			//$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
 			                    // to
 			                    // 100%)
 			// end old code
 			
+			/*
 			//new method - odd output
 			//3 - Get a portrait (or landscape) format not in a box:
 			//http://phpimageworkshop.com/tutorial/2/creating-thumbnails.html
