@@ -30,7 +30,7 @@ class MemreasConstants {
 
 	// Redis section
 	//const REDIS_SERVER_ENDPOINT = "10.154.58.83";
-	const REDIS_SERVER_ENDPOINT = "172.31.11.12";
+	const REDIS_SERVER_ENDPOINT = "10.0.0.88";
 	const REDIS_SERVER_USE = true;
 	const REDIS_SERVER_SESSION_ONLY = true;
 	const REDIS_SERVER_PORT = "6379";
