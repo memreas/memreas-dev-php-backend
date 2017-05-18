@@ -1087,11 +1087,9 @@ class MemreasTranscoder {
 			$landscape = true;
 			list($width, $height) = getimagesize($file);
 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "width is $width .... height is $height");
-			sleep(3);
 			if ($width < $height) {
 				// Portrait or Square
 				$landscape = false;
-			} else {
 			}
 			
 			// old code
@@ -1102,13 +1100,20 @@ class MemreasTranscoder {
 			//
 			if ($landscape) {
 				//landscape
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__, "thumbnail is landscape");
 				$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
 			} else {
 				//portrait
 				//flip width and height
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__, "thumbnail is portrait");
 				$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
 			}
-
+			sleep(3);
+			
+			$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
+			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+			// to
+			// 100%)
 			$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
 			$file = $dirPath . $thumbnail_name;
 			
