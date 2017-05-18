@@ -25,12 +25,12 @@ return array (
 		'db' => array (
 				'adapters' => array (
 						'memreasintdb' => array (
-								'dsn' => 'mysql:dbname=memreasintdb;host=memreasdevdb.co0fw2snbu92.us-east-1.rds.amazonaws.com',
+								'dsn' => 'mysql:dbname=memreasintdb;host=memreasdevvpcdb.cyiocnlhc7lt.us-east-2.rds.amazonaws.com',
 								'username' => 'memreasdbuser',
 								'password' => '4ma___2016' 
 						),
 						'memreasbackenddb' => array (
-								'dsn' => 'mysql:dbname=memreasbackenddb;host=memreasdevdb.co0fw2snbu92.us-east-1.rds.amazonaws.com',
+								'dsn' => 'mysql:dbname=memreasbackenddb;host=memreasdevvpcdb.cyiocnlhc7lt.us-east-2.rds.amazonaws.com',
 								'username' => 'memreasdbuser',
 								'password' => '4ma___2016' 
 						) 
@@ -47,7 +47,7 @@ return array (
 								// memreasbackenddb
 								'driverClass' => 'Doctrine\DBAL\Driver\PDOMySql\Driver',
 								'params' => array (
-										'host' => 'memreasdevdb.co0fw2snbu92.us-east-1.rds.amazonaws.com',
+										'host' => 'memreasdevvpcdb.cyiocnlhc7lt.us-east-2.rds.amazonaws.com',
 										'port' => '3306',
 										'dbname' => 'memreasbackenddb',
 										'user' => 'memreasdbuser',

@@ -1076,19 +1076,56 @@ class MemreasTranscoder {
 	}
 	public function resizeImage($dirPath, $file, $thumbnail_name, $height, $width) {
 		try {
+
+			//Initialize Sybio
 			$createFolders = true;
 			$layer = ImageWorkshop::initFromPath ( $file );
 			
+			//
+			// Check for orientation
+			// 
+			$landscape = true;
+			list($width, $height) = getimagesize($file);
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "width is $width .... height is $height");
+			if ($width < $height) {
+				// Portrait or Square
+				$landscape = false;
+			}
+			
 			// old code
 			//$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
-			$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
+			
+			//
+			// Orient thumbnail properly
+			//
+			if ($landscape) {
+				//landscape
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__, "thumbnail is landscape");
+				$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
+			} else {
+				//portrait
+				//flip width and height
+				Mlog::addone(__CLASS__.__METHOD__.__LINE__, "thumbnail is portrait");
+				$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
+			}
+			sleep(3);
+			
+			$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
+			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+			// to
+			// 100%)
+			$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
+			$file = $dirPath . $thumbnail_name;
+			
+			return $file;
+			
 			//Maintains image
-			$layer->resizeInPixel($width, $height );
+			//$layer->resizeInPixel($width, $height );
 			//$layer->resizeInPixel( $height, $width );
-			$backgroundColor = null; // transparent, only for PNG (otherwise it
+			//$backgroundColor = null; // transparent, only for PNG (otherwise it
 			                         // will
 			                         // be white if set null)
-			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+			//$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
 			                    // to
 			                    // 100%)
 			// end old code
@@ -1114,10 +1151,6 @@ class MemreasTranscoder {
 			*/
 			
 			
-			$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
-			$file = $dirPath . $thumbnail_name;
-			
-			return $file;
 		} catch ( \Exception $e ) {
 			throw $e;
 		}
