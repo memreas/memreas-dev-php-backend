@@ -32,5 +32,5 @@ git push
 #
 # curl url to pull latest on backend
 #
-#curl https://memreasprod-backend.memreas.com/?action=clearlog
-#curl https://memreasprod-backend.memreas.com/?action=gitpull
+curl https://memreasprod-backend.memreas.com/?action=clearlog
+curl https://memreasprod-backend.memreas.com/?action=gitpull
