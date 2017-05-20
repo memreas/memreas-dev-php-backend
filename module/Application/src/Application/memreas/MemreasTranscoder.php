@@ -1108,7 +1108,6 @@ class MemreasTranscoder {
 				Mlog::addone(__CLASS__.__METHOD__.__LINE__, "thumbnail is portrait");
 				$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
 			}
-			sleep(3);
 			
 			$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
 			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
