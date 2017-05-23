@@ -42,7 +42,7 @@ class IndexController extends AbstractActionController {
 		return $response->getBody ();
 	}
 	public function indexAction() {
-		Mlog::addone ( __CLASS__ . __METHOD__ . '::$_SERVER-->', $_SERVER );
+		//Mlog::addone ( __CLASS__ . __METHOD__ . '::$_SERVER-->', $_SERVER );
 		// Mlog::addone ( __CLASS__ . __METHOD__, '::entered indexAction....' );
 		$actionname = isset ( $_REQUEST ["action"] ) ? $_REQUEST ["action"] : '';
 		
