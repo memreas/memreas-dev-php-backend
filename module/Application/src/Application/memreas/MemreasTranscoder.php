@@ -1099,6 +1099,7 @@ class MemreasTranscoder {
 			} else if (preg_match ( '@\x12\x01\x03\x00\x01\x00\x00\x00(.)\x00\x00\x00@', file_get_contents ( $file ), $matches )) {
 				$orientation = ord ( $matches [1] );
 			}
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "file is $file....");
 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "orientation is $orientation....");
 			sleep(3);
 			
