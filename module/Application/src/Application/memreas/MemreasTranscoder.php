@@ -122,7 +122,7 @@ class MemreasTranscoder {
 	function refreshDBConnection() {
 		try {
 			if ($this->entityManager->getConnection ()->ping () === false) {
-				$this->closeDBConnection();
+				$this->closeDBConnection ();
 				$this->entityManager->getConnection ()->connect ();
 				Mlog::addone ( __CLASS__ . __METHOD__, '$this->entityManager->connect() is not valid ... fetching new' );
 			} else {
@@ -163,14 +163,14 @@ class MemreasTranscoder {
 			// - high priority are all else (e.g. images, audio, etc).
 			//
 			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, 'about to get object filesize...' );
-			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$message_data--->', $message_data );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__.'$message_data--->', $message_data );
 			$bucket = MemreasConstants::S3BUCKET;
 			$path = "s3://$bucket/" . $message_data ['s3path'] . $message_data ['s3file_name'];
-			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize of ' ."path" . ' is::' . $path );
+			Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize of ' . "path" . ' is::' . $path );
 			$file_size = filesize ( $path );
-			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
-			//$video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
-			//Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object video_size is::' . $video_size );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object filesize is::' . $file_size );
+			// $video_size = $this->aws_manager_receiver->s3->get_object_filesize ( MemreasConstants::S3BUCKET, $message_data ['s3path'], false );
+			// Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::object video_size is::' . $video_size );
 			if ($file_size > MemreasConstants::SIZE_100MB) {
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::priority->low' );
 				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, '::greater than MemreasConstants::SIZE_100MB--->' . MemreasConstants::SIZE_100MB );
@@ -624,8 +624,7 @@ class MemreasTranscoder {
 			//
 			// Close db connection - avoid too many connections
 			//
-			$this->closeDBConnection();
-			
+			$this->closeDBConnection ();
 		}
 		
 		return $this->pass;
@@ -677,8 +676,8 @@ class MemreasTranscoder {
 				$op = shell_exec ( $this->cmd );
 				$media_thumb_arr = glob ( $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE . 'thumbnail_' . $this->original_file_name . '_media-*.png' );
 				$result = shell_exec ( "ls -al " . $this->homeDir . self::CONVDIR . self::THUMBNAILSDIR . self::FULLSIZE );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', $result );
-				//Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr', json_encode ( $media_thumb_arr ) );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr ls -al', $result );
+				// Mlog::addone ( __CLASS__ . __METHOD__ . '::$media_thumb_arr', json_encode ( $media_thumb_arr ) );
 			} else {
 				/*
 				 * Thumbnails for images
@@ -766,7 +765,6 @@ class MemreasTranscoder {
 					$this->homeDir . self::DESTDIR . self::HLSDIR, // data/temp_job_uuid_dir/media/hls/
 					$this->homeDir . self::DESTDIR . self::WEBMDIR 
 			); // data/temp_job_uuid_dir/media/webm/
-
 			
 			$permissions = 0777;
 			foreach ( $toCreate as $dir ) {
@@ -1076,80 +1074,90 @@ class MemreasTranscoder {
 	}
 	public function resizeImage($dirPath, $file, $thumbnail_name, $height, $width) {
 		try {
-
-			//Initialize Sybio
+			
+			// Initialize Sybio
 			$createFolders = true;
 			$layer = ImageWorkshop::initFromPath ( $file );
 			
 			//
 			// Check for orientation
-			// 
-			$landscape = false;
-			list($width, $height) = getimagesize($file);
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "width is $width .... height is $height");
-			if ($width > $height) {
-				// landscape only if width > height else portrait
-				$landscape = true;
+			//
+			// $landscape = false;
+			// list($width, $height) = getimagesize($file);
+			// Mlog::addone(__CLASS__.__METHOD__.__LINE__, "width is $width .... height is $height");
+			// if ($width > $height) {
+			// // landscape only if width > height else portrait
+			// $landscape = true;
+			// }
+			
+			// orientation
+			$orientation = 1;
+			if (function_exists ( 'exif_read_data' )) {
+				$exif = exif_read_data ( $file );
+				if (isset ( $exif ['Orientation'] ))
+					$orientation = $exif ['Orientation'];
+			} else if (preg_match ( '@\x12\x01\x03\x00\x01\x00\x00\x00(.)\x00\x00\x00@', file_get_contents ( $file ), $matches )) {
+				$orientation = ord ( $matches [1] );
 			}
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "orientation is $orientation....");
+			sleep(3);
 			
 			// old code
-			//$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
+			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
 			
 			//
 			// Orient thumbnail properly
 			//
 			if ($landscape) {
-				//landscape
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__, "thumbnail is landscape");
-				$layer->resizeInPixel($width, $height, true, 0, 0, 'MM');
+				// landscape
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "thumbnail is landscape" );
+				$layer->resizeInPixel ( $width, $height, true, 0, 0, 'MM' );
 			} else {
-				//portrait
-				//flip width and height
-				Mlog::addone(__CLASS__.__METHOD__.__LINE__, "thumbnail is portrait");
-				$layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
+				// portrait
+				// flip width and height
+				Mlog::addone ( __CLASS__ . __METHOD__ . __LINE__, "thumbnail is portrait" );
+				$layer->resizeInPixel ( $height, $width, true, 0, 0, 'MM' );
 			}
 			
 			$backgroundColor = null; // transparent, only for PNG (otherwise it will be white if set null)
 			$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
-			// to
-			// 100%)
+			                    // to
+			                    // 100%)
 			$layer->save ( $dirPath, $thumbnail_name, $createFolders, $backgroundColor, $imageQuality );
 			$file = $dirPath . $thumbnail_name;
 			
 			return $file;
 			
-			//Maintains image
-			//$layer->resizeInPixel($width, $height );
-			//$layer->resizeInPixel( $height, $width );
-			//$backgroundColor = null; // transparent, only for PNG (otherwise it
-			                         // will
-			                         // be white if set null)
-			//$imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
-			                    // to
-			                    // 100%)
+			// Maintains image
+			// $layer->resizeInPixel($width, $height );
+			// $layer->resizeInPixel( $height, $width );
+			// $backgroundColor = null; // transparent, only for PNG (otherwise it
+			// will
+			// be white if set null)
+			// $imageQuality = 95; // useless for GIF, usefull for PNG and JPEG (0
+			// to
+			// 100%)
 			// end old code
 			
 			/*
-			//new method - odd output
-			//3 - Get a portrait (or landscape) format not in a box:
-			//http://phpimageworkshop.com/tutorial/2/creating-thumbnails.html
-			$expectedWidth = $width;
-			$expectedHeight = $height;
-			
-			// Determine the largest expected side automatically
-			($expectedWidth > $expectedHeight) ? $largestSide = $expectedWidth : $largestSide = $expectedHeight;
-			
-			// Get a squared layer
-			$layer->cropMaximumInPixel(0, 0, "MM");
-			
-			// Resize the squared layer with the largest side of the expected thumb
-			$layer->resizeInPixel($largestSide, $largestSide);
-			
-			// Crop the layer to get the expected dimensions
-			$layer->cropInPixel($expectedWidth, $expectedHeight, 0, 0, 'MM');
-			*/
-			
-			
+			 * //new method - odd output
+			 * //3 - Get a portrait (or landscape) format not in a box:
+			 * //http://phpimageworkshop.com/tutorial/2/creating-thumbnails.html
+			 * $expectedWidth = $width;
+			 * $expectedHeight = $height;
+			 *
+			 * // Determine the largest expected side automatically
+			 * ($expectedWidth > $expectedHeight) ? $largestSide = $expectedWidth : $largestSide = $expectedHeight;
+			 *
+			 * // Get a squared layer
+			 * $layer->cropMaximumInPixel(0, 0, "MM");
+			 *
+			 * // Resize the squared layer with the largest side of the expected thumb
+			 * $layer->resizeInPixel($largestSide, $largestSide);
+			 *
+			 * // Crop the layer to get the expected dimensions
+			 * $layer->cropInPixel($expectedWidth, $expectedHeight, 0, 0, 'MM');
+			 */
 		} catch ( \Exception $e ) {
 			throw $e;
 		}
