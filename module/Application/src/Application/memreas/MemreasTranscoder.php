@@ -1087,6 +1087,7 @@ class MemreasTranscoder {
 			$landscape = false;
 			//list($width, $height) = getimagesize($file);
 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "width is $width .... height is $height");
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "layer->getWidth() is $layer->getWidth().... $layer->getHeight() is $layer->getHeight()");
 			if ($layer->getWidth() > $layer->getHeight()) {
 				// landscape only if width > height else portrait
 				$landscape = true;
@@ -1094,7 +1095,7 @@ class MemreasTranscoder {
 			
  			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "file is $file....");
  			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "orientation is $orientation....");
- 			sleep(3);
+ 			//sleep(3);
 			
 			// old code
 			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
