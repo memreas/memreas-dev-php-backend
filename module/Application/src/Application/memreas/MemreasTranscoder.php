@@ -1079,29 +1079,22 @@ class MemreasTranscoder {
 			$createFolders = true;
 			$layer = ImageWorkshop::initFromPath ( $file );
 			
+			
+			//get heigh and width 
 			//
 			// Check for orientation
 			//
-			// $landscape = false;
-			// list($width, $height) = getimagesize($file);
-			// Mlog::addone(__CLASS__.__METHOD__.__LINE__, "width is $width .... height is $height");
-			// if ($width > $height) {
-			// // landscape only if width > height else portrait
-			// $landscape = true;
-			// }
-			
-			// orientation
-			$orientation = 1;
-			if (function_exists ( 'exif_read_data' )) {
-				$exif = exif_read_data ( $file );
-				if (isset ( $exif ['Orientation'] ))
-					$orientation = $exif ['Orientation'];
-			} else if (preg_match ( '@\x12\x01\x03\x00\x01\x00\x00\x00(.)\x00\x00\x00@', file_get_contents ( $file ), $matches )) {
-				$orientation = ord ( $matches [1] );
+			$landscape = false;
+			//list($width, $height) = getimagesize($file);
+			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "width is $width .... height is $height");
+			if ($layer->getWidth() > $layer->getHeight()) {
+				// landscape only if width > height else portrait
+				$landscape = true;
 			}
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "file is $file....");
-			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "orientation is $orientation....");
-			sleep(3);
+			
+ 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "file is $file....");
+ 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "orientation is $orientation....");
+ 			sleep(3);
 			
 			// old code
 			// $layer->resizeInPixel($height, $width, true, 0, 0, 'MM');
