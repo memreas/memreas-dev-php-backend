@@ -1094,7 +1094,7 @@ class MemreasTranscoder {
 			}
 			
  			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "file is $file....");
- 			Mlog::addone(__CLASS__.__METHOD__.__LINE__, "orientation is $orientation....");
+ 			//Mlog::addone(__CLASS__.__METHOD__.__LINE__, "orientation is $orientation....");
  			//sleep(3);
 			
 			// old code
